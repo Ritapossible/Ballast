@@ -26,6 +26,11 @@ from .policy import Action, EventType, Impact, NightRisk, PolicyConfig, decide
 from .reader import Judgment, read
 from .sessions import UTC, close_utc, next_session, open_utc, window_hours
 
+# The nightly run needs recent history for the sigma it reports, not the full
+# two-year series the research scripts page down. 100 sessions is ample and keeps
+# a scheduled run to seconds rather than minutes.
+HISTORY_BARS = 2_400
+
 MAX_HEDGE_RATIO = 1.0
 MAX_NOTIONAL_USDT = 100_000.0
 MAX_ORDERS = 50
@@ -80,9 +85,9 @@ def run(dry_run: bool = False, no_reader: bool = False) -> dict:
 
     spot_marks, histories, perp_marks = {}, {}, {}
     for pos in book:
-        bars = closes(pos.spot_symbol, "spot")
+        bars = closes(pos.spot_symbol, "spot", max_bars=HISTORY_BARS, use_cache=False)
         spot_marks[pos.spot_symbol] = bars[max(bars)]
-        perp_bars = closes(pos.perp_symbol, "mix")
+        perp_bars = closes(pos.perp_symbol, "mix", max_bars=HISTORY_BARS, use_cache=False)
         perp_marks[pos.perp_symbol] = perp_bars[max(perp_bars)]
         prior = overnight_returns(bars)
         histories[pos.ticker] = [v for d, v in sorted(prior.items()) if d < session]

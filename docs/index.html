@@ -1,0 +1,93 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ballast — overnight risk transfer</title><style>
+:root{--bg:#fbfbfa;--fg:#1a1a19;--dim:#6b6b68;--line:#e3e3e0;--card:#fff;
+--pos:#0e7a57;--neg:#b3261e;--accent:#0f6e8c}
+@media(prefers-color-scheme:dark){:root{--bg:#131313;--fg:#ececeb;--dim:#9a9a97;
+--line:#2c2c2b;--card:#1b1b1a;--pos:#4ec9a0;--neg:#f2836b;--accent:#63b8d4}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+font:15px/1.6 ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:960px;margin:0 auto;padding:48px 20px 80px}
+h1{font-size:30px;margin:0 0 6px;letter-spacing:-.02em}
+h2{font-size:17px;margin:44px 0 12px;letter-spacing:-.01em}
+.sub{color:var(--dim);margin:0 0 28px}
+.claim{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--accent);
+border-radius:8px;padding:18px 20px;margin:0 0 10px}
+.claim p{margin:0}
+.not{border-left-color:var(--dim)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:18px 0}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.tile .n{font-size:22px;font-weight:600;letter-spacing:-.02em}
+.tile .l{color:var(--dim);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:560px}
+th{text-align:left;font-weight:600;color:var(--dim);font-size:12px;
+text-transform:uppercase;letter-spacing:.06em;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pos{color:var(--pos)}.neg{color:var(--neg)}.dim{color:var(--dim)}
+.tag{display:inline-block;font-size:11px;padding:2px 7px;border-radius:99px;
+border:1px solid var(--line);color:var(--dim);white-space:nowrap}
+.tag.hedge{color:var(--accent);border-color:var(--accent)}
+code{font:13px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--card);
+border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+pre{background:var(--card);border:1px solid var(--line);border-radius:8px;
+padding:14px 16px;overflow-x:auto;font:13px ui-monospace,Menlo,monospace}
+footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);
+color:var(--dim);font-size:13px}
+</style></head><body><div class="wrap">
+<h1>Ballast</h1>
+<p class="sub">Overnight risk transfer for tokenized US stocks · generated
+2026-09-09 11:19 UTC · paper trading only</p>
+
+<div class="claim"><p><strong>Hold the position through the night without holding the
+night's risk.</strong> A matched stock perp removes a median 98.0% of overnight variance
+at β≈1.00, for about 11 bp — against 20 bp to exit the position and lose it.</p></div>
+<div class="claim not"><p><strong>What this does not claim.</strong> Ballast is priced
+protection, not alpha. It makes no Sharpe claim. It cannot place a directional trade:
+every order it can emit is opposite in sign to, and bounded by, a position already held.</p></div>
+
+<div class="grid">
+<div class="tile"><div class="n ">12</div><div class="l">positions</div></div>
+<div class="tile"><div class="n ">0</div><div class="l">hedged tonight</div></div>
+<div class="tile"><div class="n ">0</div><div class="l">decisions settled</div></div>
+<div class="tile"><div class="n ">—</div><div class="l">hedges that cut the move</div></div>
+<div class="tile"><div class="n ">—</div><div class="l">worst night seen</div></div>
+</div>
+
+<h2>Tonight — session 2026-09-08</h2>
+<p class="sub">Window 17.5 hours · event reader
+off (no QWEN_API_KEY)</p>
+<div class="scroll"><table><tr><th>Position</th><th>Decision</th><th class="num">1σ forecast</th><th class="num">Notional</th><th>Decided by</th><th>Reasoning</th></tr><tr><td><strong>TSLA</strong></td><td><span class="tag ">NO_HEDGE</span></td><td class="num">300 bp</td><td class="num">999</td><td><span class="tag">rule</span></td><td class="dim">nothing scheduled tonight — 1-sigma 300bp is not a reason to spend 11.3bp (Gate 1a: vol separates only 1.41x and its nights are compensated)</td></tr><tr><td><strong>NVDA</strong></td><td><span class="tag ">NO_HEDGE</span></td><td class="num">222 bp</td><td class="num">988</td><td><span class="tag">rule</span></td><td class="dim">nothing scheduled tonight — 1-sigma 222bp is not a reason to spend 11.3bp (Gate 1a: vol separates only 1.41x and its nights are compensated)</td></tr><tr><td><strong>PLTR</strong></td><td><span class="tag ">NO_HEDGE</span></td><td class="num">241 bp</td><td class="num">992</td><td><span class="tag">rule</span></td><td class="dim">nothing scheduled tonight — 1-sigma 241bp is not a reason to spend 11.3bp (Gate 1a: vol separates only 1.41x and its nights are compensated)</td></tr><tr><td><strong>COIN</strong></td><td><span class="tag ">NO_HEDGE</span></td><td class="num">423 bp</td><td class="num">1,002</td><td><span class="tag">rule</span></td><td class="dim">nothing scheduled tonight — 1-sigma 423bp is not a reason to spend 11.3bp (Gate 1a: vol separates only 1.41x and its nights are compensated)</td></tr><tr><td><strong>AMD</strong></td><td><span class="tag ">NO_HEDGE</span></td><td class="num">278 bp</td><td class="num">995</td><td><span class="tag">rule</span></td><td class="dim">nothing scheduled tonight — 1-sigma 278bp is not a reason to spend 11.3bp (Gate 1a: vol separates only 1.41x and its nights are compensated)</td></tr><tr><td><strong>MSFT</strong></td><td><span class="tag ">NO_HEDGE</span></td><td class="num">124 bp</td><td class="num">1,003</td><td><span class="tag">rule</span></td><td class="dim">nothing scheduled tonight — 1-sigma 124bp is not a reason to spend 11.3bp (Gate 1a: vol separates only 1.41x and its nights are compensated)</td></tr><tr><td><strong>ORCL</strong></td><td><span class="tag ">NO_HEDGE</span></td><td class="num">236 bp</td><td class="num">997</td><td><span class="tag">rule</span></td><td class="dim">nothing scheduled tonight — 1-sigma 236bp is not a reason to spend 11.3bp (Gate 1a: vol separates only 1.41x and its nights are compensated)</td></tr><tr><td><strong>ADBE</strong></td><td><span class="tag ">NO_HEDGE</span></td><td class="num">266 bp</td><td class="num">1,008</td><td><span class="tag">rule</span></td><td class="dim">nothing scheduled tonight — 1-sigma 265bp is not a reason to spend 11.3bp (Gate 1a: vol separates only 1.41x and its nights are compensated)</td></tr><tr><td><strong>MU</strong></td><td><span class="tag ">NO_HEDGE</span></td><td class="num">348 bp</td><td class="num">989</td><td><span class="tag">rule</span></td><td class="dim">nothing scheduled tonight — 1-sigma 348bp is not a reason to spend 11.3bp (Gate 1a: vol separates only 1.41x and its nights are compensated)</td></tr><tr><td><strong>NKE</strong></td><td><span class="tag ">NO_HEDGE</span></td><td class="num">174 bp</td><td class="num">998</td><td><span class="tag">rule</span></td><td class="dim">nothing scheduled tonight — 1-sigma 174bp is not a reason to spend 11.3bp (Gate 1a: vol separates only 1.41x and its nights are compensated)</td></tr><tr><td><strong>COST</strong></td><td><span class="tag ">NO_HEDGE</span></td><td class="num">113 bp</td><td class="num">1,000</td><td><span class="tag">rule</span></td><td class="dim">nothing scheduled tonight — 1-sigma 113bp is not a reason to spend 11.3bp (Gate 1a: vol separates only 1.41x and its nights are compensated)</td></tr><tr><td><strong>SPY</strong></td><td><span class="tag ">NO_HEDGE</span></td><td class="num">40 bp</td><td class="num">994</td><td><span class="tag">rule</span></td><td class="dim">nothing scheduled tonight — 1-sigma 40bp is not a reason to spend 11.3bp (Gate 1a: vol separates only 1.41x and its nights are compensated)</td></tr></table></div>
+
+<h2>Settled against the open</h2>
+<p class="sub">Every decision is graded at the next primary open against the
+<strong>exact counterfactual</strong> — what the position would have done unhedged is
+observed, not modelled. Refusals are graded alongside hedges.</p>
+<p class="dim">Nothing settled yet. Each decision is graded at the next primary open, against the exact counterfactual.</p>
+
+<h2>Claim boundaries</h2>
+<div class="scroll"><table>
+<tr><th>Claim</th><th>Status</th></tr>
+<tr><td>Perp hedge removes a median 98.0% of overnight variance (12 names, ~200 nights each)</td><td>observed</td></tr>
+<tr><td>Hedge strengthens under stress — R² 0.978–0.999 on top-decile nights</td><td>observed</td></tr>
+<tr><td>Earnings nights carry 3.2× the variance and are not reliably compensated</td><td>observed</td></tr>
+<tr><td>Trailing volatility cannot select risky nights (1.41× separation)</td><td>observed</td></tr>
+<tr><td>Signed, tamper-evident decision ledger</td><td>proven — 14 entries, chain verified</td></tr>
+<tr><td>Enforcer refuses every directional intent</td><td>proven — 18 red-team tests</td></tr>
+<tr><td>Improves risk-adjusted return</td><td class="dim">not claimed</td></tr>
+<tr><td>Any live fill</td><td class="dim">not claimed — paper only</td></tr>
+</table></div>
+
+<h2>Verify it yourself</h2>
+<pre>git clone https://github.com/Ritapossible/ballast &amp;&amp; cd ballast
+python3 -m unittest discover -s tests   # full suite: no network, no API key
+python3 research/hedge_study.py         # reproduces the hedge measurements
+python3 research/gate1_calendar.py      # reproduces the selector result</pre>
+<p class="dim">The ledger is hash-chained and committed by a scheduled job, so each
+decision is recorded before its outcome is known and timestamped independently by
+GitHub. Mutating, deleting or reordering any entry breaks verification.</p>
+
+<footer>Bitget AI Base Camp Hackathon S2 · Agentic Trading · Event-Driven Agent.
+Paper trading only. Not financial advice.</footer>
+</div></body></html>

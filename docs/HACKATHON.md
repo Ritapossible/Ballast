@@ -107,9 +107,9 @@ Incomplete productization or validation answers do **not** invalidate an entry b
 
 | Requirement | Status |
 |---|---|
-| Runnable demo | 🔶 CLI runs (`python -m ballast.night` / `.morning`); a judge-facing surface is not built yet |
+| Runnable demo | ✅ CLI plus a self-contained public page (`docs/index.html`, rebuilt nightly) — no login, no backend, no CDN |
 | Event → decision → execution flow | ✅ `docs/ARCHITECTURE.md`; every step is in the signed ledger |
-| Paper trading log, run during the competition | 🔶 **started 2026-09-08** — the critical path; 13 days is under the 2-week recommendation |
+| Paper trading log, run during the competition | ✅ **automated** — scheduled workflow runs after the close and after the open, verifies the chain, and commits the ledger. GitHub timestamps each commit independently, so the record is provably not backfilled. |
 | X post with `#BitgetHackathon` + `@Bitget_AI` | ❌ **not posted** — an entry without this is invalid regardless of quality |
 | Six-part description | ❌ not written; parts 1–3 carry the most weight |
 | Role of the LLM | ✅ event reader implemented — Qwen owns the hedge judgment behind schema, identity and grounding gates |

@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # The suite is deliberately network-free and key-free: the LLM is mocked and
+      # no market endpoint is touched, so CI cannot go red because a third party
+      # rate-limited us.
+      - name: Tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Compile every module
+        run: python -m compileall -q ballast research
+
+      - name: Ledger and mandate self-check
+        run: |
+          python - <<'EOF'
+          import datetime as dt, tempfile, pathlib
+          from ballast.ledger import Ledger
+          from ballast.mandate import NightMandate, SignedMandate
+          from ballast.enforcer import Enforcer, OrderIntent
+          now = dt.datetime.now(dt.timezone.utc)
+          m = NightMandate(issued_at=now, expires_at=now + dt.timedelta(hours=12),
+                           universe=("RTSLAUSDT",), max_notional_usdt=1000.0, max_orders=5)
+          e = Enforcer(SignedMandate.issue(m, b"ci"), b"ci")
+          v = e.evaluate(OrderIntent("RTSLAUSDT", "TSLAUSDT", "buy", 100.0), {}, now)
+          assert v.rejected, "a naked directional order was admitted"
+          print("enforcer refuses a naked directional order:", v.rule)
+          with tempfile.TemporaryDirectory() as d:
+              lg = Ledger(pathlib.Path(d) / "l.jsonl", b"ci")
+              lg.append("decision", {"ticker": "X"})
+              assert lg.verify() == 1
+          print("ledger chain verifies")
+          EOF

@@ -1,0 +1,84 @@
+name: Ballast nightly
+
+# The paper-trading log is the one deliverable that cannot be compressed: the
+# handbook requires it to be produced DURING the competition, and a night missed
+# is a night that cannot be recovered. So the loop runs on a schedule rather than
+# by hand, and commits the signed ledger back to the repository.
+#
+# That commit history is itself evidence. Each decision is written before its
+# outcome is known, and GitHub timestamps the commit independently of us — so the
+# hash-chained ledger and the commit log together show the record was not
+# backfilled.
+#
+# Times are UTC and the crons are set for EDT (US close 20:00Z, open 13:30Z).
+# US clocks fall back on 2026-11-01, after this competition ends.
+
+on:
+  schedule:
+    - cron: "0 21 * * 1-5"     # 17:00 ET — one hour after the close
+    - cron: "30 14 * * 1-5"    # 10:30 ET — one hour after the open
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "which half to run"
+        type: choice
+        options: [night, morning, both]
+        default: both
+
+concurrency:
+  group: ballast-ledger        # never let two runs write the ledger at once
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Decide (after the close)
+        if: github.event.schedule == '0 21 * * 1-5' || inputs.task == 'night' || inputs.task == 'both'
+        env:
+          QWEN_API_KEY: ${{ secrets.QWEN_API_KEY }}
+          BALLAST_SECRET: ${{ secrets.BALLAST_SECRET }}
+        run: python -m ballast.night
+
+      - name: Settle (after the open)
+        if: github.event.schedule == '30 14 * * 1-5' || inputs.task == 'morning' || inputs.task == 'both'
+        env:
+          BALLAST_SECRET: ${{ secrets.BALLAST_SECRET }}
+        run: python -m ballast.morning
+
+      - name: Verify the chain before committing
+        env:
+          BALLAST_SECRET: ${{ secrets.BALLAST_SECRET }}
+        run: |
+          python - <<'EOF'
+          from ballast import config
+          from ballast.ledger import Ledger
+          print(f"ledger verified: {Ledger(config.LEDGER_PATH, config.secret()).verify()} entries")
+          EOF
+
+      - name: Rebuild the public report
+        env:
+          BALLAST_SECRET: ${{ secrets.BALLAST_SECRET }}
+        run: python -m ballast.report
+
+      - name: Commit the ledger
+        run: |
+          git config user.name  "ballast-bot"
+          git config user.email "noreply@github.com"
+          if git diff --quiet state/ docs/index.html; then
+            echo "nothing changed"
+            exit 0
+          fi
+          git add state/ docs/index.html
+          git commit -m "ledger: $(date -u '+%Y-%m-%d %H:%MZ')"
+          git pull --rebase origin main
+          git push

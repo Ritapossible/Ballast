@@ -166,6 +166,17 @@ datacenter IPs** and are not usable here.
 8. **Never present the hedge leg standalone** — always the paired hedged-vs-unhedged portfolio
    on the same positions and the same nights.
 
+## 7b. Operations
+
+- `.github/workflows/nightly.yml` — decides at 21:00 UTC, settles at 14:30 UTC, Mon–Fri.
+  Verifies the ledger chain, rebuilds `docs/index.html`, commits `state/`. Crons are set
+  for **EDT**; US clocks fall back 2026-11-01, after the competition ends.
+- `.github/workflows/ci.yml` — tests on every push. The suite is network-free and key-free,
+  so CI cannot go red because a third party rate-limited us.
+- **Repo secrets to set:** `QWEN_API_KEY`, `BALLAST_SECRET`. Without them the run still
+  succeeds — the reader abstains and a dev signing key is used — and says so in the output.
+- **Enable GitHub Pages on `/docs`** to give the demo a public URL.
+
 ## 8. Submission requirements — non-negotiable
 
 Missing any one of these **invalidates the entry regardless of quality**:
