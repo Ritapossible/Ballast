@@ -11,7 +11,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-from bitget import futures_tickers, spot_symbols
+from .market import futures_tickers, spot_symbols
 
 _RTOKEN = re.compile(r"^r[A-Z]")
 

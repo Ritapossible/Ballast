@@ -1,4 +1,4 @@
-research/.cache/
+.cache/
 __pycache__/
 *.pyc
 .env

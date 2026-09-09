@@ -20,7 +20,7 @@ import urllib.request
 from pathlib import Path
 
 BASE = "https://api.bitget.com"
-CACHE = Path(__file__).parent / ".cache"
+CACHE = Path(__file__).resolve().parent.parent / ".cache" / "market"
 _MAX_PAGE = 200
 
 

@@ -1,0 +1,170 @@
+"""The decision: for each position, is tonight worth hedging?
+
+Gate 1 (docs/RESEARCH.md §5) measured that trailing realised volatility separates
+risky nights from ordinary ones by only 1.41x, while the same nights chosen with
+hindsight separate at 13.2x. Risky nights exist; volatility cannot find them,
+because overnight equity variance is driven by SCHEDULED EVENTS.
+
+So the calendar leads and the statistic is a fallback, never the reverse.
+
+`NightRisk` is the contract the event reader fills. In v0 it is populated from the
+earnings calendar; from day 6 an LLM populates it from unstructured news. The shape
+does not change, which is the point -- the model gains a source, never a decision.
+"""
+from __future__ import annotations
+
+import datetime as dt
+import statistics as st
+from dataclasses import dataclass, field
+from enum import Enum
+
+
+class Action(str, Enum):
+    HEDGE = "HEDGE"
+    NO_HEDGE = "NO_HEDGE"
+    REDUCE = "REDUCE"          # reserved: idiosyncratic risk a correlation hedge cannot carry
+
+
+class EventType(str, Enum):
+    EARNINGS = "earnings"
+    GUIDANCE = "guidance"
+    MACRO = "macro"
+    LEGAL = "legal"
+    PRODUCT = "product"
+    NONE = "none"
+
+
+class Impact(str, Enum):
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+
+
+@dataclass(frozen=True)
+class NightRisk:
+    """What the reader may return. It may NOT return a size, price or decision."""
+    ticker: str
+    event_type: EventType = EventType.NONE
+    scheduled_time: dt.datetime | None = None
+    expected_impact: Impact = Impact.LOW
+    confidence: float = 0.0
+    source_url: str = ""
+    verbatim_quote: str = ""
+    unknowns: tuple[str, ...] = ()
+
+    @property
+    def is_scheduled_event(self) -> bool:
+        return self.event_type is not EventType.NONE
+
+
+@dataclass(frozen=True)
+class PolicyConfig:
+    hedge_cost_bp: float = 11.3        # perp taker round trip, net of funding received
+    vol_window: int = 20               # trailing nights
+    min_history: int = 30              # need a distribution, not just a window
+    vol_percentile: float = 0.80       # hedge on vol alone only in a name's own top quintile
+    sigma_floor_bp: float = 60.0       # ...and never below this absolute level
+
+    # Why a PERCENTILE and not a fixed bp threshold: overnight 1-sigma ranges from
+    # ~40bp (SPY) to ~420bp (COIN), so any absolute threshold either hedges every
+    # volatile name every night or never hedges a quiet one. Each name is judged
+    # against its own distribution. Gate 1 used the same top-quintile definition,
+    # so the policy and the study measure the same thing.
+
+
+@dataclass(frozen=True)
+class Decision:
+    ticker: str
+    spot_symbol: str
+    action: Action
+    sigma_bp: float
+    cost_bp: float
+    risk: NightRisk
+    rationale: str
+    window_hours: float
+    inputs: dict = field(default_factory=dict)
+
+    def to_record(self) -> dict:
+        return {
+            "ticker": self.ticker,
+            "spot_symbol": self.spot_symbol,
+            "action": self.action.value,
+            "sigma_bp": round(self.sigma_bp, 1),
+            "cost_bp": round(self.cost_bp, 1),
+            "window_hours": round(self.window_hours, 1),
+            "rationale": self.rationale,
+            "event": {
+                "type": self.risk.event_type.value,
+                "impact": self.risk.expected_impact.value,
+                "confidence": self.risk.confidence,
+                "source_url": self.risk.source_url,
+                "verbatim_quote": self.risk.verbatim_quote,
+                "unknowns": list(self.risk.unknowns),
+            },
+            "inputs": self.inputs,
+        }
+
+
+def forecast_sigma_bp(history: list[float], cfg: PolicyConfig) -> float | None:
+    """Trailing 1-sigma overnight move in bp, from strictly prior nights."""
+    window = history[-cfg.vol_window:]
+    if len(window) < min(cfg.vol_window, cfg.min_history):
+        return None
+    return st.pstdev(window) * 1e4
+
+
+def sigma_percentile(history: list[float], cfg: PolicyConfig) -> float | None:
+    """Where tonight's forecast sits in this name's OWN history of forecasts.
+
+    Every value is computed from data strictly prior to the night it describes, so
+    the ranking carries no look-ahead.
+    """
+    if len(history) < cfg.min_history + cfg.vol_window:
+        return None
+    past = [st.pstdev(history[i - cfg.vol_window:i]) * 1e4
+            for i in range(cfg.vol_window, len(history))]
+    current = forecast_sigma_bp(history, cfg)
+    if current is None or not past:
+        return None
+    return sum(1 for v in past if v <= current) / len(past)
+
+
+def decide(ticker: str, spot_symbol: str, history: list[float], risk: NightRisk,
+           window_hours: float, cfg: PolicyConfig = PolicyConfig()) -> Decision:
+    """History must contain only nights strictly BEFORE the one being decided."""
+    sigma = forecast_sigma_bp(history, cfg)
+    pct = sigma_percentile(history, cfg)
+
+    # The calendar leads. Gate 1 measured that volatility barely separates risky
+    # nights (1.41x), so a scheduled event outranks any statistical signal.
+    if risk.is_scheduled_event and risk.expected_impact in (Impact.MEDIUM, Impact.HIGH):
+        action = Action.HEDGE
+        rationale = (f"scheduled {risk.event_type.value} tonight "
+                     f"({risk.expected_impact.value} impact) — calendar selector")
+    elif sigma is None or pct is None:
+        action = Action.NO_HEDGE
+        rationale = (f"insufficient history ({len(history)} nights, "
+                     f"need {cfg.min_history + cfg.vol_window})")
+    elif pct >= cfg.vol_percentile and sigma >= cfg.sigma_floor_bp:
+        action = Action.HEDGE
+        rationale = (f"1-sigma {sigma:.0f}bp is in this name's own top "
+                     f"{100 * (1 - cfg.vol_percentile):.0f}% (p{100 * pct:.0f}) — "
+                     f"unusually risky night")
+    elif sigma < cfg.sigma_floor_bp:
+        action = Action.NO_HEDGE
+        rationale = (f"1-sigma {sigma:.0f}bp below the {cfg.sigma_floor_bp:.0f}bp floor — "
+                     f"not worth {cfg.hedge_cost_bp}bp")
+    else:
+        action = Action.NO_HEDGE
+        rationale = (f"1-sigma {sigma:.0f}bp is ordinary for this name "
+                     f"(p{100 * pct:.0f}) and nothing is scheduled")
+
+    return Decision(
+        ticker=ticker, spot_symbol=spot_symbol, action=action,
+        sigma_bp=sigma or 0.0, cost_bp=cfg.hedge_cost_bp, risk=risk,
+        rationale=rationale, window_hours=window_hours,
+        inputs={"history_nights": len(history),
+                "sigma_percentile": round(pct, 3) if pct is not None else None,
+                "vol_percentile_gate": cfg.vol_percentile,
+                "sigma_floor_bp": cfg.sigma_floor_bp},
+    )

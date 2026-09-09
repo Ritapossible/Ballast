@@ -12,7 +12,7 @@ from __future__ import annotations
 import datetime as dt
 import math
 
-from sessions import UTC, overnight_window, sessions_between
+from .sessions import UTC, overnight_window, sessions_between
 
 HOUR_MS = 3_600_000
 

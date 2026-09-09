@@ -20,9 +20,9 @@ from __future__ import annotations
 import argparse
 import statistics as st
 
-from bitget import bars
-from overnight import overnight_returns
-from stats import bp, t_stat
+from ballast.market import bars
+from ballast.overnight import overnight_returns
+from ballast.stats import bp, t_stat
 
 NAMES = ["TSLA", "NVDA", "AAPL", "MSFT", "AMZN", "META",
          "GOOGL", "SPY", "QQQ", "COIN", "PLTR", "AMD"]

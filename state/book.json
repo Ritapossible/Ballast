@@ -1,0 +1,88 @@
+{
+  "positions": [
+    {
+      "spot_symbol": "RTSLAUSDT",
+      "perp_symbol": "TSLAUSDT",
+      "ticker": "TSLA",
+      "quantity": 2.7389006052970335,
+      "entry_price": 365.11
+    },
+    {
+      "spot_symbol": "RNVDAUSDT",
+      "perp_symbol": "NVDAUSDT",
+      "ticker": "NVDA",
+      "quantity": 4.404219242033868,
+      "entry_price": 227.055
+    },
+    {
+      "spot_symbol": "RPLTRUSDT",
+      "perp_symbol": "PLTRUSDT",
+      "ticker": "PLTR",
+      "quantity": 5.807639368825753,
+      "entry_price": 172.187
+    },
+    {
+      "spot_symbol": "RCOINUSDT",
+      "perp_symbol": "COINUSDT",
+      "ticker": "COIN",
+      "quantity": 5.540319676445331,
+      "entry_price": 180.495
+    },
+    {
+      "spot_symbol": "RAMDUSDT",
+      "perp_symbol": "AMDUSDT",
+      "ticker": "AMD",
+      "quantity": 1.9905449116695695,
+      "entry_price": 502.375
+    },
+    {
+      "spot_symbol": "RMSFTUSDT",
+      "perp_symbol": "MSFTUSDT",
+      "ticker": "MSFT",
+      "quantity": 2.032355093081863,
+      "entry_price": 492.04
+    },
+    {
+      "spot_symbol": "RORCLUSDT",
+      "perp_symbol": "ORCLUSDT",
+      "ticker": "ORCL",
+      "quantity": 6.112843083318051,
+      "entry_price": 163.59
+    },
+    {
+      "spot_symbol": "RADBEUSDT",
+      "perp_symbol": "ADBEUSDT",
+      "ticker": "ADBE",
+      "quantity": 3.893019815470861,
+      "entry_price": 256.87
+    },
+    {
+      "spot_symbol": "RMUUSDT",
+      "perp_symbol": "MUUSDT",
+      "ticker": "MU",
+      "quantity": 0.9926937738246505,
+      "entry_price": 1007.36
+    },
+    {
+      "spot_symbol": "RNKEUSDT",
+      "perp_symbol": "NKEUSDT",
+      "ticker": "NKE",
+      "quantity": 26.267402153926977,
+      "entry_price": 38.07
+    },
+    {
+      "spot_symbol": "RCOSTUSDT",
+      "perp_symbol": "COSTUSDT",
+      "ticker": "COST",
+      "quantity": 1.0989131748700536,
+      "entry_price": 909.99
+    },
+    {
+      "spot_symbol": "RSPYUSDT",
+      "perp_symbol": "SPYUSDT",
+      "ticker": "SPY",
+      "quantity": 1.3026770012375433,
+      "entry_price": 767.65
+    }
+  ]
+}

@@ -148,3 +148,52 @@ defect — that is what insurance is.
 | First Gate 1 run selected nights by *realised* move — look-ahead | **Fixed** — ex-ante selector only; the invalid version is preserved behind `--lookahead` to document the bug |
 | US exchange holidays are not modelled | **Open** — affects window length, not the hedge relationship. Tracked in `sessions.py`. |
 | Maker fills assumed to be available in a 4am book | **Avoided** — all costs default to taker |
+
+## 7. First policy replay — a negative result (2026-09-09)
+
+`research/replay.py` runs the **live policy** over history: the same `decide()` the
+nightly runner calls, with the return history truncated at each session and the event
+calendar read for that date. 55 sessions × 12 equally-weighted positions.
+
+| Metric | Unhedged | Ballast v0 | Change |
+|---|---|---|---|
+| Total return | 1.11% | **−6.96%** | −8.07 |
+| Volatility (ann.) | 20.65% | **12.68%** | **−7.97 ✓** |
+| Sharpe | 0.24 | **−2.61** | −2.85 |
+| Sortino | 0.40 | −3.51 | −3.91 |
+| Max drawdown | 10.15% | 9.34% | −0.82 ✓ |
+
+Hedged on **45%** of decisions. Decision accuracy **47%**. Worst single position-night:
+**1,536 bp unhedged → 1,536 bp with Ballast** — the selector missed the worst night entirely.
+
+### What this shows, plainly
+
+**The hedge works; the selection does not.** Volatility fell by 39% (20.65% → 12.68%),
+which is the mechanism behaving exactly as §3 measured. Everything else is a
+selection-and-cost failure:
+
+1. **The hedge rate is far too high.** At 12 bp a round trip, hedging 45% of nights costs
+   roughly 13% a year in fees. No tail benefit can pay for that. At this cost the
+   affordable hedge rate is nearer **5–10%**, not 45%.
+2. **The percentile gate drifts with regime.** `sigma_percentile` ranks tonight's forecast
+   against the name's whole prior history, so in a rising-volatility regime the current
+   window sits in the top quintile far more than 20% of the time. It needs a rolling
+   reference window, not an expanding one.
+3. **Accuracy of 47% is coin-flip.** Consistent with Gate 1: volatility cannot pick the
+   nights, and the calendar was only partially populated when this ran.
+4. **Portfolio level is the wrong level for this product.** Twelve equally-weighted names
+   are already diversified, so the portfolio's worst night is a market-wide move that
+   hedging *some* names barely dents. Ballast's value is at the **position** level for a
+   concentrated holder — which is precisely the target user in `PLAN.md §2`, and the
+   replay should report per-position tail metrics alongside portfolio ones.
+
+### What is not concluded
+
+That the product does not work. The mechanism measured in §3 is unchanged and the
+variance reduction reproduced here. What failed is a deliberately naive v0 selector,
+on day one of the build, which is what the replay exists to catch.
+
+**No parameters were tuned to improve this table.** Tuning a policy until its backtest
+looks good, on 55 sessions, is how the overfitting that S1 winners documented gets
+manufactured. The fixes above are structural (rolling reference window, position-level
+reporting, calendar-led selection) and each will be re-run against a held-out period.
