@@ -112,9 +112,9 @@ Incomplete productization or validation answers do **not** invalidate an entry b
 | Paper trading log, run during the competition | 🔶 **started 2026-09-08** — the critical path; 13 days is under the 2-week recommendation |
 | X post with `#BitgetHackathon` + `@Bitget_AI` | ❌ **not posted** — an entry without this is invalid regardless of quality |
 | Six-part description | ❌ not written; parts 1–3 carry the most weight |
-| Role of the LLM | 🔶 architecture defined; the reader is not implemented (v0 uses the calendar directly) |
+| Role of the LLM | ✅ event reader implemented — Qwen owns the hedge judgment behind schema, identity and grounding gates |
 | Agentic Account + `--paper-trading` | ❌ not wired; `PaperExecutor` simulates fills at observed prices |
-| Qwen `qwen3.8-max` via `hackathon.bitgetops.com/v1` | ❌ not wired |
+| Qwen `qwen3.8-max` via `hackathon.bitgetops.com/v1` | ✅ wired (`ballast/llm.py`) — **needs `QWEN_API_KEY`**; endpoint verified live (401 on a dummy key) |
 
 ### ⚠️ One requirement the current architecture is in tension with
 
@@ -128,7 +128,13 @@ Ballast's design principle has been *"the model translates; it never decides"* �
 maximise the risk-control half of the score. Read literally, that is the opposite of what
 this track asks for.
 
-**Resolution: give the LLM the judgment, keep the arithmetic deterministic.**
+**RESOLVED 2026-09-09.** The reader now returns the HEDGE / NO_HEDGE judgment and that call
+leads in `policy.decide()`. Sizing, limits and the enforcer stay deterministic, so bounded
+authority is intact.
+
+Original resolution note:
+
+**Give the LLM the judgment, keep the arithmetic deterministic.**
 The model should return the HEDGE / NO_HEDGE judgment for a position, with its reasoning
 and sources — that is a real, autonomous trading decision and satisfies the track. Sizing,
 pricing, mandate limits and the enforcer stay deterministic, so bounded authority is

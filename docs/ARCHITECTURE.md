@@ -77,33 +77,77 @@ you already hold. There is no reachable directional trade.
 
 A red-team suite drives hostile intents at the enforcer and asserts zero admissions.
 
-## Why the LLM is necessary, and where it is forbidden
+## Why the LLM is necessary, and what it decides
 
-Gate 1 measured that trailing realised volatility separates risky nights from ordinary ones
-by only **1.41×**, while ex-post selection separates them by **13.2×**. High-variance nights
-exist; statistics cannot find them, because overnight equity variance is driven by
-*scheduled events*, not volatility persistence.
+Three measurements, in order, and each narrowed the model's job until it was exact:
 
-So the selector must read calendars and news. That is the LLM's job — **and only that job**.
+| Selector | Separation | Compensated? | Verdict |
+|---|---|---|---|
+| Trailing realised volatility (Gate 1a) | 1.41× | **yes** (+19.3 bp, t=3.08) | unusable — pays to remove return |
+| Earnings calendar (Gate 1b) | **3.2×** | **no** (−61 bp, t=−1.59) | usable, but covers only 2 of the 6 worst nights |
+| **Unscheduled events** | — | — | **the reader's territory** |
+
+Scheduled earnings are a minority of the tail. Macro shocks, guidance, legal rulings and
+product events drive the rest, and none of them appear on a calendar. Reaching them means
+reading unstructured text, which is the one thing here a model does better than arithmetic.
+
+**So the reader owns the judgment.** The handbook defines this track as *"the LLM is the
+primary trading decision-maker, not just an assistant"*, and the measurements independently
+agree: the deterministic selectors are demonstrably insufficient.
+
+Its authority is real but bounded. It decides **whether** to protect a position. It never
+decides size, price or direction, and the enforcer still makes a directional trade
+unreachable — so a model saying HEDGE can only ever cause a bounded hedge against a
+position that already exists.
+
+### Three gates stand between the model and an order
+
+| Gate | Rejects |
+|---|---|
+| **Schema** | anything that does not parse into the contracted shape |
+| **Identity** | a judgment about a different ticker than the one asked about (P13) |
+| **Grounding** | a `verbatim_quote` that does not appear in the supplied headlines |
+
+A judgment failing any gate is discarded and the deterministic calendar rule runs instead.
+**Precision is a pipeline stage, not a hope pinned to the prompt** (P16). The grounding gate
+is the important one: it is what stops an invented headline from becoming a real order.
+
+Degradation is transparent. With no API key the reader abstains, the rule decides, and the
+abstention and its reason are written to the ledger — so a night decided without the model
+is visibly a night decided without the model.
 
 **Reader output (the only thing the model may produce):**
 
 ```
-NightRisk {
-  ticker            str      # resolved against the live 219-pair index
-  event_type        enum     # earnings | guidance | macro | legal | product | none
-  scheduled_time    datetime | null
-  expected_impact   enum     # low | medium | high
-  confidence        float
-  source_url        str
-  verbatim_quote    str      # the sentence this was read from
-  unknowns          [str]    # what it could not determine
+ReaderVerdict {
+  ticker          str       # must equal the ticker asked about
+  judgment        enum      # HEDGE | NO_HEDGE | ABSTAIN
+  reasoning       str
+  risk NightRisk {
+    event_type      enum    # earnings | guidance | macro | legal | product | none
+    expected_impact enum    # low | medium | high
+    confidence      float
+    source_url      str
+    verbatim_quote  str     # must appear in the supplied headlines
+    unknowns        [str]   # what it could not determine
+  }
 }
 ```
 
-The model never emits a size, a price, a direction, or a decision. Every downstream number
-is deterministic typed code. A sentinel test asserts that corrupting post-decision data
-changes no pre-decision signal.
+There is no size, side, price or quantity field anywhere in that record, and a test asserts
+their absence. Every downstream number is deterministic typed code, and a sentinel test
+proves corrupting post-decision data changes no pre-decision signal.
+
+### Sources
+
+| Layer | Source | Why |
+|---|---|---|
+| Scheduled events | Nasdaq earnings calendar | authoritative, serves historical dates |
+| Unscheduled events | Google News RSS, per ticker, window-filtered | free and keyless; Yahoo returns 429 from datacenter IPs |
+| Judgment | Qwen `qwen3.8-max` via `hackathon.bitgetops.com/v1` | temperature 0, so judgments are reproducible |
+
+News items are filtered to the window being decided: a headline published after the open
+cannot inform a decision taken before it.
 
 ## The evidence property
 

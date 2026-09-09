@@ -66,3 +66,19 @@ No API key needed. No dependencies beyond the Python standard library.
 
 Built for the **Bitget AI Base Camp Hackathon S2** — Agentic Trading, Event-Driven Agent.
 Paper trading only; no live fill is claimed.
+
+## Running it
+
+```bash
+python3 -m ballast.bootstrap          # build a paper position book
+python3 -m ballast.night              # decide, enforce, execute, record
+python3 -m ballast.morning            # settle against the exact counterfactual
+python3 -m unittest discover -s tests # 58 tests, no network, no key
+```
+
+Optional environment:
+
+| Variable | Effect |
+|---|---|
+| `QWEN_API_KEY` | enables the event reader; without it the reader abstains, the calendar rule decides, and the abstention is logged |
+| `BALLAST_SECRET` | mandate and ledger signing; a development key is used otherwise, and every run says so |

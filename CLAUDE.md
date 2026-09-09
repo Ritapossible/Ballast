@@ -134,6 +134,19 @@ Base: `https://api.bitget.com`. All of the below need **no API key**.
   is useless here. **The selector must be the event calendar.** This is why the LLM is load-bearing
   rather than decorative.
 
+## 6b. Environment
+
+| Variable | Purpose | Without it |
+|---|---|---|
+| `QWEN_API_KEY` (or `BITGET_QWEN_KEY`) | the event reader | reader abstains, calendar rule decides, reason logged |
+| `BALLAST_SECRET` | mandate + ledger signing | a development key is used and every run says so |
+| `QWEN_BASE_URL` | default `https://hackathon.bitgetops.com/v1` | — |
+| `QWEN_MODEL` | default `qwen3.8-max` | — |
+
+The endpoint is live and OpenAI-compatible: a dummy key returns HTTP 401, not a connection
+error. News comes from Google News RSS (free, keyless); **Yahoo's feeds return 429 from
+datacenter IPs** and are not usable here.
+
 ## 7. Hard rules for this codebase
 
 1. **Never state a number that was not produced by code in `research/` or a live endpoint.**

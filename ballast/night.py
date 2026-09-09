@@ -13,6 +13,7 @@ import argparse
 import datetime as dt
 
 from . import config
+from .llm import available as llm_available
 from .book import Book
 from .earnings import symbols_on
 from .enforcer import Enforcer, OrderIntent
@@ -20,7 +21,9 @@ from .ledger import Ledger
 from .mandate import NightMandate, SignedMandate
 from .market import closes
 from .overnight import overnight_returns
+from .news import fetch, in_window
 from .policy import Action, EventType, Impact, NightRisk, PolicyConfig, decide
+from .reader import Judgment, read
 from .sessions import UTC, close_utc, next_session, open_utc, window_hours
 
 MAX_HEDGE_RATIO = 1.0
@@ -38,29 +41,36 @@ def current_session(now: dt.datetime) -> dt.date:
     return day
 
 
-def read_night_risk(ticker: str, session: dt.date) -> NightRisk:
-    """v0 reader: the earnings calendar only.
-
-    From day 6 an LLM populates the same record from unstructured news. Its output
-    contract does not change — it gains sources, never authority.
-    """
-    reporting = symbols_on(next_session(session))
-    reporting_tonight = symbols_on(session)
-    flag = reporting_tonight.get(ticker) or reporting.get(ticker)
+def calendar_risk(ticker: str, session: dt.date) -> tuple[NightRisk, bool]:
+    """The deterministic half: is a report scheduled inside this window?"""
+    flag = symbols_on(session).get(ticker) or symbols_on(next_session(session)).get(ticker)
     if flag is None:
-        return NightRisk(ticker=ticker, unknowns=("no news source beyond the calendar in v0",))
+        return NightRisk(ticker=ticker), False
     return NightRisk(
-        ticker=ticker,
-        event_type=EventType.EARNINGS,
-        expected_impact=Impact.HIGH,
+        ticker=ticker, event_type=EventType.EARNINGS, expected_impact=Impact.HIGH,
         confidence=1.0,
         source_url=f"https://api.nasdaq.com/api/calendar/earnings?date={session.isoformat()}",
         verbatim_quote=f"{ticker} scheduled to report ({flag})",
         unknowns=("exact release time not supplied for historical dates",),
-    )
+    ), True
 
 
-def run(dry_run: bool = False) -> dict:
+def assess(ticker: str, session: dt.date, use_reader: bool):
+    """Calendar first, then the event reader. Returns (risk, judgment, verdict)."""
+    risk, flagged = calendar_risk(ticker, session)
+    if not use_reader:
+        return risk, None, None
+
+    start, end = close_utc(session), open_utc(next_session(session))
+    items = in_window(fetch(ticker), start, end) or fetch(ticker)[:8]
+    verdict = read(ticker, session, window_hours(session), items, flagged)
+    if not verdict.usable:
+        return risk, None, verdict          # abstained or failed a gate -> rule decides
+    return verdict.risk, verdict.judgment.value, verdict
+
+
+def run(dry_run: bool = False, no_reader: bool = False) -> dict:
+    use_reader = not no_reader
     now = dt.datetime.now(UTC)
     session = current_session(now)
     expires = open_utc(next_session(session))
@@ -98,10 +108,12 @@ def run(dry_run: bool = False) -> dict:
     hedged = declined = 0
 
     for pos in book:
-        risk = read_night_risk(pos.ticker, session)
+        risk, judgment, verdict = assess(pos.ticker, session, use_reader)
         decision = decide(pos.ticker, pos.spot_symbol, histories[pos.ticker], risk,
-                          window_hours(session))
+                          window_hours(session), model_judgment=judgment)
         record = decision.to_record()
+        if verdict is not None:
+            record["reader"] = verdict.to_record()
         record["session"] = session.isoformat()
         record["spot_mark"] = spot_marks[pos.spot_symbol]
         record["notional_usdt"] = round(notionals.get(pos.spot_symbol, 0.0), 2)
@@ -140,6 +152,7 @@ def run(dry_run: bool = False) -> dict:
         "hedged": hedged, "declined": declined,
         "window_hours": round(window_hours(session), 1),
         "usage": enforcer.usage, "dry_run": dry_run,
+        "reader": "on" if use_reader and llm_available() else "off (no QWEN_API_KEY)",
     }
     ledger.append("night_summary", summary, now)
     return summary
@@ -148,8 +161,9 @@ def run(dry_run: bool = False) -> dict:
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--dry-run", action="store_true", help="decide and record, place no fills")
+    ap.add_argument("--no-reader", action="store_true", help="calendar rule only, skip the LLM")
     s = run(**vars(ap.parse_args()))
-    print(f"session {s['session']} · window {s['window_hours']}h · "
+    print(f"session {s['session']} · window {s['window_hours']}h · reader {s['reader']}\n"
           f"{s['positions']} positions · {s['hedged']} hedged · {s['declined']} declined")
     if config.using_dev_secret():
         print("note: BALLAST_SECRET unset — signing with the development key")

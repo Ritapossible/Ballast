@@ -141,13 +141,47 @@ def sigma_percentile(history: list[float], cfg: PolicyConfig) -> float | None:
 
 
 def decide(ticker: str, spot_symbol: str, history: list[float], risk: NightRisk,
-           window_hours: float, cfg: PolicyConfig = PolicyConfig()) -> Decision:
-    """History must contain only nights strictly BEFORE the one being decided."""
+           window_hours: float, cfg: PolicyConfig = PolicyConfig(),
+           model_judgment: str | None = None) -> Decision:
+    """History must contain only nights strictly BEFORE the one being decided.
+
+    `model_judgment` is the event reader's call — "HEDGE" or "NO_HEDGE" — and it
+    LEADS when present. The handbook defines this track as "the LLM is the primary
+    trading decision-maker", and the measurements agree: the calendar reaches only
+    a minority of the tail (docs/RESEARCH.md §7), so something has to read the
+    unscheduled events, and that reader should own the call it is making.
+
+    Its authority stops at the judgment. Size, price and direction stay here and in
+    the enforcer, so a model saying HEDGE can only ever cause a bounded hedge
+    against a position that already exists — never a directional trade.
+
+    Pass None when the reader abstained, was unavailable, or failed a gate; the
+    deterministic calendar rule then runs unchanged.
+    """
     sigma = forecast_sigma_bp(history, cfg)
     pct = sigma_percentile(history, cfg)
 
-    # The calendar leads. Gate 1 measured that volatility barely separates risky
-    # nights (1.41x), so a scheduled event outranks any statistical signal.
+    if model_judgment == "HEDGE":
+        return Decision(
+            ticker=ticker, spot_symbol=spot_symbol, action=Action.HEDGE,
+            sigma_bp=sigma or 0.0, cost_bp=cfg.hedge_cost_bp, risk=risk,
+            rationale=(f"event reader judged HEDGE — {risk.event_type.value} "
+                       f"({risk.expected_impact.value} impact, "
+                       f"confidence {risk.confidence:.0%})"),
+            window_hours=window_hours,
+            inputs={"decided_by": "model", "history_nights": len(history)},
+        )
+    if model_judgment == "NO_HEDGE":
+        return Decision(
+            ticker=ticker, spot_symbol=spot_symbol, action=Action.NO_HEDGE,
+            sigma_bp=sigma or 0.0, cost_bp=cfg.hedge_cost_bp, risk=risk,
+            rationale="event reader judged NO_HEDGE — nothing tonight can move this name",
+            window_hours=window_hours,
+            inputs={"decided_by": "model", "history_nights": len(history)},
+        )
+
+    # No usable judgment: fall back to the calendar. Gate 1b measured it separates
+    # at 3.2x on uncompensated variance, which volatility (1.41x) does not.
     if risk.is_scheduled_event and risk.expected_impact in (Impact.MEDIUM, Impact.HIGH):
         action = Action.HEDGE
         rationale = (f"scheduled {risk.event_type.value} tonight "
@@ -179,7 +213,7 @@ def decide(ticker: str, spot_symbol: str, history: list[float], risk: NightRisk,
         ticker=ticker, spot_symbol=spot_symbol, action=action,
         sigma_bp=sigma or 0.0, cost_bp=cfg.hedge_cost_bp, risk=risk,
         rationale=rationale, window_hours=window_hours,
-        inputs={"history_nights": len(history),
+        inputs={"decided_by": "rule", "history_nights": len(history),
                 "sigma_percentile": round(pct, 3) if pct is not None else None,
                 "vol_percentile_gate": cfg.vol_percentile,
                 "sigma_floor_bp": cfg.sigma_floor_bp},
