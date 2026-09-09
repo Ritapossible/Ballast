@@ -149,51 +149,90 @@ defect — that is what insurance is.
 | US exchange holidays are not modelled | **Open** — affects window length, not the hedge relationship. Tracked in `sessions.py`. |
 | Maker fills assumed to be available in a 4am book | **Avoided** — all costs default to taker |
 
-## 7. First policy replay — a negative result (2026-09-09)
+## 6b. Gate 1b — the event calendar as the selector ✅ PASSES BOTH CONDITIONS
 
-`research/replay.py` runs the **live policy** over history: the same `decide()` the
-nightly runner calls, with the return history truncated at each session and the event
-calendar read for that date. 55 sessions × 12 equally-weighted positions.
+Gate 1a killed the *statistical* selector. This tests the calendar, over 2025-10-01 →
+2026-09-08, 15 names, earnings dates from Nasdaq's public endpoint. A release after a
+session's close or before the next open both land inside that session's window.
 
-| Metric | Unhedged | Ballast v0 | Change |
+| Name | earnings nights | mean | t | sd | other nights | sd | **variance ratio** |
+|---|---|---|---|---|---|---|---|
+| MSFT | 8 | +12 bp | 0.07 | 474 bp | 222 | 127 bp | **14.0×** |
+| NKE | 6 | −118 bp | — | 544 bp | 218 | 146 bp | **13.8×** |
+| AAPL | 8 | −81 bp | −0.69 | 312 bp | 222 | 107 bp | **8.5×** |
+| COST | 6 | −89 bp | — | 203 bp | 218 | 91 bp | 4.9× |
+| TSLA | 8 | −300 bp | −1.87 | 423 bp | 222 | 192 bp | 4.8× |
+| AMZN | 8 | +83 bp | 0.75 | 294 bp | 221 | 138 bp | 4.6× |
+| NVDA | 8 | +76 bp | 0.60 | 332 bp | 222 | 174 bp | 3.6× |
+
+| Condition | Result | Verdict |
+|---|---|---|
+| **(a) Separation** | variance ratio **3.2×** pooled, **3.0×** median per name | **PASS** |
+| **(b) Neutrality** | pooled mean **−61 bp**, t = **−1.59**, 95% CI **[−136, +14] bp**; **0 of 15** names significant at \|t\|≥2 | **UNCOMPENSATED** |
+
+Earnings-night 1σ is **392 bp** against an 11.3 bp hedge cost — a **35:1** ratio. At roughly
+four reports a year, hedging every earnings night costs about **45 bp per position per year**.
+
+### Why this matters
+
+Gate 1a and 1b together give a clean rule:
+
+| Selector | Separation | Compensated? | Use it? |
 |---|---|---|---|
-| Total return | 1.11% | **−6.96%** | −8.07 |
-| Volatility (ann.) | 20.65% | **12.68%** | **−7.97 ✓** |
-| Sharpe | 0.24 | **−2.61** | −2.85 |
-| Sortino | 0.40 | −3.51 | −3.91 |
-| Max drawdown | 10.15% | 9.34% | −0.82 ✓ |
+| Trailing realised volatility | 1.41× | **yes** (+19.3 bp, t=3.08) | **No** — pays to remove return |
+| **Earnings calendar** | **3.2×** | **no** (−61 bp, t=−1.59) | **Yes** — uncompensated variance |
 
-Hedged on **45%** of decisions. Decision accuracy **47%**. Worst single position-night:
-**1,536 bp unhedged → 1,536 bp with Ballast** — the selector missed the worst night entirely.
+**The volatility gate is therefore OFF by default in `ballast/policy.py`.** Re-enabling it
+requires new evidence, not a hunch. The point estimate on earnings nights is negative, but
+with 4–8 observations per name and a 392 bp standard deviation it must not be read as a
+directional claim — only as "not reliably compensated".
 
-### What this shows, plainly
+## 7. Policy replay — calendar-only selection (2026-09-09)
 
-**The hedge works; the selection does not.** Volatility fell by 39% (20.65% → 12.68%),
-which is the mechanism behaving exactly as §3 measured. Everything else is a
-selection-and-cost failure:
+`research/replay.py` runs the **live policy** over history, 55 sessions × 12 positions.
 
-1. **The hedge rate is far too high.** At 12 bp a round trip, hedging 45% of nights costs
-   roughly 13% a year in fees. No tail benefit can pay for that. At this cost the
-   affordable hedge rate is nearer **5–10%**, not 45%.
-2. **The percentile gate drifts with regime.** `sigma_percentile` ranks tonight's forecast
-   against the name's whole prior history, so in a rising-volatility regime the current
-   window sits in the top quintile far more than 20% of the time. It needs a rolling
-   reference window, not an expanding one.
-3. **Accuracy of 47% is coin-flip.** Consistent with Gate 1: volatility cannot pick the
-   nights, and the calendar was only partially populated when this ran.
-4. **Portfolio level is the wrong level for this product.** Twelve equally-weighted names
-   are already diversified, so the portfolio's worst night is a market-wide move that
-   hedging *some* names barely dents. Ballast's value is at the **position** level for a
-   concentrated holder — which is precisely the target user in `PLAN.md §2`, and the
-   replay should report per-position tail metrics alongside portfolio ones.
+| Metric | Unhedged | Ballast | |
+|---|---|---|---|
+| Volatility (ann.) | 20.65% | **18.35%** | ✓ |
+| Max drawdown | 10.15% | **9.24%** | ✓ |
+| Total return | 1.11% | −0.75% | −1.86 |
+| Sharpe | 0.24 | −0.19 | −0.43 |
 
-### What is not concluded
+**Position-level tail — the level the product actually operates at:**
 
-That the product does not work. The mechanism measured in §3 is unchanged and the
-variance reduction reproduced here. What failed is a deliberately naive v0 selector,
-on day one of the build, which is what the replay exists to catch.
+| Cohort | n | hedged | mean \|move\| | mean realised |
+|---|---|---|---|---|
+| worst 1% | 6 | **2** | 1,237 bp | 870 bp |
+| worst 5% | 33 | **6** | 827 bp | 674 bp |
+| worst 10% | 66 | **8** | 660 bp | 569 bp |
+| all | 660 | 16 | 186 bp | 175 bp |
 
-**No parameters were tuned to improve this table.** Tuning a policy until its backtest
-looks good, on 55 sessions, is how the overfitting that S1 winners documented gets
-manufactured. The fixes above are structural (rolling reference window, position-level
-reporting, calendar-led selection) and each will be re-run against a held-out period.
+- Hedge rate **2.4%** (down from 45%), total drag **0.3 bp per position-night**
+- **15 of 16 hedges reduced the move (94%)**
+- Worst position-night **1,536 bp — unhedged**
+
+### The honest reading
+
+**The mechanism fires accurately and costs almost nothing. Its coverage is the problem.**
+Only 2 of the 6 worst nights and 6 of the worst 33 were hedged: scheduled earnings are a
+minority of the tail. Macro shocks, guidance, legal and product events drive the rest, and
+v0 cannot see them because it reads a calendar and nothing else.
+
+**That gap is exactly what the LLM event reader is for**, and it is now measured rather than
+assumed: the model's job is to extend the selector from *scheduled* events to *all* events.
+
+On returns: 16 hedges over 55 sessions is far too small a sample to attribute the −1.86 pp.
+A delta hedge is symmetric, so hedged nights that happened to rise cost the upside — which
+Gate 1b says we cannot predict. **No return claim is made from this sample.**
+
+### Metric definitions
+
+The first replay reported a "decision accuracy" of 47%, then 10%, using
+`|move| > cost` on hedged nights and `|move| <= cost` on unhedged ones. **That metric was
+wrong** — typical overnight moves are 100–400 bp against a 12 bp cost, so nearly every
+unhedged night scored as an error regardless of the decision's quality. It has been replaced:
+
+- **Win rate** = share of hedges that reduced \|move\|. A hedge is symmetric, so a
+  P&L-direction win rate is meaningless.
+- **Tail coverage** = share of the worst 1% / 5% / 10% of position-nights that were hedged.
+  This is the metric the product should be judged on, and the one v0 fails.

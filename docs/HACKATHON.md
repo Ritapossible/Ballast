@@ -102,3 +102,38 @@ Incomplete productization or validation answers do **not** invalidate an entry b
 - Full URL for the Qwen credits form (the announcement link is truncated)
 - The exact retweet target the X post requirement refers to
 - Whether paper-mode perp shorting is available on the Agentic Account
+
+## Compliance check against the build (reviewed 2026-09-09)
+
+| Requirement | Status |
+|---|---|
+| Runnable demo | 🔶 CLI runs (`python -m ballast.night` / `.morning`); a judge-facing surface is not built yet |
+| Event → decision → execution flow | ✅ `docs/ARCHITECTURE.md`; every step is in the signed ledger |
+| Paper trading log, run during the competition | 🔶 **started 2026-09-08** — the critical path; 13 days is under the 2-week recommendation |
+| X post with `#BitgetHackathon` + `@Bitget_AI` | ❌ **not posted** — an entry without this is invalid regardless of quality |
+| Six-part description | ❌ not written; parts 1–3 carry the most weight |
+| Role of the LLM | 🔶 architecture defined; the reader is not implemented (v0 uses the calendar directly) |
+| Agentic Account + `--paper-trading` | ❌ not wired; `PaperExecutor` simulates fills at observed prices |
+| Qwen `qwen3.8-max` via `hackathon.bitgetops.com/v1` | ❌ not wired |
+
+### ⚠️ One requirement the current architecture is in tension with
+
+The handbook defines the Agentic Trading track as:
+
+> "The LLM is the **primary trading decision-maker**, not just an assistant. The Agent must
+> sense the environment, make independent judgments, and autonomously place orders with
+> risk controls."
+
+Ballast's design principle has been *"the model translates; it never decides"* — chosen to
+maximise the risk-control half of the score. Read literally, that is the opposite of what
+this track asks for.
+
+**Resolution: give the LLM the judgment, keep the arithmetic deterministic.**
+The model should return the HEDGE / NO_HEDGE judgment for a position, with its reasoning
+and sources — that is a real, autonomous trading decision and satisfies the track. Sizing,
+pricing, mandate limits and the enforcer stay deterministic, so bounded authority is
+untouched: the model can decide *whether* to protect a position, and still has no path to a
+directional trade.
+
+This is a genuine design change driven by the handbook, not a re-labelling. Track it before
+the reader is implemented.

@@ -62,14 +62,25 @@ class PolicyConfig:
     hedge_cost_bp: float = 11.3        # perp taker round trip, net of funding received
     vol_window: int = 20               # trailing nights
     min_history: int = 30              # need a distribution, not just a window
-    vol_percentile: float = 0.80       # hedge on vol alone only in a name's own top quintile
+    vol_gate_enabled: bool = False     # see below — measured OFF, deliberately
+    vol_percentile: float = 0.95       # if re-enabled, only a name's own extreme tail
     sigma_floor_bp: float = 60.0       # ...and never below this absolute level
 
-    # Why a PERCENTILE and not a fixed bp threshold: overnight 1-sigma ranges from
-    # ~40bp (SPY) to ~420bp (COIN), so any absolute threshold either hedges every
-    # volatile name every night or never hedges a quiet one. Each name is judged
-    # against its own distribution. Gate 1 used the same top-quintile definition,
-    # so the policy and the study measure the same thing.
+    # WHY THE VOLATILITY GATE IS OFF BY DEFAULT (docs/RESEARCH.md §5, §8)
+    #
+    # Gate 1a: trailing realised volatility separates risky nights from ordinary
+    # ones by only 1.41x, and the nights it selects carry POSITIVE expected return
+    # (+19.3bp, t=3.08). Hedging them forgoes compensated return and pays 11.3bp
+    # for the privilege. In the first replay it hedged 45% of nights and cost ~13%
+    # a year.
+    #
+    # Gate 1b: the earnings calendar separates at 3.2x (median 3.0x per name) and
+    # those nights are NOT reliably compensated -- pooled mean -61bp, t=-1.59, and
+    # 0 of 15 names significant at |t|>=2. That is uncompensated variance, which is
+    # exactly what a hedge should remove.
+    #
+    # So the calendar selects and the statistic does not. Turning this back on
+    # requires new evidence, not a hunch.
 
 
 @dataclass(frozen=True)
@@ -141,6 +152,11 @@ def decide(ticker: str, spot_symbol: str, history: list[float], risk: NightRisk,
         action = Action.HEDGE
         rationale = (f"scheduled {risk.event_type.value} tonight "
                      f"({risk.expected_impact.value} impact) — calendar selector")
+    elif not cfg.vol_gate_enabled:
+        action = Action.NO_HEDGE
+        rationale = (f"nothing scheduled tonight — 1-sigma {sigma or 0:.0f}bp is not a "
+                     f"reason to spend {cfg.hedge_cost_bp}bp (Gate 1a: vol separates "
+                     f"only 1.41x and its nights are compensated)")
     elif sigma is None or pct is None:
         action = Action.NO_HEDGE
         rationale = (f"insufficient history ({len(history)} nights, "

@@ -122,7 +122,14 @@ Base: `https://api.bitget.com`. All of the below need **no API key**.
 - Tail: **median 88% cut in p95 |move|**. MSFT 1,128bp → 233bp. AMD 1,262bp → 90bp.
 - Weekends (Fri→Mon) hold: R² 0.941–0.992.
 - **Crypto is not a hedge** — median BTC R² 0.114. Do not add crypto legs.
-- **Gate 1 (RESOLVED — Positioning B): trailing realised vol does NOT select risky nights.** Variance ratio of ex-ante
+- **Gate 1b (PASSES): the earnings calendar separates at 3.2x and those nights are
+  UNCOMPENSATED** (pooled -61bp, t=-1.59, 0/15 names significant). Earnings-night 1-sigma is
+  392bp against an 11.3bp cost -- 35:1. **The calendar is the selector.** The volatility gate
+  ships OFF in `policy.py`; re-enabling needs new evidence.
+- **Replay, calendar-only: 15/16 hedges reduced the move (94%) at 0.3bp average drag.
+  But only 2 of the 6 worst nights were covered** -- scheduled earnings are a minority of
+  the tail. Extending the selector to unscheduled events is the LLM reader's job.
+- **Gate 1a: trailing realised vol does NOT select risky nights.** Variance ratio of ex-ante
   selected vs rest = **1.41×** (versus 13.2× when selected ex-post). Statistical vol selection
   is useless here. **The selector must be the event calendar.** This is why the LLM is load-bearing
   rather than decorative.

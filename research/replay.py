@@ -79,8 +79,9 @@ def run(start: dt.date | None) -> None:
         sessions = [s for s in sessions if s >= start]
 
     unhedged_nightly, hedged_nightly = [], []
-    decisions = hedges = correct = 0
-    worst_un = worst_hd = 0.0
+    decisions = hedges = 0
+    hedge_shrank = 0                 # hedges that actually reduced |move|
+    per_night: list[tuple[float, float, bool]] = []   # (|unhedged|, |realised|, hedged)
 
     for session in sessions:
         un_leg, hd_leg = [], []
@@ -93,9 +94,9 @@ def run(start: dt.date | None) -> None:
 
             decisions += 1
             hedges += hedged
-            correct += (abs(s_ret) > COST) if hedged else (abs(s_ret) <= COST)
-            worst_un = max(worst_un, abs(s_ret))
-            worst_hd = max(worst_hd, abs(realised))
+            if hedged and abs(realised) < abs(s_ret):
+                hedge_shrank += 1
+            per_night.append((abs(s_ret), abs(realised), hedged))
             un_leg.append(s_ret)
             hd_leg.append(realised)
 
@@ -117,10 +118,38 @@ def run(start: dt.date | None) -> None:
         mark = "✓" if (delta < 0) == better_low and abs(delta) > 1e-9 else ""
         print(f"{label:16s} {a:12.2f} {b:12.2f} {delta:+11.2f} {mark}")
     print("-" * 56)
-    print(f"nights hedged     {hedges}/{decisions} decisions ({100*hedges/decisions:.0f}%)")
-    print(f"decision accuracy {correct}/{decisions} ({100*correct/decisions:.0f}%)")
-    print(f"worst single night {1e4*worst_un:.0f}bp unhedged → {1e4*worst_hd:.0f}bp with Ballast")
+
+    # Position-level tail. This is the level the product operates at: a
+    # concentrated holder feels one position's night, not a 12-name average.
+    ranked = sorted(per_night, key=lambda r: -r[0])
+    worst_un = ranked[0][0]
+    worst_hd = max(r[1] for r in per_night)
+    spent_bp = hedges * COST * 1e4
+
+    print(f"\nPosition-level tail ({decisions} position-nights)")
+    print(f"{'cohort':22s} {'n':>5s} {'hedged':>8s} {'mean |move|':>12s} {'mean realised':>14s}")
+    print("-" * 66)
+    for label, cohort in [("worst 1%", ranked[:max(1, decisions // 100)]),
+                          ("worst 5%", ranked[:max(1, decisions // 20)]),
+                          ("worst 10%", ranked[:max(1, decisions // 10)]),
+                          ("all", per_night)]:
+        n = len(cohort)
+        h = sum(1 for r in cohort if r[2])
+        print(f"{label:22s} {n:5d} {h:7d}  {1e4*sum(r[0] for r in cohort)/n:11.0f}bp "
+              f"{1e4*sum(r[1] for r in cohort)/n:13.0f}bp")
+
+    print("-" * 66)
+    print(f"hedge rate          {hedges}/{decisions} position-nights ({100*hedges/decisions:.1f}%)")
+    if hedges:
+        print(f"hedges that shrank the move  {hedge_shrank}/{hedges} "
+              f"({100*hedge_shrank/hedges:.0f}%)")
+    print(f"worst position-night {1e4*worst_un:.0f}bp unhedged · "
+          f"worst realised {1e4*worst_hd:.0f}bp")
+    print(f"total spent         {spent_bp:.0f}bp across {decisions} position-nights "
+          f"({spent_bp/decisions:.1f}bp average drag)")
     print(f"\ncost model: {1e4*COST:.0f}bp round trip, taker both legs, no maker assumed")
+    print("note: 'win rate' is reported as the share of hedges that reduced |move|.")
+    print("      A hedge is symmetric, so a P&L-direction win rate would be meaningless.")
 
 
 if __name__ == "__main__":
