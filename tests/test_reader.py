@@ -150,3 +150,75 @@ class TestAuthorityBoundary(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestEndpointResilience(unittest.TestCase):
+    """The first live run abstained on half its positions because the endpoint
+    failed, and every one was logged identically to the model choosing to abstain.
+    Retries reduce the first problem; carrying the reason fixes the second."""
+
+    def test_transient_failures_are_retried(self):
+        """Drives the real `complete`; the retry lives inside it, not around it."""
+        import io
+        import urllib.error
+        attempts = {"n": 0}
+        body = json.dumps({"choices": [{"message": {"content": answer()}}],
+                           "model": "qwen3.8-max", "usage": {}}).encode()
+
+        class Resp(io.BytesIO):
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+
+        def flaky(req, timeout=None):
+            attempts["n"] += 1
+            if attempts["n"] < 3:
+                raise urllib.error.HTTPError("u", 429, "Too Many", {}, None)
+            return Resp(body)
+
+        with mock.patch.dict("os.environ", {"QWEN_API_KEY": "k"}), \
+             mock.patch.object(llm.urllib.request, "urlopen", flaky), \
+             mock.patch.object(llm.time, "sleep"):
+            completion = llm.complete("s", "u")
+        self.assertEqual(attempts["n"], 3, "should have retried twice then succeeded")
+        self.assertIn("ORCL", completion.text)
+
+    def test_persistent_failure_reports_the_last_status(self):
+        import urllib.error
+        with mock.patch.dict("os.environ", {"QWEN_API_KEY": "k"}), \
+             mock.patch.object(llm.urllib.request, "urlopen",
+                               side_effect=urllib.error.HTTPError("u", 503, "x", {}, None)), \
+             mock.patch.object(llm.time, "sleep"):
+            with self.assertRaises(llm.LLMUnavailable) as ctx:
+                llm.complete("s", "u")
+        self.assertEqual(ctx.exception.detail, "HTTP 503")
+
+    def test_retryable_statuses_are_distinguished_from_fatal_ones(self):
+        self.assertIn(429, llm.RETRYABLE_STATUS)
+        self.assertIn(503, llm.RETRYABLE_STATUS)
+        self.assertNotIn(401, llm.RETRYABLE_STATUS)
+        self.assertNotIn(400, llm.RETRYABLE_STATUS)
+
+    def test_the_failure_reason_reaches_the_ledger(self):
+        with with_key(), mock.patch.object(
+                llm, "complete",
+                side_effect=llm.LLMUnavailable("3 attempts failed, last: HTTP 429",
+                                               "HTTP 429")):
+            verdict = read("ORCL", SESSION, 17.5, ITEMS, True)
+        self.assertIs(verdict.rejected_because, RejectReason.NO_MODEL)
+        self.assertIn("HTTP 429", verdict.to_record()["unknowns"][0])
+
+    def test_a_bad_key_is_not_retried(self):
+        import urllib.error
+        calls = {"n": 0}
+
+        def unauthorised(*a, **k):
+            calls["n"] += 1
+            raise urllib.error.HTTPError("u", 401, "Unauthorized", {}, None)
+
+        with mock.patch.dict("os.environ", {"QWEN_API_KEY": "bad"}), \
+             mock.patch.object(llm.urllib.request, "urlopen", unauthorised), \
+             mock.patch.object(llm.time, "sleep"):
+            with self.assertRaises(llm.LLMUnavailable) as ctx:
+                llm.complete("s", "u")
+        self.assertEqual(calls["n"], 1, "a 401 must not be retried")
+        self.assertEqual(ctx.exception.detail, "HTTP 401")

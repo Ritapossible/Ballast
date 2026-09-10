@@ -20,17 +20,34 @@ from __future__ import annotations
 
 import json
 import os
+import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
 
 BASE_URL = os.environ.get("QWEN_BASE_URL", "https://hackathon.bitgetops.com/v1")
 MODEL = os.environ.get("QWEN_MODEL", "qwen3.8-max")
-TIMEOUT = 45
+TIMEOUT = 60
+RETRIES = 3
+BACKOFF = 2.0
+
+# Rate limits and gateway hiccups are worth retrying; a bad key or a malformed
+# request is not, and retrying it just burns the window.
+RETRYABLE_STATUS = {408, 425, 429, 500, 502, 503, 504}
 
 
 class LLMUnavailable(RuntimeError):
-    """No credentials, or the endpoint could not be reached."""
+    """No credentials, or the endpoint could not be reached.
+
+    Carries `detail` so the ledger records WHY the model did not answer. The first
+    live run abstained on 6 of 12 positions and every one was logged identically as
+    "model_unavailable" - indistinguishable from the model choosing to abstain,
+    which is a very different thing.
+    """
+
+    def __init__(self, message: str, detail: str = ""):
+        super().__init__(message)
+        self.detail = detail or message
 
 
 class LLMBadOutput(RuntimeError):
@@ -71,13 +88,26 @@ def complete(system: str, user: str, *, temperature: float = 0.0,
         f"{BASE_URL}/chat/completions", data=payload,
         headers={"Content-Type": "application/json", "Authorization": f"Bearer {key}"},
     )
-    try:
-        with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
-            body = json.load(resp)
-    except urllib.error.HTTPError as exc:
-        raise LLMUnavailable(f"HTTP {exc.code} from {BASE_URL}") from exc
-    except Exception as exc:
-        raise LLMUnavailable(f"{type(exc).__name__}: {exc}") from exc
+
+    last = ""
+    for attempt in range(RETRIES):
+        try:
+            with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
+                body = json.load(resp)
+            break
+        except urllib.error.HTTPError as exc:
+            last = f"HTTP {exc.code}"
+            if exc.code not in RETRYABLE_STATUS:
+                raise LLMUnavailable(f"{last} from {BASE_URL}", last) from exc
+        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
+            last = f"{type(exc).__name__}: {exc}"
+        except Exception as exc:                    # noqa: BLE001
+            raise LLMUnavailable(f"{type(exc).__name__}: {exc}",
+                                 type(exc).__name__) from exc
+        if attempt < RETRIES - 1:
+            time.sleep(BACKOFF ** attempt)
+    else:
+        raise LLMUnavailable(f"{RETRIES} attempts failed, last: {last}", last)
 
     try:
         text = body["choices"][0]["message"]["content"]

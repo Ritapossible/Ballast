@@ -146,7 +146,7 @@ def read(ticker: str, session: dt.date, window_hours: float,
                                                   items, earnings_flagged))
         data = llm.parse_json_object(completion.text)
     except llm.LLMUnavailable as exc:
-        return _reject(ticker, RejectReason.NO_MODEL, str(exc))
+        return _reject(ticker, RejectReason.NO_MODEL, exc.detail)
     except llm.LLMBadOutput as exc:
         return _reject(ticker, RejectReason.BAD_SCHEMA, str(exc))
 
