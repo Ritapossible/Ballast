@@ -18,29 +18,65 @@ import argparse
 import datetime as dt
 
 from . import config
-from .executor import PERP_TAKER_FEE
+from .costs import HEDGE_COST_BP
 from .ledger import Ledger
-from .market import closes
+from .market import bars as market_bars
 from .overnight import overnight_returns
+from .universe import hedgeable_pairs
 from .sessions import UTC
 
 
+def _perp_for(spot_symbol: str) -> str:
+    """Resolve the hedge leg from the live pair index rather than by string surgery.
+
+    Older ledger entries predate `perp_symbol` being recorded, so this is the
+    fallback for them. New decisions carry it explicitly.
+    """
+    for pair in hedgeable_pairs():
+        if pair.spot == spot_symbol:
+            return pair.perp
+    raise ValueError(f"no perp leg for {spot_symbol}")
+
+
 def _settle_one(record: dict, spot_ret: float, perp_ret: float,
-                cost_bp: float) -> dict:
-    """Grade one decision. Returns are logs over the same overnight window."""
+                cost_bp: float = HEDGE_COST_BP) -> dict:
+    """Grade one decision against the outcome of the choice NOT taken.
+
+    Both branches are scored the same way, which is the only way a refusal can be
+    graded honestly:
+
+        hedged      realised = spot - perp - cost   counterfactual = spot
+        not hedged  realised = spot                 counterfactual = spot - perp - cost
+
+    `value_added_bp` is the SIGNED profit-and-loss difference between the choice
+    taken and the one refused. Signed, not absolute: a hedge almost always shrinks
+    the move (beta is ~1.00), so scoring on size alone would say "always hedge" -
+    which is precisely the policy the research rejected, because it cost ~13% a
+    year. Protection is insurance, and insurance pays off when the loss actually
+    arrives. So hedging wins on a night that fell, and declining wins on a night
+    that rose or stayed flat.
+
+    The earlier definition compared |move| against the 12 bp cost on every night.
+    Because typical overnight moves are 100-400 bp, it marked essentially every
+    refusal wrong - and the policy declines roughly 90% of position-nights.
+    """
     unhedged_bp = spot_ret * 1e4
+    protected_bp = (spot_ret - perp_ret) * 1e4 - cost_bp
     hedged = record["action"] == "HEDGE"
-    # A short perp against long spot: residual = spot - perp, less round-trip cost.
-    residual_bp = (spot_ret - perp_ret) * 1e4 - cost_bp if hedged else unhedged_bp
-    value_added_bp = abs(unhedged_bp) - abs(residual_bp)
-    correct = (abs(unhedged_bp) > cost_bp) if hedged else (abs(unhedged_bp) <= cost_bp)
+
+    realised_bp = protected_bp if hedged else unhedged_bp
+    counterfactual_bp = unhedged_bp if hedged else protected_bp
+    value_added_bp = realised_bp - counterfactual_bp
+
     return {
         "ticker": record["ticker"],
         "action": record["action"],
         "unhedged_bp": round(unhedged_bp, 1),
-        "realised_bp": round(residual_bp, 1),
+        "realised_bp": round(realised_bp, 1),
+        "counterfactual_bp": round(counterfactual_bp, 1),
         "value_added_bp": round(value_added_bp, 1),
-        "correct": correct,
+        "correct": value_added_bp > 0,
+        "cost_bp": round(cost_bp, 1),
         "rationale": record.get("rationale", ""),
         "event": record.get("event", {}).get("type"),
     }
@@ -51,16 +87,22 @@ def run(session: str | None = None) -> dict:
     ledger.verify()                                    # refuse to settle a broken chain
 
     decisions = [e["body"] for e in ledger.records("decision")]
+    already = {e["body"].get("session") for e in ledger.records("settlement")}
+
     if session:
+        # Idempotent by construction: settling the same session twice would append
+        # a second record, and the site flattens every settlement into one list -
+        # so the tiles would double-count.
+        if session in already:
+            return {"settled": 0, "note": f"{session} is already settled"}
         decisions = [d for d in decisions if d.get("session") == session]
     else:
-        settled = {e["body"].get("session") for e in ledger.records("settlement")}
         decisions = [d for d in decisions
-                     if d.get("session") and d["session"] not in settled]
+                     if d.get("session") and d["session"] not in already]
     if not decisions:
         return {"settled": 0, "note": "nothing outstanding"}
 
-    cost_bp = PERP_TAKER_FEE * 2 * 1e4                 # round trip, taker both ways
+    cost_bp = HEDGE_COST_BP
     by_session: dict[str, list[dict]] = {}
     for d in decisions:
         by_session.setdefault(d["session"], []).append(d)
@@ -69,16 +111,23 @@ def run(session: str | None = None) -> dict:
     now = dt.datetime.now(UTC)
     for sess, rows in sorted(by_session.items()):
         day = dt.date.fromisoformat(sess)
-        graded = []
+        graded, ungraded = [], []
         for r in rows:
-            perp = r["spot_symbol"][1:]                # RTSLAUSDT -> TSLAUSDT
-            spot_ret = overnight_returns(closes(r["spot_symbol"], "spot")).get(day)
-            perp_ret = overnight_returns(closes(perp, "mix")).get(day)
+            perp = r.get("perp_symbol") or _perp_for(r["spot_symbol"])
+            spot_ret = overnight_returns(market_bars(r["spot_symbol"], "spot")).get(day)
+            perp_ret = overnight_returns(market_bars(perp, "mix")).get(day)
             if spot_ret is None or perp_ret is None:
-                continue                               # window has not closed yet
+                ungraded.append(r["ticker"])           # window not closed, or a data gap
+                continue
             graded.append(_settle_one(r, spot_ret, perp_ret, cost_bp))
 
         if not graded:
+            continue
+        if ungraded:
+            # Writing a settlement marks the session done, and outstanding sessions
+            # are found by "has no settlement record" - so settling partially would
+            # strand these decisions permanently. Wait for the whole session instead.
+            out.setdefault("deferred", {})[sess] = ungraded
             continue
         summary = {
             "session": sess,

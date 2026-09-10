@@ -16,7 +16,7 @@ import datetime as dt
 import hashlib
 import hmac
 import json
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass
 
 
 class MandateError(RuntimeError):

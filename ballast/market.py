@@ -25,7 +25,11 @@ _MAX_PAGE = 200
 
 
 class BitgetError(RuntimeError):
-    pass
+    """The API answered with an error, or could not be reached."""
+
+
+class MarketDataUnavailable(BitgetError):
+    """A symbol returned no usable candles."""
 
 
 def _get(url: str, retries: int = 3, backoff: float = 1.5) -> dict:

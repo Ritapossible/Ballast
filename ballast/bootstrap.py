@@ -11,7 +11,7 @@ import argparse
 
 from . import config
 from .book import Book
-from .market import closes
+from .market import bars as market_bars
 from .universe import hedgeable_pairs
 
 # Liquid, high-overnight-variance names, plus two ETFs as low-vol controls.
@@ -29,8 +29,8 @@ def run(tickers: list[str], usdt_each: float) -> dict:
 
     marks = {}
     for t in tickers:
-        bars = closes(pairs[t].spot, "spot")
-        marks[pairs[t].spot] = bars[max(bars)]
+        series = market_bars(pairs[t].spot, "spot")
+        marks[pairs[t].spot] = series[max(series)][1]
 
     book = Book.from_tickers(tickers, usdt_each, marks)
     config.STATE.mkdir(parents=True, exist_ok=True)

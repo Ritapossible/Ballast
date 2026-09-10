@@ -18,6 +18,8 @@ import statistics as st
 from dataclasses import dataclass, field
 from enum import Enum
 
+from .costs import HEDGE_COST_BP
+
 
 class Action(str, Enum):
     HEDGE = "HEDGE"
@@ -59,7 +61,7 @@ class NightRisk:
 
 @dataclass(frozen=True)
 class PolicyConfig:
-    hedge_cost_bp: float = 11.3        # perp taker round trip, net of funding received
+    hedge_cost_bp: float = HEDGE_COST_BP   # from costs.py: taker round trip net of funding
     vol_window: int = 20               # trailing nights
     min_history: int = 30              # need a distribution, not just a window
     vol_gate_enabled: bool = False     # see below - measured OFF, deliberately

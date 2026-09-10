@@ -6,10 +6,10 @@ and stops, and what is deliberately not claimed.
 """
 from __future__ import annotations
 
-import datetime as dt
 from pathlib import Path
 
 from . import config
+from .facts import load as load_facts
 from .theme import REPO, page
 
 OUT = config.ROOT / "docs" / "docs.html"
@@ -25,6 +25,8 @@ SECTIONS = [
                   ("limits", "Limitations"), ("verify", "Reproduce it")]),
     ("Reference", [("cli", "CLI"), ("env", "Environment"), ("glossary", "Glossary")]),
 ]
+
+F = load_facts()
 
 BODY = f"""
 <h2 id="what">What Ballast is</h2>
@@ -53,7 +55,7 @@ this sample reach <strong>1,262 bp</strong> in a single night.</p>
 for weeks or months, 500–50,000 USDT apiece, directionally bullish and
 drawdown-averse, who will not exit before a catalyst because exiting defeats a
 multi-month thesis.</p>
-<p>Their alternatives fail specifically: exiting a position costs <strong>20 bp</strong>
+<p>Their alternatives fail specifically: exiting a position costs <strong>{F['exit_cost_bp']:.0f} bp</strong>
 round trip and surrenders it; there are no options on rTokens; and the underlying
 market is shut, so it cannot be hedged there.</p>
 
@@ -68,14 +70,14 @@ within 4% of 1.00 - close to a one-for-one hedge.</li>
 move nights and 0.77–0.96 on calm ones. On a big-news night the common factor
 dominates and both instruments track it almost exactly; on a quiet night the residual
 is venue microstructure noise. The hedge is loosest only when little is at stake.</li>
-<li><strong>Median 88% reduction in the p95 tail.</strong> MSFT's worst night falls
+<li><strong>Median {F['median_tail_cut_pct']}% reduction in the p95 tail.</strong> MSFT's worst night falls
 from 1,128 bp to 233 bp; AMD's from 1,262 bp to 90 bp.</li>
-<li><strong>Cost 11.3 bp</strong> taker round trip, net of funding received on the
-short. Cheaper than the 20 bp it costs to exit - and you keep the position.</li>
+<li><strong>Cost {F['hedge_cost_bp']} bp</strong> taker round trip, net of funding received on the
+short. Cheaper than the {F['exit_cost_bp']:.0f} bp it costs to exit - and you keep the position.</li>
 <li><strong>Crypto is not a hedge.</strong> Median R² against BTC is 0.114. Crypto
 legs are excluded by measurement, not preference.</li>
 </ul>
-<p>Of 699 live rTokens, <strong>219 have a perp leg</strong>. Ballast states plainly
+<p>Of {F['rtokens_total']} live rTokens, <strong>{F['rtokens_hedgeable']} have a perp leg</strong> (measured {F['measured_on']}). Ballast states plainly
 which positions it cannot protect rather than pretending otherwise.</p>
 
 <h2 id="selector">Choosing the night</h2>
@@ -92,7 +94,7 @@ tested against that bar.</p>
 <p>Volatility barely distinguishes a risky night from an ordinary one, and the nights
 it picks carry positive expected return - so hedging them pays to remove return.
 Earnings nights separate three times better and carry no reliable compensation.
-Earnings-night 1σ is <strong>392 bp against an 11.3 bp cost</strong>, roughly 35:1.</p>
+Earnings-night 1σ is <strong>392 bp against a {F['hedge_cost_bp']} bp cost</strong>, roughly 35:1.</p>
 <div class="callout"><p><strong>This is why the model is necessary.</strong> The
 statistical selector demonstrably fails, and the calendar reaches only part of the
 tail - in replay it covered 2 of the 6 worst position-nights. Macro shocks, guidance,
@@ -161,19 +163,22 @@ not modelled, it is observed on the same window.</p>
 symmetric, so a P&amp;L-direction win rate would be meaningless.</li>
 <li><strong>Tail coverage</strong> is the share of the worst 1% / 5% / 10% of
 position-nights that were hedged - the metric the product should be judged on.</li>
+<li>A session is <strong>never settled partially</strong>. Marking it done while a
+row is still ungradeable would strand that row permanently, so settlement waits for
+the whole session.</li>
 </ul>
 
 <h2 id="research">Research findings</h2>
 <p>All figures are produced by code in <code>research/</code> from public endpoints,
 labelled <em>observed</em>, <em>estimated</em> or <em>targeted</em>.</p>
 <div class="scroll"><table><thead><tr><th>Finding</th><th>Value</th></tr></thead><tbody>
-<tr><td>rTokens live on spot / with a perp leg</td><td class="num">699 / 219</td></tr>
-<tr><td>Median overnight variance removed</td><td class="num">98.0%</td></tr>
+<tr><td>rTokens live on spot / with a perp leg</td><td class="num">{F['rtokens_total']} / {F['rtokens_hedgeable']}</td></tr>
+<tr><td>Median overnight variance removed</td><td class="num">{F['median_r2'] * 100:.1f}%</td></tr>
 <tr><td>R² on top-decile move nights</td><td class="num">0.978–0.999</td></tr>
-<tr><td>Median p95 tail reduction</td><td class="num">88%</td></tr>
+<tr><td>Median p95 tail reduction</td><td class="num">{F['median_tail_cut_pct']}%</td></tr>
 <tr><td>Earnings-night variance ratio</td><td class="num">3.2×</td></tr>
 <tr><td>Volatility-selector separation</td><td class="num">1.41×</td></tr>
-<tr><td>Hedge cost / exit cost</td><td class="num">11.3 bp / 20 bp</td></tr>
+<tr><td>Hedge cost / exit cost</td><td class="num">{F['hedge_cost_bp']} bp / {F['exit_cost_bp']:.0f} bp</td></tr>
 <tr><td>Hourly history reachable per rToken</td><td class="num">2+ years</td></tr>
 </tbody></table></div>
 <p>The first policy replay is published as a <strong>negative result</strong>:
@@ -201,9 +206,11 @@ against cost on every night, scoring nearly every unhedged night as an error. Re
 <li><strong>Tail coverage is incomplete.</strong> Scheduled earnings are a minority of
 the worst nights; the reader exists to close that gap and has not yet been measured
 doing so.</li>
-<li><strong>480 of 699 rTokens have no perp leg</strong> and cannot be protected.</li>
+<li><strong>{F['rtokens_total'] - F['rtokens_hedgeable']} of {F['rtokens_total']} rTokens have no perp leg</strong> and cannot be protected.</li>
 <li><strong>Paper trading only.</strong> Fills are simulated against observed prices
-with taker fees and modelled slippage. No live fill is claimed.</li>
+with the real fee schedule, taker on both legs, and modelled slippage. The ledger is
+also exported in Bitget UTA order field names for comparison with a live log, but
+<strong>no order is sent to an exchange</strong> and the Agentic Account is not wired.</li>
 <li><strong>US exchange holidays are not modelled</strong>, which affects window
 length rather than the hedge relationship.</li>
 <li><strong>Maker fills are never assumed.</strong> All costs default to taker; a 4am
@@ -216,13 +223,17 @@ python3 -m unittest discover -s tests   <span class="dim"># full suite, no netwo
 python3 research/hedge_study.py         <span class="dim"># the hedge measurements</span>
 python3 research/gate1_selection.py     <span class="dim"># why volatility fails</span>
 python3 research/gate1_calendar.py      <span class="dim"># why the calendar works</span>
-python3 research/replay.py              <span class="dim"># the policy over history</span></pre>
+python3 research/replay.py              <span class="dim"># the policy over history</span>
+python3 research/costs_study.py         <span class="dim"># every fee and funding figure</span>
+python3 research/facts_study.py         <span class="dim"># re-measure the universe counts</span></pre>
 
 <h2 id="cli">CLI</h2>
 <pre><b>python3 -m ballast.bootstrap</b>   build the paper position book
 <b>python3 -m ballast.night</b>       decide, enforce, execute, record
 <b>python3 -m ballast.morning</b>     settle against the counterfactual
 <b>python3 -m ballast.report</b>      rebuild this site
+<b>python3 -m ballast.export</b>      export the log in Bitget order schema
+<b>python3 -m ballast.preflight</b>   check credentials without writing
 <b>python3 -m ballast.universe</b>    list the hedgeable universe</pre>
 <p><code>--dry-run</code> records decisions without fills. <code>--no-reader</code>
 runs the deterministic calendar rule alone.</p>
@@ -232,8 +243,9 @@ runs the deterministic calendar rule alone.</p>
 </tr></thead><tbody>
 <tr><td><code>QWEN_API_KEY</code></td><td>the reader abstains, the calendar rule
 decides, and the abstention is logged with its reason</td></tr>
-<tr><td><code>BALLAST_SECRET</code></td><td>a development signing key is used, and
-every run says so</td></tr>
+<tr><td><code>BALLAST_SECRET</code></td><td>writing is <strong>refused</strong>;
+set <code>BALLAST_DEV_SECRET=1</code> to accept an unverifiable key. Reading still
+works and the page says "signatures NOT verified".</td></tr>
 <tr><td><code>QWEN_BASE_URL</code></td><td>defaults to the hackathon endpoint</td></tr>
 <tr><td><code>QWEN_MODEL</code></td><td>defaults to <code>qwen3.8-max</code></td></tr>
 </tbody></table></div>
@@ -249,7 +261,7 @@ ticker - <code>TSLAUSDT</code>. The hedge instrument.</td></tr>
 <tr><td><strong>Overnight window</strong></td><td>A session's 16:00 ET close to the
 next 09:30 ET open. Friday spans the weekend.</td></tr>
 <tr><td><strong>Basis point (bp)</strong></td><td>One hundredth of a percent. The
-hedge costs 11.3 bp; a bad night can cost 1,000.</td></tr>
+hedge costs {F['hedge_cost_bp']} bp; a bad night can cost 1,000.</td></tr>
 <tr><td><strong>Counterfactual</strong></td><td>What the position would have done
 unhedged - observed, not estimated.</td></tr>
 <tr><td><strong>Night Mandate</strong></td><td>The signed document bounding what may

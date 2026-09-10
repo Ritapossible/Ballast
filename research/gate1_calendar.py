@@ -30,6 +30,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from ballast.earnings import build_calendar
+from ballast.costs import HEDGE_COST_BP
 from ballast.market import bars
 from ballast.overnight import overnight_returns
 from ballast.sessions import next_session
@@ -37,7 +38,7 @@ from ballast.stats import bp, t_stat
 
 TICKERS = ["TSLA", "NVDA", "AAPL", "MSFT", "AMZN", "META", "GOOGL",
            "COIN", "PLTR", "AMD", "ORCL", "ADBE", "MU", "NKE", "COST"]
-HEDGE_COST_BP = 11.3
+
 # Bounded to the window where BOTH the earnings cache and the perp series exist.
 # Widening this triggers a fresh calendar crawl and a full re-page of every ticker.
 START = dt.date(2025, 10, 1)

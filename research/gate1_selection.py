@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import statistics as st
 
+from ballast.costs import HEDGE_COST_BP
 from ballast.market import bars
 from ballast.overnight import overnight_returns
 from ballast.stats import bp, t_stat
@@ -28,7 +29,7 @@ NAMES = ["TSLA", "NVDA", "AAPL", "MSFT", "AMZN", "META",
          "GOOGL", "SPY", "QQQ", "COIN", "PLTR", "AMD"]
 WINDOW = 20        # trailing nights used to predict tonight
 TOP_QUINTILE = 0.80
-HEDGE_COST_BP = 11.3
+
 
 
 def run(lookahead: bool = False) -> None:

@@ -62,6 +62,14 @@ jobs:
           BALLAST_SECRET: ${{ secrets.BALLAST_SECRET }}
         run: python -m ballast.morning
 
+      - name: Refresh measured facts and export the Bitget-schema log
+        if: inputs.task != 'check'
+        env:
+          BALLAST_SECRET: ${{ secrets.BALLAST_SECRET }}
+        run: |
+          python research/facts_study.py
+          python -m ballast.export
+
       - name: Verify the chain before committing
         if: inputs.task != 'check'
         env:
@@ -80,17 +88,46 @@ jobs:
         run: |
           python -m ballast.report
           python -m ballast.docs_page
+          # Every page the builder declares must exist on disk afterwards.
+          python - <<'EOF'
+          from pathlib import Path
+          from ballast.report import PAGES, OUT_DIR
+          missing = [n for n, *_ in PAGES if not (OUT_DIR / n).exists()]
+          missing += [] if (OUT_DIR / "docs.html").exists() else ["docs.html"]
+          if missing:
+              raise SystemExit(f"pages not generated: {missing}")
+          print(f"generated {len(PAGES) + 1} pages")
+          EOF
 
-      - name: Commit the ledger
+      - name: Commit the ledger and the rebuilt site
         if: inputs.task != 'check'
         run: |
           git config user.name  "ballast-bot"
           git config user.email "noreply@github.com"
-          if git diff --quiet state/ docs/index.html docs/docs.html; then
+
+          # Stage whole directories. The previous version listed index.html and
+          # docs.html by name; when the site grew to five pages the three new ones
+          # were rebuilt on the runner and thrown away, so the Tonight and Settled
+          # pages never showed a scheduled decision. A named list silently goes
+          # stale every time a page is added - a directory cannot.
+          git add -A state/ docs/
+          if git diff --cached --quiet; then
             echo "nothing changed"
             exit 0
           fi
-          git add state/ docs/index.html docs/docs.html
+
+          # Rebase BEFORE committing. Rebasing an append-only JSONL commit onto a
+          # remote that also appended conflicts, and the night's work is then lost
+          # with the runner.
+          git stash push --staged --message "pending ledger"
+          git pull --rebase --autostash origin main
+          git stash pop
+          git add -A state/ docs/
           git commit -m "ledger: $(date -u '+%Y-%m-%d %H:%MZ')"
-          git pull --rebase origin main
-          git push
+
+          for attempt in 1 2 3; do
+            git push && exit 0
+            echo "push rejected, re-syncing (attempt $attempt)"
+            git pull --rebase --autostash origin main || exit 1
+          done
+          exit 1

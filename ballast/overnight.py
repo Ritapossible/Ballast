@@ -39,19 +39,30 @@ def _lookup(bars: dict[int, tuple[float, float]], ts: int, field: int,
     return None
 
 
-def overnight_returns(bars: dict[int, tuple[float, float]] | dict[int, float]
-                      ) -> dict[dt.date, float]:
+class BarFormatError(TypeError):
+    """Close-only input was passed where open/close bars are required."""
+
+
+def overnight_returns(bars: dict[int, tuple[float, float]]) -> dict[dt.date, float]:
     """{session_date: log return, that session's close -> the next session's open}.
 
-    Accepts either {ts: (open, close)} or {ts: close}; with closes only, the open
-    leg falls back to the preceding bar's close, which is the same instant.
+    Requires {ts: (open, close)} from `market.bars()`. Close-only input is REFUSED
+    rather than silently degraded: with closes alone the open leg resolves to the
+    previous hour's close, which shifted returns by a mean of 71-99 bp per night
+    and inflated sigma by ~15% against the research definition. A production
+    surface quietly disagreeing with the research that justifies it is worse than
+    a crash, so this raises.
+
     Friday yields the Friday-close -> Monday-open window.
     """
     if not bars:
         return {}
-    normalised: dict[int, tuple[float, float]] = {
-        ts: (v if isinstance(v, tuple) else (v, v)) for ts, v in bars.items()
-    }
+    sample = next(iter(bars.values()))
+    if not isinstance(sample, tuple):
+        raise BarFormatError(
+            "overnight_returns requires {ts: (open, close)} from market.bars(); "
+            "market.closes() loses the open leg and shifts every return")
+    normalised: dict[int, tuple[float, float]] = dict(bars)
     stamps = sorted(normalised)
     first = dt.datetime.fromtimestamp(stamps[0] / 1000, UTC).date()
     last = dt.datetime.fromtimestamp(stamps[-1] / 1000, UTC).date()

@@ -23,7 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from ballast.earnings import symbols_on
-from ballast.executor import PERP_TAKER_FEE
+from ballast.costs import HEDGE_COST_BP
 from ballast.market import bars
 from ballast.overnight import overnight_returns
 from ballast.policy import (Action, EventType, Impact, NightRisk, PolicyConfig,
@@ -32,7 +32,7 @@ from ballast.sessions import next_session, window_hours
 
 TICKERS = ["TSLA", "NVDA", "PLTR", "COIN", "AMD", "MSFT",
            "ORCL", "ADBE", "MU", "NKE", "COST", "SPY"]
-COST = PERP_TAKER_FEE * 2          # round trip, taker both legs
+COST = HEDGE_COST_BP / 1e4         # taker round trip, net of funding
 CFG = PolicyConfig()
 
 

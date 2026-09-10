@@ -13,17 +13,19 @@ import argparse
 import datetime as dt
 
 from . import config
+from .costs import HEDGE_COST_BP
+from .market import MarketDataUnavailable
 from .llm import available as llm_available
 from .book import Book
 from .earnings import symbols_on
 from .enforcer import Enforcer, OrderIntent
 from .ledger import Ledger
 from .mandate import NightMandate, SignedMandate
-from .market import closes
+from .market import bars as market_bars
 from .overnight import overnight_returns
 from .news import fetch, in_window
-from .policy import Action, EventType, Impact, NightRisk, PolicyConfig, decide
-from .reader import Judgment, read
+from .policy import Action, EventType, Impact, NightRisk, decide
+from .reader import read
 from .sessions import UTC, close_utc, next_session, open_utc, window_hours
 
 # The nightly run needs recent history for the sigma it reports, not the full
@@ -32,18 +34,29 @@ from .sessions import UTC, close_utc, next_session, open_utc, window_hours
 HISTORY_BARS = 2_400
 
 MAX_HEDGE_RATIO = 1.0
-MAX_NOTIONAL_USDT = 100_000.0
-MAX_ORDERS = 50
+
+# A fixed 100,000 USDT cap against a 12,000 USDT book never bound - it was
+# decorative. The night's budget is now the book itself plus a small tolerance for
+# marks moving between valuation and execution, so the cap is a real constraint.
+NOTIONAL_HEADROOM = 1.05
+
+
+MAX_SESSION_LOOKBACK_DAYS = 14
 
 
 def current_session(now: dt.datetime) -> dt.date:
-    """The most recent weekday session whose close has already passed."""
+    """The most recent weekday session whose close has already passed.
+
+    Bounded: an unbounded backward walk would spin forever on a clock or calendar
+    fault rather than failing where it can be seen.
+    """
     day = now.date()
-    while day.weekday() > 4 or now < close_utc(day):
+    for _ in range(MAX_SESSION_LOOKBACK_DAYS):
+        if day.weekday() <= 4 and now >= close_utc(day):
+            return day
         day -= dt.timedelta(days=1)
-        while day.weekday() > 4:
-            day -= dt.timedelta(days=1)
-    return day
+    raise RuntimeError(
+        f"no closed session found within {MAX_SESSION_LOOKBACK_DAYS} days of {now}")
 
 
 def calendar_risk(ticker: str, session: dt.date) -> tuple[NightRisk, bool]:
@@ -61,17 +74,32 @@ def calendar_risk(ticker: str, session: dt.date) -> tuple[NightRisk, bool]:
 
 
 def assess(ticker: str, session: dt.date, use_reader: bool):
-    """Calendar first, then the event reader. Returns (risk, judgment, verdict)."""
+    """Calendar first, then the event reader.
+
+    Returns (risk, judgment, verdict, provenance). `provenance` records what the
+    model was actually shown: whether the headlines fell inside tonight's window or
+    were the recent fallback. Without it you cannot tell afterwards whether a
+    judgment rested on tonight's news or last week's - a silent degradation rather
+    than a visible failure.
+    """
     risk, flagged = calendar_risk(ticker, session)
     if not use_reader:
-        return risk, None, None
+        return risk, None, None, None
 
+    headlines = fetch(ticker)                       # one request, not two
     start, end = close_utc(session), open_utc(next_session(session))
-    items = in_window(fetch(ticker), start, end) or fetch(ticker)[:8]
+    windowed = in_window(headlines, start, end)
+    items = windowed or headlines[:8]
+    provenance = {
+        "headlines_fetched": len(headlines),
+        "in_window": len(windowed),
+        "source": "window" if windowed else "recent_fallback",
+        "shown": len(items),
+    }
     verdict = read(ticker, session, window_hours(session), items, flagged)
     if not verdict.usable:
-        return risk, None, verdict          # abstained or failed a gate -> rule decides
-    return verdict.risk, verdict.judgment.value, verdict
+        return risk, None, verdict, provenance      # abstained or gated -> rule decides
+    return verdict.risk, verdict.judgment.value, verdict, provenance
 
 
 def run(dry_run: bool = False, no_reader: bool = False) -> dict:
@@ -83,23 +111,41 @@ def run(dry_run: bool = False, no_reader: bool = False) -> dict:
     book = Book.load(config.BOOK_PATH)
     ledger = Ledger(config.LEDGER_PATH, config.secret())
 
-    spot_marks, histories, perp_marks = {}, {}, {}
-    for pos in book:
-        bars = closes(pos.spot_symbol, "spot", max_bars=HISTORY_BARS, use_cache=False)
-        spot_marks[pos.spot_symbol] = bars[max(bars)]
-        perp_bars = closes(pos.perp_symbol, "mix", max_bars=HISTORY_BARS, use_cache=False)
-        perp_marks[pos.perp_symbol] = perp_bars[max(perp_bars)]
-        prior = overnight_returns(bars)
-        histories[pos.ticker] = [v for d, v in sorted(prior.items()) if d < session]
+    # Appending under a new key to a chain signed with an old one produces a
+    # ledger that can never verify again. Rotate first, keeping the old file.
+    if ledger.signed_by_other_key():
+        ledger.rotate(config.STATE / "ledger.superseded.jsonl",
+                      "signing key rotated; the previous chain used the public "
+                      "development key and was therefore never verifiable")
 
+    spot_marks, histories, perp_marks, unreachable = {}, {}, {}, {}
+    for pos in book:
+        # One flaky symbol used to abort the whole run, leaving decisions in the
+        # ledger with no summary. Each position now fails on its own.
+        try:
+            series = market_bars(pos.spot_symbol, "spot",
+                                 max_bars=HISTORY_BARS, use_cache=False)
+            perp_series = market_bars(pos.perp_symbol, "mix",
+                                      max_bars=HISTORY_BARS, use_cache=False)
+            if not series or not perp_series:
+                raise MarketDataUnavailable(f"empty candle series for {pos.ticker}")
+            spot_marks[pos.spot_symbol] = series[max(series)][1]
+            perp_marks[pos.perp_symbol] = perp_series[max(perp_series)][1]
+            prior = overnight_returns(series)
+            histories[pos.ticker] = [v for d, v in sorted(prior.items()) if d < session]
+        except Exception as exc:                       # noqa: BLE001 - isolate, then record
+            unreachable[pos.ticker] = f"{type(exc).__name__}: {exc}"
+
+    notionals = book.notionals(spot_marks)
+    gross = sum(abs(v) for v in notionals.values())
     mandate = NightMandate(
         issued_at=now, expires_at=expires, universe=book.symbols(),
-        max_hedge_ratio=MAX_HEDGE_RATIO, max_notional_usdt=MAX_NOTIONAL_USDT,
-        max_orders=MAX_ORDERS, account="paper",
+        max_hedge_ratio=MAX_HEDGE_RATIO,
+        max_notional_usdt=round(gross * MAX_HEDGE_RATIO * NOTIONAL_HEADROOM, 2),
+        max_orders=len(book), account="paper",
     )
     signed = SignedMandate.issue(mandate, config.secret())
     enforcer = Enforcer(signed, config.secret())
-    notionals = book.notionals(spot_marks)
 
     ledger.append("mandate", {
         "session": session.isoformat(), "expires_at": expires.isoformat(),
@@ -112,14 +158,48 @@ def run(dry_run: bool = False, no_reader: bool = False) -> dict:
     executor = PaperExecutor()
     hedged = declined = 0
 
+    errors = 0
     for pos in book:
-        risk, judgment, verdict = assess(pos.ticker, session, use_reader)
-        decision = decide(pos.ticker, pos.spot_symbol, histories[pos.ticker], risk,
-                          window_hours(session), model_judgment=judgment)
+        if pos.ticker in unreachable:
+            # Recorded as a decision, not dropped: a position Ballast could not
+            # assess is a fact the morning needs to know about.
+            errors += 1
+            ledger.append("decision", {
+                "ticker": pos.ticker, "spot_symbol": pos.spot_symbol,
+                "perp_symbol": pos.perp_symbol, "session": session.isoformat(),
+                "action": Action.NO_HEDGE.value, "sigma_bp": 0.0,
+                "cost_bp": HEDGE_COST_BP, "notional_usdt": 0.0,
+                "rationale": f"no decision taken - market data unavailable "
+                             f"({unreachable[pos.ticker]})",
+                "error": unreachable[pos.ticker],
+                "inputs": {"decided_by": "none"},
+            }, now)
+            continue
+
+        try:
+            risk, judgment, verdict, provenance = assess(pos.ticker, session, use_reader)
+            decision = decide(pos.ticker, pos.spot_symbol, histories[pos.ticker], risk,
+                              window_hours(session), model_judgment=judgment)
+        except Exception as exc:                       # noqa: BLE001 - isolate, then record
+            errors += 1
+            ledger.append("decision", {
+                "ticker": pos.ticker, "spot_symbol": pos.spot_symbol,
+                "perp_symbol": pos.perp_symbol, "session": session.isoformat(),
+                "action": Action.NO_HEDGE.value, "sigma_bp": 0.0,
+                "cost_bp": HEDGE_COST_BP, "notional_usdt": 0.0,
+                "rationale": f"no decision taken - {type(exc).__name__}: {exc}",
+                "error": f"{type(exc).__name__}: {exc}",
+                "inputs": {"decided_by": "none"},
+            }, now)
+            continue
+
         record = decision.to_record()
         if verdict is not None:
             record["reader"] = verdict.to_record()
+        if provenance is not None:
+            record["news"] = provenance
         record["session"] = session.isoformat()
+        record["perp_symbol"] = pos.perp_symbol        # settlement must not guess it
         record["spot_mark"] = spot_marks[pos.spot_symbol]
         record["notional_usdt"] = round(notionals.get(pos.spot_symbol, 0.0), 2)
 
@@ -144,17 +224,17 @@ def run(dry_run: bool = False, no_reader: bool = False) -> dict:
             ledger.append("decision", record, now)
             continue
 
+        enforcer.commit(intent)          # budget is consumed in rehearsal too
         if not dry_run:
             fill = executor.execute(intent.perp_symbol, intent.side, intent.notional_usdt,
                                     perp_marks[pos.perp_symbol], now)
-            enforcer.commit(intent)
             record["fill"] = fill.to_record()
         hedged += 1
         ledger.append("decision", record, now)
 
     summary = {
         "session": session.isoformat(), "positions": len(book),
-        "hedged": hedged, "declined": declined,
+        "hedged": hedged, "declined": declined, "errors": errors,
         "window_hours": round(window_hours(session), 1),
         "usage": enforcer.usage, "dry_run": dry_run,
         "reader": "on" if use_reader and llm_available() else "off (no QWEN_API_KEY)",

@@ -135,9 +135,11 @@ upside and never assumed.
 | Cost drag | - | **0.3 bp** per position-night |
 | Hedges that reduced the move | - | **15 of 16 (94%)** |
 
-**Metric definitions, stated so they cannot be misread.** *Win rate* is the share of hedges
-that reduced |move| - a hedge is symmetric, so a P&L-direction win rate is meaningless.
-*Tail coverage* is the share of the worst 1%/5%/10% of position-nights that were hedged.
+**Metric definitions, stated so they cannot be misread.** Every call is scored against the
+**signed P&L of the choice refused**: hedging wins on a night that fell, declining wins on a
+night that rose or stayed flat. Scoring on the size of the move alone would say "always
+hedge", which is the policy the research rejected. *Tail coverage* is the share of the worst
+1%/5%/10% of position-nights that were hedged.
 
 ### The honest limitation
 
@@ -167,8 +169,8 @@ and commits unattended, and a public site with full documentation. **79 tests, n
 and key-free.**
 
 **Not built:** live execution (paper only, by choice); Bitget Agentic Account OAuth wiring -
-fills are currently simulated against observed prices with real fees; US exchange holidays
-in the session calendar.
+fills are simulated against observed prices with the real fee schedule, then exported in UTA
+order field names; US exchange holidays in the session calendar.
 
 **Problems found and fixed - published rather than quietly corrected:**
 
@@ -199,8 +201,9 @@ market API (spot + USDT-futures), Nasdaq earnings calendar, Google News RSS, Qwe
 | **Documentation** | https://ballast-v1.vercel.app/docs - 16 sections incl. limitations and defects |
 | **Source** | https://github.com/Ritapossible/Ballast |
 | **Paper trading log** | `state/ledger.jsonl` - hash-chained, signed, committed by the scheduled job |
+| **Bitget-schema log** | `state/bitget_orders.json` - the same fills in UTA order field names |
 | **Research suite** | `research/` - reproduces every figure, no API key needed |
-| **Tests** | `python3 -m unittest discover -s tests` - 79, network-free |
+| **Tests** | `python3 -m unittest discover -s tests` - 103, network-free, incl. 17 end-to-end |
 | **Workflows** | `.github/workflows/` - nightly loop and CI |
 
 **Why the log is evidence rather than assertion:** each decision is written before its

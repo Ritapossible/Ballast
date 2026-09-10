@@ -149,9 +149,19 @@ datacenter IPs** and are not usable here.
 
 ## 7. Hard rules for this codebase
 
+0. **Costs come from `ballast/costs.py`; published figures come from `docs/facts.json`.**
+   Never write a fee, a cost or a universe count as a literal. Three different numbers
+   for the hedge cost were once in use and the site advertised a price it did not
+   settle at; the universe count drifted from 219/699 to 224/704 unnoticed.
+   `research/costs_study.py` and `research/facts_study.py` regenerate both.
+
 1. **Never state a number that was not produced by code in `research/` or a live endpoint.**
    Every figure carries a label: `observed` / `estimated` / `targeted`. The submission form
    requires this and the whole strategy rests on it.
+1b. **Overnight returns require `market.bars()`, never `market.closes()`.**
+   Close-only input now raises. It used to degrade silently to the previous hour's
+   close, which shifted returns by a mean of 71-99bp and inflated sigma ~15% - so
+   production disagreed with the research that justifies it.
 2. **No look-ahead, ever.** Any selection rule sees only strictly prior data. The ex-post
    selection bug is already documented in `docs/RESEARCH.md`; do not reintroduce it. Ship a
    sentinel test that fails if future data changes a past signal.
@@ -162,7 +172,14 @@ datacenter IPs** and are not usable here.
 5. **The LLM translates; it never decides.** It returns a typed `NightRisk` record. All sizing,
    pricing, gating and grading is deterministic typed code.
 6. **The enforcer is a separate process** and holds the only write-scoped key.
-7. **Paper only.** No real fill is claimed anywhere.
+7. **Paper only.** No real fill is claimed anywhere. `ballast/export.py` re-encodes
+   the ledger in Bitget UTA order field names for comparison; it invents nothing.
+8. **Writing requires `BALLAST_SECRET`.** `DEV_SECRET` is public in this repo, so a
+   silent fallback would make "signed and tamper-evident" untrue. Set
+   `BALLAST_DEV_SECRET=1` to opt in deliberately. Reading degrades to
+   "signatures NOT verified" rather than crashing.
+9. **A session is never settled partially**, and settlement is idempotent. Both would
+   otherwise corrupt the evidence: stranded rows, or double-counted tiles.
 8. **Never present the hedge leg standalone** — always the paired hedged-vs-unhedged portfolio
    on the same positions and the same nights.
 

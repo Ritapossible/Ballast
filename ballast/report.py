@@ -12,11 +12,11 @@ Every page is self-contained: no CDN, no web fonts, no scripts, nothing that can
 """
 from __future__ import annotations
 
-import datetime as dt
 import html
 from pathlib import Path
 
 from . import config
+from .facts import load as load_facts
 from .ledger import Ledger, LedgerError
 from .theme import REPO, page
 
@@ -76,13 +76,14 @@ def _settled(rows: list[dict]) -> str:
     return "".join(out) + "</tbody></table></div>"
 
 
-CLAIMS = [
-    ("A matched perp removes a median 98.0% of overnight variance, β within 4% of 1.00",
-     "observed", "12 names, 100-260 nights each"),
+def claims(f: dict) -> list[tuple[str, str, str | None]]:
+    return [
+    (f"A matched perp removes a median {f['median_r2'] * 100:.1f}% of overnight "
+     f"variance, β within 4% of 1.00", "observed", "12 names, 100-260 nights each"),
     ("The hedge strengthens under stress - R² 0.978-0.999 on top-decile nights",
      "observed", "conditional regression"),
-    ("Median 88% cut in p95 tail; MSFT's worst night 1,128 bp to 233 bp",
-     "observed", "same sample"),
+    (f"Median {f['median_tail_cut_pct']}% cut in p95 tail; MSFT's worst night "
+     f"1,128 bp to 233 bp", "observed", "same sample"),
     ("Earnings nights carry 3.2× the variance and are not reliably compensated",
      "observed", "15 names; 0 of 15 significant at |t|≥2"),
     ("Trailing volatility cannot select risky nights - 1.41× separation",
@@ -91,25 +92,40 @@ CLAIMS = [
     ("The enforcer refuses every directional intent", "proven", "18 red-team tests"),
     ("Improves risk-adjusted return", "not claimed", "priced protection, not alpha"),
     ("Any live fill", "not claimed", "paper only"),
-]
+    ]
 
 
 class Site:
     """Everything the pages need, read from the ledger once."""
 
     def __init__(self):
-        ledger = Ledger(config.LEDGER_PATH, config.secret())
+        self.f = load_facts()
+        # Rendering is a read. It must not require the signing key - anyone should
+        # be able to clone and rebuild the site - but it must never imply the
+        # signatures were checked when they were not.
         try:
-            self.chain = f"{ledger.verify()} entries · chain verified"
+            ledger = Ledger(config.LEDGER_PATH, config.secret())
+        except config.UnsignedError:
+            ledger = Ledger(config.LEDGER_PATH, config.DEV_SECRET)
+            self.chain = f"{len(ledger.records())} entries · signatures NOT verified"
             self.broken = False
-        except LedgerError as exc:
-            self.chain, self.broken = f"CHAIN BROKEN - {exc}", True
+            self.unverified = True
+        else:
+            self.unverified = False
+            try:
+                self.chain = f"{ledger.verify()} entries · chain verified"
+                self.broken = False
+            except LedgerError as exc:
+                self.chain, self.broken = f"CHAIN BROKEN - {exc}", True
 
         decisions = [e["body"] for e in ledger.records("decision")]
         summaries = [e["body"] for e in ledger.records("night_summary")]
         self.settlements = [e["body"] for e in ledger.records("settlement")]
 
-        self.latest = summaries[-1] if summaries else {}
+        # By session date, not by write order: a backfill or an out-of-order run
+        # would otherwise make an older night look like tonight.
+        self.latest = max(summaries, key=lambda s: s.get("session", ""),
+                          default={}) if summaries else {}
         self.session = self.latest.get("session", "-")
         self.tonight = [d for d in decisions if d.get("session") == self.session]
         self.rows = [r for s in self.settlements for r in s.get("rows", [])]
@@ -134,7 +150,7 @@ class Site:
 <p class="lede">Tokenized US stocks trade around the clock. The market that prices
 them is shut for <span class="hl">81% of the week</span> - through earnings, through
 the Fed, through weekends. Ballast keeps the position and switches the night off for
-about <span class="hl">11 basis points</span>.</p>
+about <span class="hl">{self.f['hedge_cost_bp']:.0f} basis points</span>.</p>
 <div class="row">
 <a class="btn btn-p" href="tonight.html">Tonight's decisions</a>
 <a class="btn btn-s" href="docs.html">Read the docs</a>
@@ -154,16 +170,16 @@ about <span class="hl">11 basis points</span>.</p>
 it almost exactly. Shorting it overnight removes nearly all of the move - and costs
 less than selling the position and buying it back.</p>
 <div class="tiles">
-{_tile("98.0%", "median variance removed")}
+{_tile(f"{self.f['median_r2'] * 100:.1f}%", "median variance removed")}
 {_tile("β 1.00", "hedge ratio, ±4%")}
-{_tile("88%", "median p95 tail cut")}
-{_tile("11.3 bp", "cost to protect")}
-{_tile("20 bp", "cost to exit instead")}
+{_tile(f"{self.f['median_tail_cut_pct']}%", "median p95 tail cut")}
+{_tile(f"{self.f['hedge_cost_bp']} bp", "cost to protect")}
+{_tile(f"{self.f['exit_cost_bp']:.0f} bp", "cost to exit instead")}
 </div>
 <div class="narrow"><ul class="bul">
 <li>The hedge is <strong>strongest exactly when it matters</strong> - R² reaches 0.999 on the largest moves, and is loosest on quiet nights where little is at stake.</li>
 <li>Worst nights measured: MSFT <strong>1,128 bp to 233 bp</strong>, AMD <strong>1,262 bp to 90 bp</strong>.</li>
-<li><strong>219 of 699</strong> listed rTokens have a perp leg. Ballast says plainly which positions it cannot protect.</li>
+<li><strong>{self.f['rtokens_hedgeable']} of {self.f['rtokens_total']}</strong> listed rTokens have a perp leg, measured {self.f['measured_on']}. Ballast says plainly which positions it cannot protect.</li>
 </ul></div>
 </div></section>
 
@@ -245,7 +261,7 @@ settles at the next opening bell, so nothing can be quietly forgotten.</p>
             f'<tr><td>{_e(c)}</td>'
             f'<td><span class="tag {"on" if s == "proven" else ""}">{_e(s)}</span></td>'
             f'<td class="dim">{_e(n or "")}</td></tr>'
-            for c, s, n in CLAIMS)
+            for c, s, n in claims(self.f))
         return f"""
 <section class="bd"><div class="wrap center">
 <p class="eyebrow">Open by construction</p>

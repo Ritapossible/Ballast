@@ -68,10 +68,12 @@ def run(ticker: str = "ORCL") -> int:
     if verdict.accepted:
         _line(OK, "reader", f"{verdict.judgment.value} · {verdict.risk.event_type.value} · "
                             f"confidence {verdict.risk.confidence:.0%}")
-        if verdict.risk.verbatim_quote:
-            print(f"         grounded on: {verdict.risk.verbatim_quote[:88]!r}")
-        if verdict.reasoning:
-            print(f"         reasoning:   {verdict.reasoning[:88]}")
+        # Deliberately not printing the quote or the reasoning: these logs are
+        # public on a public repository, and echoing model output from a
+        # credentialed endpoint into them is a habit worth not forming. What
+        # matters here is that the gates passed, which is already reported.
+        print(f"         grounded: {'yes' if verdict.risk.verbatim_quote else 'no quote'}"
+              f" · source: {'linked' if verdict.risk.source_url else 'none'}")
     else:
         # A refusal is a working gate, not a broken pipeline - say which one fired.
         _line(WARN, "reader", f"refused by gate: {verdict.rejected_because.value}")

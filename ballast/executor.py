@@ -14,9 +14,7 @@ import datetime as dt
 from dataclasses import dataclass
 from typing import Protocol
 
-PERP_TAKER_FEE = 0.0006          # observed 2026-09-08
-PERP_MAKER_FEE = 0.0002
-DEFAULT_SLIPPAGE_BP = 2.0        # modelled, off-hours book
+from .costs import PERP_MAKER_FEE, PERP_TAKER_FEE, SLIPPAGE_BP  # noqa: F401
 
 
 @dataclass(frozen=True)
@@ -47,7 +45,7 @@ class Executor(Protocol):
 
 class PaperExecutor:
     def __init__(self, fee: float = PERP_TAKER_FEE,
-                 slippage_bp: float = DEFAULT_SLIPPAGE_BP):
+                 slippage_bp: float = SLIPPAGE_BP):
         self.fee = fee
         self.slippage_bp = slippage_bp
 

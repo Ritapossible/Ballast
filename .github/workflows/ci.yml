@@ -6,6 +6,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+# CI only reads. The default token scope is wider than this job needs.
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
