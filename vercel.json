@@ -3,6 +3,7 @@
   "framework": null,
   "outputDirectory": "docs",
   "cleanUrls": true,
+  "redirects": [{ "source": "/documentation", "destination": "/docs", "permanent": false }],
   "trailingSlash": false,
   "headers": [
     {

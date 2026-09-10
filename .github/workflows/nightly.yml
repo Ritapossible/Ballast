@@ -65,20 +65,22 @@ jobs:
           print(f"ledger verified: {Ledger(config.LEDGER_PATH, config.secret()).verify()} entries")
           EOF
 
-      - name: Rebuild the public report
+      - name: Rebuild the public site
         env:
           BALLAST_SECRET: ${{ secrets.BALLAST_SECRET }}
-        run: python -m ballast.report
+        run: |
+          python -m ballast.report
+          python -m ballast.docs_page
 
       - name: Commit the ledger
         run: |
           git config user.name  "ballast-bot"
           git config user.email "noreply@github.com"
-          if git diff --quiet state/ docs/index.html; then
+          if git diff --quiet state/ docs/index.html docs/docs.html; then
             echo "nothing changed"
             exit 0
           fi
-          git add state/ docs/index.html
+          git add state/ docs/index.html docs/docs.html
           git commit -m "ledger: $(date -u '+%Y-%m-%d %H:%MZ')"
           git pull --rebase origin main
           git push

@@ -18,10 +18,9 @@ from pathlib import Path
 
 from . import config
 from .ledger import Ledger, LedgerError
-from .theme import CSS, MARK
+from .theme import REPO, page
 
 OUT = config.ROOT / "docs" / "index.html"
-REPO = "https://github.com/Ritapossible/ballast"
 
 
 def _e(v) -> str:
@@ -130,28 +129,17 @@ def build() -> Path:
         '<div class="term-r"><span class="dim">awaiting the next close</span>'
         '<span class="dim">—</span></div>')
 
-    body = f"""<header class="top"><div class="top-in">
-<div class="brand">{MARK}BALLAST</div>
-<a class="btn btn-p" href="#tonight">See tonight</a>
-</div></header>
-<nav class="nav"><div class="nav-in">
-<a class="on" href="#top">Overview</a><a href="#tonight">Tonight</a>
-<a href="#settled">Settled</a><a href="#evidence">Evidence</a>
-<a href="#method">Method</a><a href="{REPO}">Repo</a>
-</div></nav>
-
-<main id="top"><div class="wrap">
-
-<section>
-<p class="eyebrow">Bitget AI Hackathon S2 · Agentic Trading</p>
+    body = f"""
+<section class="bd">
+<div class="wrap center">
 <h1>Hold the position.<br>Not the night's risk.</h1>
 <p class="lede">Tokenized US stocks trade around the clock. The market that prices
 them is shut for <span class="hl">81% of the week</span> — through earnings, through
-the Fed, through weekends. Ballast lets you keep the position and switch the night
-off for about <span class="hl">11 basis points</span>.</p>
+the Fed, through weekends. Ballast keeps the position and switches the night off for
+about <span class="hl">11 basis points</span>.</p>
 <div class="row">
 <a class="btn btn-p" href="#tonight">Tonight's decisions</a>
-<a class="btn btn-s" href="#evidence">What's verified</a>
+<a class="btn btn-s" href="docs.html">Read the docs</a>
 </div>
 
 <div class="term">
@@ -160,14 +148,15 @@ off for about <span class="hl">11 basis points</span>.</p>
 <span class="live"><span class="pulse"></span>{"BROKEN" if broken else "LEDGER OK"}</span></div>
 <div class="term-b">{term}</div>
 </div>
-</section>
+</div></section>
 
-<section>
+<section class="bd bd-deep">
+<div class="wrap center">
 <p class="eyebrow">The exposure</p>
-<h2>Every night, unhedged, by default.</h2>
-<p class="lede">A matched stock perp trades the same clock as the token and moves
-with it almost exactly. Shorting it overnight removes nearly all of the move —
-and costs less than selling the position and buying it back.</p>
+<h2>Every night, unhedged,<br>by default.</h2>
+<p class="lede">A matched stock perp trades the same clock as the token and moves with
+it almost exactly. Shorting it overnight removes nearly all of the move — and costs
+less than selling the position and buying it back.</p>
 <div class="tiles">
 {_tile("98.0%", "median variance removed")}
 {_tile("β 1.00", "hedge ratio, ±4%")}
@@ -175,31 +164,33 @@ and costs less than selling the position and buying it back.</p>
 {_tile("11.3 bp", "cost to protect")}
 {_tile("20 bp", "cost to exit instead")}
 </div>
-<ul class="bul">
+<div class="narrow"><ul class="bul">
 <li>The hedge is <strong>strongest exactly when it matters</strong> — R² reaches 0.999 on the largest moves, and is loosest on quiet nights where little is at stake.</li>
 <li>Worst nights measured: MSFT <strong>1,128 bp → 233 bp</strong>, AMD <strong>1,262 bp → 90 bp</strong>.</li>
 <li><strong>219 of 699</strong> listed rTokens have a perp leg. Ballast says plainly which positions it cannot protect.</li>
-</ul>
-</section>
+</ul></div>
+</div></section>
 
 <section id="tonight">
+<div class="wrap center">
 <p class="eyebrow">Live from the desk</p>
 <h2>Tonight's decisions.</h2>
-<p class="lede">One call per position, taken before the window opens and written to
-a signed ledger. Refusals are recorded as carefully as hedges — a night Ballast
+<p class="lede">One call per position, taken before the window opens and written to a
+signed ledger. Refusals are recorded as carefully as hedges — a night Ballast
 declined is a decision it will be graded on.</p>
 <p class="note">Session <strong>{_e(session)}</strong> · window
 {latest.get('window_hours', 0)} hours · event reader
 <strong>{_e(latest.get('reader', 'unknown'))}</strong> · {_e(chain)}</p>
 {_decisions(tonight)}
-</section>
+</div></section>
 
-<section id="settled">
+<section id="settled" class="bd bd-deep">
+<div class="wrap center">
 <p class="eyebrow">Graded against reality</p>
-<h2>Every call has an exact counterfactual.</h2>
+<h2>Every call has an<br>exact counterfactual.</h2>
 <p class="lede">What the position would have done unhedged is not modelled — it is
-<span class="hl">observed</span>, on the same window. So every decision, right or
-wrong, is settled at the next opening bell and nothing can be quietly forgotten.</p>
+<span class="hl">observed</span>, on the same window. Every decision, right or wrong,
+settles at the next opening bell, so nothing can be quietly forgotten.</p>
 <div class="tiles">
 {_tile(len(rows), "decisions settled")}
 {_tile(f"{shrank}/{len(hedges)}" if hedges else "—", "hedges that cut the move")}
@@ -207,37 +198,40 @@ wrong, is settled at the next opening bell and nothing can be quietly forgotten.
 {_tile(latest.get("hedged", 0), "hedged tonight")}
 </div>
 {_settled(rows)}
-</section>
+</div></section>
 
-<section id="evidence">
+<section id="evidence" class="bd">
+<div class="wrap center">
 <p class="eyebrow">Open by construction</p>
-<h2>What is verified, and what is not.</h2>
-<div class="cards">
+<h2>An audited desk,<br>not a black box.</h2>
+<div class="narrow stack">
 <div class="card"><h3>It cannot place a bet</h3><p>Every order Ballast can emit is
 opposite in sign to, and bounded in size by, a position already held. The enforcer
-holds the only write-scoped key, sees no model reasoning, and does arithmetic
-against a signed mandate.</p></div>
-<div class="card"><h3>The model is fenced, not trusted</h3><p>Qwen owns the
-hedge judgment. Three gates stand between it and an order: schema, ticker identity,
-and a grounding check that a quote actually appears in the supplied headlines.
-A fabricated source cannot reach the book.</p></div>
+holds the only write-scoped key, sees no model reasoning, and does arithmetic against
+a signed mandate. Eighteen red-team tests drive hostile intents at it.</p></div>
+<div class="card"><h3>The model is fenced, not trusted</h3><p>Qwen owns the hedge
+judgment. Three gates stand between it and an order — schema, ticker identity, and a
+grounding check that the quoted headline actually appears in the supplied sources. A
+fabricated source cannot reach the book.</p></div>
 <div class="card"><h3>The record cannot be edited</h3><p>The ledger is hash-chained
 and signed; mutation, deletion or reordering breaks verification. A scheduled job
 commits it, so each decision is timestamped before its outcome is known.</p></div>
 </div>
 <div class="scroll"><table><thead><tr><th>Claim</th><th>Status</th><th>Basis</th>
 </tr></thead><tbody>{claim_rows}</tbody></table></div>
-<p class="note" style="margin-top:22px">Ballast is <strong>priced protection, not
-alpha</strong>. It makes no Sharpe claim: the nights it hedges carry real variance
-and no reliable expected return, so removing them is insurance — which has a price
-and is worth paying only on the right nights.</p>
-</section>
+<p class="note" style="margin-top:24px">Ballast is <strong>priced protection, not
+alpha</strong>. It makes no Sharpe claim: the nights it hedges carry real variance and
+no reliable expected return, so removing them is insurance — which has a price, and is
+worth paying only on the right nights.</p>
+</div></section>
 
-<section id="method">
+<section>
+<div class="wrap center">
 <p class="eyebrow">Reproduce it</p>
-<h2>Don't take the numbers on trust.</h2>
-<p class="lede">Every figure on this page is produced by code in the repository,
-from public endpoints, with no API key.</p>
+<h2>Don't take the numbers<br>on trust.</h2>
+<p class="lede">Every figure on this page is produced by code in the repository, from
+public endpoints, with no API key.</p>
+<div class="narrow">
 <pre><b>git clone {REPO} &amp;&amp; cd ballast</b>
 python3 -m unittest discover -s tests   <span class="dim"># full suite, no network, no key</span>
 python3 research/hedge_study.py         <span class="dim"># the hedge measurements</span>
@@ -245,27 +239,20 @@ python3 research/gate1_calendar.py      <span class="dim"># why the calendar is 
 python3 research/replay.py              <span class="dim"># the policy, replayed over history</span></pre>
 <ul class="bul">
 <li><strong>No look-ahead is possible</strong> — every selector sees strictly prior data, and a sentinel test fails if a future night ever moves a past decision.</li>
-<li><strong>Defects are published, not patched over</strong> — a DST bug, a look-ahead contamination and an hour-snapping bug are all written up in the research notes.</li>
+<li><strong>Defects are published, not patched over</strong> — a DST bug, a look-ahead contamination and an hour-snapping bug are all written up.</li>
 <li><strong>Paper trading only.</strong> No live fill is claimed anywhere.</li>
 </ul>
-</section>
-
-</div></main>
-
-<footer><div class="wrap">
-Ballast · Bitget AI Base Camp Hackathon S2 · Agentic Trading, Event-Driven Agent<br>
-Generated {now:%Y-%m-%d %H:%M} UTC · <a href="{REPO}">source</a> ·
-paper trading only, not financial advice.
-</div></footer>"""
+<div class="row" style="justify-content:center;margin-top:34px">
+<a class="btn btn-s" href="docs.html">Full documentation</a>
+</div>
+</div>
+</div></section>"""
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(
-        '<!doctype html><html lang="en"><head><meta charset="utf-8">'
-        '<meta name="viewport" content="width=device-width,initial-scale=1">'
-        '<title>Ballast — overnight risk transfer for tokenized US stocks</title>'
-        '<meta name="description" content="Hold tokenized US stocks through the night '
-        'without holding the night\'s risk.">'
-        f'<style>{CSS}</style></head><body>{body}</body></html>')
+    OUT.write_text(page(
+        "Ballast — overnight risk transfer for tokenized US stocks",
+        "Hold tokenized US stocks through the night without holding the night's risk.",
+        "Overview", body, f"{now:%Y-%m-%d %H:%M}"))
     return OUT
 
 

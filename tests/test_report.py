@@ -76,3 +76,40 @@ class TestReport(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestDocsPage(unittest.TestCase):
+    """The docs page carries the claims a judge will check hardest."""
+
+    def setUp(self):
+        from ballast import docs_page
+        self.dir = tempfile.TemporaryDirectory()
+        out = Path(self.dir.name) / "docs.html"
+        with mock.patch.object(docs_page, "OUT", out):
+            self.page = " ".join(docs_page.build().read_text().split())
+
+    def tearDown(self):
+        self.dir.cleanup()
+
+    def test_builds(self):
+        self.assertIn("<!doctype html>", self.page)
+        self.assertIn("Documentation", self.page)
+
+    def test_every_toc_anchor_has_a_target(self):
+        from ballast.docs_page import SECTIONS
+        for _, items in SECTIONS:
+            for anchor, _label in items:
+                self.assertIn(f'href="#{anchor}"', self.page, f"missing TOC link {anchor}")
+                self.assertIn(f'id="{anchor}"', self.page, f"missing section {anchor}")
+
+    def test_states_the_negative_capability(self):
+        self.assertIn("Ballast cannot place a bet", self.page)
+
+    def test_publishes_limitations_and_defects(self):
+        for phrase in ("Limitations", "Defects found", "Paper trading only",
+                       "no live fill is claimed", "priced protection, not alpha"):
+            self.assertIn(phrase, self.page.replace("No live", "no live"))
+
+    def test_is_self_contained(self):
+        for forbidden in ("<script", "http://", "cdn.", "fonts.googleapis"):
+            self.assertNotIn(forbidden, self.page)
