@@ -1,7 +1,7 @@
 """Visual system and page shell for the public site.
 
-Dark, editorial, centred display type over atmospheric backdrops — the house style
-of the reference design — with Bitget's cyan as the single accent.
+Dark, editorial, centred display type over atmospheric backdrops - the house style
+of the reference design - with Bitget's cyan as the single accent.
 
 The backdrops are pure CSS gradients rather than photography. That is a deliberate
 constraint, not a compromise: the site ships as self-contained HTML with no CDN, no
@@ -202,12 +202,12 @@ def nav(active: str, prefix: str = "") -> str:
             f'</div></header><nav class="nav"><div class="nav-in">{links}</div></nav>')
 
 
-def page(title: str, description: str, active: str, body: str, generated: str) -> str:
+def page(title: str, description: str, active: str, body: str) -> str:
     return (
         '<!doctype html><html lang="en"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
         f'<title>{title}</title><meta name="description" content="{description}">'
         f'<style>{CSS}</style></head><body>{nav(active)}<main>{body}</main>'
-        f'<footer><div class="wrap">Ballast — overnight risk transfer for tokenized '
-        f'US stocks.<br>Generated {generated} UTC · <a href="{REPO}">source</a> · '
-        f'paper trading only, not financial advice.</div></footer></body></html>')
+        f'<footer><div class="wrap">Ballast - overnight risk transfer for tokenized '
+        f'US stocks.<br><a href="{REPO}">source</a> · paper trading only, '
+        f'not financial advice.</div></footer></body></html>')

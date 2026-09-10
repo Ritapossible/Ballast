@@ -171,4 +171,4 @@ if __name__ == "__main__":
     print(f"session {s['session']} · window {s['window_hours']}h · reader {s['reader']}\n"
           f"{s['positions']} positions · {s['hedged']} hedged · {s['declined']} declined")
     if config.using_dev_secret():
-        print("note: BALLAST_SECRET unset — signing with the development key")
+        print("note: BALLAST_SECRET unset - signing with the development key")

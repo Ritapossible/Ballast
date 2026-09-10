@@ -150,7 +150,7 @@ def read(ticker: str, session: dt.date, window_hours: float,
     except llm.LLMBadOutput as exc:
         return _reject(ticker, RejectReason.BAD_SCHEMA, str(exc))
 
-    # Gate 1 — schema
+    # Gate 1 - schema
     try:
         judgment = Judgment(str(data["judgment"]).upper())
         event_type = EventType(str(data.get("event_type", "none")).lower())
@@ -159,12 +159,12 @@ def read(ticker: str, session: dt.date, window_hours: float,
     except (KeyError, ValueError) as exc:
         return _reject(ticker, RejectReason.BAD_SCHEMA, f"{type(exc).__name__}: {exc}")
 
-    # Gate 2 — identity. P13: never accept a judgment about a different instrument.
+    # Gate 2 - identity. P13: never accept a judgment about a different instrument.
     if str(data.get("ticker", "")).upper().strip() != ticker.upper():
         return _reject(ticker, RejectReason.WRONG_TICKER,
                        f"model answered about {data.get('ticker')!r}")
 
-    # Gate 3 — grounding. A quote must exist in what we supplied.
+    # Gate 3 - grounding. A quote must exist in what we supplied.
     quote = str(data.get("verbatim_quote", "")).strip()
     if quote and not any(quote.lower() in i.title.lower() for i in items):
         return _reject(ticker, RejectReason.UNGROUNDED,

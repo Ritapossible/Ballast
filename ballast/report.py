@@ -4,7 +4,7 @@ This is the judge-facing surface, and the handbook makes an accessible demo a
 required material. Three properties it has to keep:
 
   * publicly readable, no login
-  * always-on with nothing to cold-start — one static file, no CDN, no web fonts,
+  * always-on with nothing to cold-start - one static file, no CDN, no web fonts,
     no scripts, so nothing can 404 or hang on the day
   * every claim traceable to a ledger entry the reader can verify themselves
 
@@ -79,13 +79,13 @@ def _settled(rows: list[dict]) -> str:
 CLAIMS = [
     ("A matched perp removes a median 98.0% of overnight variance, β within 4% of 1.00",
      "observed", "12 names, 100–260 nights each"),
-    ("The hedge strengthens under stress — R² 0.978–0.999 on top-decile nights",
+    ("The hedge strengthens under stress - R² 0.978–0.999 on top-decile nights",
      "observed", "conditional regression"),
     ("Median 88% cut in p95 tail; MSFT's worst night 1,128 bp → 233 bp",
      "observed", "same sample"),
     ("Earnings nights carry 3.2× the variance and are not reliably compensated",
      "observed", "15 names; 0 of 15 significant at |t|≥2"),
-    ("Trailing volatility cannot select risky nights — 1.41× separation",
+    ("Trailing volatility cannot select risky nights - 1.41× separation",
      "observed", "which is why the reader exists"),
     ("Signed, tamper-evident decision ledger", "proven", None),
     ("The enforcer refuses every directional intent", "proven", "18 red-team tests"),
@@ -100,14 +100,14 @@ def build() -> Path:
         chain = f"{ledger.verify()} entries · chain verified"
         broken = False
     except LedgerError as exc:
-        chain, broken = f"CHAIN BROKEN — {exc}", True
+        chain, broken = f"CHAIN BROKEN - {exc}", True
 
     decisions = [e["body"] for e in ledger.records("decision")]
     summaries = [e["body"] for e in ledger.records("night_summary")]
     settlements = [e["body"] for e in ledger.records("settlement")]
 
     latest = summaries[-1] if summaries else {}
-    session = latest.get("session", "—")
+    session = latest.get("session", "-")
     tonight = [d for d in decisions if d.get("session") == session]
     rows = [r for s in settlements for r in s.get("rows", [])]
     hedges = [r for r in rows if r.get("action") == "HEDGE"]
@@ -127,14 +127,14 @@ def build() -> Path:
         f'{_e(d.get("action"))}</span></div>'
         for d in tonight[:6]) or (
         '<div class="term-r"><span class="dim">awaiting the next close</span>'
-        '<span class="dim">—</span></div>')
+        '<span class="dim">-</span></div>')
 
     body = f"""
 <section class="bd">
 <div class="wrap center">
 <h1>Hold the position.<br>Not the night's risk.</h1>
 <p class="lede">Tokenized US stocks trade around the clock. The market that prices
-them is shut for <span class="hl">81% of the week</span> — through earnings, through
+them is shut for <span class="hl">81% of the week</span> - through earnings, through
 the Fed, through weekends. Ballast keeps the position and switches the night off for
 about <span class="hl">11 basis points</span>.</p>
 <div class="row">
@@ -155,7 +155,7 @@ about <span class="hl">11 basis points</span>.</p>
 <p class="eyebrow">The exposure</p>
 <h2>Every night, unhedged,<br>by default.</h2>
 <p class="lede">A matched stock perp trades the same clock as the token and moves with
-it almost exactly. Shorting it overnight removes nearly all of the move — and costs
+it almost exactly. Shorting it overnight removes nearly all of the move - and costs
 less than selling the position and buying it back.</p>
 <div class="tiles">
 {_tile("98.0%", "median variance removed")}
@@ -165,7 +165,7 @@ less than selling the position and buying it back.</p>
 {_tile("20 bp", "cost to exit instead")}
 </div>
 <div class="narrow"><ul class="bul">
-<li>The hedge is <strong>strongest exactly when it matters</strong> — R² reaches 0.999 on the largest moves, and is loosest on quiet nights where little is at stake.</li>
+<li>The hedge is <strong>strongest exactly when it matters</strong> - R² reaches 0.999 on the largest moves, and is loosest on quiet nights where little is at stake.</li>
 <li>Worst nights measured: MSFT <strong>1,128 bp → 233 bp</strong>, AMD <strong>1,262 bp → 90 bp</strong>.</li>
 <li><strong>219 of 699</strong> listed rTokens have a perp leg. Ballast says plainly which positions it cannot protect.</li>
 </ul></div>
@@ -176,7 +176,7 @@ less than selling the position and buying it back.</p>
 <p class="eyebrow">Live from the desk</p>
 <h2>Tonight's decisions.</h2>
 <p class="lede">One call per position, taken before the window opens and written to a
-signed ledger. Refusals are recorded as carefully as hedges — a night Ballast
+signed ledger. Refusals are recorded as carefully as hedges - a night Ballast
 declined is a decision it will be graded on.</p>
 <p class="note">Session <strong>{_e(session)}</strong> · window
 {latest.get('window_hours', 0)} hours · event reader
@@ -188,13 +188,13 @@ declined is a decision it will be graded on.</p>
 <div class="wrap center">
 <p class="eyebrow">Graded against reality</p>
 <h2>Every call has an<br>exact counterfactual.</h2>
-<p class="lede">What the position would have done unhedged is not modelled — it is
+<p class="lede">What the position would have done unhedged is not modelled - it is
 <span class="hl">observed</span>, on the same window. Every decision, right or wrong,
 settles at the next opening bell, so nothing can be quietly forgotten.</p>
 <div class="tiles">
 {_tile(len(rows), "decisions settled")}
-{_tile(f"{shrank}/{len(hedges)}" if hedges else "—", "hedges that cut the move")}
-{_tile(f"{worst:,.0f} bp" if worst else "—", "worst night seen")}
+{_tile(f"{shrank}/{len(hedges)}" if hedges else "-", "hedges that cut the move")}
+{_tile(f"{worst:,.0f} bp" if worst else "-", "worst night seen")}
 {_tile(latest.get("hedged", 0), "hedged tonight")}
 </div>
 {_settled(rows)}
@@ -210,7 +210,7 @@ opposite in sign to, and bounded in size by, a position already held. The enforc
 holds the only write-scoped key, sees no model reasoning, and does arithmetic against
 a signed mandate. Eighteen red-team tests drive hostile intents at it.</p></div>
 <div class="card"><h3>The model is fenced, not trusted</h3><p>Qwen owns the hedge
-judgment. Three gates stand between it and an order — schema, ticker identity, and a
+judgment. Three gates stand between it and an order - schema, ticker identity, and a
 grounding check that the quoted headline actually appears in the supplied sources. A
 fabricated source cannot reach the book.</p></div>
 <div class="card"><h3>The record cannot be edited</h3><p>The ledger is hash-chained
@@ -221,7 +221,7 @@ commits it, so each decision is timestamped before its outcome is known.</p></di
 </tr></thead><tbody>{claim_rows}</tbody></table></div>
 <p class="note" style="margin-top:24px">Ballast is <strong>priced protection, not
 alpha</strong>. It makes no Sharpe claim: the nights it hedges carry real variance and
-no reliable expected return, so removing them is insurance — which has a price, and is
+no reliable expected return, so removing them is insurance - which has a price, and is
 worth paying only on the right nights.</p>
 </div></section>
 
@@ -238,8 +238,8 @@ python3 research/hedge_study.py         <span class="dim"># the hedge measuremen
 python3 research/gate1_calendar.py      <span class="dim"># why the calendar is the selector</span>
 python3 research/replay.py              <span class="dim"># the policy, replayed over history</span></pre>
 <ul class="bul">
-<li><strong>No look-ahead is possible</strong> — every selector sees strictly prior data, and a sentinel test fails if a future night ever moves a past decision.</li>
-<li><strong>Defects are published, not patched over</strong> — a DST bug, a look-ahead contamination and an hour-snapping bug are all written up.</li>
+<li><strong>No look-ahead is possible</strong> - every selector sees strictly prior data, and a sentinel test fails if a future night ever moves a past decision.</li>
+<li><strong>Defects are published, not patched over</strong> - a DST bug, a look-ahead contamination and an hour-snapping bug are all written up.</li>
 <li><strong>Paper trading only.</strong> No live fill is claimed anywhere.</li>
 </ul>
 <div class="row" style="justify-content:center;margin-top:34px">
@@ -250,9 +250,9 @@ python3 research/replay.py              <span class="dim"># the policy, replayed
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(page(
-        "Ballast — overnight risk transfer for tokenized US stocks",
+        "Ballast - overnight risk transfer for tokenized US stocks",
         "Hold tokenized US stocks through the night without holding the night's risk.",
-        "Overview", body, f"{now:%Y-%m-%d %H:%M}"))
+        "Overview", body))
     return OUT
 
 

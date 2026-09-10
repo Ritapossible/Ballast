@@ -99,10 +99,10 @@ def run(session: str | None = None) -> dict:
 
 def brief(result: dict) -> str:
     if not result.get("sessions"):
-        return "Nothing to settle — no overnight window has closed since the last run."
+        return "Nothing to settle - no overnight window has closed since the last run."
     lines = []
     for sess, s in result["sessions"].items():
-        lines.append(f"\n  {sess} — {s['decisions']} decisions, {s['hedged']} hedged, "
+        lines.append(f"\n  {sess} - {s['decisions']} decisions, {s['hedged']} hedged, "
                      f"{s['correct']}/{s['decisions']} correct")
         lines.append(f"  {'ticker':8s} {'action':10s} {'unhedged':>10s} {'realised':>10s} "
                      f"{'value':>8s}  verdict")

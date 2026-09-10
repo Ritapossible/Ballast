@@ -97,3 +97,24 @@ class TestDecisions(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestOutputTypography(unittest.TestCase):
+    """Rationales render verbatim in the public UI, so they follow its conventions.
+
+    They are also signed into the ledger, which means a wording change reaches the
+    site only through new decisions - past entries keep the text they were signed
+    with, and that is the tamper-evidence working, not a bug to paper over.
+    """
+
+    def test_no_em_dashes_in_rationales(self):
+        for risk in (CALM_RISK, EARNINGS):
+            for cfg in (CFG, VOL_CFG):
+                d = decide("X", "RXUSDT", volatile(), risk, 17.5, cfg)
+                self.assertNotIn("—", d.rationale)
+
+    def test_no_em_dashes_in_model_led_rationales(self):
+        for judgment in ("HEDGE", "NO_HEDGE"):
+            d = decide("X", "RXUSDT", volatile(), EARNINGS, 17.5, CFG,
+                       model_judgment=judgment)
+            self.assertNotIn("—", d.rationale)

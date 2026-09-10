@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ballast — overnight risk transfer for tokenized US stocks</title><meta name="description" content="Hold tokenized US stocks through the night without holding the night's risk."><style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ballast - overnight risk transfer for tokenized US stocks</title><meta name="description" content="Hold tokenized US stocks through the night without holding the night's risk."><style>
 :root{
   --bg:#070708; --surface:#101012; --raised:#16161a; --line:#242429;
   --fg:#fafafa; --mid:#a6a6ad; --dim:#6c6c75;
@@ -168,7 +168,7 @@ footer a{color:var(--mid)}
 <div class="wrap center">
 <h1>Hold the position.<br>Not the night's risk.</h1>
 <p class="lede">Tokenized US stocks trade around the clock. The market that prices
-them is shut for <span class="hl">81% of the week</span> — through earnings, through
+them is shut for <span class="hl">81% of the week</span> - through earnings, through
 the Fed, through weekends. Ballast keeps the position and switches the night off for
 about <span class="hl">11 basis points</span>.</p>
 <div class="row">
@@ -189,7 +189,7 @@ about <span class="hl">11 basis points</span>.</p>
 <p class="eyebrow">The exposure</p>
 <h2>Every night, unhedged,<br>by default.</h2>
 <p class="lede">A matched stock perp trades the same clock as the token and moves with
-it almost exactly. Shorting it overnight removes nearly all of the move — and costs
+it almost exactly. Shorting it overnight removes nearly all of the move - and costs
 less than selling the position and buying it back.</p>
 <div class="tiles">
 <div class="tile"><div class="n">98.0%</div><div class="l">median variance removed</div></div>
@@ -199,7 +199,7 @@ less than selling the position and buying it back.</p>
 <div class="tile"><div class="n">20 bp</div><div class="l">cost to exit instead</div></div>
 </div>
 <div class="narrow"><ul class="bul">
-<li>The hedge is <strong>strongest exactly when it matters</strong> — R² reaches 0.999 on the largest moves, and is loosest on quiet nights where little is at stake.</li>
+<li>The hedge is <strong>strongest exactly when it matters</strong> - R² reaches 0.999 on the largest moves, and is loosest on quiet nights where little is at stake.</li>
 <li>Worst nights measured: MSFT <strong>1,128 bp → 233 bp</strong>, AMD <strong>1,262 bp → 90 bp</strong>.</li>
 <li><strong>219 of 699</strong> listed rTokens have a perp leg. Ballast says plainly which positions it cannot protect.</li>
 </ul></div>
@@ -210,7 +210,7 @@ less than selling the position and buying it back.</p>
 <p class="eyebrow">Live from the desk</p>
 <h2>Tonight's decisions.</h2>
 <p class="lede">One call per position, taken before the window opens and written to a
-signed ledger. Refusals are recorded as carefully as hedges — a night Ballast
+signed ledger. Refusals are recorded as carefully as hedges - a night Ballast
 declined is a decision it will be graded on.</p>
 <p class="note">Session <strong>2026-09-09</strong> · window
 17.5 hours · event reader
@@ -222,13 +222,13 @@ declined is a decision it will be graded on.</p>
 <div class="wrap center">
 <p class="eyebrow">Graded against reality</p>
 <h2>Every call has an<br>exact counterfactual.</h2>
-<p class="lede">What the position would have done unhedged is not modelled — it is
+<p class="lede">What the position would have done unhedged is not modelled - it is
 <span class="hl">observed</span>, on the same window. Every decision, right or wrong,
 settles at the next opening bell, so nothing can be quietly forgotten.</p>
 <div class="tiles">
 <div class="tile"><div class="n">0</div><div class="l">decisions settled</div></div>
-<div class="tile"><div class="n">—</div><div class="l">hedges that cut the move</div></div>
-<div class="tile"><div class="n">—</div><div class="l">worst night seen</div></div>
+<div class="tile"><div class="n">-</div><div class="l">hedges that cut the move</div></div>
+<div class="tile"><div class="n">-</div><div class="l">worst night seen</div></div>
 <div class="tile"><div class="n">2</div><div class="l">hedged tonight</div></div>
 </div>
 <div class="scroll"><div class="empty">Nothing settled yet. Every decision is graded at the next primary open, against the exact counterfactual.</div></div>
@@ -244,7 +244,7 @@ opposite in sign to, and bounded in size by, a position already held. The enforc
 holds the only write-scoped key, sees no model reasoning, and does arithmetic against
 a signed mandate. Eighteen red-team tests drive hostile intents at it.</p></div>
 <div class="card"><h3>The model is fenced, not trusted</h3><p>Qwen owns the hedge
-judgment. Three gates stand between it and an order — schema, ticker identity, and a
+judgment. Three gates stand between it and an order - schema, ticker identity, and a
 grounding check that the quoted headline actually appears in the supplied sources. A
 fabricated source cannot reach the book.</p></div>
 <div class="card"><h3>The record cannot be edited</h3><p>The ledger is hash-chained
@@ -252,10 +252,10 @@ and signed; mutation, deletion or reordering breaks verification. A scheduled jo
 commits it, so each decision is timestamped before its outcome is known.</p></div>
 </div>
 <div class="scroll"><table><thead><tr><th>Claim</th><th>Status</th><th>Basis</th>
-</tr></thead><tbody><tr><td>A matched perp removes a median 98.0% of overnight variance, β within 4% of 1.00</td><td><span class="tag ">observed</span></td><td class="dim">12 names, 100–260 nights each</td></tr><tr><td>The hedge strengthens under stress — R² 0.978–0.999 on top-decile nights</td><td><span class="tag ">observed</span></td><td class="dim">conditional regression</td></tr><tr><td>Median 88% cut in p95 tail; MSFT&#x27;s worst night 1,128 bp → 233 bp</td><td><span class="tag ">observed</span></td><td class="dim">same sample</td></tr><tr><td>Earnings nights carry 3.2× the variance and are not reliably compensated</td><td><span class="tag ">observed</span></td><td class="dim">15 names; 0 of 15 significant at |t|≥2</td></tr><tr><td>Trailing volatility cannot select risky nights — 1.41× separation</td><td><span class="tag ">observed</span></td><td class="dim">which is why the reader exists</td></tr><tr><td>Signed, tamper-evident decision ledger</td><td><span class="tag on">proven</span></td><td class="dim"></td></tr><tr><td>The enforcer refuses every directional intent</td><td><span class="tag on">proven</span></td><td class="dim">18 red-team tests</td></tr><tr><td>Improves risk-adjusted return</td><td><span class="tag ">not claimed</span></td><td class="dim">priced protection, not alpha</td></tr><tr><td>Any live fill</td><td><span class="tag ">not claimed</span></td><td class="dim">paper only</td></tr></tbody></table></div>
+</tr></thead><tbody><tr><td>A matched perp removes a median 98.0% of overnight variance, β within 4% of 1.00</td><td><span class="tag ">observed</span></td><td class="dim">12 names, 100–260 nights each</td></tr><tr><td>The hedge strengthens under stress - R² 0.978–0.999 on top-decile nights</td><td><span class="tag ">observed</span></td><td class="dim">conditional regression</td></tr><tr><td>Median 88% cut in p95 tail; MSFT&#x27;s worst night 1,128 bp → 233 bp</td><td><span class="tag ">observed</span></td><td class="dim">same sample</td></tr><tr><td>Earnings nights carry 3.2× the variance and are not reliably compensated</td><td><span class="tag ">observed</span></td><td class="dim">15 names; 0 of 15 significant at |t|≥2</td></tr><tr><td>Trailing volatility cannot select risky nights - 1.41× separation</td><td><span class="tag ">observed</span></td><td class="dim">which is why the reader exists</td></tr><tr><td>Signed, tamper-evident decision ledger</td><td><span class="tag on">proven</span></td><td class="dim"></td></tr><tr><td>The enforcer refuses every directional intent</td><td><span class="tag on">proven</span></td><td class="dim">18 red-team tests</td></tr><tr><td>Improves risk-adjusted return</td><td><span class="tag ">not claimed</span></td><td class="dim">priced protection, not alpha</td></tr><tr><td>Any live fill</td><td><span class="tag ">not claimed</span></td><td class="dim">paper only</td></tr></tbody></table></div>
 <p class="note" style="margin-top:24px">Ballast is <strong>priced protection, not
 alpha</strong>. It makes no Sharpe claim: the nights it hedges carry real variance and
-no reliable expected return, so removing them is insurance — which has a price, and is
+no reliable expected return, so removing them is insurance - which has a price, and is
 worth paying only on the right nights.</p>
 </div></section>
 
@@ -272,12 +272,12 @@ python3 research/hedge_study.py         <span class="dim"># the hedge measuremen
 python3 research/gate1_calendar.py      <span class="dim"># why the calendar is the selector</span>
 python3 research/replay.py              <span class="dim"># the policy, replayed over history</span></pre>
 <ul class="bul">
-<li><strong>No look-ahead is possible</strong> — every selector sees strictly prior data, and a sentinel test fails if a future night ever moves a past decision.</li>
-<li><strong>Defects are published, not patched over</strong> — a DST bug, a look-ahead contamination and an hour-snapping bug are all written up.</li>
+<li><strong>No look-ahead is possible</strong> - every selector sees strictly prior data, and a sentinel test fails if a future night ever moves a past decision.</li>
+<li><strong>Defects are published, not patched over</strong> - a DST bug, a look-ahead contamination and an hour-snapping bug are all written up.</li>
 <li><strong>Paper trading only.</strong> No live fill is claimed anywhere.</li>
 </ul>
 <div class="row" style="justify-content:center;margin-top:34px">
 <a class="btn btn-s" href="docs.html">Full documentation</a>
 </div>
 </div>
-</div></section></main><footer><div class="wrap">Ballast — overnight risk transfer for tokenized US stocks.<br>Generated 2026-09-10 10:38 UTC · <a href="https://github.com/Ritapossible/Ballast">source</a> · paper trading only, not financial advice.</div></footer></body></html>
+</div></section></main><footer><div class="wrap">Ballast - overnight risk transfer for tokenized US stocks.<br><a href="https://github.com/Ritapossible/Ballast">source</a> · paper trading only, not financial advice.</div></footer></body></html>

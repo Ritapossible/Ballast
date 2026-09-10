@@ -62,7 +62,7 @@ class PolicyConfig:
     hedge_cost_bp: float = 11.3        # perp taker round trip, net of funding received
     vol_window: int = 20               # trailing nights
     min_history: int = 30              # need a distribution, not just a window
-    vol_gate_enabled: bool = False     # see below — measured OFF, deliberately
+    vol_gate_enabled: bool = False     # see below - measured OFF, deliberately
     vol_percentile: float = 0.95       # if re-enabled, only a name's own extreme tail
     sigma_floor_bp: float = 60.0       # ...and never below this absolute level
 
@@ -165,7 +165,7 @@ def decide(ticker: str, spot_symbol: str, history: list[float], risk: NightRisk,
         return Decision(
             ticker=ticker, spot_symbol=spot_symbol, action=Action.HEDGE,
             sigma_bp=sigma or 0.0, cost_bp=cfg.hedge_cost_bp, risk=risk,
-            rationale=(f"event reader judged HEDGE — {risk.event_type.value} "
+            rationale=(f"event reader judged HEDGE - {risk.event_type.value} "
                        f"({risk.expected_impact.value} impact, "
                        f"confidence {risk.confidence:.0%})"),
             window_hours=window_hours,
@@ -175,7 +175,7 @@ def decide(ticker: str, spot_symbol: str, history: list[float], risk: NightRisk,
         return Decision(
             ticker=ticker, spot_symbol=spot_symbol, action=Action.NO_HEDGE,
             sigma_bp=sigma or 0.0, cost_bp=cfg.hedge_cost_bp, risk=risk,
-            rationale="event reader judged NO_HEDGE — nothing tonight can move this name",
+            rationale="event reader judged NO_HEDGE - nothing tonight can move this name",
             window_hours=window_hours,
             inputs={"decided_by": "model", "history_nights": len(history)},
         )
@@ -185,10 +185,10 @@ def decide(ticker: str, spot_symbol: str, history: list[float], risk: NightRisk,
     if risk.is_scheduled_event and risk.expected_impact in (Impact.MEDIUM, Impact.HIGH):
         action = Action.HEDGE
         rationale = (f"scheduled {risk.event_type.value} tonight "
-                     f"({risk.expected_impact.value} impact) — calendar selector")
+                     f"({risk.expected_impact.value} impact) - calendar selector")
     elif not cfg.vol_gate_enabled:
         action = Action.NO_HEDGE
-        rationale = (f"nothing scheduled tonight — 1-sigma {sigma or 0:.0f}bp is not a "
+        rationale = (f"nothing scheduled tonight - 1-sigma {sigma or 0:.0f}bp is not a "
                      f"reason to spend {cfg.hedge_cost_bp}bp (Gate 1a: vol separates "
                      f"only 1.41x and its nights are compensated)")
     elif sigma is None or pct is None:
@@ -198,11 +198,11 @@ def decide(ticker: str, spot_symbol: str, history: list[float], risk: NightRisk,
     elif pct >= cfg.vol_percentile and sigma >= cfg.sigma_floor_bp:
         action = Action.HEDGE
         rationale = (f"1-sigma {sigma:.0f}bp is in this name's own top "
-                     f"{100 * (1 - cfg.vol_percentile):.0f}% (p{100 * pct:.0f}) — "
+                     f"{100 * (1 - cfg.vol_percentile):.0f}% (p{100 * pct:.0f}) - "
                      f"unusually risky night")
     elif sigma < cfg.sigma_floor_bp:
         action = Action.NO_HEDGE
-        rationale = (f"1-sigma {sigma:.0f}bp below the {cfg.sigma_floor_bp:.0f}bp floor — "
+        rationale = (f"1-sigma {sigma:.0f}bp below the {cfg.sigma_floor_bp:.0f}bp floor - "
                      f"not worth {cfg.hedge_cost_bp}bp")
     else:
         action = Action.NO_HEDGE
