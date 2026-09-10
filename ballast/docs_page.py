@@ -197,6 +197,17 @@ of sample were EST. Fixed; both transitions are pinned by test.</li>
 <em>realised</em> move. Fixed; the invalid version survives behind a flag to document it.</li>
 <li><strong>Hour-snapping</strong> - the 09:30 ET open does not fall on an hourly bar
 boundary, so price lookups silently missed. Fixed.</li>
+<li><strong>A holiday counted as a trading day</strong> - the function that picks the
+session to trade tested only for a weekday, while the rest of the calendar excludes
+holidays. On Thanksgiving it returned Thanksgiving: a session the exchange never opened,
+against a window that never existed. Fixed and moved beside the calendar it has to agree
+with.</li>
+<li><strong>Settlement never ran unattended</strong> - the market cache directory is
+excluded from the repository, so on a fresh runner its parent did not exist and the
+create call raised. It could not fail locally, and the tests mock the market client, so
+every scheduled settlement failed silently from the day the loop was automated. Fixed;
+the client now has its own tests, and the pages state how many sessions behind they
+are so the next silent stoppage is visible here.</li>
 <li><strong>Broken metrics, twice</strong> - an early "decision accuracy" compared move
 against cost on every night, scoring nearly every unhedged night as an error. Its
 replacement, signed value added, is the right number, but it was still rendered as a

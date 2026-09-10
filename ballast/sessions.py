@@ -36,6 +36,30 @@ def open_utc(session: dt.date) -> dt.datetime:
     return _ny(session, MARKET_OPEN).astimezone(UTC)
 
 
+MAX_SESSION_LOOKBACK_DAYS = 14
+
+
+def current_session(now: dt.datetime) -> dt.date:
+    """The most recent session whose close has already passed.
+
+    This picks the day the whole loop then trades and grades, so it has to agree
+    with the rest of the calendar. It tested `weekday() <= 4` while every other
+    function here uses is_trading_day, so on Thanksgiving it returned Thanksgiving:
+    a session the exchange never opened, priced against a window that never existed.
+    next_session had skipped that same holiday correctly, so the two disagreed.
+
+    Bounded: an unbounded backward walk would spin forever on a clock or calendar
+    fault rather than failing where it can be seen.
+    """
+    day = now.date()
+    for _ in range(MAX_SESSION_LOOKBACK_DAYS):
+        if is_trading_day(day) and now >= close_utc(day):
+            return day
+        day -= dt.timedelta(days=1)
+    raise RuntimeError(
+        f"no closed session found within {MAX_SESSION_LOOKBACK_DAYS} days of {now}")
+
+
 def next_session(session: dt.date) -> dt.date:
     """The next day the exchange is actually open.
 

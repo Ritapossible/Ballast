@@ -8,7 +8,9 @@ from __future__ import annotations
 import datetime as dt
 import unittest
 
-from ballast.sessions import close_utc, next_session, open_utc, window_hours
+from ballast import sessions
+from ballast.sessions import (close_utc, current_session, next_session, open_utc,
+                              window_hours)
 
 
 class TestDaylightSaving(unittest.TestCase):
@@ -50,3 +52,39 @@ class TestWindows(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CurrentSessionCase(unittest.TestCase):
+    """current_session picks the day the whole loop trades and grades.
+
+    It tested weekday() <= 4 while every other function in the module uses
+    is_trading_day, so a holiday came back as a tradeable session - a session the
+    exchange never opened, priced against a window that never existed.
+    """
+
+    def _at(self, day: dt.date, hour: int = 23) -> dt.date:
+        return sessions.current_session(
+            dt.datetime.combine(day, dt.time(hour), tzinfo=dt.timezone.utc))
+
+    def test_a_holiday_is_never_returned_as_a_session(self):
+        for holiday, expected in (
+            (dt.date(2026, 11, 26), dt.date(2026, 11, 25)),   # Thanksgiving -> Wednesday
+            (dt.date(2026, 12, 25), dt.date(2026, 12, 24)),   # Christmas -> Thursday
+            (dt.date(2026, 9, 7), dt.date(2026, 9, 4)),       # Labor Day -> Friday
+        ):
+            with self.subTest(holiday=holiday):
+                self.assertEqual(self._at(holiday), expected)
+
+    def test_it_agrees_with_next_session_across_a_holiday(self):
+        """The two disagreed: next_session skipped the holiday, current_session did not."""
+        wednesday = dt.date(2026, 11, 25)
+        self.assertEqual(sessions.next_session(wednesday), dt.date(2026, 11, 27))
+        self.assertEqual(self._at(dt.date(2026, 11, 26)), wednesday)
+
+    def test_before_the_close_the_session_is_the_previous_day(self):
+        thursday = dt.date(2026, 9, 10)
+        self.assertEqual(self._at(thursday, hour=19), dt.date(2026, 9, 9))   # 20:00Z close
+        self.assertEqual(self._at(thursday, hour=21), thursday)
+
+    def test_a_weekend_falls_back_to_friday(self):
+        self.assertEqual(self._at(dt.date(2026, 9, 12)), dt.date(2026, 9, 11))

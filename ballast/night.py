@@ -26,7 +26,8 @@ from .overnight import overnight_returns
 from .news import fetch, in_window
 from .policy import Action, EventType, Impact, NightRisk, decide
 from .reader import read
-from .sessions import UTC, close_utc, next_session, open_utc, window_hours
+from .sessions import (UTC, close_utc, current_session, next_session, open_utc,
+                       window_hours)
 
 # The nightly run needs recent history for the sigma it reports, not the full
 # two-year series the research scripts page down. 100 sessions is ample and keeps
@@ -39,24 +40,6 @@ MAX_HEDGE_RATIO = 1.0
 # decorative. The night's budget is now the book itself plus a small tolerance for
 # marks moving between valuation and execution, so the cap is a real constraint.
 NOTIONAL_HEADROOM = 1.05
-
-
-MAX_SESSION_LOOKBACK_DAYS = 14
-
-
-def current_session(now: dt.datetime) -> dt.date:
-    """The most recent weekday session whose close has already passed.
-
-    Bounded: an unbounded backward walk would spin forever on a clock or calendar
-    fault rather than failing where it can be seen.
-    """
-    day = now.date()
-    for _ in range(MAX_SESSION_LOOKBACK_DAYS):
-        if day.weekday() <= 4 and now >= close_utc(day):
-            return day
-        day -= dt.timedelta(days=1)
-    raise RuntimeError(
-        f"no closed session found within {MAX_SESSION_LOOKBACK_DAYS} days of {now}")
 
 
 def calendar_risk(ticker: str, session: dt.date) -> tuple[NightRisk, bool]:

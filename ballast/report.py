@@ -12,12 +12,14 @@ Every page is self-contained: no CDN, no web fonts, no scripts, nothing that can
 """
 from __future__ import annotations
 
+import datetime as dt
 import html
 from pathlib import Path
 
 from . import config
 from .facts import load as load_facts
 from .ledger import Ledger, LedgerError
+from .sessions import UTC, current_session, sessions_between
 from .theme import REPO, page
 
 OUT_DIR = config.ROOT / "docs"
@@ -107,7 +109,8 @@ def claims(f: dict) -> list[tuple[str, str, str | None]]:
 class Site:
     """Everything the pages need, read from the ledger once."""
 
-    def __init__(self):
+    def __init__(self, now: dt.datetime | None = None):
+        now = now or dt.datetime.now(UTC)      # injectable, so staleness is testable
         self.f = load_facts()
         # Rendering is a read. It must not require the signing key - anyone should
         # be able to clone and rebuild the site - but it must never imply the
@@ -148,6 +151,22 @@ class Site:
         self.mean_va = (sum(r.get("value_added_bp", 0) for r in self.rows) / len(self.rows)
                         if self.rows else 0)
 
+        # A scheduled run that stops running leaves the site showing its last good
+        # night, which reads exactly like a working site. Settlement had in fact
+        # been failing on every run since the loop was automated and the pages said
+        # nothing. So the page states how far behind the ledger is, and a silent
+        # failure becomes visible on the artifact itself.
+        self.behind = 0
+        try:
+            shown = dt.date.fromisoformat(self.session)
+            elapsed = list(sessions_between(shown, current_session(now)))
+            self.behind = max(0, len(elapsed) - 1)
+        except (ValueError, RuntimeError):
+            self.behind = 0                    # no session yet, or a calendar fault
+        self.freshness = ("" if not self.behind else
+                          f" · <strong>{self.behind} session{'s' if self.behind > 1 else ''} "
+                          f"behind</strong> - the scheduled run has not reported")
+
     # -- pages ---------------------------------------------------------------
 
     def index(self) -> str:
@@ -171,7 +190,7 @@ about <span class="hl">{self.f['hedge_cost_bp']:.0f} basis points</span>.</p>
 </div>
 <div class="term">
 <div class="term-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>
-<span>ballast / session {_e(self.session)}</span>
+<span>ballast / session {_e(self.session)}{" / STALE" if self.behind else ""}</span>
 <span class="live"><span class="pulse"></span>{"BROKEN" if self.broken else "LEDGER OK"}</span></div>
 <div class="term-b">{term}</div>
 </div>
@@ -224,7 +243,7 @@ signed ledger. Refusals are recorded as carefully as hedges - a night Ballast
 declined is a decision it will be graded on.</p>
 <p class="note">Session <strong>{_e(self.session)}</strong> · window
 {self.latest.get('window_hours', 0)} hours · event reader
-<strong>{_e(self.latest.get('reader', 'unknown'))}</strong> · {_e(self.chain)}</p>
+<strong>{_e(self.latest.get('reader', 'unknown'))}</strong> · {_e(self.chain)}{self.freshness}</p>
 </div></section>
 
 <section><div class="wrap">

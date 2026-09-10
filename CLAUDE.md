@@ -189,6 +189,13 @@ datacenter IPs** and are not usable here.
     move (symmetric, settled by one night); refusals are graded across the run, on the mean.
     Every row still shows its own signed arithmetic.
 
+12. **Session selection goes through `sessions.py`, and every calendar test is
+    `is_trading_day`, never `weekday() <= 4`.** The two disagreed and a holiday came back
+    as a tradeable session.
+13. **A stalled loop must be visible on the site.** The pages state how many sessions
+    behind the ledger is. A site showing its last good night looks identical to a working
+    one, which is how a broken settlement went unnoticed for a day.
+
 ## 7b. Operations
 
 - `.github/workflows/nightly.yml` — decides at 21:00 UTC, settles at 14:30 UTC, Mon–Fri.

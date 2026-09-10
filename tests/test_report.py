@@ -5,6 +5,7 @@ accessible demo a required material.
 """
 from __future__ import annotations
 
+import datetime as dt
 import os
 import tempfile
 import unittest
@@ -88,6 +89,38 @@ class TestPages(unittest.TestCase):
     def test_no_em_dashes_in_page_templates(self):
         for name, html in build_site([]).items():
             self.assertNotIn("—", html, f"{name} contains an em dash")
+
+
+class StalenessCase(unittest.TestCase):
+    """A stopped scheduler leaves the last good night on the page, which reads as
+    a working site. Settlement had been failing on every run and the pages said
+    nothing, so the page now states how far behind the ledger is."""
+
+    def _site(self, session: str, now: dt.datetime):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "ledger.jsonl"
+            lg = Ledger(path, config.DEV_SECRET)
+            lg.append("night_summary", {"session": session, "positions": 1,
+                                        "hedged": 0, "window_hours": 17.5})
+            with mock.patch.object(config, "LEDGER_PATH", path), \
+                 mock.patch.object(config, "secret", return_value=config.DEV_SECRET):
+                return report.Site(now=now)
+
+    def test_the_current_session_is_not_flagged(self):
+        # 2026-09-10 21:00Z is after that day's 20:00Z close.
+        site = self._site("2026-09-10", dt.datetime(2026, 9, 10, 21, tzinfo=dt.timezone.utc))
+        self.assertEqual(site.behind, 0)
+        self.assertEqual(site.freshness, "")
+
+    def test_a_missed_run_is_stated_on_the_page(self):
+        site = self._site("2026-09-08", dt.datetime(2026, 9, 10, 21, tzinfo=dt.timezone.utc))
+        self.assertEqual(site.behind, 2)            # 09-09 and 09-10 both missed
+        self.assertIn("2 sessions behind", site.freshness)
+
+    def test_holidays_do_not_count_as_missed_sessions(self):
+        """Labor Day 2026 is 09-07. Friday 09-04 to Tuesday 09-08 is one session."""
+        site = self._site("2026-09-04", dt.datetime(2026, 9, 8, 21, tzinfo=dt.timezone.utc))
+        self.assertEqual(site.behind, 1)
 
 
 class DevKeyBuildGuard(unittest.TestCase):
