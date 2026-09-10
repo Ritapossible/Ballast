@@ -183,6 +183,9 @@ order field names; US exchange holidays in the session calendar.
 3b. **A holiday counted as a trading day** - the function picking the session to trade tested
    only for a weekday while the rest of the calendar excludes holidays, so Thanksgiving came
    back as a tradeable session. Fixed.
+3e. **The night could be decided twice** - settlement was made idempotent in the audit, the
+   decide half was not. A repeat run doubled the decisions, the notional against one book,
+   and the settlement grades. Now a no-op.
 3d. **A session decided after its own window** - a run taken while testing re-decided the
    2026-09-09 session 16.8 hours after its close, 45 minutes before the reopen, while
    settlement still graded it close-to-open. The entry stays in the chain and now discloses

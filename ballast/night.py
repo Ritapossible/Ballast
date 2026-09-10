@@ -126,6 +126,21 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
                       "signing key rotated; the previous chain used the public "
                       "development key and was therefore never verifiable")
 
+    # Deciding a session twice appends a second full set of decisions, a second
+    # mandate's worth of notional against the same book, and makes settlement grade
+    # every position twice. The workflow's concurrency group stops two runs at once
+    # but not one after another - and a manual run followed by a cron GitHub delayed
+    # by hours is exactly that. A no-op rather than an error, so the late run is not
+    # reported as a failure for correctly declining to duplicate work.
+    decided = {e["body"].get("session") for e in ledger.records("night_summary")}
+    if session.isoformat() in decided and not force:
+        return {"session": session.isoformat(), "positions": 0, "hedged": 0,
+                "declined": 0, "errors": 0, "window_hours": round(total_hours, 1),
+                "decided_after_close_hours": round(lag_hours, 2),
+                "window_elapsed_at_decision": round(elapsed, 3), "forced": False,
+                "usage": {}, "dry_run": dry_run, "reader": "not run",
+                "note": "already decided; nothing appended"}
+
     spot_marks, histories, perp_marks, unreachable = {}, {}, {}, {}
     for pos in book:
         # One flaky symbol used to abort the whole run, leaving decisions in the

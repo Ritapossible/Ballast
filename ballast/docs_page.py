@@ -202,6 +202,14 @@ session to trade tested only for a weekday, while the rest of the calendar exclu
 holidays. On Thanksgiving it returned Thanksgiving: a session the exchange never opened,
 against a window that never existed. Fixed and moved beside the calendar it has to agree
 with.</li>
+<li><strong>The night could be decided twice</strong> - settlement had been made
+idempotent during the audit, but the decide half had not. A second run for the same
+session appended a second full set of decisions, committed a second mandate's worth of
+notional against one book, and made settlement grade every position twice. The workflow
+serialises simultaneous runs but not sequential ones, so a manual run followed by a cron
+GitHub delayed by hours was enough. A repeat is now a no-op rather than an error, so a
+late scheduled run is not reported as a failure for correctly declining to duplicate
+work.</li>
 <li><strong>A session decided after its own window</strong> - a manual run taken while
 testing re-decided the 2026-09-09 session at 12:45 the following day: 16.8 hours after
 the close, 45 minutes before the market reopened. Settlement grades close-to-open, so it

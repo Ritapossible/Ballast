@@ -182,6 +182,35 @@ class TestDecisionTiming(LivePathCase):
         self.assertGreater(summary["window_elapsed_at_decision"], 0.9)
 
 
+class TestNightIsIdempotent(LivePathCase):
+    """A second run for the same session would double the decisions, double the
+    notional committed against one book, and make settlement grade every position
+    twice. The workflow serialises concurrent runs but not sequential ones, and a
+    manual run followed by a cron GitHub delayed by hours is exactly that."""
+
+    def test_a_second_run_appends_nothing(self):
+        first = self.run_night()
+        before = len(self.ledger().records("decision"))
+        second = self.run_night(at=NOW + dt.timedelta(hours=2))
+        self.assertEqual(second["hedged"], 0)
+        self.assertEqual(second["positions"], 0)
+        self.assertIn("already decided", second["note"])
+        self.assertEqual(len(self.ledger().records("decision")), before)
+        self.assertEqual(len(self.ledger().records("night_summary")), 1)
+        self.assertGreater(first["positions"], 0)
+
+    def test_the_chain_still_verifies_after_a_repeat(self):
+        self.run_night()
+        self.run_night(at=NOW + dt.timedelta(hours=2))
+        self.ledger().verify()
+
+    def test_force_still_allows_a_deliberate_rerun(self):
+        self.run_night()
+        second = self.run_night(at=NOW + dt.timedelta(hours=2), force=True)
+        self.assertGreater(second["positions"], 0)
+        self.assertEqual(len(self.ledger().records("night_summary")), 2)
+
+
 class TestMorningSettlement(LivePathCase):
     def test_value_added_is_the_signed_difference_against_the_other_choice(self):
         """The old metric compared |move| to the cost and marked every refusal wrong."""
