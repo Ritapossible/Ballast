@@ -141,7 +141,7 @@ night that rose or stayed flat. Scoring on the size of the move alone would say 
 hedge", which is the policy the research rejected. *Tail coverage* is the share of the worst
 1%/5%/10% of position-nights that were hedged.
 
-### The honest limitation
+### The open question
 
 **Tail coverage is the open problem**: 2 of the worst 6 position-nights, 6 of the worst 33.
 The mechanism fires accurately and costs almost nothing; its *reach* is incomplete because
@@ -198,7 +198,7 @@ market API (spot + USDT-futures), Nasdaq earnings calendar, Google News RSS, Qwe
 | | |
 |---|---|
 | **Live demo** | https://ballast-v1.vercel.app |
-| **Documentation** | https://ballast-v1.vercel.app/docs - 16 sections incl. limitations and defects |
+| **Documentation** | https://ballast-v1.vercel.app/docs - 17 sections incl. the defects found and the roadmap |
 | **Source** | https://github.com/Ritapossible/Ballast |
 | **Paper trading log** | `state/ledger.jsonl` - hash-chained, signed, committed by the scheduled job |
 | **Bitget-schema log** | `state/bitget_orders.json` - the same fills in UTA order field names |

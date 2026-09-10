@@ -170,6 +170,9 @@ code{{font-family:var(--mono);font-size:.9em;background:var(--surface);
 .toc .h:first-child{{margin-top:0}}
 .prose h2{{font-size:26px;margin:56px 0 14px;scroll-margin-top:130px}}
 .prose h2:first-child{{margin-top:0}}
+.prose h4{{font-size:16.5px;font-weight:650;color:var(--fg);margin:32px 0 10px;
+  letter-spacing:-.01em;scroll-margin-top:130px}}
+.prose h4 + p,.prose h4 + ul{{margin-top:0}}
 .prose p,.prose li{{color:var(--mid);font-size:15.5px}}
 .prose strong{{color:var(--fg);font-weight:620}}
 .prose ul{{padding-left:20px}}

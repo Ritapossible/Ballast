@@ -155,6 +155,9 @@ code{font-family:var(--mono);font-size:.9em;background:var(--surface);
 .toc .h:first-child{margin-top:0}
 .prose h2{font-size:26px;margin:56px 0 14px;scroll-margin-top:130px}
 .prose h2:first-child{margin-top:0}
+.prose h4{font-size:16.5px;font-weight:650;color:var(--fg);margin:32px 0 10px;
+  letter-spacing:-.01em;scroll-margin-top:130px}
+.prose h4 + p,.prose h4 + ul{margin-top:0}
 .prose p,.prose li{color:var(--mid);font-size:15.5px}
 .prose strong{color:var(--fg);font-weight:620}
 .prose ul{padding-left:20px}
@@ -207,7 +210,7 @@ footer a{color:var(--mid)}
 authority starts and stops - and what is deliberately not claimed.</p>
 </div></section>
 <div class="wrap"><div class="docs">
-<aside class="toc"><div class="h">Start</div><a href="#what">What Ballast is</a><a href="#problem">The problem</a><a href="#who">Who it is for</a><div class="h">Mechanism</div><a href="#hedge">The hedge</a><a href="#selector">Choosing the night</a><a href="#policy">The decision policy</a><div class="h">System</div><a href="#architecture">Architecture</a><a href="#authority">Bounded authority</a><a href="#ledger">The ledger</a><a href="#settlement">Settlement</a><div class="h">Evidence</div><a href="#research">Research findings</a><a href="#defects">Defects found</a><a href="#limits">Limitations</a><a href="#verify">Reproduce it</a><div class="h">Reference</div><a href="#cli">CLI</a><a href="#env">Environment</a><a href="#glossary">Glossary</a></aside>
+<aside class="toc"><div class="h">Start</div><a href="#what">What Ballast is</a><a href="#problem">The problem</a><a href="#who">Who it is for</a><div class="h">Mechanism</div><a href="#hedge">The hedge</a><a href="#selector">Choosing the night</a><a href="#policy">The decision policy</a><div class="h">System</div><a href="#architecture">Architecture</a><a href="#authority">Bounded authority</a><a href="#ledger">The ledger</a><a href="#settlement">Settlement</a><div class="h">Evidence</div><a href="#research">Research findings</a><a href="#defects">Defects found</a><a href="#roadmap">Roadmap</a><a href="#verify">Reproduce it</a><div class="h">Reference</div><a href="#cli">CLI</a><a href="#env">Environment</a><a href="#glossary">Glossary</a></aside>
 <article class="prose">
 <h2 id="what">What Ballast is</h2>
 <p>Ballast is an autonomous overnight risk desk for <strong>tokenized US
@@ -381,22 +384,75 @@ boundary, so price lookups silently missed. Fixed.</li>
 against cost on every night, scoring nearly every unhedged night as an error. Replaced.</li>
 </ul>
 
-<h2 id="limits">Limitations</h2>
+<h2 id="roadmap">Roadmap</h2>
+<p>What is still open, why, and what it would take. Ordered by how much it would
+change the product rather than by effort. What is <em>not</em> planned is listed too,
+so an absence reads as a decision rather than an oversight.</p>
+
+<div class="callout"><p>The <a href="#defects">defects</a> above are a different list
+and not a backlog - every item on it is already fixed. It stays published because a
+project that reports only its successes has told you nothing about its error rate.</p></div>
+
+<h4>1 &middot; Does the reader close the tail-coverage gap?</h4>
+<p><strong>The open question the whole thesis rests on.</strong> The calendar selector
+covered 2 of the 6 worst position-nights in replay. Macro shocks, guidance, legal
+rulings and product events drive the rest, and the reader exists to reach them - but
+that has not been measured.</p>
+<p>It cannot be measured retrospectively without look-ahead: judging a past night needs
+the headlines as they stood <em>before</em> the open, and no free source serves a
+point-in-time archive. So it accumulates forward.</p>
 <ul>
-<li><strong>Tail coverage is incomplete.</strong> Scheduled earnings are a minority of
-the worst nights. The reader exists to close that gap and has not yet been measured
-doing so - it cannot be measured retrospectively without look-ahead, so it accumulates
-forward. See the <a href="https://github.com/Ritapossible/Ballast/blob/main/docs/ROADMAP.md">roadmap</a>.</li>
-<li><strong>480 of 704 rTokens have no perp leg</strong> and cannot be protected.</li>
-<li><strong>Paper trading only.</strong> Fills are simulated against observed prices
-with the real fee schedule, taker on both legs, and modelled slippage. The ledger is
-also exported in Bitget UTA order field names for comparison with a live log, but
-<strong>no order is sent to an exchange</strong> and the Agentic Account is not wired.</li>
-<li><strong>Maker fills are never assumed.</strong> All costs default to taker; a 4am
-perp book may not fill a resting order. Maker pricing would be roughly a third of the
-cost, so this is deliberately conservative rather than settled.</li>
-<li><strong>Exchange holidays are modelled</strong> from NYSE rules, including early
-closes - a Good Friday window measures 89.5 hours, not a mislabelled 17.5.</li>
+<li><strong>Needs</strong> roughly 30 sessions of live reader decisions, then the
+tail-coverage cohorts re-run split by who decided.</li>
+<li><strong>Blocked by</strong> wall-clock time. A handful of sessions exist.</li>
+<li><strong>Until then</strong> the site says coverage is incomplete rather than
+implying otherwise.</li>
+</ul>
+
+<h4>2 &middot; Live execution through the Agentic Account</h4>
+<p>Fills are simulated against observed prices with the real fee schedule, and the
+ledger is exported in Bitget UTA order field names so it reads alongside a real log -
+but <strong>no order reaches an exchange</strong>. The executor interface is already the
+seam: a live implementation replaces one class and nothing upstream changes.</p>
+<ul>
+<li><strong>Needs</strong> OAuth credentials for a Bitget Agentic sub-account.</li>
+<li><strong>Blocked by</strong> credentials, which are the operator's to issue.</li>
+<li><strong>Risk if rushed</strong> - an untested live-order path is worse than an
+honest simulated one.</li>
+</ul>
+
+<h4>3 &middot; Position-level reporting</h4>
+<p>The replay measures a twelve-name equal-weight book, which is already diversified, so
+its worst night is a market-wide move that hedging some names barely dents. The target
+user holds one to ten positions. Position-level tail cohorts are computed but not yet
+surfaced. <strong>Nothing blocks this</strong>; it is the next substantive feature.</p>
+
+<h4>4 &middot; The rTokens with no perp leg</h4>
+<p>Two thirds of the listed universe cannot be hedged at all. Ballast reports which, and
+stops there. A correlated proxy with a tradeable leg could cover some of them, with the
+residual basis risk reported honestly - but a proxy hedge is a different product with a
+different error profile, and claiming one without measuring it is exactly what the
+defects list exists to prevent.</p>
+
+<h4>5 &middot; Maker execution</h4>
+<p>Every cost assumes taker on both legs. Maker pricing would be roughly a third of that,
+which materially widens the set of nights worth hedging. It is
+<strong>deliberately not assumed</strong> until the fill rate in a 4am perp book has been
+measured: an unfilled hedge is worse than an expensive one.</p>
+
+<h4>6 &middot; Richer sources for the reader</h4>
+<p>The reader sees news headlines. Earnings calls, filings and the macro calendar are
+richer signals it does not read. The grounding gate already accepts any source, since it
+only checks that a quote appears in what was supplied.</p>
+
+<h4>Not planned</h4>
+<ul>
+<li><strong>Predicting direction.</strong> Earnings nights measured as not reliably
+compensated; the product removes variance and makes no directional claim.</li>
+<li><strong>A volatility-based selector.</strong> Measured at 1.41&times; separation on
+compensated nights. The gate exists in the code and ships disabled; re-enabling it needs
+new evidence, not a hunch.</li>
+<li><strong>Real capital.</strong> Out of scope for this build.</li>
 </ul>
 
 <h2 id="verify">Reproduce it</h2>
