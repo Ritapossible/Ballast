@@ -380,8 +380,13 @@ of sample were EST. Fixed; both transitions are pinned by test.</li>
 <em>realised</em> move. Fixed; the invalid version survives behind a flag to document it.</li>
 <li><strong>Hour-snapping</strong> - the 09:30 ET open does not fall on an hourly bar
 boundary, so price lookups silently missed. Fixed.</li>
-<li><strong>Broken metrics</strong> - an early "decision accuracy" compared move
-against cost on every night, scoring nearly every unhedged night as an error. Replaced.</li>
+<li><strong>Broken metrics, twice</strong> - an early "decision accuracy" compared move
+against cost on every night, scoring nearly every unhedged night as an error. Its
+replacement, signed value added, is the right number, but it was still rendered as a
+per-night correct/wrong on refusals - and a refusal's value added is positive exactly
+when the position rose, which is a directional verdict this system does not make. A
+refusal now carries its arithmetic and no verdict; a hedge is graded on whether it cut
+the move, which is symmetric. Both fixed.</li>
 </ul>
 
 <h2 id="roadmap">Roadmap</h2>
