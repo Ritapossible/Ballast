@@ -114,8 +114,13 @@ def run(session: str | None = None) -> dict:
         graded, ungraded = [], []
         for r in rows:
             perp = r.get("perp_symbol") or _perp_for(r["spot_symbol"])
-            spot_ret = overnight_returns(market_bars(r["spot_symbol"], "spot")).get(day)
-            perp_ret = overnight_returns(market_bars(perp, "mix")).get(day)
+            # use_cache=False, as at night. The cache never expires, so a second
+            # settlement on a machine that had already fetched these symbols would
+            # grade tonight's decision against an older session's bars.
+            spot_ret = overnight_returns(
+                market_bars(r["spot_symbol"], "spot", use_cache=False)).get(day)
+            perp_ret = overnight_returns(
+                market_bars(perp, "mix", use_cache=False)).get(day)
             if spot_ret is None or perp_ret is None:
                 ungraded.append(r["ticker"])           # window not closed, or a data gap
                 continue

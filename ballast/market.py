@@ -104,7 +104,9 @@ def candles(symbol: str, market: str = "spot", granularity: str | None = None,
 
     out = [seen[k] for k in sorted(seen)]
     if use_cache:
-        CACHE.mkdir(exist_ok=True)
+        # parents=True: .cache/ is gitignored, so on a fresh checkout - every
+        # scheduled run - only the leaf's parent was missing and mkdir raised.
+        CACHE.mkdir(parents=True, exist_ok=True)
         cache_file.write_text(json.dumps(out))
     return out
 

@@ -193,6 +193,10 @@ datacenter IPs** and are not usable here.
 - **Repo secrets to set:** `QWEN_API_KEY`, `BALLAST_SECRET`. Without them the run still
   succeeds — the reader abstains and a dev signing key is used — and says so in the output.
 - **Enable GitHub Pages on `/docs`** to give the demo a public URL.
+- **A scheduled run is a fresh checkout.** `.cache/` is gitignored and absent there, and
+  GitHub can delay a cron by hours. Anything the loop touches must work cold, on the
+  first try, with no local state. Mocking a dependency in tests is right, but it means
+  the dependency itself needs its own test.
 - **Never rebuild `docs/` locally.** The site is static: the chain is verified when the
   pages are built and the verdict is a fixed string in the HTML. Only the workflow holds
   `BALLAST_SECRET`, so a local rebuild over a scheduled run's ledger publishes

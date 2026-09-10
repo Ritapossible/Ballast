@@ -193,6 +193,20 @@ class TestMorningSettlement(LivePathCase):
         self.assertIn("SPY", result["deferred"][SESSION.isoformat()])
         self.assertEqual(self.ledger().records("settlement"), [])
 
+    def test_settlement_never_reads_the_market_cache(self):
+        """The cache never expires, so a cached bar would grade the wrong session."""
+        self.run_night()
+        calls = []
+
+        def recording(symbol, market="spot", **kw):
+            calls.append(kw)
+            return fake_bars(symbol, market, **kw)
+
+        with mock.patch.object(morning, "market_bars", recording):
+            self.settle()
+        self.assertTrue(calls, "settlement fetched no bars at all")
+        self.assertTrue(all(kw.get("use_cache") is False for kw in calls), calls)
+
     def test_settlement_refuses_a_broken_chain(self):
         self.run_night()
         lines = self.ledger_path.read_text().splitlines()
