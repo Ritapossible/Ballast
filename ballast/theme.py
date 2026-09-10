@@ -26,8 +26,10 @@ CSS = f"""
 html{{-webkit-text-size-adjust:100%;scroll-behavior:smooth}}
 body{{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);
   font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;
-  overflow-x:hidden}}
+  overflow-wrap:break-word}}
+html{{overflow-x:clip}}
 img,svg,table,pre{{max-width:100%}}
+.wrap,.narrow,.docs,.prose{{min-width:0}}
 section[id]{{scroll-margin-top:112px}}
 a{{color:inherit}}
 
@@ -135,7 +137,7 @@ p{{margin:0 0 16px}}
 /* ---- tables ---- */
 .scroll{{overflow-x:auto;-webkit-overflow-scrolling:touch;
   border:1px solid var(--line);border-radius:14px;margin-top:30px;text-align:left}}
-table{{border-collapse:collapse;width:100%;min-width:600px;font-size:14.5px}}
+table{{border-collapse:collapse;width:100%;min-width:560px;font-size:14.5px}}
 th{{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.14em;
   color:var(--dim);font-weight:600;padding:14px 17px;background:var(--raised);
   border-bottom:1px solid var(--line);white-space:nowrap}}
@@ -177,9 +179,9 @@ code{{font-family:var(--mono);font-size:.9em;background:var(--surface);
 .callout p:last-child{{margin-bottom:0}}
 @media(max-width:860px){{
   .docs{{grid-template-columns:1fr;gap:0;padding:34px 0}}
-  .toc{{position:sticky;top:105px;z-index:20;display:flex;gap:8px;
-    overflow-x:auto;scrollbar-width:none;margin:0 -18px 30px;padding:12px 18px;
-    background:rgba(7,7,8,.94);backdrop-filter:blur(14px);
+  .toc{{position:sticky;top:104px;z-index:20;display:flex;gap:8px;
+    overflow-x:auto;scrollbar-width:none;margin:0 0 30px;padding:12px 0;
+    background:rgba(7,7,8,.96);backdrop-filter:blur(14px);
     border-bottom:1px solid var(--line)}}
   .toc::-webkit-scrollbar{{display:none}}
   .toc .h{{display:none}}
@@ -223,16 +225,20 @@ MARK = (
 )
 
 
+NAV = [("Overview", "index.html"), ("Tonight", "tonight.html"),
+       ("Settled", "settled.html"), ("Evidence", "evidence.html"),
+       ("Docs", "docs.html"), ("Repo", REPO)]
+
+
 def nav(active: str, prefix: str = "") -> str:
-    items = [("Overview", f"{prefix}index.html#top"), ("Tonight", f"{prefix}index.html#tonight"),
-             ("Settled", f"{prefix}index.html#settled"), ("Evidence", f"{prefix}index.html#evidence"),
-             ("Docs", f"{prefix}docs.html"), ("Repo", REPO)]
+    items = [(label, href if href.startswith("http") else f"{prefix}{href}")
+             for label, href in NAV]
     links = "".join(
         f'<a class="{"on" if label == active else ""}" href="{href}">{label}</a>'
         for label, href in items)
     return (f'<div class="chrome"><header class="top"><div class="top-in">'
             f'<a class="brand" href="{prefix}index.html">{MARK}BALLAST</a>'
-            f'<a class="btn btn-p" href="{prefix}index.html#tonight">See tonight</a>'
+            f'<a class="btn btn-p" href="{prefix}tonight.html">See tonight</a>'
             f'</div></header><nav class="nav"><div class="nav-in">{links}</div></nav></div>')
 
 

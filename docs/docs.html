@@ -11,8 +11,10 @@
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);
   font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;
-  overflow-x:hidden}
+  overflow-wrap:break-word}
+html{overflow-x:clip}
 img,svg,table,pre{max-width:100%}
+.wrap,.narrow,.docs,.prose{min-width:0}
 section[id]{scroll-margin-top:112px}
 a{color:inherit}
 
@@ -120,7 +122,7 @@ p{margin:0 0 16px}
 /* ---- tables ---- */
 .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;
   border:1px solid var(--line);border-radius:14px;margin-top:30px;text-align:left}
-table{border-collapse:collapse;width:100%;min-width:600px;font-size:14.5px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:14.5px}
 th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.14em;
   color:var(--dim);font-weight:600;padding:14px 17px;background:var(--raised);
   border-bottom:1px solid var(--line);white-space:nowrap}
@@ -162,9 +164,9 @@ code{font-family:var(--mono);font-size:.9em;background:var(--surface);
 .callout p:last-child{margin-bottom:0}
 @media(max-width:860px){
   .docs{grid-template-columns:1fr;gap:0;padding:34px 0}
-  .toc{position:sticky;top:105px;z-index:20;display:flex;gap:8px;
-    overflow-x:auto;scrollbar-width:none;margin:0 -18px 30px;padding:12px 18px;
-    background:rgba(7,7,8,.94);backdrop-filter:blur(14px);
+  .toc{position:sticky;top:104px;z-index:20;display:flex;gap:8px;
+    overflow-x:auto;scrollbar-width:none;margin:0 0 30px;padding:12px 0;
+    background:rgba(7,7,8,.96);backdrop-filter:blur(14px);
     border-bottom:1px solid var(--line)}
   .toc::-webkit-scrollbar{display:none}
   .toc .h{display:none}
@@ -197,7 +199,7 @@ code{font-family:var(--mono);font-size:.9em;background:var(--surface);
 
 footer{padding:48px 0 76px;color:var(--dim);font-size:13.5px}
 footer a{color:var(--mid)}
-</style></head><body><div class="chrome"><header class="top"><div class="top-in"><a class="brand" href="index.html"><svg class="mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 8h14M5 16h14" stroke="#00d9ec" stroke-width="1.5" stroke-linecap="round" opacity=".38"/><path d="M12 2.5v19" stroke="#00d9ec" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="3.6" fill="#00d9ec"/></svg>BALLAST</a><a class="btn btn-p" href="index.html#tonight">See tonight</a></div></header><nav class="nav"><div class="nav-in"><a class="" href="index.html#top">Overview</a><a class="" href="index.html#tonight">Tonight</a><a class="" href="index.html#settled">Settled</a><a class="" href="index.html#evidence">Evidence</a><a class="on" href="docs.html">Docs</a><a class="" href="https://github.com/Ritapossible/Ballast">Repo</a></div></nav></div><main><section class="bd bd-deep" style="border-bottom:1px solid var(--line)">
+</style></head><body><div class="chrome"><header class="top"><div class="top-in"><a class="brand" href="index.html"><svg class="mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 8h14M5 16h14" stroke="#00d9ec" stroke-width="1.5" stroke-linecap="round" opacity=".38"/><path d="M12 2.5v19" stroke="#00d9ec" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="3.6" fill="#00d9ec"/></svg>BALLAST</a><a class="btn btn-p" href="tonight.html">See tonight</a></div></header><nav class="nav"><div class="nav-in"><a class="" href="index.html">Overview</a><a class="" href="tonight.html">Tonight</a><a class="" href="settled.html">Settled</a><a class="" href="evidence.html">Evidence</a><a class="on" href="docs.html">Docs</a><a class="" href="https://github.com/Ritapossible/Ballast">Repo</a></div></nav></div><main><section class="bd bd-deep" style="border-bottom:1px solid var(--line)">
 <div class="wrap center" style="padding:26px 0 6px">
 <p class="eyebrow">Documentation</p>
 <h1>How Ballast works,<br>and how to check it.</h1>

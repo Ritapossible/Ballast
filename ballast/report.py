@@ -1,14 +1,14 @@
-"""Render the signed ledger into the public report.
+"""Build the public site from the signed ledger.
 
-This is the judge-facing surface, and the handbook makes an accessible demo a
-required material. Three properties it has to keep:
+Four pages rather than one long scroll: the landing page makes the case, and each
+working surface - tonight's calls, what settled, the evidence - gets its own URL so
+it can be linked to, deep-linked from a submission, and read on a phone without
+scrolling past everything else.
 
-  * publicly readable, no login
-  * always-on with nothing to cold-start - one static file, no CDN, no web fonts,
-    no scripts, so nothing can 404 or hang on the day
-  * every claim traceable to a ledger entry the reader can verify themselves
+Every page is self-contained: no CDN, no web fonts, no scripts, nothing that can
+404 or hang when a judge opens it.
 
-    python -m ballast.report            # -> docs/index.html
+    python -m ballast.report            # -> docs/*.html
 """
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ from . import config
 from .ledger import Ledger, LedgerError
 from .theme import REPO, page
 
-OUT = config.ROOT / "docs" / "index.html"
+OUT_DIR = config.ROOT / "docs"
 
 
 def _e(v) -> str:
@@ -78,10 +78,10 @@ def _settled(rows: list[dict]) -> str:
 
 CLAIMS = [
     ("A matched perp removes a median 98.0% of overnight variance, β within 4% of 1.00",
-     "observed", "12 names, 100–260 nights each"),
-    ("The hedge strengthens under stress - R² 0.978–0.999 on top-decile nights",
+     "observed", "12 names, 100-260 nights each"),
+    ("The hedge strengthens under stress - R² 0.978-0.999 on top-decile nights",
      "observed", "conditional regression"),
-    ("Median 88% cut in p95 tail; MSFT's worst night 1,128 bp → 233 bp",
+    ("Median 88% cut in p95 tail; MSFT's worst night 1,128 bp to 233 bp",
      "observed", "same sample"),
     ("Earnings nights carry 3.2× the variance and are not reliably compensated",
      "observed", "15 names; 0 of 15 significant at |t|≥2"),
@@ -94,64 +94,60 @@ CLAIMS = [
 ]
 
 
-def build() -> Path:
-    ledger = Ledger(config.LEDGER_PATH, config.secret())
-    try:
-        chain = f"{ledger.verify()} entries · chain verified"
-        broken = False
-    except LedgerError as exc:
-        chain, broken = f"CHAIN BROKEN - {exc}", True
+class Site:
+    """Everything the pages need, read from the ledger once."""
 
-    decisions = [e["body"] for e in ledger.records("decision")]
-    summaries = [e["body"] for e in ledger.records("night_summary")]
-    settlements = [e["body"] for e in ledger.records("settlement")]
+    def __init__(self):
+        ledger = Ledger(config.LEDGER_PATH, config.secret())
+        try:
+            self.chain = f"{ledger.verify()} entries · chain verified"
+            self.broken = False
+        except LedgerError as exc:
+            self.chain, self.broken = f"CHAIN BROKEN - {exc}", True
 
-    latest = summaries[-1] if summaries else {}
-    session = latest.get("session", "-")
-    tonight = [d for d in decisions if d.get("session") == session]
-    rows = [r for s in settlements for r in s.get("rows", [])]
-    hedges = [r for r in rows if r.get("action") == "HEDGE"]
-    shrank = sum(1 for r in hedges if abs(r.get("realised_bp", 0)) < abs(r.get("unhedged_bp", 0)))
-    worst = max((abs(r.get("unhedged_bp", 0)) for r in rows), default=0)
-    now = dt.datetime.now(dt.timezone.utc)
+        decisions = [e["body"] for e in ledger.records("decision")]
+        summaries = [e["body"] for e in ledger.records("night_summary")]
+        self.settlements = [e["body"] for e in ledger.records("settlement")]
 
-    claim_rows = "".join(
-        f'<tr><td>{_e(c)}</td>'
-        f'<td><span class="tag {"on" if s == "proven" else ""}">{_e(s)}</span></td>'
-        f'<td class="dim">{_e(n or "")}</td></tr>'
-        for c, s, n in CLAIMS)
+        self.latest = summaries[-1] if summaries else {}
+        self.session = self.latest.get("session", "-")
+        self.tonight = [d for d in decisions if d.get("session") == self.session]
+        self.rows = [r for s in self.settlements for r in s.get("rows", [])]
+        self.hedges = [r for r in self.rows if r.get("action") == "HEDGE"]
+        self.shrank = sum(1 for r in self.hedges
+                          if abs(r.get("realised_bp", 0)) < abs(r.get("unhedged_bp", 0)))
+        self.worst = max((abs(r.get("unhedged_bp", 0)) for r in self.rows), default=0)
 
-    term = "".join(
-        f'<div class="term-r"><span class="mid">{_e(d.get("ticker"))}</span>'
-        f'<span class="{"hl" if d.get("action") == "HEDGE" else "dim"}">'
-        f'{_e(d.get("action"))}</span></div>'
-        for d in tonight[:6]) or (
-        '<div class="term-r"><span class="dim">awaiting the next close</span>'
-        '<span class="dim">-</span></div>')
+    # -- pages ---------------------------------------------------------------
 
-    body = f"""
-<section class="bd">
-<div class="wrap center">
+    def index(self) -> str:
+        term = "".join(
+            f'<div class="term-r"><span class="mid">{_e(d.get("ticker"))}</span>'
+            f'<span class="{"hl" if d.get("action") == "HEDGE" else "dim"}">'
+            f'{_e(d.get("action"))}</span></div>'
+            for d in self.tonight[:5]) or (
+            '<div class="term-r"><span class="dim">awaiting the next close</span>'
+            '<span class="dim">-</span></div>')
+        return f"""
+<section class="bd"><div class="wrap center">
 <h1>Hold the position.<br>Not the night's risk.</h1>
 <p class="lede">Tokenized US stocks trade around the clock. The market that prices
 them is shut for <span class="hl">81% of the week</span> - through earnings, through
 the Fed, through weekends. Ballast keeps the position and switches the night off for
 about <span class="hl">11 basis points</span>.</p>
 <div class="row">
-<a class="btn btn-p" href="#tonight">Tonight's decisions</a>
+<a class="btn btn-p" href="tonight.html">Tonight's decisions</a>
 <a class="btn btn-s" href="docs.html">Read the docs</a>
 </div>
-
 <div class="term">
 <div class="term-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>
-<span>ballast / session {_e(session)}</span>
-<span class="live"><span class="pulse"></span>{"BROKEN" if broken else "LEDGER OK"}</span></div>
+<span>ballast / session {_e(self.session)}</span>
+<span class="live"><span class="pulse"></span>{"BROKEN" if self.broken else "LEDGER OK"}</span></div>
 <div class="term-b">{term}</div>
 </div>
 </div></section>
 
-<section class="bd bd-deep">
-<div class="wrap center">
+<section class="bd bd-deep"><div class="wrap center">
 <p class="eyebrow">The exposure</p>
 <h2>Every night, unhedged,<br>by default.</h2>
 <p class="lede">A matched stock perp trades the same clock as the token and moves with
@@ -166,44 +162,94 @@ less than selling the position and buying it back.</p>
 </div>
 <div class="narrow"><ul class="bul">
 <li>The hedge is <strong>strongest exactly when it matters</strong> - R² reaches 0.999 on the largest moves, and is loosest on quiet nights where little is at stake.</li>
-<li>Worst nights measured: MSFT <strong>1,128 bp → 233 bp</strong>, AMD <strong>1,262 bp → 90 bp</strong>.</li>
+<li>Worst nights measured: MSFT <strong>1,128 bp to 233 bp</strong>, AMD <strong>1,262 bp to 90 bp</strong>.</li>
 <li><strong>219 of 699</strong> listed rTokens have a perp leg. Ballast says plainly which positions it cannot protect.</li>
 </ul></div>
 </div></section>
 
-<section id="tonight">
-<div class="wrap center">
+<section><div class="wrap center">
+<p class="eyebrow">The desk</p>
+<h2>Three surfaces,<br>one record.</h2>
+<div class="narrow stack">
+<div class="card"><h3><a href="tonight.html" class="hl">Tonight →</a></h3>
+<p>One call per position, taken before the window opens. Refusals are recorded as
+carefully as hedges, because a night Ballast declined is a decision it will be
+graded on.</p></div>
+<div class="card"><h3><a href="settled.html" class="hl">Settled →</a></h3>
+<p>Every call graded at the next opening bell against the exact counterfactual -
+what the position would have done unhedged is observed, not modelled.</p></div>
+<div class="card"><h3><a href="evidence.html" class="hl">Evidence →</a></h3>
+<p>What is proven, what is merely observed, and what is deliberately not claimed -
+plus the commands to reproduce every figure yourself.</p></div>
+</div>
+</div></section>"""
+
+    def tonight_page(self) -> str:
+        return f"""
+<section class="bd"><div class="wrap center">
 <p class="eyebrow">Live from the desk</p>
-<h2>Tonight's decisions.</h2>
+<h1>Tonight's decisions.</h1>
 <p class="lede">One call per position, taken before the window opens and written to a
 signed ledger. Refusals are recorded as carefully as hedges - a night Ballast
 declined is a decision it will be graded on.</p>
-<p class="note">Session <strong>{_e(session)}</strong> · window
-{latest.get('window_hours', 0)} hours · event reader
-<strong>{_e(latest.get('reader', 'unknown'))}</strong> · {_e(chain)}</p>
-{_decisions(tonight)}
+<p class="note">Session <strong>{_e(self.session)}</strong> · window
+{self.latest.get('window_hours', 0)} hours · event reader
+<strong>{_e(self.latest.get('reader', 'unknown'))}</strong> · {_e(self.chain)}</p>
 </div></section>
 
-<section id="settled" class="bd bd-deep">
-<div class="wrap center">
+<section><div class="wrap">
+{_decisions(self.tonight)}
+<div class="narrow" style="margin-top:52px">
+<h3>How a call is made</h3>
+<ul class="bul">
+<li>The <strong>exchange calendar</strong> is checked for a report scheduled inside this window.</li>
+<li>The <strong>event reader</strong> gets the night's headlines and that flag, and returns HEDGE, NO_HEDGE or ABSTAIN. Its judgment leads.</li>
+<li>On abstention or a failed gate the <strong>deterministic rule</strong> decides instead, and the ledger records which.</li>
+<li>Every intended order passes the <strong>enforcer</strong>, which can only permit a hedge against a position already held.</li>
+</ul>
+<div class="row" style="justify-content:center;margin-top:34px">
+<a class="btn btn-s" href="settled.html">See what settled →</a></div>
+</div>
+</div></section>"""
+
+    def settled_page(self) -> str:
+        return f"""
+<section class="bd"><div class="wrap center">
 <p class="eyebrow">Graded against reality</p>
-<h2>Every call has an<br>exact counterfactual.</h2>
+<h1>Every call has an<br>exact counterfactual.</h1>
 <p class="lede">What the position would have done unhedged is not modelled - it is
 <span class="hl">observed</span>, on the same window. Every decision, right or wrong,
 settles at the next opening bell, so nothing can be quietly forgotten.</p>
 <div class="tiles">
-{_tile(len(rows), "decisions settled")}
-{_tile(f"{shrank}/{len(hedges)}" if hedges else "-", "hedges that cut the move")}
-{_tile(f"{worst:,.0f} bp" if worst else "-", "worst night seen")}
-{_tile(latest.get("hedged", 0), "hedged tonight")}
+{_tile(len(self.rows), "decisions settled")}
+{_tile(f"{self.shrank}/{len(self.hedges)}" if self.hedges else "-", "hedges that cut the move")}
+{_tile(f"{self.worst:,.0f} bp" if self.worst else "-", "worst night seen")}
+{_tile(self.latest.get("hedged", 0), "hedged tonight")}
 </div>
-{_settled(rows)}
 </div></section>
 
-<section id="evidence" class="bd">
-<div class="wrap center">
+<section><div class="wrap">
+{_settled(self.rows)}
+<div class="narrow" style="margin-top:52px">
+<h3>How these are scored</h3>
+<ul class="bul">
+<li><strong>Value added</strong> is the reduction in the size of the move, less the cost of the hedge.</li>
+<li><strong>Win rate</strong> is the share of hedges that reduced the move. A hedge is symmetric, so a profit-direction win rate would be meaningless.</li>
+<li><strong>Refusals are graded too.</strong> Declining a quiet night correctly is a win; declining a violent one is not.</li>
+</ul>
+</div>
+</div></section>"""
+
+    def evidence_page(self) -> str:
+        claim_rows = "".join(
+            f'<tr><td>{_e(c)}</td>'
+            f'<td><span class="tag {"on" if s == "proven" else ""}">{_e(s)}</span></td>'
+            f'<td class="dim">{_e(n or "")}</td></tr>'
+            for c, s, n in CLAIMS)
+        return f"""
+<section class="bd"><div class="wrap center">
 <p class="eyebrow">Open by construction</p>
-<h2>An audited desk,<br>not a black box.</h2>
+<h1>An audited desk,<br>not a black box.</h1>
 <div class="narrow stack">
 <div class="card"><h3>It cannot place a bet</h3><p>Every order Ballast can emit is
 opposite in sign to, and bounded in size by, a position already held. The enforcer
@@ -217,22 +263,17 @@ fabricated source cannot reach the book.</p></div>
 and signed; mutation, deletion or reordering breaks verification. A scheduled job
 commits it, so each decision is timestamped before its outcome is known.</p></div>
 </div>
-<div class="scroll"><table><thead><tr><th>Claim</th><th>Status</th><th>Basis</th>
-</tr></thead><tbody>{claim_rows}</tbody></table></div>
-<p class="note" style="margin-top:24px">Ballast is <strong>priced protection, not
-alpha</strong>. It makes no Sharpe claim: the nights it hedges carry real variance and
-no reliable expected return, so removing them is insurance - which has a price, and is
-worth paying only on the right nights.</p>
 </div></section>
 
-<section>
-<div class="wrap center">
-<p class="eyebrow">Reproduce it</p>
-<h2>Don't take the numbers<br>on trust.</h2>
-<p class="lede">Every figure on this page is produced by code in the repository, from
-public endpoints, with no API key.</p>
-<div class="narrow">
-<pre><b>git clone {REPO} &amp;&amp; cd ballast</b>
+<section><div class="wrap">
+<div class="scroll"><table><thead><tr><th>Claim</th><th>Status</th><th>Basis</th>
+</tr></thead><tbody>{claim_rows}</tbody></table></div>
+<div class="narrow" style="margin-top:44px">
+<p class="note">Ballast is <strong>priced protection, not alpha</strong>. It makes no
+Sharpe claim: the nights it hedges carry real variance and no reliable expected
+return, so removing them is insurance - which has a price, and is worth paying only
+on the right nights.</p>
+<pre style="margin-top:34px"><b>git clone {REPO} &amp;&amp; cd ballast</b>
 python3 -m unittest discover -s tests   <span class="dim"># full suite, no network, no key</span>
 python3 research/hedge_study.py         <span class="dim"># the hedge measurements</span>
 python3 research/gate1_calendar.py      <span class="dim"># why the calendar is the selector</span>
@@ -243,19 +284,34 @@ python3 research/replay.py              <span class="dim"># the policy, replayed
 <li><strong>Paper trading only.</strong> No live fill is claimed anywhere.</li>
 </ul>
 <div class="row" style="justify-content:center;margin-top:34px">
-<a class="btn btn-s" href="docs.html">Full documentation</a>
-</div>
+<a class="btn btn-s" href="docs.html">Full documentation →</a></div>
 </div>
 </div></section>"""
 
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(page(
-        "Ballast - overnight risk transfer for tokenized US stocks",
-        "Hold tokenized US stocks through the night without holding the night's risk.",
-        "Overview", body))
-    return OUT
+
+PAGES = [
+    ("index.html", "Overview", "Ballast - overnight risk transfer for tokenized US stocks",
+     "Hold tokenized US stocks through the night without holding the night's risk.", "index"),
+    ("tonight.html", "Tonight", "Ballast - tonight's decisions",
+     "One call per position, taken before the overnight window opens.", "tonight_page"),
+    ("settled.html", "Settled", "Ballast - settled against the open",
+     "Every decision graded against the exact counterfactual.", "settled_page"),
+    ("evidence.html", "Evidence", "Ballast - evidence and claim boundaries",
+     "What is proven, what is observed, and what is deliberately not claimed.", "evidence_page"),
+]
+
+
+def build() -> list[Path]:
+    site = Site()
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    written = []
+    for filename, active, title, description, method in PAGES:
+        path = OUT_DIR / filename
+        path.write_text(page(title, description, active, getattr(site, method)()))
+        written.append(path)
+    return written
 
 
 if __name__ == "__main__":
-    p = build()
-    print(f"wrote {p} ({p.stat().st_size:,} bytes)")
+    for p in build():
+        print(f"wrote {p.name} ({p.stat().st_size:,} bytes)")

@@ -18,15 +18,17 @@ from ballast.ledger import Ledger
 
 
 def build_pages() -> dict[str, str]:
+    """Render every public page against a throwaway ledger."""
     with tempfile.TemporaryDirectory() as d:
         ledger_path = Path(d) / "ledger.jsonl"
         Ledger(ledger_path, b"t").append("night_summary", {"session": "2026-09-10"})
         with mock.patch.object(config, "LEDGER_PATH", ledger_path), \
              mock.patch.object(config, "secret", return_value=b"t"), \
-             mock.patch.object(report, "OUT", Path(d) / "index.html"), \
+             mock.patch.object(report, "OUT_DIR", Path(d)), \
              mock.patch.object(docs_page, "OUT", Path(d) / "docs.html"):
-            return {"index": report.build().read_text(),
-                    "docs": docs_page.build().read_text()}
+            pages = {pg.name: pg.read_text() for pg in report.build()}
+            pages["docs.html"] = docs_page.build().read_text()
+            return pages
 
 
 class TestLayout(unittest.TestCase):
@@ -56,9 +58,12 @@ class TestLayout(unittest.TestCase):
             self.assertNotIn(".bul li{display:flex", html, name)
 
     def test_guards_against_horizontal_overflow(self):
+        """Clip at the root, not on body: overflow on body breaks position:sticky."""
         for name, html in self.each():
-            self.assertIn("overflow-x:hidden", html, name)
+            self.assertIn("html{overflow-x:clip}", html, name)
+            self.assertNotIn("body{overflow-x", html, name)
             self.assertIn("img,svg,table,pre{max-width:100%}", html, name)
+            self.assertIn(".wrap,.narrow,.docs,.prose{min-width:0}", html, name)
 
     def test_anchors_clear_the_sticky_header(self):
         for name, html in self.each():
@@ -78,9 +83,35 @@ class TestLayout(unittest.TestCase):
                     if a not in ids and a != "top"]
             self.assertEqual(dead, [], f"{name}: dead anchors {dead}")
 
-    def test_pages_link_to_each_other(self):
-        self.assertIn('href="docs.html"', self.pages["index"])
-        self.assertIn('href="index.html', self.pages["docs"])
+    def test_every_page_links_to_every_other(self):
+        """The nav is the only way around a multi-page site; it must be complete."""
+        expected = {"index.html", "tonight.html", "settled.html",
+                    "evidence.html", "docs.html"}
+        for name, html in self.each():
+            for target in expected - {name}:
+                self.assertIn(f'href="{target}"', html, f"{name} cannot reach {target}")
+
+    def test_exactly_one_nav_item_is_marked_active_per_page(self):
+        """The underline must follow the page, not sit on Overview everywhere."""
+        for name, html in self.each():
+            active = html.count('class="on"')
+            self.assertEqual(active, 1, f"{name} has {active} active nav items")
+
+    def test_the_active_item_matches_the_page(self):
+        expected = {"index.html": "Overview", "tonight.html": "Tonight",
+                    "settled.html": "Settled", "evidence.html": "Evidence",
+                    "docs.html": "Docs"}
+        for name, html in self.each():
+            self.assertIn(f'class="on" href="{name}">{expected[name]}</a>', html, name)
+
+    def test_the_header_button_leaves_the_landing_page(self):
+        self.assertIn('class="btn btn-p" href="tonight.html"', self.pages["index.html"])
+
+    def test_no_negative_margins_that_widen_the_document(self):
+        """A bled-to-edge element widened the page and broke every sticky bar."""
+        for name, html in self.each():
+            self.assertNotIn("margin:0 -18px", html, name)
+            self.assertIn("overflow-x:clip", html, name)
 
     def test_no_external_resources(self):
         for name, html in self.each():
