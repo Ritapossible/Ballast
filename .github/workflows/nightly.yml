@@ -22,7 +22,7 @@ on:
       task:
         description: "which half to run"
         type: choice
-        options: [night, morning, both]
+        options: [check, night, morning, both]
         default: both
 
 concurrency:
@@ -42,6 +42,13 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Preflight (credentials and the live reader, writes nothing)
+        if: inputs.task == 'check'
+        env:
+          QWEN_API_KEY: ${{ secrets.QWEN_API_KEY }}
+          BALLAST_SECRET: ${{ secrets.BALLAST_SECRET }}
+        run: python -m ballast.preflight
+
       - name: Decide (after the close)
         if: github.event.schedule == '0 21 * * 1-5' || inputs.task == 'night' || inputs.task == 'both'
         env:
@@ -50,12 +57,13 @@ jobs:
         run: python -m ballast.night
 
       - name: Settle (after the open)
-        if: github.event.schedule == '30 14 * * 1-5' || inputs.task == 'morning' || inputs.task == 'both'
+        if: inputs.task != 'check' && (github.event.schedule == '30 14 * * 1-5' || inputs.task == 'morning' || inputs.task == 'both')
         env:
           BALLAST_SECRET: ${{ secrets.BALLAST_SECRET }}
         run: python -m ballast.morning
 
       - name: Verify the chain before committing
+        if: inputs.task != 'check'
         env:
           BALLAST_SECRET: ${{ secrets.BALLAST_SECRET }}
         run: |
@@ -66,6 +74,7 @@ jobs:
           EOF
 
       - name: Rebuild the public site
+        if: inputs.task != 'check'
         env:
           BALLAST_SECRET: ${{ secrets.BALLAST_SECRET }}
         run: |
@@ -73,6 +82,7 @@ jobs:
           python -m ballast.docs_page
 
       - name: Commit the ledger
+        if: inputs.task != 'check'
         run: |
           git config user.name  "ballast-bot"
           git config user.email "noreply@github.com"
