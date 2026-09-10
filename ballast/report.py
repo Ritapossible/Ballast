@@ -19,7 +19,7 @@ from pathlib import Path
 from . import config
 from .facts import load as load_facts
 from .ledger import Ledger, LedgerError
-from .sessions import UTC, current_session, sessions_between
+from .sessions import UTC, close_utc, current_session, sessions_between, window_hours
 from .theme import REPO, page
 
 OUT_DIR = config.ROOT / "docs"
@@ -131,7 +131,8 @@ class Site:
                 self.chain, self.broken = f"CHAIN BROKEN - {exc}", True
 
         decisions = [e["body"] for e in ledger.records("decision")]
-        summaries = [e["body"] for e in ledger.records("night_summary")]
+        night_records = ledger.records("night_summary")
+        summaries = [e["body"] for e in night_records]
         self.settlements = [e["body"] for e in ledger.records("settlement")]
 
         # By session date, not by write order: a backfill or an out-of-order run
@@ -139,6 +140,26 @@ class Site:
         self.latest = max(summaries, key=lambda s: s.get("session", ""),
                           default={}) if summaries else {}
         self.session = self.latest.get("session", "-")
+
+        # How late the night was decided. Newer runs record it; for entries written
+        # before that field existed it is derived from the ledger's own timestamp,
+        # so the published record reports its own provenance either way. One session
+        # was re-decided 16.8 hours after its close - 45 minutes before the market
+        # reopened - while settlement still graded it close-to-open, as though the
+        # hedge had been on for the whole move. That entry now says so itself.
+        self.decided_after = self.latest.get("decided_after_close_hours")
+        if self.decided_after is None and self.session != "-":
+            record = max((e for e in night_records
+                          if e["body"].get("session") == self.session),
+                         key=lambda e: e["at"], default=None)
+            if record:
+                written = dt.datetime.fromisoformat(record["at"])
+                closed = close_utc(dt.date.fromisoformat(self.session))
+                self.decided_after = round((written - closed).total_seconds() / 3600, 2)
+        total = self.latest.get("window_hours") or (
+            window_hours(dt.date.fromisoformat(self.session)) if self.session != "-" else 0)
+        self.decided_late = bool(self.decided_after and total
+                                 and self.decided_after > 0.5 * total)
         self.tonight = [d for d in decisions if d.get("session") == self.session]
         self.rows = [r for s in self.settlements for r in s.get("rows", [])]
         self.hedges = [r for r in self.rows if r.get("action") == "HEDGE"]
@@ -166,6 +187,22 @@ class Site:
         self.freshness = ("" if not self.behind else
                           f" · <strong>{self.behind} session{'s' if self.behind > 1 else ''} "
                           f"behind</strong> - the scheduled run has not reported")
+
+    @property
+    def provenance(self) -> str:
+        """One line on when this night was decided, and a plain warning if too late."""
+        if self.decided_after is None:
+            return ""
+        when = (f'<p class="note">Decided <strong>{self.decided_after:.1f} hours</strong> '
+                f'after the close.</p>')
+        if not self.decided_late:
+            return when
+        return (f'<p class="note">Decided <strong>{self.decided_after:.1f} hours</strong> '
+                f'after the close, with most of the overnight window already gone. '
+                f'<span class="neg">This entry is not an ex-ante decision</span> and should '
+                f'not be read as one: settlement grades it close-to-open, crediting a hedge '
+                f'that could not have been on for the move. It is left in the chain rather '
+                f'than removed, and later runs refuse a window this far elapsed.</p>')
 
     # -- pages ---------------------------------------------------------------
 
@@ -244,6 +281,7 @@ declined is a decision it will be graded on.</p>
 <p class="note">Session <strong>{_e(self.session)}</strong> · window
 {self.latest.get('window_hours', 0)} hours · event reader
 <strong>{_e(self.latest.get('reader', 'unknown'))}</strong> · {_e(self.chain)}{self.freshness}</p>
+{self.provenance}
 </div></section>
 
 <section><div class="wrap">

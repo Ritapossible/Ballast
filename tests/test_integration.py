@@ -87,9 +87,9 @@ class LivePathCase(unittest.TestCase):
     def settle(self, **kw):
         return morning.run(**kw)
 
-    def run_night(self, **kw):
+    def run_night(self, at: dt.datetime | None = None, **kw):
         with mock.patch("ballast.night.dt", wraps=dt) as fake_dt:
-            fake_dt.datetime.now.return_value = NOW
+            fake_dt.datetime.now.return_value = at or NOW
             fake_dt.timedelta = dt.timedelta
             fake_dt.date = dt.date
             return night.run(no_reader=True, **kw)
@@ -147,6 +147,39 @@ class TestNightRun(LivePathCase):
             self.assertEqual(Ledger(self.ledger_path, b"a-new-key").verify(),
                              len(TICKERS) + 3)     # chain_start + mandate + n + summary
         self.assertTrue((Path(self.tmp.name) / "ledger.superseded.jsonl").exists())
+
+
+class TestDecisionTiming(LivePathCase):
+    """A decision taken after the window has largely passed is not a decision.
+
+    Settlement grades close-to-open, so it credits such an entry with covering a
+    move that had already happened. One session was re-decided 16.8 hours after
+    its close - 45 minutes before the market reopened - and the record showed
+    nothing unusual.
+    """
+
+    def test_the_lag_is_recorded_on_every_run(self):
+        summary = self.run_night()
+        self.assertAlmostEqual(summary["decided_after_close_hours"], 1.0, places=2)
+        self.assertLess(summary["window_elapsed_at_decision"], 0.1)
+        self.assertFalse(summary["forced"])
+
+    def test_a_late_run_is_still_allowed(self):
+        """Scheduled runs are routinely hours late; that must not lose the night."""
+        summary = self.run_night(at=close_utc(SESSION) + dt.timedelta(hours=6))
+        self.assertAlmostEqual(summary["decided_after_close_hours"], 6.0, places=2)
+
+    def test_a_window_mostly_gone_is_refused(self):
+        with self.assertRaises(night.WindowElapsed) as caught:
+            self.run_night(at=close_utc(SESSION) + dt.timedelta(hours=16.8))
+        self.assertIn("16.8h", str(caught.exception))
+        self.assertEqual(self.ledger().records("decision"), [])
+
+    def test_force_reconstructs_but_marks_the_entry(self):
+        summary = self.run_night(at=close_utc(SESSION) + dt.timedelta(hours=16.8),
+                                 force=True)
+        self.assertTrue(summary["forced"])
+        self.assertGreater(summary["window_elapsed_at_decision"], 0.9)
 
 
 class TestMorningSettlement(LivePathCase):

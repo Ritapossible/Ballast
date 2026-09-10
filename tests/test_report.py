@@ -123,6 +123,44 @@ class StalenessCase(unittest.TestCase):
         self.assertEqual(site.behind, 1)
 
 
+class ProvenanceCase(unittest.TestCase):
+    """The page must say when the night was decided, derived from the ledger's own
+    timestamp for entries written before the field existed."""
+
+    def _site(self, session: str, written: dt.datetime, body_extra=None):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "ledger.jsonl"
+            lg = Ledger(path, config.DEV_SECRET)
+            body = {"session": session, "positions": 1, "hedged": 0, "window_hours": 17.5}
+            body.update(body_extra or {})
+            lg.append("night_summary", body, written)
+            with mock.patch.object(config, "LEDGER_PATH", path), \
+                 mock.patch.object(config, "secret", return_value=config.DEV_SECRET):
+                return report.Site(now=written)
+
+    def test_a_prompt_decision_is_reported_plainly(self):
+        site = self._site("2026-09-10",
+                          dt.datetime(2026, 9, 10, 22, tzinfo=dt.timezone.utc))
+        self.assertAlmostEqual(site.decided_after, 2.0, places=1)
+        self.assertFalse(site.decided_late)
+        self.assertIn("2.0 hours", site.provenance)
+        self.assertNotIn("not an ex-ante decision", site.provenance)
+
+    def test_a_window_mostly_gone_is_disclosed_on_the_page(self):
+        # 12:45Z the next day is 16.75h after a 20:00Z close - the entry that shipped.
+        site = self._site("2026-09-10",
+                          dt.datetime(2026, 9, 11, 12, 45, tzinfo=dt.timezone.utc))
+        self.assertTrue(site.decided_late)
+        self.assertIn("not an ex-ante decision", site.provenance)
+
+    def test_a_recorded_lag_is_preferred_over_the_derived_one(self):
+        site = self._site("2026-09-10",
+                          dt.datetime(2026, 9, 11, 12, 45, tzinfo=dt.timezone.utc),
+                          {"decided_after_close_hours": 1.5})
+        self.assertEqual(site.decided_after, 1.5)
+        self.assertFalse(site.decided_late)
+
+
 class DevKeyBuildGuard(unittest.TestCase):
     """The command line must not publish pages without the real signing key.
 

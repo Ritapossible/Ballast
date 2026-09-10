@@ -196,6 +196,11 @@ datacenter IPs** and are not usable here.
     behind the ledger is. A site showing its last good night looks identical to a working
     one, which is how a broken settlement went unnoticed for a day.
 
+14. **A decision is only a decision if the window is still open.** `night.run` refuses a
+    session more than half elapsed and records `decided_after_close_hours` every time.
+    Never re-run a past night to "test the loop" - settlement grades close-to-open and
+    will credit the hedge with a move that already happened. Use `--dry-run`.
+
 ## 7b. Operations
 
 - `.github/workflows/nightly.yml` — decides at 21:00 UTC, settles at 14:30 UTC, Mon–Fri.

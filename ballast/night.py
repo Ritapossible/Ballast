@@ -85,11 +85,36 @@ def assess(ticker: str, session: dt.date, use_reader: bool):
     return verdict.risk, verdict.judgment.value, verdict, provenance
 
 
-def run(dry_run: bool = False, no_reader: bool = False) -> dict:
+class WindowElapsed(RuntimeError):
+    """The overnight window is too far gone for a decision to mean anything."""
+
+
+# A decision recorded after most of the window has passed is not a decision: the
+# move it claims to have judged has already happened, and settlement grades it
+# close-to-open as though the hedge had been on the whole time. Scheduled runs are
+# routinely hours late - GitHub delayed one of ours by 3h17m - so the bound has to
+# be generous. Half the window still leaves eight hours of slack on a normal night
+# while refusing the case that actually occurred: a session re-decided 16.8 hours
+# after its close, 45 minutes before the market reopened.
+MAX_WINDOW_ELAPSED = 0.5
+
+
+def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> dict:
     use_reader = not no_reader
     now = dt.datetime.now(UTC)
     session = current_session(now)
     expires = open_utc(next_session(session))
+
+    close = close_utc(session)
+    lag_hours = (now - close).total_seconds() / 3600
+    total_hours = window_hours(session)
+    elapsed = lag_hours / total_hours if total_hours else 1.0
+    if elapsed > MAX_WINDOW_ELAPSED and not force:
+        raise WindowElapsed(
+            f"{lag_hours:.1f}h of the {total_hours:.1f}h window for {session} has already "
+            f"passed ({elapsed:.0%}). A hedge placed now could not have covered the move "
+            f"settlement would credit it with. Pass --force only to reconstruct a session "
+            f"deliberately, knowing the entry is not an ex-ante decision.")
 
     book = Book.load(config.BOOK_PATH)
     ledger = Ledger(config.LEDGER_PATH, config.secret())
@@ -218,7 +243,12 @@ def run(dry_run: bool = False, no_reader: bool = False) -> dict:
     summary = {
         "session": session.isoformat(), "positions": len(book),
         "hedged": hedged, "declined": declined, "errors": errors,
-        "window_hours": round(window_hours(session), 1),
+        "window_hours": round(total_hours, 1),
+        # How late the decision was taken, so the record says for itself whether it
+        # was made before the outcome was known rather than asking to be trusted.
+        "decided_after_close_hours": round(lag_hours, 2),
+        "window_elapsed_at_decision": round(elapsed, 3),
+        "forced": bool(force),
         "usage": enforcer.usage, "dry_run": dry_run,
         "reader": "on" if use_reader and llm_available() else "off (no QWEN_API_KEY)",
     }
@@ -230,8 +260,12 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--dry-run", action="store_true", help="decide and record, place no fills")
     ap.add_argument("--no-reader", action="store_true", help="calendar rule only, skip the LLM")
+    ap.add_argument("--force", action="store_true",
+                    help="decide even though most of the window has already passed; "
+                         "the entry is marked as not an ex-ante decision")
     s = run(**vars(ap.parse_args()))
-    print(f"session {s['session']} · window {s['window_hours']}h · reader {s['reader']}\n"
+    print(f"session {s['session']} · window {s['window_hours']}h · "
+          f"decided {s['decided_after_close_hours']}h after the close · reader {s['reader']}\n"
           f"{s['positions']} positions · {s['hedged']} hedged · {s['declined']} declined")
     if config.using_dev_secret():
         print("note: BALLAST_SECRET unset - signing with the development key")

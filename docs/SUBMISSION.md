@@ -183,6 +183,11 @@ order field names; US exchange holidays in the session calendar.
 3b. **A holiday counted as a trading day** - the function picking the session to trade tested
    only for a weekday while the rest of the calendar excludes holidays, so Thanksgiving came
    back as a tradeable session. Fixed.
+3d. **A session decided after its own window** - a run taken while testing re-decided the
+   2026-09-09 session 16.8 hours after its close, 45 minutes before the reopen, while
+   settlement still graded it close-to-open. The entry stays in the chain and now discloses
+   its own lag; the night run refuses a window more than half elapsed, and records the lag
+   on every run.
 3c. **Settlement never ran unattended** - the gitignored cache directory has no parent on a
    fresh runner, so every scheduled settlement failed from the day the loop was automated.
    Invisible locally, and invisible to tests that mock the market client. Fixed; the pages

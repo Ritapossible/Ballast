@@ -202,6 +202,15 @@ session to trade tested only for a weekday, while the rest of the calendar exclu
 holidays. On Thanksgiving it returned Thanksgiving: a session the exchange never opened,
 against a window that never existed. Fixed and moved beside the calendar it has to agree
 with.</li>
+<li><strong>A session decided after its own window</strong> - a manual run taken while
+testing re-decided the 2026-09-09 session at 12:45 the following day: 16.8 hours after
+the close, 45 minutes before the market reopened. Settlement grades close-to-open, so it
+credited that hedge with covering a move that had already happened, and nothing in the
+record said so. The entry stays in the chain - removing it is exactly the edit the design
+exists to prevent - and the Tonight page now states its lag and that it is not an ex-ante
+decision. The night run refuses a window more than half elapsed unless forced, and every
+run records how long after the close it was taken. Scheduled runs are often hours late,
+so the bound is generous: half of a 17.5 hour window is over eight hours of slack.</li>
 <li><strong>Settlement never ran unattended</strong> - the market cache directory is
 excluded from the repository, so on a fresh runner its parent did not exist and the
 create call raised. It could not fail locally, and the tests mock the market client, so
