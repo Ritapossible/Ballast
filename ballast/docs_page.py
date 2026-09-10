@@ -350,5 +350,6 @@ authority starts and stops - and what is deliberately not claimed.</p>
 
 
 if __name__ == "__main__":
+    config.refuse_dev_build()
     p = build()
     print(f"wrote {p} ({p.stat().st_size:,} bytes)")

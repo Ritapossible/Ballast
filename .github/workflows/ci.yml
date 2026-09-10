@@ -28,6 +28,28 @@ jobs:
       - name: Compile every module
         run: python -m compileall -q ballast research
 
+      # The chain status is baked into the HTML when the pages are built, so a
+      # rebuild carrying the development key publishes "CHAIN BROKEN" against a
+      # ledger that is in fact intact. That reached the live site once. The
+      # builders now refuse a keyless build; this is the second line, catching a
+      # bad page however it was produced.
+      - name: Published pages must not advertise a broken chain
+        run: |
+          python - <<'EOF'
+          from pathlib import Path
+          bad = {
+              '<span class="pulse"></span>BROKEN</span>': "the header badge reads BROKEN",
+              "\u00b7 CHAIN BROKEN": "a page states the chain is broken",
+              "entries \u00b7 signatures NOT verified": "a page was built without the signing key",
+          }
+          found = [f"{p.name}: {why}"
+                   for p in sorted(Path("docs").glob("*.html"))
+                   for marker, why in bad.items() if marker in p.read_text()]
+          if found:
+              raise SystemExit("committed pages misreport the ledger:\n  " + "\n  ".join(found))
+          print(f"{len(list(Path('docs').glob('*.html')))} pages report an intact chain")
+          EOF
+
       - name: Ledger and mandate self-check
         run: |
           python - <<'EOF'

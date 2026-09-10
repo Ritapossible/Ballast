@@ -329,5 +329,6 @@ def build() -> list[Path]:
 
 
 if __name__ == "__main__":
+    config.refuse_dev_build()
     for p in build():
         print(f"wrote {p.name} ({p.stat().st_size:,} bytes)")

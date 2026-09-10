@@ -5,6 +5,7 @@ accessible demo a required material.
 """
 from __future__ import annotations
 
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -87,3 +88,31 @@ class TestPages(unittest.TestCase):
     def test_no_em_dashes_in_page_templates(self):
         for name, html in build_site([]).items():
             self.assertNotIn("—", html, f"{name} contains an em dash")
+
+
+class DevKeyBuildGuard(unittest.TestCase):
+    """The command line must not publish pages without the real signing key.
+
+    Verification runs at build time and its verdict is a fixed string in the
+    HTML, so a development-key rebuild over a real-key ledger publishes
+    "CHAIN BROKEN" about a ledger that is intact.
+    """
+
+    def test_refuses_without_a_signing_key(self):
+        with mock.patch.dict(os.environ, {}, clear=True):
+            with self.assertRaises(config.UnsignedError):
+                config.refuse_dev_build()
+
+    def test_refuses_with_only_the_development_key(self):
+        with mock.patch.dict(os.environ, {"BALLAST_DEV_SECRET": "1"}, clear=True):
+            with self.assertRaises(config.UnsignedError):
+                config.refuse_dev_build()
+
+    def test_allows_a_deliberate_local_preview(self):
+        env = {"BALLAST_DEV_SECRET": "1", config.DEV_BUILD_OVERRIDE: "1"}
+        with mock.patch.dict(os.environ, env, clear=True):
+            config.refuse_dev_build()
+
+    def test_allows_a_real_key(self):
+        with mock.patch.dict(os.environ, {"BALLAST_SECRET": "x"}, clear=True):
+            config.refuse_dev_build()

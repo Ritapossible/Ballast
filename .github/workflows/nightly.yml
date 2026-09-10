@@ -18,11 +18,15 @@ on:
     - cron: "0 21 * * 1-5"     # 17:00 ET — one hour after the close
     - cron: "30 14 * * 1-5"    # 10:30 ET — one hour after the open
   workflow_dispatch:
+    # "publish" appends nothing to the ledger; it only re-verifies the chain and
+    # regenerates the site. The chain status is baked into the HTML at build
+    # time, so pages built anywhere but here - where the real signing key lives -
+    # misreport it. This is the way to repair them without inventing a decision.
     inputs:
       task:
-        description: "which half to run"
+        description: "which half to run (publish rebuilds the site only)"
         type: choice
-        options: [check, night, morning, both]
+        options: [check, night, morning, both, publish]
         default: both
 
 concurrency:

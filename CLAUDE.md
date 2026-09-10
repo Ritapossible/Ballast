@@ -193,6 +193,14 @@ datacenter IPs** and are not usable here.
 - **Repo secrets to set:** `QWEN_API_KEY`, `BALLAST_SECRET`. Without them the run still
   succeeds — the reader abstains and a dev signing key is used — and says so in the output.
 - **Enable GitHub Pages on `/docs`** to give the demo a public URL.
+- **Never rebuild `docs/` locally.** The site is static: the chain is verified when the
+  pages are built and the verdict is a fixed string in the HTML. Only the workflow holds
+  `BALLAST_SECRET`, so a local rebuild over a scheduled run's ledger publishes
+  "CHAIN BROKEN" about a ledger that is intact - which is what broke the live site on
+  2026-09-10. The builders' `__main__` now refuses a keyless build, CI rejects a page that
+  misreports the chain, and `workflow_dispatch` with `task: publish` regenerates the site
+  without appending anything to the ledger. Content changes to a page: edit the builder,
+  push, then run `publish`.
 
 ## 8. Submission requirements — non-negotiable
 
