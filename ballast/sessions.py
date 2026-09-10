@@ -11,11 +11,14 @@ from __future__ import annotations
 import datetime as dt
 from zoneinfo import ZoneInfo
 
+from .holidays import closes_early, is_trading_day
+
 NY = ZoneInfo("America/New_York")
 UTC = ZoneInfo("UTC")
 
 MARKET_OPEN = dt.time(9, 30)
 MARKET_CLOSE = dt.time(16, 0)
+EARLY_CLOSE = dt.time(13, 0)
 
 
 def _ny(date: dt.date, t: dt.time) -> dt.datetime:
@@ -23,8 +26,9 @@ def _ny(date: dt.date, t: dt.time) -> dt.datetime:
 
 
 def close_utc(session: dt.date) -> dt.datetime:
-    """UTC instant of the 16:00 ET close for a given session date."""
-    return _ny(session, MARKET_CLOSE).astimezone(UTC)
+    """UTC instant of the close for a session - 13:00 ET on an early-close day."""
+    hour = EARLY_CLOSE if closes_early(session) else MARKET_CLOSE
+    return _ny(session, hour).astimezone(UTC)
 
 
 def open_utc(session: dt.date) -> dt.datetime:
@@ -33,11 +37,18 @@ def open_utc(session: dt.date) -> dt.datetime:
 
 
 def next_session(session: dt.date) -> dt.date:
-    """Next weekday. Exchange holidays are NOT handled — see caveat below."""
+    """The next day the exchange is actually open.
+
+    Holidays are skipped, not just weekends. Treating a holiday as a trading day
+    produced a window that silently spanned an extra closed day - understating the
+    exposure being priced on precisely the nights when it is longest.
+    """
     nxt = session + dt.timedelta(days=1)
-    while nxt.weekday() > 4:
+    for _ in range(10):                      # bounded: no run of closures is longer
+        if is_trading_day(nxt):
+            return nxt
         nxt += dt.timedelta(days=1)
-    return nxt
+    raise RuntimeError(f"no trading day within 10 days of {session}")
 
 
 def overnight_window(session: dt.date) -> tuple[dt.datetime, dt.datetime]:
@@ -55,15 +66,10 @@ def window_hours(session: dt.date) -> float:
 
 
 def sessions_between(start: dt.date, end: dt.date):
-    """Weekday sessions in [start, end]."""
+    """Trading sessions in [start, end] - weekdays the exchange was open."""
     d = start
     while d <= end:
-        if d.weekday() <= 4:
+        if is_trading_day(d):
             yield d
         d += dt.timedelta(days=1)
 
-
-# CAVEAT (tracked, not yet fixed): US exchange holidays are not modelled. A holiday
-# produces a window that spans an extra closed day and is therefore mislabelled as a
-# normal overnight. Affects window length, not the hedge relationship. Fix before
-# publishing per-window 1-sigma figures.

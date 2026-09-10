@@ -25,7 +25,7 @@ All figures **observed** on 2026-09-08 from public Bitget endpoints, reproducibl
 | Worst nights | MSFT 1,128 bp → 233 bp · AMD 1,262 bp → 90 bp |
 | Cost of protection | **11.3 bp** taker, net of funding received |
 | Cost of exiting instead | **20 bp**, and you lose the position |
-| Hedgeable universe | **219** of 699 live rTokens |
+| Hedgeable universe | **224** of 704 live rTokens (measured 2026-09-10; see `docs/facts.json`) |
 
 ## What it does not claim
 
@@ -55,7 +55,7 @@ Enforced by a separate process holding the only write-scoped credential — see
 | [`CLAUDE.md`](CLAUDE.md) | Working memory — links, verified facts, hard rules |
 
 ```bash
-python3 research/universe.py        # 219 hedgeable pairs of 699 rTokens
+python3 -m ballast.universe         # the hedgeable universe
 python3 research/hedge_study.py     # hedge quality, stress conditioning, tail
 python3 research/gate1_selection.py # can risky nights be chosen in advance
 ```

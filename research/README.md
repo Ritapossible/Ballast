@@ -4,7 +4,7 @@ Every number quoted in `docs/RESEARCH.md`, `PLAN.md` and the submission is produ
 by these scripts. No API key is required — all endpoints used here are public.
 
 ```bash
-python3 research/universe.py            # hedgeable universe (219 of 699)
+python3 -m ballast.universe             # hedgeable universe
 python3 research/hedge_study.py         # hedge quality, stress conditioning, tail
 python3 research/gate1_selection.py     # Gate 1: ex-ante selectability
 python3 research/gate1_calendar.py      # Gate 1b: the calendar as selector

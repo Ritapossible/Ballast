@@ -353,7 +353,7 @@ the whole session.</li>
 labelled <em>observed</em>, <em>estimated</em> or <em>targeted</em>.</p>
 <div class="scroll"><table><thead><tr><th>Finding</th><th>Value</th></tr></thead><tbody>
 <tr><td>rTokens live on spot / with a perp leg</td><td class="num">704 / 224</td></tr>
-<tr><td>Median overnight variance removed</td><td class="num">98.0%</td></tr>
+<tr><td>Median overnight variance removed</td><td class="num">98.2%</td></tr>
 <tr><td>R² on top-decile move nights</td><td class="num">0.978–0.999</td></tr>
 <tr><td>Median p95 tail reduction</td><td class="num">88%</td></tr>
 <tr><td>Earnings-night variance ratio</td><td class="num">3.2×</td></tr>
@@ -384,17 +384,19 @@ against cost on every night, scoring nearly every unhedged night as an error. Re
 <h2 id="limits">Limitations</h2>
 <ul>
 <li><strong>Tail coverage is incomplete.</strong> Scheduled earnings are a minority of
-the worst nights; the reader exists to close that gap and has not yet been measured
-doing so.</li>
+the worst nights. The reader exists to close that gap and has not yet been measured
+doing so - it cannot be measured retrospectively without look-ahead, so it accumulates
+forward. See the <a href="https://github.com/Ritapossible/Ballast/blob/main/docs/ROADMAP.md">roadmap</a>.</li>
 <li><strong>480 of 704 rTokens have no perp leg</strong> and cannot be protected.</li>
 <li><strong>Paper trading only.</strong> Fills are simulated against observed prices
 with the real fee schedule, taker on both legs, and modelled slippage. The ledger is
 also exported in Bitget UTA order field names for comparison with a live log, but
 <strong>no order is sent to an exchange</strong> and the Agentic Account is not wired.</li>
-<li><strong>US exchange holidays are not modelled</strong>, which affects window
-length rather than the hedge relationship.</li>
 <li><strong>Maker fills are never assumed.</strong> All costs default to taker; a 4am
-perp book may not fill a resting order.</li>
+perp book may not fill a resting order. Maker pricing would be roughly a third of the
+cost, so this is deliberately conservative rather than settled.</li>
+<li><strong>Exchange holidays are modelled</strong> from NYSE rules, including early
+closes - a Good Friday window measures 89.5 hours, not a mislabelled 17.5.</li>
 </ul>
 
 <h2 id="verify">Reproduce it</h2>

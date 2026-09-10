@@ -10,6 +10,11 @@ Median p95 tail reduction 90%.
 """
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 import statistics as st
 
 from ballast.market import bars

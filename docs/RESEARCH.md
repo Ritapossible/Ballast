@@ -58,7 +58,9 @@ DST-correct. Friday yields the Friday→Monday window. `RxxxUSDT` regressed on `
 | GOOGL | 253 | 1.011 | 0.972 | 1.026 | 0.984 | 0.768 | 0.987 |
 | META | 253 | 1.025 | 0.969 | 1.062 | 0.983 | 0.773 | 0.985 |
 
-**Median R² = 0.980. Every β within 4% of 1.00.**
+**Median R² = 0.982. Every β within 4% of 1.00.**
+
+*(0.980 before exchange holidays were modelled; correcting the window labelling moved it slightly up and left every conclusion unchanged.)*
 
 ### The hedge strengthens under stress
 
@@ -146,7 +148,7 @@ defect — that is what insurance is.
 | DST: US close hardcoded at 20:00 UTC; ~4 months of sample were EST | **Fixed** — `research/sessions.py`; verified across both 2025-11-02 and 2026-03-08 transitions |
 | The 09:30 ET open does not fall on an hourly bar boundary, so lookups silently missed | **Fixed** — open snapped up to the next whole hour, `research/overnight.py` |
 | First Gate 1 run selected nights by *realised* move — look-ahead | **Fixed** — ex-ante selector only; the invalid version is preserved behind `--lookahead` to document the bug |
-| US exchange holidays are not modelled | **Open** — affects window length, not the hedge relationship. Tracked in `sessions.py`. |
+| US exchange holidays are not modelled | **Fixed** — `ballast/holidays.py` computes NYSE closures and early closes from rules. A Good Friday window measured 17.5 hours and is now 89.5. |
 | Maker fills assumed to be available in a 4am book | **Avoided** — all costs default to taker |
 
 ## 6b. Gate 1b — the event calendar as the selector ✅ PASSES BOTH CONDITIONS
