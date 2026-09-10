@@ -25,6 +25,13 @@ from .overnight import overnight_returns
 from .universe import hedgeable_pairs
 from .sessions import UTC
 
+# Settlement grades a session against the following open, so it needs days of
+# bars, not years. The default 12,000 pages back 60 times per symbol - 1,440
+# requests for a twelve-position book, which is why a run took minutes. Two pages
+# cover ~16 days, comfortably past the 14-day limit on how far back a session can
+# still be outstanding.
+SETTLE_BARS = 400
+
 
 def _perp_for(spot_symbol: str) -> str:
     """Resolve the hedge leg from the live pair index rather than by string surgery.
@@ -117,10 +124,10 @@ def run(session: str | None = None) -> dict:
             # use_cache=False, as at night. The cache never expires, so a second
             # settlement on a machine that had already fetched these symbols would
             # grade tonight's decision against an older session's bars.
-            spot_ret = overnight_returns(
-                market_bars(r["spot_symbol"], "spot", use_cache=False)).get(day)
-            perp_ret = overnight_returns(
-                market_bars(perp, "mix", use_cache=False)).get(day)
+            spot_ret = overnight_returns(market_bars(
+                r["spot_symbol"], "spot", max_bars=SETTLE_BARS, use_cache=False)).get(day)
+            perp_ret = overnight_returns(market_bars(
+                perp, "mix", max_bars=SETTLE_BARS, use_cache=False)).get(day)
             if spot_ret is None or perp_ret is None:
                 ungraded.append(r["ticker"])           # window not closed, or a data gap
                 continue

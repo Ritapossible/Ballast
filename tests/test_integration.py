@@ -206,6 +206,8 @@ class TestMorningSettlement(LivePathCase):
             self.settle()
         self.assertTrue(calls, "settlement fetched no bars at all")
         self.assertTrue(all(kw.get("use_cache") is False for kw in calls), calls)
+        self.assertTrue(all(kw.get("max_bars") == morning.SETTLE_BARS for kw in calls),
+                        "settlement paged further back than the session it grades")
 
     def test_settlement_refuses_a_broken_chain(self):
         self.run_night()
