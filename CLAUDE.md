@@ -180,8 +180,14 @@ datacenter IPs** and are not usable here.
    "signatures NOT verified" rather than crashing.
 9. **A session is never settled partially**, and settlement is idempotent. Both would
    otherwise corrupt the evidence: stranded rows, or double-counted tiles.
-8. **Never present the hedge leg standalone** — always the paired hedged-vs-unhedged portfolio
+10. **Never present the hedge leg standalone** - always the paired hedged-vs-unhedged portfolio
    on the same positions and the same nights.
+
+11. **A refusal gets no nightly verdict.** Its value added is positive exactly when the
+    position rose, so correct/wrong on a refusal is a directional scorecard - the one claim
+    two S1 winners already showed cannot be made. Hedges are graded on whether they cut the
+    move (symmetric, settled by one night); refusals are graded across the run, on the mean.
+    Every row still shows its own signed arithmetic.
 
 ## 7b. Operations
 

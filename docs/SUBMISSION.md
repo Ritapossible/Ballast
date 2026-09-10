@@ -180,8 +180,12 @@ order field names; US exchange holidays in the session calendar.
    invalid version survives behind a flag to document it.
 3. **Hour-snapping** - the 09:30 ET open does not fall on an hourly bar boundary, so price
    lookups silently missed every time. Fixed.
-4. **A broken metric** - an early "decision accuracy" compared move against cost on every
-   night, scoring nearly every unhedged night as an error. Replaced.
+4. **A broken metric, twice** - an early "decision accuracy" compared move against cost on
+   every night, scoring nearly every unhedged night as an error. Its replacement, signed
+   value added, is the right number, but was still shown as a per-night correct/wrong on
+   refusals - positive exactly when the position rose, which is a directional verdict this
+   system does not make. Refusals now carry their arithmetic and no verdict; hedges are
+   graded on whether they cut the move. Both fixed.
 5. **A policy that lost money** - the first replay hedged 45% of nights and cost ~13% a year.
    Diagnosed to the selector, not the mechanism, and published as a negative result. **No
    parameters were tuned to make that table look better.**

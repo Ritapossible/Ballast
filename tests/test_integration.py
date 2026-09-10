@@ -150,25 +150,37 @@ class TestNightRun(LivePathCase):
 
 
 class TestMorningSettlement(LivePathCase):
-    def test_refusals_are_graded_by_outcome_not_by_cost(self):
-        """The old metric marked every refusal wrong; the market fell here, so a
-        refusal is genuinely wrong and a hedge genuinely right - both by P&L."""
+    def test_value_added_is_the_signed_difference_against_the_other_choice(self):
+        """The old metric compared |move| to the cost and marked every refusal wrong."""
         self.run_night()
         result = self.settle()
         rows = {r["ticker"]: r for r in result["sessions"][SESSION.isoformat()]["rows"]}
-        self.assertTrue(rows["ORCL"]["correct"])        # hedged into an 800bp fall
-        self.assertFalse(rows["TSLA"]["correct"])       # declined into the same fall
-        self.assertGreater(rows["ORCL"]["value_added_bp"], 0)
-        self.assertLess(rows["TSLA"]["value_added_bp"], 0)
+        self.assertGreater(rows["ORCL"]["value_added_bp"], 0)   # hedged into an 800bp fall
+        self.assertLess(rows["TSLA"]["value_added_bp"], 0)      # declined into the same fall
 
-    def test_a_refusal_on_a_rising_night_is_graded_correct(self):
+    def test_a_refusal_keeps_the_gain_on_a_rising_night(self):
         with mock.patch.object(morning, "market_bars",
                                lambda s, m="spot", **k: _rising(m)):
             self.run_night()
             rows = {r["ticker"]: r for r in
                     self.settle()["sessions"][SESSION.isoformat()]["rows"]}
-        self.assertTrue(rows["TSLA"]["correct"])        # declined, and it rose
-        self.assertFalse(rows["ORCL"]["correct"])       # hedged away the gain
+        self.assertGreater(rows["TSLA"]["value_added_bp"], 0)   # declined, and it rose
+        self.assertLess(rows["ORCL"]["value_added_bp"], 0)      # hedged away the gain
+
+    def test_only_a_hedge_is_given_a_verdict(self):
+        """A refusal's value added is positive exactly when the position rose, so a
+        nightly verdict on one is a directional call. A hedge's is symmetric: it
+        cut the move, or it did not - true here even on the night it cost money."""
+        with mock.patch.object(morning, "market_bars",
+                               lambda s, m="spot", **k: _rising(m)):
+            self.run_night()
+            rows = {r["ticker"]: r for r in
+                    self.settle()["sessions"][SESSION.isoformat()]["rows"]}
+        self.assertIsNone(rows["TSLA"]["cut_the_move"])
+        self.assertTrue(rows["ORCL"]["cut_the_move"])
+        self.assertLess(rows["ORCL"]["value_added_bp"], 0)
+        for row in rows.values():
+            self.assertNotIn("correct", row)
 
     def test_settlement_is_idempotent(self):
         self.run_night()
@@ -237,8 +249,25 @@ class TestSiteReflectsTheLedger(LivePathCase):
             pages = {p.name: p.read_text() for p in report.build()}
         self.assertIn("ORCL", pages["tonight.html"])
         self.assertIn("chain verified", pages["tonight.html"])
-        self.assertIn("correct", pages["settled.html"])
+        self.assertIn("cut the move", pages["settled.html"])
         self.assertNotIn("CHAIN BROKEN", pages["settled.html"])
+
+    def test_a_refusal_is_never_given_a_nightly_verdict(self):
+        """Value added on a refusal is positive iff the position rose.
+
+        Labelling that correct or wrong per night is a directional scorecard, and
+        this system makes no directional claim. The number stays; the label does not.
+        """
+        self.run_night()
+        self.settle()
+        out = Path(self.tmp.name) / "site"
+        with mock.patch.object(report, "OUT_DIR", out):
+            pages = {p.name: p.read_text() for p in report.build()}
+        settled = pages["settled.html"]
+        self.assertIn("NO_HEDGE", settled)
+        self.assertIn(">carried<", settled)
+        for verdict in (">correct<", ">wrong<"):
+            self.assertNotIn(verdict, settled)
 
 
 if __name__ == "__main__":

@@ -65,14 +65,23 @@ def _settled(rows: list[dict]) -> str:
         va = r.get("value_added_bp", 0)
         cls = "pos" if va > 0 else "neg" if va < 0 else "dim"
         on = r.get("action") == "HEDGE"
+        # A hedge answers a symmetric question - did it cut the move - and one
+        # night answers it. A refusal does not: value added is positive for a
+        # refusal exactly when the position rose, so a per-night verdict on it is
+        # a directional scorecard, and this system makes no directional claim.
+        # The number stays in the row; only the label is withheld.
+        if on:
+            cut = abs(r.get("realised_bp", 0)) < abs(r.get("unhedged_bp", 0))
+            verdict, faint = ("cut the move", False) if cut else ("did not cut", True)
+        else:
+            verdict, faint = "carried", True
         out.append(
             f'<tr><td><strong>{_e(r.get("ticker"))}</strong></td>'
             f'<td><span class="tag {"on" if on else ""}">{_e(r.get("action"))}</span></td>'
             f'<td class="num mid">{r.get("unhedged_bp", 0):+,.0f} bp</td>'
             f'<td class="num mid">{r.get("realised_bp", 0):+,.0f} bp</td>'
             f'<td class="num {cls}">{va:+,.0f} bp</td>'
-            f'<td class="{"" if r.get("correct") else "dim"}">'
-            f'{"correct" if r.get("correct") else "wrong"}</td></tr>')
+            f'<td class="{"dim" if faint else ""}">{verdict}</td></tr>')
     return "".join(out) + "</tbody></table></div>"
 
 
@@ -133,6 +142,11 @@ class Site:
         self.shrank = sum(1 for r in self.hedges
                           if abs(r.get("realised_bp", 0)) < abs(r.get("unhedged_bp", 0)))
         self.worst = max((abs(r.get("unhedged_bp", 0)) for r in self.rows), default=0)
+        # Where a refusal is actually graded: the mean over every settled
+        # position-night, against the choice not taken. One session is n=1 and the
+        # page says so - but the number belongs on the page, not only in the ledger.
+        self.mean_va = (sum(r.get("value_added_bp", 0) for r in self.rows) / len(self.rows)
+                        if self.rows else 0)
 
     # -- pages ---------------------------------------------------------------
 
@@ -240,7 +254,7 @@ settles at the next opening bell, so nothing can be quietly forgotten.</p>
 {_tile(len(self.rows), "decisions settled")}
 {_tile(f"{self.shrank}/{len(self.hedges)}" if self.hedges else "-", "hedges that cut the move")}
 {_tile(f"{self.worst:,.0f} bp" if self.worst else "-", "worst night seen")}
-{_tile(self.latest.get("hedged", 0), "hedged tonight")}
+{_tile(f"{self.mean_va:+,.0f} bp" if self.rows else "-", "mean value added per position-night")}
 </div>
 </div></section>
 
@@ -249,9 +263,9 @@ settles at the next opening bell, so nothing can be quietly forgotten.</p>
 <div class="narrow" style="margin-top:52px">
 <h3>How these are scored</h3>
 <ul class="bul">
-<li><strong>Value added</strong> is the reduction in the size of the move, less the cost of the hedge.</li>
-<li><strong>Win rate</strong> is the share of hedges that reduced the move. A hedge is symmetric, so a profit-direction win rate would be meaningless.</li>
-<li><strong>Refusals are graded too.</strong> Declining a quiet night correctly is a win; declining a violent one is not.</li>
+<li><strong>Value added</strong> is what the call returned minus what the other choice would have returned, over the same window, with the hedge cost charged to whichever side pays it. The counterfactual leg is not modelled - it is observed.</li>
+<li><strong>A hedge is graded on whether it cut the move.</strong> It is symmetric, so grading one by profit direction would be meaningless, and one night settles the question.</li>
+<li><strong>A refusal cannot be graded on one night.</strong> Its value added is positive exactly when the position rose, so a nightly verdict on a refusal is a directional scorecard - and this system makes no directional claim. On a broad down night every refusal scores badly, which is only the case for hedging everything, every night, at 11.3 bp a time. Refusals are graded across the run instead, on the mean above; each row still shows its own arithmetic.</li>
 </ul>
 </div>
 </div></section>"""

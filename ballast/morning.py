@@ -5,10 +5,12 @@ counterfactual**. "What would have happened had we not hedged" is not modelled -
 it is the observed rToken return over the same window. So both the hedges and the
 refusals are graded, precisely, every morning.
 
-A decision is scored correct when it was the cheaper choice ex post:
-
-    HEDGED    and |unhedged move| > cost  -> correct (protection paid for itself)
-    NOT HEDGED and |unhedged move| < cost -> correct (the fee was rightly saved)
+Each row records the signed difference between the choice taken and the one
+refused, and nothing more. A hedge also records whether it cut the move, which is
+the symmetric question a single night can answer. A refusal records no verdict:
+its value added is positive exactly when the position rose, so a nightly verdict
+on a refusal would be a directional scorecard, and Ballast makes no directional
+claim. Refusals are graded across the run, on the mean.
 
     python -m ballast.morning
 """
@@ -66,6 +68,11 @@ def _settle_one(record: dict, spot_ret: float, perp_ret: float,
     The earlier definition compared |move| against the 12 bp cost on every night.
     Because typical overnight moves are 100-400 bp, it marked essentially every
     refusal wrong - and the policy declines roughly 90% of position-nights.
+
+    No per-row correct/wrong is stored. Both replacements for that flag were
+    directional in disguise: value_added_bp > 0 on a refusal says only that the
+    position rose. A hedge does get a verdict, because "did it cut the move" is
+    symmetric and one night settles it.
     """
     unhedged_bp = spot_ret * 1e4
     protected_bp = (spot_ret - perp_ret) * 1e4 - cost_bp
@@ -82,7 +89,7 @@ def _settle_one(record: dict, spot_ret: float, perp_ret: float,
         "realised_bp": round(realised_bp, 1),
         "counterfactual_bp": round(counterfactual_bp, 1),
         "value_added_bp": round(value_added_bp, 1),
-        "correct": value_added_bp > 0,
+        "cut_the_move": abs(protected_bp) < abs(unhedged_bp) if hedged else None,
         "cost_bp": round(cost_bp, 1),
         "rationale": record.get("rationale", ""),
         "event": record.get("event", {}).get("type"),
@@ -144,8 +151,8 @@ def run(session: str | None = None) -> dict:
         summary = {
             "session": sess,
             "decisions": len(graded),
-            "correct": sum(1 for g in graded if g["correct"]),
             "hedged": sum(1 for g in graded if g["action"] == "HEDGE"),
+            "hedges_that_cut": sum(1 for g in graded if g.get("cut_the_move")),
             "worst_unhedged_bp": max((abs(g["unhedged_bp"]) for g in graded), default=0),
             "worst_realised_bp": max((abs(g["realised_bp"]) for g in graded), default=0),
             "net_value_added_bp": round(sum(g["value_added_bp"] for g in graded), 1),
@@ -158,20 +165,27 @@ def run(session: str | None = None) -> dict:
     return out
 
 
+def _verdict(row: dict) -> str:
+    """Only a hedge gets one. See _settle_one."""
+    if row["action"] != "HEDGE":
+        return "carried"
+    return "cut the move" if row.get("cut_the_move") else "did not cut"
+
+
 def brief(result: dict) -> str:
     if not result.get("sessions"):
         return "Nothing to settle - no overnight window has closed since the last run."
     lines = []
     for sess, s in result["sessions"].items():
         lines.append(f"\n  {sess} - {s['decisions']} decisions, {s['hedged']} hedged, "
-                     f"{s['correct']}/{s['decisions']} correct")
+                     f"{s['hedges_that_cut']}/{s['hedged']} hedges cut the move")
         lines.append(f"  {'ticker':8s} {'action':10s} {'unhedged':>10s} {'realised':>10s} "
                      f"{'value':>8s}  verdict")
         lines.append("  " + "-" * 62)
         for g in sorted(s["rows"], key=lambda r: -abs(r["unhedged_bp"])):
             lines.append(f"  {g['ticker']:8s} {g['action']:10s} {g['unhedged_bp']:9.0f}bp "
                          f"{g['realised_bp']:9.0f}bp {g['value_added_bp']:7.0f}bp  "
-                         f"{'correct' if g['correct'] else 'wrong'}")
+                         f"{_verdict(g)}")
         lines.append(f"  worst night: {s['worst_unhedged_bp']:.0f}bp unhedged -> "
                      f"{s['worst_realised_bp']:.0f}bp realised · "
                      f"net {s['net_value_added_bp']:+.0f}bp")
