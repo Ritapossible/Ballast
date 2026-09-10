@@ -22,7 +22,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from ballast.earnings import symbols_on
+from ballast.earnings import scheduled_in_window
 from ballast.costs import HEDGE_COST_BP
 from ballast.market import bars
 from ballast.overnight import overnight_returns
@@ -37,8 +37,12 @@ CFG = PolicyConfig()
 
 
 def _risk(ticker: str, session: dt.date) -> NightRisk:
-    reporting = set(symbols_on(session)) | set(symbols_on(next_session(session)))
-    if ticker not in reporting:
+    # The same selector production uses, not a second copy of the rule. The audit
+    # already caught research and production computing returns differently; a
+    # selector that drifts the same way would invalidate every number here.
+    # Historical dates carry no release-time flag, so this reduces to date-only
+    # matching - exactly what Gate 1 measured.
+    if scheduled_in_window(ticker, session) is None:
         return NightRisk(ticker=ticker)
     return NightRisk(ticker=ticker, event_type=EventType.EARNINGS,
                      expected_impact=Impact.HIGH, confidence=1.0,

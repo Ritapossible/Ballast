@@ -196,10 +196,14 @@ datacenter IPs** and are not usable here.
     behind the ledger is. A site showing its last good night looks identical to a working
     one, which is how a broken settlement went unnoticed for a day.
 
-14. **Both halves of the loop are idempotent.** Deciding twice doubles the decisions, the
+14. **An earnings match must fall INSIDE the window.** After-hours on the session, or
+    pre-market on the next one - nothing else. Date-only matching hedges the night before
+    every after-hours report. `earnings.scheduled_in_window` is the only selector; the
+    replay calls it too, so research and production cannot drift.
+15. **Both halves of the loop are idempotent.** Deciding twice doubles the decisions, the
     notional against one book, and the settlement grades. Fixing one half and not the other
     is how this survived the audit.
-15. **A decision is only a decision if the window is still open.** `night.run` refuses a
+16. **A decision is only a decision if the window is still open.** `night.run` refuses a
     session more than half elapsed and records `decided_after_close_hours` every time.
     Never re-run a past night to "test the loop" - settlement grades close-to-open and
     will credit the hedge with a move that already happened. Use `--dry-run`.

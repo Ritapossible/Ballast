@@ -70,8 +70,9 @@ class LivePathCase(unittest.TestCase):
             mock.patch.object(config, "secret", return_value=SECRET),
             mock.patch.object(night, "market_bars", fake_bars),
             mock.patch.object(morning, "market_bars", fake_bars),
-            mock.patch.object(night, "symbols_on",
-                              lambda d: {"ORCL": "time-after-hours"}),
+            mock.patch.object(night, "scheduled_in_window",
+                              lambda ticker, session:
+                              "time-after-hours" if ticker == "ORCL" else None),
         ]
         for p in self.patches:
             p.start()

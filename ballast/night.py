@@ -17,7 +17,7 @@ from .costs import HEDGE_COST_BP
 from .market import MarketDataUnavailable
 from .llm import available as llm_available
 from .book import Book
-from .earnings import symbols_on
+from .earnings import scheduled_in_window
 from .enforcer import Enforcer, OrderIntent
 from .ledger import Ledger
 from .mandate import NightMandate, SignedMandate
@@ -44,7 +44,7 @@ NOTIONAL_HEADROOM = 1.05
 
 def calendar_risk(ticker: str, session: dt.date) -> tuple[NightRisk, bool]:
     """The deterministic half: is a report scheduled inside this window?"""
-    flag = symbols_on(session).get(ticker) or symbols_on(next_session(session)).get(ticker)
+    flag = scheduled_in_window(ticker, session)
     if flag is None:
         return NightRisk(ticker=ticker), False
     return NightRisk(

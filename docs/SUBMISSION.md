@@ -183,6 +183,11 @@ order field names; US exchange holidays in the session calendar.
 3b. **A holiday counted as a trading day** - the function picking the session to trade tested
    only for a weekday while the rest of the calendar excludes holidays, so Thanksgiving came
    back as a tradeable session. Fixed.
+3f. **The calendar selector hedged a night early** - it matched the session date or the next
+   session's without checking the release time, so an after-hours report on the next session
+   hedged both nights. The 2026-09-09 ORCL and ADBE hedges were such cases; they cut the move
+   but for a reason that was not true of that window. Fixed, disclosed on the settled page,
+   and the replay now shares the selector instead of copying the rule.
 3e. **The night could be decided twice** - settlement was made idempotent in the audit, the
    decide half was not. A repeat run doubled the decisions, the notional against one book,
    and the settlement grades. Now a no-op.

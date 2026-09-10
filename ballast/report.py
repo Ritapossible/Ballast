@@ -24,6 +24,10 @@ from .theme import REPO, page
 
 OUT_DIR = config.ROOT / "docs"
 
+# Sessions decided before the calendar selector checked the release time. Their
+# hedges may have been placed a night early; the settled page says so beside them.
+SELECTOR_BUG_SESSIONS = frozenset({"2026-09-09"})
+
 
 def _e(v) -> str:
     return html.escape(str(v))
@@ -299,6 +303,30 @@ declined is a decision it will be graded on.</p>
 </div>
 </div></section>"""
 
+    @property
+    def selector_correction(self) -> str:
+        """Sessions decided before the calendar window was fixed.
+
+        The selector ORed the session date with the next session's and ignored the
+        release time, so an after-hours report on the next session hedged the night
+        before as well. Only 2026-09-09 was settled under that rule, and its two
+        hedges are the ones the tiles above are built from - so the correction
+        belongs beside them, not only in the defect list.
+        """
+        affected = [r for s in self.settlements if s.get("session") in SELECTOR_BUG_SESSIONS
+                    for r in s.get("rows", []) if r.get("action") == "HEDGE"]
+        if not affected:
+            return ""
+        names = ", ".join(sorted(r["ticker"] for r in affected))
+        return f"""<div class="callout"><p><strong>A correction on {names}.</strong>
+The 2026-09-09 hedges were placed a night early. The calendar rule matched the session
+date or the next session's without checking the release time, and both companies reported
+after the close on 2026-09-10 - outside the 2026-09-09 window entirely. The hedges did cut
+the move, because a hedge cuts whatever move arrives, but the reason recorded for them was
+wrong and the protection was not aimed at the event it names. The Nasdaq calendar for each
+date is linked in the ledger, so this is checkable rather than asserted. The rule now
+requires the release to fall inside the window; one event is hedged on exactly one night.</p></div>"""
+
     def settled_page(self) -> str:
         return f"""
 <section class="bd"><div class="wrap center">
@@ -318,6 +346,7 @@ settles at the next opening bell, so nothing can be quietly forgotten.</p>
 <section><div class="wrap">
 {_settled(self.rows)}
 <div class="narrow" style="margin-top:52px">
+{self.selector_correction}
 <h3>How these are scored</h3>
 <ul class="bul">
 <li><strong>Value added</strong> is what the call returned minus what the other choice would have returned, over the same window, with the hedge cost charged to whichever side pays it. The counterfactual leg is not modelled - it is observed.</li>

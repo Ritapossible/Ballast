@@ -13,7 +13,7 @@ import datetime as dt
 import sys
 
 from . import config, llm
-from .earnings import symbols_on
+from .earnings import scheduled_in_window
 from .news import fetch, in_window
 from .reader import read
 from .sessions import UTC, close_utc, next_session, open_utc, window_hours
@@ -60,7 +60,7 @@ def run(ticker: str = "ORCL") -> int:
                           f"({len(windowed)} inside tonight's window)")
 
     # --- calendar ----------------------------------------------------------
-    flagged = ticker in symbols_on(session) or ticker in symbols_on(next_session(session))
+    flagged = scheduled_in_window(ticker, session) is not None
     _line(OK, "calendar", f"{ticker} reporting in this window: {'YES' if flagged else 'no'}")
 
     # --- the full reader path ---------------------------------------------

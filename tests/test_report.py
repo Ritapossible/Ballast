@@ -161,6 +161,36 @@ class ProvenanceCase(unittest.TestCase):
         self.assertFalse(site.decided_late)
 
 
+class SelectorCorrectionCase(unittest.TestCase):
+    """The affected hedges are the ones the settled tiles are built from, so the
+    correction has to sit beside them, not only in the defect list."""
+
+    def _site(self, session: str):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "ledger.jsonl"
+            lg = Ledger(path, config.DEV_SECRET)
+            lg.append("night_summary", {"session": session, "positions": 1,
+                                        "hedged": 1, "window_hours": 17.5})
+            lg.append("settlement", {"session": session, "decisions": 1, "hedged": 1,
+                                     "rows": [{"ticker": "ORCL", "action": "HEDGE",
+                                               "unhedged_bp": -390.0, "realised_bp": -13.6,
+                                               "counterfactual_bp": -390.0,
+                                               "value_added_bp": 376.6}]})
+            with mock.patch.object(config, "LEDGER_PATH", path), \
+                 mock.patch.object(config, "secret", return_value=config.DEV_SECRET):
+                return report.Site(now=dt.datetime(2026, 9, 11, 21,
+                                                   tzinfo=dt.timezone.utc))
+
+    def test_an_affected_session_carries_the_correction(self):
+        site = self._site("2026-09-09")
+        self.assertIn("ORCL", site.selector_correction)
+        self.assertIn("a night early", site.selector_correction)
+        self.assertIn(site.selector_correction, site.settled_page())
+
+    def test_a_clean_session_carries_none(self):
+        self.assertEqual(self._site("2026-09-10").selector_correction, "")
+
+
 class DevKeyBuildGuard(unittest.TestCase):
     """The command line must not publish pages without the real signing key.
 

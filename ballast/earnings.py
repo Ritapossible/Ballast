@@ -23,6 +23,8 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+from .sessions import next_session
+
 CACHE = Path(__file__).resolve().parent.parent / ".cache" / "earnings"
 _UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
        "(KHTML, like Gecko) Chrome/124.0 Safari/537.36")
@@ -61,6 +63,35 @@ def _fetch_day(day: dt.date, retries: int = 3) -> list[dict]:
 def symbols_on(day: dt.date) -> dict[str, str]:
     """{ticker: time_flag} for every company reporting on `day`."""
     return {r["symbol"]: r.get("time") or "time-not-supplied" for r in _fetch_day(day)}
+
+
+def scheduled_in_window(ticker: str, session: dt.date) -> str | None:
+    """The flag for a report that actually falls inside this session's window.
+
+    Nasdaq lists a report under the calendar date it is released, and the window
+    runs from `session`'s close to the next session's open. So:
+
+        session, after-hours      inside   <- the common case
+        session, pre-market       OUTSIDE  - it happened before this close
+        next session, pre-market  inside
+        next session, after-hours OUTSIDE  - the window shut hours earlier
+
+    The old rule ORed the two dates and ignored the flag, so an after-hours report
+    on the next session hedged the night before as well as the night itself: two
+    nights of cost per event, one of them protecting nothing. That is how the
+    2026-09-09 session came to hedge ORCL, whose earnings were the following night.
+
+    `time-not-supplied` passes both gates. Nasdaq only populates the flag for
+    upcoming dates, so historical dates are matched on date alone - which is the
+    rule the Gate 1 study measured, and keeps this consistent with it.
+    """
+    flag = symbols_on(session).get(ticker)
+    if flag and flag != "time-pre-market":
+        return flag
+    flag = symbols_on(next_session(session)).get(ticker)
+    if flag and flag != "time-after-hours":
+        return flag
+    return None
 
 
 def build_calendar(start: dt.date, end: dt.date, tickers: set[str] | None = None

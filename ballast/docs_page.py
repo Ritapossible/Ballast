@@ -202,6 +202,18 @@ session to trade tested only for a weekday, while the rest of the calendar exclu
 holidays. On Thanksgiving it returned Thanksgiving: a session the exchange never opened,
 against a window that never existed. Fixed and moved beside the calendar it has to agree
 with.</li>
+<li><strong>The calendar selector hedged a night early</strong> - the rule matched the
+session date or the next session's and ignored the release time. Nasdaq lists a report
+under the date it is released, and only two of the four combinations fall inside a
+close-to-open window: after-hours on the session, or pre-market on the next one. An
+after-hours report on the next session was matched anyway, so the night before every such
+event was hedged as well as the night itself - two nights of cost per event, one of them
+protecting nothing. It is how the 2026-09-09 session hedged ORCL, which reported the
+following night. The hedge cut the move regardless, because a hedge cuts whatever arrives,
+but the reason recorded for it was wrong. Fixed; the settled page carries the correction
+beside the affected rows. Historical dates carry no release-time flag, so they still match
+on date alone - the rule Gate 1 measured - and the replay now calls the same selector
+rather than keeping its own copy.</li>
 <li><strong>The night could be decided twice</strong> - settlement had been made
 idempotent during the audit, but the decide half had not. A second run for the same
 session appended a second full set of decisions, committed a second mandate's worth of
