@@ -81,10 +81,14 @@ def _settled(rows: list[dict]) -> str:
     if not rows:
         return _empty("Nothing settled yet. Every decision is graded at the next "
                       "primary open, against the exact counterfactual.")
-    out = ['<div class="scroll stacked"><table><thead><tr><th>Position</th><th>Call</th>'
+    out = ['<div class="scroll stacked"><table><thead><tr><th>Position</th>'
+           '<th>Session</th><th>Call</th>'
            '<th class="num">Unhedged</th><th class="num">Realised</th>'
            '<th class="num">Value added</th><th>Verdict</th></tr></thead><tbody>']
-    for r in sorted(rows, key=lambda x: -abs(x.get("unhedged_bp", 0))):
+    # Newest night first, then by size within it. Sorting by size across sessions
+    # interleaved them, so consecutive rows came from different nights.
+    for r in sorted(rows, key=lambda x: (x.get("session", ""),
+                                         abs(x.get("unhedged_bp", 0))), reverse=True):
         va = r.get("value_added_bp", 0)
         cls = "pos" if va > 0 else "neg" if va < 0 else "dim"
         on = r.get("action") == "HEDGE"
@@ -100,6 +104,7 @@ def _settled(rows: list[dict]) -> str:
             verdict, faint = "carried", True
         out.append(
             f'<tr><td data-label=""><strong>{_e(r.get("ticker"))}</strong></td>'
+            f'<td class="dim" data-label="Session">{_e(r.get("session", "-"))}</td>'
             f'<td data-label="Call"><span class="tag {"on" if on else ""}">'
             f'{_e(r.get("action"))}</span></td>'
             f'<td class="num mid" data-label="Unhedged">{r.get("unhedged_bp", 0):+,.0f} bp</td>'
@@ -183,7 +188,12 @@ class Site:
         self.decided_late = bool(self.decided_after and total
                                  and self.decided_after > 0.5 * total)
         self.tonight = [d for d in decisions if d.get("session") == self.session]
-        self.rows = [r for s in self.settlements for r in s.get("rows", [])]
+        # Each row carries its session. Two nights in, the table showed ORCL twice
+        # with near-identical numbers and no way to tell them apart - which reads as
+        # a duplicate-row bug, not as two nights. dict() copies; the ledger body is
+        # never mutated.
+        self.rows = [dict(r, session=s.get("session", ""))
+                     for s in self.settlements for r in s.get("rows", [])]
         self.hedges = [r for r in self.rows if r.get("action") == "HEDGE"]
         self.shrank = sum(1 for r in self.hedges
                           if abs(r.get("realised_bp", 0)) < abs(r.get("unhedged_bp", 0)))
@@ -343,13 +353,19 @@ declined is a decision it will be graded on.</p>
         hedges are the ones the tiles above are built from - so the correction
         belongs beside them, not only in the defect list.
         """
-        affected = [r for s in self.settlements if s.get("session") in SELECTOR_BUG_SESSIONS
-                    for r in s.get("rows", []) if r.get("action") == "HEDGE"]
+        hit = [s for s in self.settlements
+               if s.get("session") in SELECTOR_BUG_SESSIONS]
+        affected = [r for s in hit for r in s.get("rows", [])
+                    if r.get("action") == "HEDGE"]
         if not affected:
             return ""
-        names = ", ".join(sorted(r["ticker"] for r in affected))
-        return f"""<div class="callout"><p><strong>A correction on {names}.</strong>
-The 2026-09-09 hedges were placed a night early. The calendar rule matched the session
+        names = ", ".join(sorted({r["ticker"] for r in affected}))
+        sessions = ", ".join(sorted(s["session"] for s in hit))
+        return f"""<div class="callout"><p><strong>A correction on {names}, session
+{sessions} only.</strong> The same two names were hedged again on 2026-09-10, on the
+night they actually reported, and those rows are sound - read this against the Session
+column, not the ticker.
+The {sessions} hedges were placed a night early. The calendar rule matched the session
 date or the next session's without checking the release time, and both companies reported
 after the close on 2026-09-10 - outside the 2026-09-09 window entirely. The hedges did cut
 the move, because a hedge cuts whatever move arrives, but the reason recorded for them was

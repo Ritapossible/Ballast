@@ -203,6 +203,29 @@ class LandingWidgetCase(unittest.TestCase):
         self.assertNotIn("see all", html)
 
 
+class SettledTableCase(unittest.TestCase):
+    """Two nights in, the table showed ORCL twice with near-identical numbers and
+    nothing to tell them apart - which reads as a duplicate-row bug."""
+
+    def test_every_row_names_its_session(self):
+        rows = [{"ticker": "ORCL", "action": "HEDGE", "unhedged_bp": -390.0,
+                 "realised_bp": -14.0, "value_added_bp": 376.0, "session": "2026-09-09"},
+                {"ticker": "ORCL", "action": "HEDGE", "unhedged_bp": -384.0,
+                 "realised_bp": -11.0, "value_added_bp": 373.0, "session": "2026-09-10"}]
+        html = report._settled(rows)
+        self.assertIn("2026-09-09", html)
+        self.assertIn("2026-09-10", html)
+        self.assertIn('data-label="Session"', html)
+
+    def test_rows_group_by_night_newest_first(self):
+        rows = [{"ticker": "SMALL", "action": "NO_HEDGE", "unhedged_bp": -10.0,
+                 "realised_bp": -10.0, "value_added_bp": -5.0, "session": "2026-09-10"},
+                {"ticker": "BIG", "action": "NO_HEDGE", "unhedged_bp": -900.0,
+                 "realised_bp": -900.0, "value_added_bp": -880.0, "session": "2026-09-09"}]
+        order = re.findall(r"<strong>([A-Z]+)</strong>", report._settled(rows))
+        self.assertEqual(order, ["SMALL", "BIG"], "a bigger move from an older night led")
+
+
 class SelectorCorrectionCase(unittest.TestCase):
     """The affected hedges are the ones the settled tiles are built from, so the
     correction has to sit beside them, not only in the defect list."""
@@ -222,6 +245,14 @@ class SelectorCorrectionCase(unittest.TestCase):
                  mock.patch.object(config, "secret", return_value=config.DEV_SECRET):
                 return report.Site(now=dt.datetime(2026, 9, 11, 21,
                                                    tzinfo=dt.timezone.utc))
+
+    def test_the_correction_names_its_session_not_just_the_ticker(self):
+        """ORCL and ADBE were hedged on the flawed night and again on a clean one.
+        Naming only the tickers reads as discrediting both."""
+        site = self._site("2026-09-09")
+        self.assertIn("2026-09-09", site.selector_correction)
+        flat = " ".join(site.selector_correction.split())
+        self.assertIn("Session column", flat)
 
     def test_an_affected_session_carries_the_correction(self):
         site = self._site("2026-09-09")
