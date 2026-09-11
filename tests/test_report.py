@@ -271,42 +271,40 @@ class SettledTableCase(unittest.TestCase):
         self.assertEqual(order, ["SMALL", "BIG"], "a bigger move from an older night led")
 
 
-class SelectorCorrectionCase(unittest.TestCase):
-    """The affected hedges are the ones the settled tiles are built from, so the
-    correction has to sit beside them, not only in the defect list."""
+class SelectorMarkCase(unittest.TestCase):
+    """A results page needs to say which rows are unsound, not why the bug happened.
 
-    def _site(self, session: str):
+    The mechanism is written up once, under defects. A hundred-word post-mortem in a
+    callout here repeated what the tile scope note already said - the same
+    duplication the roadmap callout was removed for.
+    """
+
+    def _rows(self, session):
+        return [{"ticker": "ORCL", "action": "HEDGE", "unhedged_bp": -390.0,
+                 "realised_bp": -14.0, "value_added_bp": 376.0, "session": session}]
+
+    def test_an_affected_row_is_marked(self):
+        html = report._settled(self._rows("2026-09-09"))
+        self.assertIn("selector corrected", html)
+
+    def test_a_clean_row_is_not(self):
+        html = report._settled(self._rows("2026-09-10"))
+        self.assertNotIn("selector corrected", html)
+
+    def test_the_page_points_at_the_full_write_up_rather_than_repeating_it(self):
         with tempfile.TemporaryDirectory() as d:
             path = Path(d) / "ledger.jsonl"
             lg = Ledger(path, config.DEV_SECRET)
-            lg.append("night_summary", {"session": session, "positions": 1,
+            lg.append("night_summary", {"session": "2026-09-09", "positions": 1,
                                         "hedged": 1, "window_hours": 17.5})
-            lg.append("settlement", {"session": session, "decisions": 1, "hedged": 1,
-                                     "rows": [{"ticker": "ORCL", "action": "HEDGE",
-                                               "unhedged_bp": -390.0, "realised_bp": -13.6,
-                                               "counterfactual_bp": -390.0,
-                                               "value_added_bp": 376.6}]})
+            lg.append("settlement", {"session": "2026-09-09", "decisions": 1,
+                                     "hedged": 1, "rows": self._rows("2026-09-09")})
             with mock.patch.object(config, "LEDGER_PATH", path), \
                  mock.patch.object(config, "secret", return_value=config.DEV_SECRET):
-                return report.Site(now=dt.datetime(2026, 9, 11, 21,
-                                                   tzinfo=dt.timezone.utc))
-
-    def test_the_correction_names_its_session_not_just_the_ticker(self):
-        """ORCL and ADBE were hedged on the flawed night and again on a clean one.
-        Naming only the tickers reads as discrediting both."""
-        site = self._site("2026-09-09")
-        self.assertIn("2026-09-09", site.selector_correction)
-        flat = " ".join(site.selector_correction.split())
-        self.assertIn("Session column", flat)
-
-    def test_an_affected_session_carries_the_correction(self):
-        site = self._site("2026-09-09")
-        self.assertIn("ORCL", site.selector_correction)
-        self.assertIn("a night early", site.selector_correction)
-        self.assertIn(site.selector_correction, site.settled_page())
-
-    def test_a_clean_session_carries_none(self):
-        self.assertEqual(self._site("2026-09-10").selector_correction, "")
+                page = report.Site(now=dt.datetime(2026, 9, 10, 21,
+                                                   tzinfo=dt.timezone.utc)).settled_page()
+        self.assertIn("docs.html#defects", page)
+        self.assertNotIn("The calendar rule matched", page)
 
 
 class DevKeyBuildGuard(unittest.TestCase):

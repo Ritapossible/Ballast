@@ -250,9 +250,11 @@ MARK = (
 )
 
 
+# The footer carries the source link on every page, so a nav entry for it only
+# widened the bar and pushed the real sections off-screen on a phone.
 NAV = [("Overview", "index.html"), ("Tonight", "tonight.html"),
        ("Settled", "settled.html"), ("Evidence", "evidence.html"),
-       ("Docs", "docs.html"), ("Repo", REPO)]
+       ("Docs", "docs.html")]
 
 
 def nav(active: str, prefix: str = "") -> str:

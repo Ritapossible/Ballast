@@ -97,6 +97,8 @@ def _settled(rows: list[dict]) -> str:
         # refusal exactly when the position rose, so a per-night verdict on it is
         # a directional scorecard, and this system makes no directional claim.
         # The number stays in the row; only the label is withheld.
+        mark = ('<span class="neg"> · selector corrected</span>'
+                if r.get("session") in SELECTOR_BUG_SESSIONS else "")
         if on:
             cut = abs(r.get("realised_bp", 0)) < abs(r.get("unhedged_bp", 0))
             verdict, faint = ("cut the move", False) if cut else ("did not cut", True)
@@ -104,7 +106,7 @@ def _settled(rows: list[dict]) -> str:
             verdict, faint = "carried", True
         out.append(
             f'<tr><td data-label=""><strong>{_e(r.get("ticker"))}</strong></td>'
-            f'<td class="dim" data-label="Session">{_e(r.get("session", "-"))}</td>'
+            f'<td class="dim" data-label="Session">{_e(r.get("session", "-"))}{mark}</td>'
             f'<td data-label="Call"><span class="tag {"on" if on else ""}">'
             f'{_e(r.get("action"))}</span></td>'
             f'<td class="num mid" data-label="Unhedged">{r.get("unhedged_bp", 0):+,.0f} bp</td>'
@@ -368,45 +370,15 @@ declined is a decision it will be graded on.</p>
         note = (f'<p class="note">Across <strong>{n} {nights}</strong> decided with the '
                 f'corrected calendar ({", ".join(self.clean_sessions)}). ')
         if self.excluded_sessions:
-            note += (f'{", ".join(self.excluded_sessions)} is excluded from these figures '
-                     f'and corrected below - its hedges were placed a night early, so it '
-                     f'cannot say how well a hedge works. Excluding it <em>raises</em> the '
-                     f'mean, because that night fell broadly. ')
+            note += (f'{", ".join(self.excluded_sessions)} is excluded - its hedges were '
+                     f'placed a night early, so it cannot say how well a hedge works. '
+                     f'Excluding it <em>raises</em> the mean, because that night fell '
+                     f'broadly. Its rows are still in the table, marked. ')
         if n < 5:
             note += ('At this sample size the mean is one night\'s market direction, not '
                      'a performance record. The claims this project actually stands on are '
                      'on the Evidence page, measured over years.')
         return note + "</p>"
-
-    @property
-    def selector_correction(self) -> str:
-        """Sessions decided before the calendar window was fixed.
-
-        The selector ORed the session date with the next session's and ignored the
-        release time, so an after-hours report on the next session hedged the night
-        before as well. Only 2026-09-09 was settled under that rule, and its two
-        hedges are the ones the tiles above are built from - so the correction
-        belongs beside them, not only in the defect list.
-        """
-        hit = [s for s in self.settlements
-               if s.get("session") in SELECTOR_BUG_SESSIONS]
-        affected = [r for s in hit for r in s.get("rows", [])
-                    if r.get("action") == "HEDGE"]
-        if not affected:
-            return ""
-        names = ", ".join(sorted({r["ticker"] for r in affected}))
-        sessions = ", ".join(sorted(s["session"] for s in hit))
-        return f"""<div class="callout"><p><strong>A correction on {names}, session
-{sessions} only.</strong> The same two names were hedged again on 2026-09-10, on the
-night they actually reported, and those rows are sound - read this against the Session
-column, not the ticker.
-The {sessions} hedges were placed a night early. The calendar rule matched the session
-date or the next session's without checking the release time, and both companies reported
-after the close on 2026-09-10 - outside the 2026-09-09 window entirely. The hedges did cut
-the move, because a hedge cuts whatever move arrives, but the reason recorded for them was
-wrong and the protection was not aimed at the event it names. The Nasdaq calendar for each
-date is linked in the ledger, so this is checkable rather than asserted. The rule now
-requires the release to fall inside the window; one event is hedged on exactly one night.</p></div>"""
 
     def settled_page(self) -> str:
         return f"""
@@ -428,11 +400,13 @@ settles at the next opening bell, so nothing can be quietly forgotten.</p>
 <section><div class="wrap">
 {_settled(self.rows)}
 <div class="narrow" style="margin-top:52px">
-{self.selector_correction}
 <h3>How these are scored</h3>
 <ul class="bul">
 <li><strong>Value added</strong> is what the call returned minus what the other choice would have returned, over the same window, with the hedge cost charged to whichever side pays it. The counterfactual leg is not modelled - it is observed.</li>
 <li><strong>A hedge is graded on whether it cut the move.</strong> It is symmetric, so grading one by profit direction would be meaningless, and one night settles the question.</li>
+<li><strong>Rows marked "selector corrected"</strong> were hedged a night early, before the
+calendar rule checked the release time. They are kept, excluded from the figures above, and
+written up in full under <a href="docs.html#defects">defects</a>.</li>
 <li><strong>A refusal cannot be graded on one night.</strong> Its value added is positive exactly when the position rose, so a nightly verdict on a refusal is a directional scorecard - and this system makes no directional claim. On a broad down night every refusal scores badly, which is only the case for hedging everything, every night, at 11.3 bp a time. Refusals are graded across the run instead, on the mean above; each row still shows its own arithmetic.</li>
 </ul>
 </div>

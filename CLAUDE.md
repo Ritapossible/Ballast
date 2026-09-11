@@ -224,6 +224,11 @@ datacenter IPs** and are not usable here.
 21. **The page rounds; the ledger does not.** A rationale is signed as written, so a
     formatting bug in one is permanent. `_round_floats` formats at render only.
 
+23. **A results page marks, it does not explain.** Which rows are unsound belongs on
+    `/settled`; why the bug happened belongs once, under `/docs#defects`. A callout
+    repeating the mechanism duplicated the tile scope note - the same fault the roadmap
+    callout was removed for. This keeps happening: text written to justify a decision in
+    conversation rarely belongs on the page.
 22. **Headline tiles cover clean sessions only; the table keeps everything.** A session
     whose hedges were misattributed cannot support a claim about hedges. Excluding
     2026-09-09 *raises* the mean (+27 to +136 bp) because that night fell broadly - so the
