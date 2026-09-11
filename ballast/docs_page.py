@@ -202,6 +202,11 @@ session to trade tested only for a weekday, while the rest of the calendar exclu
 holidays. On Thanksgiving it returned Thanksgiving: a session the exchange never opened,
 against a window that never existed. Fixed and moved beside the calendar it has to agree
 with.</li>
+<li><strong>A declined position showed a notional</strong> - the Tonight table labelled the
+column "Notional USDT" and printed the position size on every row, including the ones where
+nothing was traded. On a page whose whole claim is that most nights it does nothing, a row
+reading NO_HEDGE beside 999 invites exactly the wrong conclusion. The same number now says
+which it is: hedged, or exposed.</li>
 <li><strong>The look-ahead sentinel could not fail</strong> - the evidence page cited a
 test that fails if a future night moves a past decision. That test built a polluted history
 and then passed the <em>original</em> to the policy both times, comparing a function against

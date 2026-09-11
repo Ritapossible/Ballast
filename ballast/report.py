@@ -84,7 +84,7 @@ def _decisions(rows: list[dict]) -> str:
     if not rows:
         return _empty("No decisions recorded yet. The loop runs after the US close.")
     out = ['<div class="scroll stacked"><table><thead><tr><th>Position</th><th>Call</th>'
-           '<th class="num">1-sigma move</th><th class="num">Notional USDT</th>'
+           '<th class="num">1-sigma move</th><th class="num">Position USDT</th>'
            '<th>Decided by</th><th>Reasoning</th></tr></thead><tbody>']
     for r in rows:
         on = r.get("action") == "HEDGE"
@@ -94,7 +94,12 @@ def _decisions(rows: list[dict]) -> str:
             f'<td data-label="Call"><span class="tag {"on" if on else ""}">'
             f'{_e(r.get("action"))}</span></td>'
             f'<td class="num mid" data-label="1-sigma move">{r.get("sigma_bp", 0):,.0f} bp</td>'
-            f'<td class="num mid" data-label="Notional USDT">{r.get("notional_usdt", 0):,.0f}</td>'
+            # The same number means two different things: the hedge that was placed,
+            # or the exposure that was left open. Unlabelled it reads as "999 traded"
+            # on a row where nothing was traded, which is the opposite of the claim
+            # this page exists to make.
+            f'<td class="num mid" data-label="Position USDT">'
+            f'{r.get("notional_usdt", 0):,.0f} {"hedged" if on else "exposed"}</td>'
             f'<td data-label="Decided by"><span class="tag {"on" if by == "model" else ""}">'
             f'{_e(by)}</span></td>'
             f'<td class="dim wrap" data-label="Reasoning">'

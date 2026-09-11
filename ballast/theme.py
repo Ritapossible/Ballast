@@ -163,6 +163,13 @@ tr:last-child td{{border-bottom:0}}
    showing two short cells at the top and a wall of blank below. The data was
    there, just where it could not be read. Labels come from data-label. */
 @media(max-width:720px){{
+  /* A hero section and the content section under it stacked their padding, and
+     the table added its own top margin on top of that: 159px of empty screen
+     above the first row on a 400px-tall-ish viewport, pushing the thing the page
+     exists to show below the fold. */
+  .bd + section{{padding-top:30px}}
+  .wrap > .scroll:first-child{{margin-top:0}}
+
   .stacked{{overflow-x:visible}}
   .stacked table{{min-width:0;display:block}}
   .stacked thead{{display:none}}

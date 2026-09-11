@@ -157,3 +157,19 @@ class TestLayout(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class DeadSpaceCase(unittest.TestCase):
+    """A hero section and the content section beneath it stacked their padding,
+    and the table added its own top margin on top: 159px of empty screen above
+    the first row on a phone, pushing the thing the page exists to show down.
+    Measured before and after in a real browser; 159px became 103px."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pages = build_pages()
+
+    def test_the_block_after_a_hero_is_tightened_on_a_phone(self):
+        for name, html in self.pages.items():
+            self.assertIn(".bd + section{padding-top:30px}", html, name)
+            self.assertIn(".wrap > .scroll:first-child{margin-top:0}", html, name)
