@@ -498,6 +498,48 @@ is a property of that period rather than evidence the hedge improved: read it as
 not as better. Reproduce with <code>python3 research/oos.py</code>.</p>"""
 
     @property
+    def provenance_block(self) -> str:
+        """Where every number comes from, and what each source is allowed to decide.
+
+        Worth stating plainly because the instrument matters here: a tokenized stock
+        trades continuously, so its overnight move is a path through the closed
+        window rather than a gap at the bell. Measuring the listed share instead
+        would describe a different instrument from the one being held.
+        """
+        rows = [
+            ("rToken hourly candles", "Bitget spot, public",
+             "every overnight return, 1-sigma forecast and settlement"),
+            ("Stock perpetual hourly candles", "Bitget USDT-futures, public",
+             "the hedge leg, and the counterfactual each call is graded against"),
+            ("Earnings calendar", "Nasdaq, public",
+             "which nights carry a scheduled event - dates only, never a price"),
+            ("Headlines", "Google News RSS, public",
+             "shown to the reader, which may only quote what it was given"),
+            ("Event reader", f"Qwen via the hackathon endpoint",
+             "a typed HEDGE / NO_HEDGE judgment - no sizing, no price, no order"),
+        ]
+        body = "".join(
+            f'<tr><td data-label=""><strong>{_e(what)}</strong></td>'
+            f'<td class="dim" data-label="Source">{_e(src)}</td>'
+            f'<td class="dim wrap" data-label="Decides">{_e(use)}</td></tr>'
+            for what, src, use in rows)
+        return f"""
+<h3 style="margin-top:44px">Measured on the instrument, not a proxy</h3>
+<p class="note">A tokenized US stock trades continuously. It does not gap at the opening
+bell the way the listed share does - the move happens <em>inside</em> the closed window,
+hour by hour, in the token's own book. A close-to-open gap measured on the underlying
+equity would therefore describe a different instrument from the one being held.</p>
+<p class="note">So every price on this site is measured on what a holder actually owns and
+would actually trade: the rToken's own candles and the matched perpetual's. There is no
+equity feed anywhere in the codebase, no proxy series and nothing synthetic - one endpoint,
+<code>api.bitget.com</code>, for every figure quoted.</p>
+<div class="scroll stacked"><table><thead><tr><th>What</th><th>Source</th>
+<th>Decides</th></tr></thead><tbody>{body}</tbody></table></div>
+<p class="note">Paper trading only. No live fill is claimed anywhere, and the exported
+order log re-encodes the ledger into Bitget's field names rather than reporting exchange
+state.</p>"""
+
+    @property
     def tile_scope(self) -> str:
         """State what the tiles cover, and how few nights that is."""
         n = len(self.clean_sessions)
@@ -592,6 +634,7 @@ paper log.</p>
 nights, not shown above: MSFT <strong>1,128 bp to 233 bp</strong>, AMD
 <strong>1,262 bp to 90 bp</strong>.</p>
 {self.oos_block}
+{self.provenance_block}
 </div>
 </div></section>
 

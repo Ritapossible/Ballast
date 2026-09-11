@@ -260,6 +260,12 @@ datacenter IPs** and are not usable here.
 29. **`python3 verify.py` is the judge's entry point.** It must keep covering every offline
     claim, and must keep naming what it cannot check rather than implying it did.
 
+30. **Every price comes from `api.bitget.com`, and a test enforces it.** The rToken trades
+    continuously, so its overnight move is a path through the closed window, not a gap at the
+    bell; a figure measured on the listed share would describe a different instrument. Never
+    add an equity price feed - `test_no_price_source_outside_bitget` fails if `market.py`
+    reaches any other host.
+
 ## 7b. Operations
 
 - `.github/workflows/nightly.yml` — decides at 21:00 UTC, settles at 14:30 UTC, Mon–Fri.

@@ -285,6 +285,43 @@ class TileScopeCase(unittest.TestCase):
         self.assertIn("hedged a night early", html)
 
 
+class ProvenanceCase(unittest.TestCase):
+    """The instrument claim is only true while every price really does come from
+    the traded books. A test, not a sentence, because the sentence is the risk."""
+
+    def _site(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "ledger.jsonl"
+            Ledger(path, config.DEV_SECRET).append("night_summary", {"session": "2026-09-10"})
+            with mock.patch.object(config, "LEDGER_PATH", path), \
+                 mock.patch.object(config, "secret", return_value=config.DEV_SECRET):
+                return report.Site(now=dt.datetime(2026, 9, 10, 21,
+                                                   tzinfo=dt.timezone.utc))
+
+    def test_no_price_source_outside_bitget(self):
+        """The page states there is no equity feed. Verify it against the code."""
+        market = (Path(__file__).resolve().parent.parent / "ballast" / "market.py").read_text()
+        hosts = set(re.findall(r"https://([a-z0-9.]+)", market))
+        self.assertEqual(hosts, {"api.bitget.com"}, f"market.py reaches {hosts}")
+
+    def test_the_block_names_every_source_and_its_job(self):
+        block = self._site().provenance_block
+        for source in ("Bitget spot", "Bitget USDT-futures", "Nasdaq",
+                       "Google News", "Qwen"):
+            self.assertIn(source, block)
+        self.assertIn("dates only, never a price", block)
+
+    def test_it_states_the_instrument_distinction(self):
+        # Normalised: the source wraps, so a line break can fall mid-phrase.
+        flat = " ".join(self._site().provenance_block.split())
+        self.assertIn("trades continuously", flat)
+        self.assertIn("no equity feed anywhere in the codebase", flat)
+
+    def test_it_is_on_the_evidence_page(self):
+        site = self._site()
+        self.assertIn(site.provenance_block, site.evidence_page())
+
+
 class SettledTableCase(unittest.TestCase):
     """Two nights in, the table showed ORCL twice with near-identical numbers and
     nothing to tell them apart - which reads as a duplicate-row bug."""

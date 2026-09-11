@@ -216,6 +216,12 @@ unchanged to the last 30%. Median variance removed 0.980 to 0.996, median p95 ta
 rather than an edge, so the test it must pass is that nothing decays on unseen data. The
 out-of-sample figures being *higher* is a property of that period, not an improvement.
 
+**Measured on the instrument.** A tokenized US stock trades continuously, so its overnight
+move is a path through the closed window rather than a gap at the bell - a close-to-open gap
+measured on the listed share describes a different instrument from the one being held. Every
+price here comes from the rToken's own candles and the matched perpetual's, one endpoint, no
+equity feed and nothing synthetic. Nasdaq supplies event dates only, never a price.
+
 **Verify it:** `git clone` then `python3 verify.py` - one command, no key, no network. It runs
 the suite, requires the enforcer to refuse a naked directional order, re-derives the hash chain,
 mutates a ledger copy and requires verification to fail, checks every published figure comes
