@@ -113,7 +113,7 @@ def _settled(rows: list[dict]) -> str:
                       "primary open, against the exact counterfactual.")
     out = ['<div class="scroll stacked"><table><thead><tr><th>Position</th>'
            '<th>Session</th><th>Call</th>'
-           '<th class="num">Unhedged</th><th class="num">Realised</th>'
+           '<th class="num">Realised</th><th class="num">Counterfactual</th>'
            '<th class="num">Value added</th><th>Verdict</th></tr></thead><tbody>']
     # Newest night first, then by size within it. Sorting by size across sessions
     # interleaved them, so consecutive rows came from different nights.
@@ -139,8 +139,14 @@ def _settled(rows: list[dict]) -> str:
             f'<td class="dim" data-label="Session">{_e(r.get("session", "-"))}{mark}</td>'
             f'<td data-label="Call"><span class="tag {"on" if on else ""}">'
             f'{_e(r.get("action"))}</span></td>'
-            f'<td class="num mid" data-label="Unhedged">{r.get("unhedged_bp", 0):+,.0f} bp</td>'
+            # Counterfactual, not "unhedged". Unhedged is the same number as the
+            # counterfactual on a hedge and the same number as realised on a
+            # refusal, so it duplicated a column on every row and left the one
+            # value that makes value-added checkable off the page entirely: a
+            # refusal showed +439, +439 and +440 with nothing to derive 440 from.
             f'<td class="num mid" data-label="Realised">{r.get("realised_bp", 0):+,.0f} bp</td>'
+            f'<td class="num mid" data-label="Counterfactual">'
+            f'{r.get("counterfactual_bp", 0):+,.0f} bp</td>'
             f'<td class="num {cls}" data-label="Value added">{va:+,.0f} bp</td>'
             f'<td class="{"dim" if faint else ""}" data-label="Verdict">{verdict}</td></tr>')
     return "".join(out) + "</tbody></table></div>"
@@ -590,7 +596,7 @@ settles at the next opening bell, so nothing can be quietly forgotten.</p>
 <div class="narrow" style="margin-top:52px">
 <h3>How these are scored</h3>
 <ul class="bul">
-<li><strong>Value added</strong> is what the call returned minus what the other choice would have returned, over the same window, with the hedge cost charged to whichever side pays it. The counterfactual leg is not modelled - it is observed.</li>
+<li><strong>Value added is Realised minus Counterfactual</strong>, and both are in the row, so every number here can be checked by subtracting two others. The counterfactual is what the choice <em>not</em> taken would have returned over the same window, with the hedge cost charged to whichever side pays it - not modelled, observed.</li>
 <li><strong>A hedge is graded on whether it cut the move.</strong> It is symmetric, so grading one by profit direction would be meaningless, and one night settles the question.</li>
 <li><strong>Rows marked "hedged a night early"</strong> were hedged before the calendar rule
 checked the release time. They are kept, excluded from the figures above, and written up in

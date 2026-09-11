@@ -42,7 +42,8 @@ POPULATED = [
                        "window_hours": 17.5, "reader": "on"}),
     ("settlement", {"session": "2026-09-10", "rows": [
         {"ticker": "ORCL", "action": "HEDGE", "unhedged_bp": -812.0,
-         "realised_bp": -41.0, "value_added_bp": 771.0, "correct": True}]}),
+         "realised_bp": -41.0, "counterfactual_bp": -812.0,
+         "value_added_bp": 771.0}]}),
 ]
 
 
@@ -64,8 +65,24 @@ class TestPages(unittest.TestCase):
 
     def test_settlements_render_on_the_settled_page(self):
         settled = build_site(POPULATED)["settled.html"]
-        self.assertIn("-812", settled)
-        self.assertIn("+771 bp", settled)
+        self.assertIn("-41 bp", settled)          # realised
+        self.assertIn("-812 bp", settled)         # counterfactual
+        self.assertIn("+771 bp", settled)         # the difference
+
+    def test_every_settled_row_can_be_checked_by_subtraction(self):
+        """The page tells a reader value added is realised minus counterfactual.
+        A row that does not satisfy that is a row nobody can verify - and the
+        column was missing entirely until the arithmetic stopped reconciling on
+        screen for every refusal."""
+        import re
+        settled = build_site(POPULATED)["settled.html"]
+        row = re.search(r"<tr><td data-label=\"\">.*?</tr>", settled).group(0)
+        nums = [int(n.replace(",", "")) for n in
+                re.findall(r'data-label="(?:Realised|Counterfactual|Value added)">'
+                           r'([+-][\d,]+) bp', row)]
+        self.assertEqual(len(nums), 3, row)
+        realised, counterfactual, value_added = nums
+        self.assertEqual(realised - counterfactual, value_added)
 
     def test_states_what_is_not_claimed(self):
         pages = build_site([])
@@ -237,6 +254,7 @@ class TileScopeCase(unittest.TestCase):
                 lg.append("settlement", {"session": session, "decisions": 1, "hedged": 1,
                                          "rows": [{"ticker": "ORCL", "action": "HEDGE",
                                                    "unhedged_bp": -400.0, "realised_bp": -10.0,
+                                                   "counterfactual_bp": -10.0 - va,
                                                    "value_added_bp": va}]})
             with mock.patch.object(config, "LEDGER_PATH", path), \
                  mock.patch.object(config, "secret", return_value=config.DEV_SECRET):
@@ -254,7 +272,8 @@ class TileScopeCase(unittest.TestCase):
         would have been a refusal under the corrected rule too. Excluding it would
         drop a sound decision and overstate the result."""
         row = {"ticker": "MU", "action": "NO_HEDGE", "unhedged_bp": -413.0,
-               "realised_bp": -413.0, "value_added_bp": -395.0, "session": "2026-09-09"}
+               "realised_bp": -413.0, "counterfactual_bp": -18.0,
+               "value_added_bp": -395.0, "session": "2026-09-09"}
         self.assertFalse(report._selector_affected(row))
         row["action"] = "HEDGE"
         self.assertTrue(report._selector_affected(row))
