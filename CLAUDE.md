@@ -266,6 +266,15 @@ datacenter IPs** and are not usable here.
     add an equity price feed - `test_no_price_source_outside_bitget` fails if `market.py`
     reaches any other host.
 
+31. **The executor only accepts an `Admitted`.** It is minted by `Enforcer.evaluate`
+    alone and cannot be constructed by hand. Never add a `perp_symbol`/`side`/`notional`
+    parameter back to `execute()` - that is what made the safety claim caller-enforced
+    rather than structural, and the red-team suite could not see the gap because it
+    drives the enforcer, not the executor.
+32. **README figures are generated.** `tools/readme_facts.py` rewrites the block between
+    the `facts:` markers; CI runs it with `--check`. It once said 224 of 704 rTokens while
+    facts.json said 241 of 1,173.
+
 ## 7b. Operations
 
 - `.github/workflows/nightly.yml` — decides at 21:00 UTC, settles at 14:30 UTC, Mon–Fri.

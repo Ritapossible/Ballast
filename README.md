@@ -12,20 +12,38 @@ stated price.**
 
 ---
 
+## Running it
+
+Python **3.11+** (3.10 is the floor for the syntax; CI runs 3.11). **No third-party
+dependencies** - standard library only, so there is nothing to install and no lockfile
+to go stale.
+
+```
+git clone https://github.com/Ritapossible/Ballast && cd ballast
+python3 verify.py          # every offline claim, one command
+```
+
+Licensed MIT - see [`LICENSE`](LICENSE).
+
 ## What is measured
 
-All figures **observed** on 2026-09-08 from public Bitget endpoints, reproducible via
-`research/`. Full detail and disclosed defects in [`docs/RESEARCH.md`](docs/RESEARCH.md).
+<!-- facts:start -->
+All figures measured **2026-09-11** from public Bitget endpoints and
+regenerated from [`docs/facts.json`](docs/facts.json) - none is a literal in this
+file. Reproduce with `research/`; full detail and disclosed defects in
+[`docs/RESEARCH.md`](docs/RESEARCH.md).
 
 | | |
 |---|---|
-| Overnight variance removed by a matched perp hedge | **median R² 0.980**, β within 4% of 1.00 |
-| R² on the largest-move nights | **0.978 – 0.999** — the hedge strengthens under stress |
+| Overnight variance removed by a matched perp hedge | **median R² 0.982**, β within 4% of 1.00 |
+| R² on the largest-move nights | **0.978 - 0.999** - the hedge strengthens under stress |
 | p95 tail reduction | **median 88%** |
-| Worst nights | MSFT 1,128 bp → 233 bp · AMD 1,262 bp → 90 bp |
+| Held out (β fitted on the first 70%, applied unchanged) | **R² 0.98 -> 0.996**, tail 86% -> 94%, 12/12 names holding |
+| Worst nights | MSFT 1,128 bp -> 233 bp · AMD 1,262 bp -> 90 bp |
 | Cost of protection | **11.3 bp** taker, net of funding received |
 | Cost of exiting instead | **20 bp**, and you lose the position |
-| Hedgeable universe | **224** of 704 live rTokens (measured 2026-09-10; see `docs/facts.json`) |
+| Hedgeable universe | **241** of 1,173 live rTokens |
+<!-- facts:end -->
 
 ## What it does not claim
 

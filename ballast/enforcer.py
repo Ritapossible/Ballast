@@ -41,12 +41,46 @@ class OrderIntent:
     reason: str = ""
 
 
+# Only this module can mint an admission. The executor demands one, so an order
+# that never passed the enforcer cannot be constructed to hand it - the rule stops
+# being a convention the caller has to remember and becomes a type error.
+_ADMISSION = object()
+
+
+class Admitted:
+    """Proof that an intent passed every rule. Issued by Enforcer.evaluate only.
+
+    The claim this project is built on is that Ballast cannot place a bet. That was
+    previously true only because night.py happened to check the verdict before
+    calling the executor: the executor itself took a symbol, a side and a size, so
+    any new code path that forgot the check was a naked directional order, and the
+    red-team suite would not have caught it - those tests drive the enforcer, not
+    the executor.
+    """
+
+    __slots__ = ("intent", "rule")
+
+    def __init__(self, intent: "OrderIntent", token: object = None):
+        if token is not _ADMISSION:
+            raise TypeError(
+                "Admitted cannot be constructed directly - it is issued by "
+                "Enforcer.evaluate() and only to an intent that passed every rule")
+        self.intent = intent
+        self.rule = None
+
+    def __repr__(self) -> str:
+        return f"Admitted({self.intent.perp_symbol} {self.intent.side} " \
+               f"{self.intent.notional_usdt:.2f})"
+
+
 @dataclass(frozen=True)
 class Verdict:
     admitted: bool
     rule: str | None = None
     detail: str = ""
     capped_notional: float | None = None
+    # Present only when admitted. The executor will not act without it.
+    admission: "Admitted | None" = None
 
     @property
     def rejected(self) -> bool:
@@ -106,7 +140,7 @@ class Enforcer:
         if self._orders_used >= m.max_orders:
             return Verdict(False, RULE_ORDER_COUNT, f"order cap {m.max_orders} reached")
 
-        return Verdict(True)
+        return Verdict(True, admission=Admitted(intent, _ADMISSION))
 
     def commit(self, intent: OrderIntent) -> None:
         """Record an admitted order against the night's budget."""

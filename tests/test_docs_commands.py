@@ -89,3 +89,35 @@ class VerifyEntrypointCase(unittest.TestCase):
         it did not compute would be the opposite of the point."""
         src = (Path(__file__).resolve().parent.parent / "verify.py").read_text()
         self.assertIn("need the exchange", src)
+
+
+class ReadmeIsGeneratedCase(unittest.TestCase):
+    """The README said "224 of 704 rTokens, observed 2026-09-08" while facts.json
+    said 241 of 1173 measured three days later. The universe had grown 67% and the
+    most-read file in the repo had not noticed."""
+
+    def _readme(self) -> str:
+        return (Path(__file__).resolve().parent.parent / "README.md").read_text()
+
+    def test_the_figures_block_is_generated(self):
+        self.assertIn("<!-- facts:start -->", self._readme())
+        self.assertIn("<!-- facts:end -->", self._readme())
+
+    def test_the_figures_match_facts_json(self):
+        import sys
+        sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+        from tools.readme_facts import block
+        from ballast import facts
+        self.assertIn(block(facts.load()), self._readme(),
+                      "README figures are stale - run python3 tools/readme_facts.py")
+
+    def test_the_runtime_is_declared(self):
+        """Zero third-party dependencies is a real property and it was invisible."""
+        readme = self._readme()
+        self.assertIn("3.11", readme)
+        self.assertIn("No third-party", readme)
+
+    def test_the_project_is_licensed(self):
+        path = Path(__file__).resolve().parent.parent / "LICENSE"
+        self.assertTrue(path.exists(), "public repo inviting a clone, with no licence")
+        self.assertIn("MIT", path.read_text())

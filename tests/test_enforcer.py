@@ -14,9 +14,10 @@ from __future__ import annotations
 import datetime as dt
 import unittest
 
-from ballast.enforcer import (RULE_EXPIRED, RULE_NONPOSITIVE, RULE_NO_POSITION,
+from ballast.enforcer import (Admitted, RULE_EXPIRED, RULE_NONPOSITIVE, RULE_NO_POSITION,
                               RULE_NOTIONAL, RULE_NOT_OPPOSITE, RULE_ORDER_COUNT,
                               RULE_RATIO, RULE_UNIVERSE, Enforcer, OrderIntent)
+from ballast.executor import PaperExecutor
 from ballast.mandate import MandateError, NightMandate, SignedMandate
 
 SECRET = b"test-secret"
@@ -160,3 +161,66 @@ class TestMandateValidation(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class AdmissionIsUnforgeable(unittest.TestCase):
+    """The executor used to take a symbol, a side and a size.
+
+    Nothing but caller discipline in night.py stood between a bug and a naked
+    directional order, and none of the red-team tests above could have caught it -
+    they drive the enforcer, and the gap was downstream of it. These attack the
+    seam itself.
+    """
+
+    def setUp(self):
+        now = dt.datetime.now(dt.timezone.utc)
+        m = NightMandate(issued_at=now, expires_at=now + dt.timedelta(hours=12),
+                         universe=("RTSLAUSDT",), max_notional_usdt=10_000.0,
+                         max_orders=5)
+        self.now = now
+        self.enforcer = Enforcer(SignedMandate.issue(m, b"k"), b"k")
+        self.book = {"RTSLAUSDT": 1_000.0}
+        self.hedge = OrderIntent("RTSLAUSDT", "TSLAUSDT", "sell", 900.0)
+        self.executor = PaperExecutor()
+
+    def test_an_admission_cannot_be_built_by_hand(self):
+        with self.assertRaises(TypeError):
+            Admitted(self.hedge)
+
+    def test_a_guessed_token_does_not_work(self):
+        for guess in (object(), "admitted", True, 1, None):
+            with self.subTest(guess=guess), self.assertRaises(TypeError):
+                Admitted(self.hedge, guess)
+
+    def test_the_executor_refuses_a_raw_intent(self):
+        """The bypass that used to be possible: call the executor directly."""
+        with self.assertRaises(TypeError):
+            self.executor.execute(self.hedge, 100.0, self.now)
+
+    def test_the_executor_refuses_anything_that_is_not_an_admission(self):
+        for impostor in (None, "ok", {"side": "buy"}, self.hedge):
+            with self.subTest(impostor=type(impostor).__name__):
+                with self.assertRaises(TypeError):
+                    self.executor.execute(impostor, 100.0, self.now)
+
+    def test_a_rejected_intent_yields_no_admission_to_pass(self):
+        naked = OrderIntent("RTSLAUSDT", "TSLAUSDT", "buy", 500.0)   # directional
+        verdict = self.enforcer.evaluate(naked, {}, self.now)
+        self.assertTrue(verdict.rejected)
+        self.assertIsNone(verdict.admission)
+
+    def test_an_admitted_intent_fills_exactly_as_admitted(self):
+        verdict = self.enforcer.evaluate(self.hedge, self.book, self.now)
+        self.assertTrue(verdict.admitted)
+        fill = self.executor.execute(verdict.admission, 100.0, self.now)
+        self.assertEqual(fill.perp_symbol, "TSLAUSDT")
+        self.assertEqual(fill.side, "sell")
+        self.assertEqual(fill.notional_usdt, 900.0)
+
+    def test_the_executor_cannot_be_asked_for_a_different_size(self):
+        """There is no parameter for it. The fill comes from the admitted intent."""
+        import inspect
+        params = list(inspect.signature(self.executor.execute).parameters)
+        self.assertEqual(params, ["admitted", "mark", "at"])
+        for gone in ("notional_usdt", "side", "perp_symbol"):
+            self.assertNotIn(gone, params)

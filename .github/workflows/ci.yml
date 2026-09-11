@@ -50,6 +50,16 @@ jobs:
           print(f"{len(list(Path('docs').glob('*.html')))} pages report an intact chain")
           EOF
 
+      # verify.py is quoted on the site as the way to check every claim. Nothing
+      # checked that it still passed, so it would have rotted quietly.
+      - name: Judge entry point (python3 verify.py)
+        run: python verify.py
+
+      # The README claimed 224 of 704 rTokens while facts.json said 241 of 1173.
+      # Its figures are generated now, and this fails if they drift again.
+      - name: README figures match docs/facts.json
+        run: python tools/readme_facts.py --check
+
       - name: Ledger and mandate self-check
         run: |
           python - <<'EOF'

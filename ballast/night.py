@@ -249,8 +249,7 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
 
         enforcer.commit(intent)          # budget is consumed in rehearsal too
         if not dry_run:
-            fill = executor.execute(intent.perp_symbol, intent.side, intent.notional_usdt,
-                                    perp_marks[pos.perp_symbol], now)
+            fill = executor.execute(verdict.admission, perp_marks[pos.perp_symbol], now)
             record["fill"] = fill.to_record()
         hedged += 1
         ledger.append("decision", record, now)
