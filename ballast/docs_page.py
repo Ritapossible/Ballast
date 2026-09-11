@@ -10,6 +10,7 @@ from pathlib import Path
 
 from . import config
 from .facts import load as load_facts
+from .facts import worst_night
 from .theme import REPO, page
 
 OUT = config.ROOT / "docs" / "docs.html"
@@ -71,7 +72,7 @@ move nights and 0.77-0.96 on calm ones. On a big-news night the common factor
 dominates and both instruments track it almost exactly; on a quiet night the residual
 is venue microstructure noise. The hedge is loosest only when little is at stake.</li>
 <li><strong>Median {F['median_tail_cut_pct']}% reduction in the p95 tail.</strong> MSFT's worst night falls
-from 1,128 bp to 233 bp; AMD's from 1,262 bp to 90 bp.</li>
+from {worst_night(F, 'MSFT')}; AMD's from {worst_night(F, 'AMD')}.</li>
 <li><strong>Cost {F['hedge_cost_bp']} bp</strong> taker round trip, net of funding received on the
 short. Cheaper than the {F['exit_cost_bp']:.0f} bp it costs to exit - and you keep the position.</li>
 <li><strong>Crypto is not a hedge.</strong> Median R² against BTC is 0.114. Crypto
@@ -202,6 +203,14 @@ session to trade tested only for a weekday, while the rest of the calendar exclu
 holidays. On Thanksgiving it returned Thanksgiving: a session the exchange never opened,
 against a window that never existed. Fixed and moved beside the calendar it has to agree
 with.</li>
+<li><strong>Measured figures were still being typed</strong> - MSFT's and AMD's worst
+nights appeared as literals in three places across the two page builders, and the whole
+out-of-sample paragraph was typed on the day it was measured, while both sat in
+<code>docs/facts.json</code> the entire time. That is the failure the universe counts had,
+in the files that exist to prevent it. Both render from the measurement now, and a test
+fails on any typed pair. The claim table was worse: it asserted "18 red-team tests" against
+a file holding 25, and "100-260 nights" against a sample running to 264 - counts are
+counted now.</li>
 <li><strong>The settled table hid the number that makes it checkable</strong> - it showed
 Unhedged, Realised and Value added, but value added is realised minus the
 <em>counterfactual</em>, and that column was not on the page. Unhedged is the same figure as
@@ -327,8 +336,10 @@ it points at the scripts that reproduce those instead of pretending otherwise.</
 <p>Every other figure on the site is fitted on all the nights it covers. The hedge ratio
 is also tested held-out: beta estimated on the first 70% of each name's paired nights and
 applied <strong>unchanged</strong> to the last 30%, with no refit. Median variance removed
-goes 0.980 to 0.996, median p95 tail cut 86% to 94%, and the median absolute beta drift on
-refitting is 0.009 - twelve of twelve names hold.</p>
+goes {F['oos']['is_median_r2']:.3f} to {F['oos']['oos_median_r2']:.3f}, median p95 tail cut
+{F['oos']['is_median_tail']}% to {F['oos']['oos_median_tail']}%, and the median absolute beta
+drift on refitting is {F['oos']['median_beta_drift']:.3f} - {F['oos']['names']} of
+{F['oos']['names']} names hold.</p>
 <p>The out-of-sample figures come out higher. That is a property of the period, not
 evidence the hedge improved; read it as stable rather than as better. The claim being
 tested is only that a mechanism does not decay on data it never saw, which is what

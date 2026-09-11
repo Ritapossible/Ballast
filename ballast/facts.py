@@ -40,6 +40,19 @@ def load() -> dict:
     return merged
 
 
+def worst_night(values: dict, name: str) -> str:
+    """e.g. "1,128 bp to 233 bp" - the worst single night for one name, hedged.
+
+    These were typed as literals in four places across two page builders while the
+    measurement sat in this file the whole time. That is the same failure the
+    universe counts had, and the reason this module exists.
+    """
+    for row in values.get("tail", []):
+        if row.get("name") == name:
+            return f"{row['worst_unhedged']:,} bp to {row['worst_hedged']:,} bp"
+    return "-"
+
+
 def save(values: dict) -> Path:
     FACTS_PATH.parent.mkdir(parents=True, exist_ok=True)
     FACTS_PATH.write_text(json.dumps(values, indent=2, sort_keys=True) + "\n")

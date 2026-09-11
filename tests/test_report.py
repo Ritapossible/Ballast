@@ -431,3 +431,67 @@ class DevKeyBuildGuard(unittest.TestCase):
     def test_allows_a_real_key(self):
         with mock.patch.dict(os.environ, {"BALLAST_SECRET": "x"}, clear=True):
             config.refuse_dev_build()
+
+
+class NoLiteralMeasurementsCase(unittest.TestCase):
+    """Measured figures must be rendered from facts.json, never typed.
+
+    The universe counts drifted 224/704 -> 241/1,173 while the README said the old
+    ones, which is why facts.json exists. Four more measurements were still typed
+    into the page builders after that: MSFT's and AMD's worst nights in three
+    places, and the whole out-of-sample paragraph - written the same day the rule
+    was restated.
+    """
+
+    def test_the_worst_night_pairs_come_from_the_measurement(self):
+        from ballast import facts
+        values = dict(facts.load())
+        values["tail"] = [{"name": "MSFT", "worst_unhedged": 4321, "worst_hedged": 21,
+                           "p95_unhedged": 100, "p95_hedged": 10, "nights": 200}]
+        self.assertEqual(facts.worst_night(values, "MSFT"), "4,321 bp to 21 bp")
+        self.assertEqual(facts.worst_night(values, "NOPE"), "-")
+
+    def test_no_builder_types_a_measured_pair(self):
+        import re
+        for module in ("ballast/report.py", "ballast/docs_page.py"):
+            src = Path(__file__).resolve().parent.parent.joinpath(module).read_text()
+            typed = re.findall(r"\d,\d{3} bp to \d+ bp", src)
+            self.assertEqual(typed, [], f"{module} types a measured pair: {typed}")
+
+    def test_the_docs_out_of_sample_figures_are_not_typed(self):
+        src = (Path(__file__).resolve().parent.parent
+               / "ballast" / "docs_page.py").read_text()
+        oos = src[src.index('id="oos"'):src.index('id="roadmap"')]
+        self.assertNotIn("0.996", oos)
+        self.assertNotIn("0.009", oos)
+        self.assertIn("F['oos']", oos)
+
+
+class ClaimTableCase(unittest.TestCase):
+    """The claim table is the complete statement of what the project asserts, so
+    a count in it going stale is the table asserting something untrue. It said
+    "18 red-team tests" while the file held 25, and "100-260 nights" against a
+    sample running to 264."""
+
+    def test_the_red_team_count_is_counted(self):
+        from ballast import report
+        path = Path(__file__).resolve().parent / "test_enforcer.py"
+        self.assertEqual(report._red_team_count(), path.read_text().count("def test_"))
+
+    def test_the_night_range_comes_from_the_sample(self):
+        from ballast import report
+        f = {"tail": [{"name": "A", "nights": 100}, {"name": "B", "nights": 264}]}
+        self.assertEqual(report._nights_range(f), "100-264")
+
+    def test_no_count_in_the_table_is_a_literal(self):
+        import re
+        src = (Path(__file__).resolve().parent.parent / "ballast" / "report.py").read_text()
+        table = src[src.index("def claims("):src.index("class Site")]
+        for typed in re.findall(r'"\s*(\d+) red-team|(\d+)-(\d+) nights', table):
+            self.fail(f"claim table types a count: {typed}")
+
+    def test_the_out_of_sample_result_is_claimed(self):
+        from ballast import facts, report
+        claims = [c for c, _, _ in report.claims(facts.load())]
+        self.assertTrue(any("out of sample" in c for c in claims),
+                        "the strongest evidence on the site is not in the claim table")

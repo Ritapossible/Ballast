@@ -19,6 +19,7 @@ from pathlib import Path
 
 from . import config
 from .facts import load as load_facts
+from .facts import worst_night
 from .ledger import Ledger, LedgerError
 from .sessions import UTC, close_utc, current_session, sessions_between, window_hours
 from .theme import REPO, page
@@ -228,20 +229,47 @@ def _tail_chart(rows: list[dict]) -> str:
             f'{legend}{grid}{"".join(body)}</svg></figure>')
 
 
+def _nights_range(f: dict) -> str:
+    rows = f.get("tail", [])
+    if not rows:
+        return "-"
+    return f"{min(r['nights'] for r in rows)}-{max(r['nights'] for r in rows)}"
+
+
+def _red_team_count() -> int:
+    """Counted, because the page said 18 while the file held 25.
+
+    Seven were added the same day the executor boundary was closed, which is
+    exactly when the number mattered most and was least likely to be reread.
+    """
+    path = config.ROOT / "tests" / "test_enforcer.py"
+    try:
+        return path.read_text().count("def test_")
+    except OSError:
+        return 0
+
+
 def claims(f: dict) -> list[tuple[str, str, str | None]]:
     return [
     (f"A matched perp removes a median {f['median_r2'] * 100:.1f}% of overnight "
-     f"variance, β within 4% of 1.00", "observed", "12 names, 100-260 nights each"),
+     f"variance, β within 4% of 1.00", "observed",
+     f"{len(f.get('tail', []))} names, {_nights_range(f)} nights each"),
     ("The hedge strengthens under stress - R² 0.978-0.999 on top-decile nights",
      "observed", "conditional regression"),
     (f"Median {f['median_tail_cut_pct']}% cut in p95 tail; MSFT's worst night "
-     f"1,128 bp to 233 bp", "observed", "same sample"),
+     f"{worst_night(f, 'MSFT')}", "observed", "same sample"),
     ("Earnings nights carry 3.2× the variance and are not reliably compensated",
      "observed", "15 names; 0 of 15 significant at |t|≥2"),
     ("Trailing volatility cannot select risky nights - 1.41× separation",
      "observed", "which is why the reader exists"),
     ("Signed, tamper-evident decision ledger", "proven", None),
-    ("The enforcer refuses every directional intent", "proven", "18 red-team tests"),
+    ("The enforcer refuses every directional intent", "proven",
+     f"{_red_team_count()} red-team tests, and the executor takes only an admission"),
+    (f"The hedge holds out of sample - β fitted on the first "
+     f"{f['oos']['split']:.0%} of each name's nights and applied unchanged",
+     "observed",
+     f"R² {f['oos']['is_median_r2']:.3f} to {f['oos']['oos_median_r2']:.3f}, "
+     f"{f['oos']['names']} of {f['oos']['names']} names"),
     ("Improves risk-adjusted return", "not claimed", "priced protection, not alpha"),
     ("Any live fill", "not claimed", "paper only"),
     ]
@@ -425,7 +453,7 @@ less than selling the position and buying it back.</p>
 </div>
 <div class="narrow"><ul class="bul">
 <li>The hedge is <strong>strongest exactly when it matters</strong> - R² reaches 0.999 on the largest moves, and is loosest on quiet nights where little is at stake.</li>
-<li>Worst nights measured: MSFT <strong>1,128 bp to 233 bp</strong>, AMD <strong>1,262 bp to 90 bp</strong>.</li>
+<li>Worst nights measured: MSFT <strong>{worst_night(self.f, "MSFT")}</strong>, AMD <strong>{worst_night(self.f, "AMD")}</strong>.</li>
 <li><strong>{self.f['rtokens_hedgeable']} of {self.f['rtokens_total']}</strong> listed rTokens have a perp leg, measured {self.f['measured_on']}. Ballast says plainly which positions it cannot protect.</li>
 </ul></div>
 </div></section>
@@ -643,8 +671,8 @@ the product rests on, and it is the one made over years rather than over this we
 paper log.</p>
 {_tail_chart(self.f.get("tail", []))}
 <p class="note">Reproduce with <code>python3 research/hedge_study.py</code>. Worst single
-nights, not shown above: MSFT <strong>1,128 bp to 233 bp</strong>, AMD
-<strong>1,262 bp to 90 bp</strong>.</p>
+nights, not shown above: MSFT <strong>{worst_night(self.f, "MSFT")}</strong>, AMD
+<strong>{worst_night(self.f, "AMD")}</strong>.</p>
 {self.oos_block}
 {self.provenance_block}
 </div>
