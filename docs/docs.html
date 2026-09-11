@@ -420,6 +420,13 @@ session to trade tested only for a weekday, while the rest of the calendar exclu
 holidays. On Thanksgiving it returned Thanksgiving: a session the exchange never opened,
 against a window that never existed. Fixed and moved beside the calendar it has to agree
 with.</li>
+<li><strong>The settled table hid the number that makes it checkable</strong> - it showed
+Unhedged, Realised and Value added, but value added is realised minus the
+<em>counterfactual</em>, and that column was not on the page. Unhedged is the same figure as
+the counterfactual on a hedge and the same figure as realised on a refusal, so every row
+printed one number twice and one that could not be derived from anything visible: a refusal
+read +439, +439 and +440. The column is now Counterfactual, so every row is a subtraction a
+reader can do, and a test rejects any row where it does not hold.</li>
 <li><strong>A declined position showed a notional</strong> - the Tonight table labelled the
 column "Notional USDT" and printed the position size on every row, including the ones where
 nothing was traded. On a page whose whole claim is that most nights it does nothing, a row
