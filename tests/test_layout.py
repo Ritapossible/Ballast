@@ -91,6 +91,21 @@ class TestLayout(unittest.TestCase):
                 unlabelled = [c for c in cells if "data-label=" not in c]
                 self.assertEqual(unlabelled, [], f"{name}: cells without a label {unlabelled}")
 
+    def test_no_capital_sigma_reaches_a_page(self):
+        """Labels are uppercased in CSS, and Greek σ uppercases to Σ - summation,
+        not standard deviation. On a page quoting 1-sigma moves that is the wrong
+        symbol, and it was wrong on desktop too."""
+        for name, html in self.each():
+            self.assertNotIn("\u03a3", html, f"{name}: capital sigma")
+
+    def test_no_unrounded_float_is_displayed(self):
+        """The ledger is append-only, so a rationale written before the policy fix
+        keeps 11.291999999999998bp for good. The page rounds what it renders; the
+        signed record is untouched."""
+        for name, html in self.each():
+            body = re.sub(r"<style>.*?</style>", "", html, flags=re.S)
+            self.assertEqual(re.findall(r"\d+\.\d{4,}", body), [], name)
+
     def test_the_stacked_rules_are_present(self):
         for name, html in self.each():
             if "<table" in html:

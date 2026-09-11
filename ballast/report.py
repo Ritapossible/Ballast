@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import datetime as dt
 import html
+import re
 from pathlib import Path
 
 from . import config
@@ -23,6 +24,19 @@ from .sessions import UTC, close_utc, current_session, sessions_between, window_
 from .theme import REPO, page
 
 OUT_DIR = config.ROOT / "docs"
+
+_LONG_FLOAT = re.compile(r"\d+\.\d{3,}")
+
+
+def _round_floats(text: str) -> str:
+    """Round runaway decimals in stored text before displaying it.
+
+    A rationale written before the formatting fix carries 11.291999999999998bp,
+    and the ledger is append-only - that string is signed and stays. The page is a
+    report over the record, and a report rounds its numbers; the ledger is
+    unchanged and still verifies against exactly what was written.
+    """
+    return _LONG_FLOAT.sub(lambda m: f"{float(m.group()):.1f}", text)
 
 # Sessions decided before the calendar selector checked the release time. Their
 # hedges may have been placed a night early; the settled page says so beside them.
@@ -45,7 +59,7 @@ def _decisions(rows: list[dict]) -> str:
     if not rows:
         return _empty("No decisions recorded yet. The loop runs after the US close.")
     out = ['<div class="scroll stacked"><table><thead><tr><th>Position</th><th>Call</th>'
-           '<th class="num">1σ forecast</th><th class="num">Notional</th>'
+           '<th class="num">1-sigma move</th><th class="num">Notional USDT</th>'
            '<th>Decided by</th><th>Reasoning</th></tr></thead><tbody>']
     for r in rows:
         on = r.get("action") == "HEDGE"
@@ -54,12 +68,12 @@ def _decisions(rows: list[dict]) -> str:
             f'<tr><td data-label=""><strong>{_e(r.get("ticker"))}</strong></td>'
             f'<td data-label="Call"><span class="tag {"on" if on else ""}">'
             f'{_e(r.get("action"))}</span></td>'
-            f'<td class="num mid" data-label="1σ forecast">{r.get("sigma_bp", 0):,.0f} bp</td>'
-            f'<td class="num mid" data-label="Notional">{r.get("notional_usdt", 0):,.0f}</td>'
+            f'<td class="num mid" data-label="1-sigma move">{r.get("sigma_bp", 0):,.0f} bp</td>'
+            f'<td class="num mid" data-label="Notional USDT">{r.get("notional_usdt", 0):,.0f}</td>'
             f'<td data-label="Decided by"><span class="tag {"on" if by == "model" else ""}">'
             f'{_e(by)}</span></td>'
             f'<td class="dim wrap" data-label="Reasoning">'
-            f'{_e(r.get("rationale", ""))}</td></tr>')
+            f'{_e(_round_floats(r.get("rationale", "")))}</td></tr>')
     return "".join(out) + "</tbody></table></div>"
 
 

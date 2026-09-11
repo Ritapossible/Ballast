@@ -219,6 +219,11 @@ datacenter IPs** and are not usable here.
     book order filled the page's only live element with refusals and showed neither hedge.
     Five rows also carry a count, so they cannot misrepresent twelve.
 
+20. **Never put a Greek letter in a label.** The CSS uppercases them, and σ becomes Σ -
+    summation where the page means standard deviation. Spell it: "1-sigma move".
+21. **The page rounds; the ledger does not.** A rationale is signed as written, so a
+    formatting bug in one is permanent. `_round_floats` formats at render only.
+
 ## 7b. Operations
 
 - `.github/workflows/nightly.yml` — decides at 21:00 UTC, settles at 14:30 UTC, Mon–Fri.
