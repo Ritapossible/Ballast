@@ -13,10 +13,24 @@ name: Ballast nightly
 # Times are UTC and the crons are set for EDT (US close 20:00Z, open 13:30Z).
 # US clocks fall back on 2026-11-01, after this competition ends.
 
+# GitHub treats schedules as best effort and has delayed this repository's by
+# 1h23m, 1h52m and 3h17m in one week. A settlement can always catch up - it grades
+# whatever is outstanding - but a night that is never decided cannot be recovered,
+# and the paper log is the one required material that cannot be backfilled.
+#
+# So the decide half has three independent chances instead of one. Deciding twice
+# is already a no-op, so a later trigger firing after an earlier one succeeded
+# costs nothing; the only thing it can do is rescue a night that would otherwise
+# be lost. All three land inside the window with room to spare - midnight UTC is
+# four hours past a 20:00Z close, well inside the half-window limit at which a
+# decision is refused as too late to mean anything.
 on:
   schedule:
-    - cron: "0 21 * * 1-5"     # 17:00 ET — one hour after the close
-    - cron: "30 14 * * 1-5"    # 10:30 ET — one hour after the open
+    - cron: "0 21 * * 1-5"     # 17:00 ET - one hour after the close
+    - cron: "30 22 * * 1-5"    # backup, if the first was delayed or dropped
+    - cron: "0 0 * * 2-6"      # last chance, 4h after the close it belongs to
+    - cron: "30 14 * * 1-5"    # 10:30 ET - one hour after the open
+    - cron: "0 17 * * 1-5"     # backup settle
   workflow_dispatch:
     # "publish" appends nothing to the ledger; it only re-verifies the chain and
     # regenerates the site. The chain status is baked into the HTML at build
@@ -54,17 +68,32 @@ jobs:
         run: python -m ballast.preflight
 
       - name: Decide (after the close)
-        if: github.event.schedule == '0 21 * * 1-5' || inputs.task == 'night' || inputs.task == 'both'
+        if: >-
+          contains(fromJSON('["0 21 * * 1-5","30 22 * * 1-5","0 0 * * 2-6"]'),
+                   github.event.schedule)
+          || inputs.task == 'night' || inputs.task == 'both'
         env:
           QWEN_API_KEY: ${{ secrets.QWEN_API_KEY }}
           BALLAST_SECRET: ${{ secrets.BALLAST_SECRET }}
         run: python -m ballast.night
 
       - name: Settle (after the open)
-        if: inputs.task != 'check' && (github.event.schedule == '30 14 * * 1-5' || inputs.task == 'morning' || inputs.task == 'both')
+        if: >-
+          inputs.task != 'check'
+          && (contains(fromJSON('["30 14 * * 1-5","0 17 * * 1-5"]'),
+                       github.event.schedule)
+              || inputs.task == 'morning' || inputs.task == 'both')
         env:
           BALLAST_SECRET: ${{ secrets.BALLAST_SECRET }}
         run: python -m ballast.morning
+
+      # The job used to report success for having started. A run that fired but
+      # produced nothing looked identical to one that worked, and the hole only
+      # showed up if somebody went looking. This fails the job - and sends the
+      # owner GitHub's failure mail - when a due session has no decision.
+      - name: Every due session has a decision on the chain
+        if: inputs.task != 'check'
+        run: python tools/check_coverage.py --days 10
 
       - name: Refresh measured facts and export the Bitget-schema log
         if: inputs.task != 'check'

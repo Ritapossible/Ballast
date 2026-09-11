@@ -279,6 +279,12 @@ datacenter IPs** and are not usable here.
     with a reason; callers record it. Collapsing them into an empty list let the reader
     abstain for a wrong reason with nothing in the record to show it.
 
+34. **The decide half has three crons, the settle half two.** GitHub delayed this
+    repo's schedules by up to 3h17m in a week, and a night never decided cannot be
+    backfilled. Deciding twice is already a no-op, so a backup trigger costs nothing and
+    can only rescue a night. `tools/check_coverage.py` fails the job when a due session has
+    no decision - the job used to report success for having started.
+
 ## 7b. Operations
 
 - `.github/workflows/nightly.yml` — decides at 21:00 UTC, settles at 14:30 UTC, Mon–Fri.

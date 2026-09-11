@@ -6,7 +6,10 @@ transitions inside our data sample are pinned by test.
 from __future__ import annotations
 
 import datetime as dt
+import tempfile
 import unittest
+from pathlib import Path
+from unittest import mock
 
 from ballast import sessions
 from ballast.sessions import (close_utc, current_session, next_session, open_utc,
@@ -88,3 +91,51 @@ class CurrentSessionCase(unittest.TestCase):
 
     def test_a_weekend_falls_back_to_friday(self):
         self.assertEqual(self._at(dt.date(2026, 9, 12)), dt.date(2026, 9, 11))
+
+
+class CoverageCase(unittest.TestCase):
+    """A night that is never decided cannot be backfilled - the decide half is
+    graded on being written before the outcome is known. Nothing checked that a
+    scheduled run had actually landed; the job reported success for starting."""
+
+    def _ledger(self, sessions):
+        import json
+        from ballast import config
+        from ballast.ledger import Ledger
+        self.tmp = tempfile.TemporaryDirectory()
+        path = Path(self.tmp.name) / "ledger.jsonl"
+        lg = Ledger(path, config.DEV_SECRET)
+        for s in sessions:
+            lg.append("night_summary", {"session": s})
+        return mock.patch.object(config, "LEDGER_PATH", path)
+
+    def test_a_missed_weekday_is_reported(self):
+        from tools import check_coverage
+        now = dt.datetime(2026, 9, 11, 23, tzinfo=dt.timezone.utc)
+        with self._ledger(["2026-09-09", "2026-09-10"]):
+            # 09-10 is decided; 09-11 closed at 20:00Z and is now past grace.
+            self.assertEqual(check_coverage.missing(5, now=now), [])
+        now = dt.datetime(2026, 9, 12, 6, tzinfo=dt.timezone.utc)
+        with self._ledger(["2026-09-09", "2026-09-10"]):
+            self.assertEqual(check_coverage.missing(5, now=now),
+                             [dt.date(2026, 9, 11)])
+
+    def test_a_session_still_inside_grace_is_not_a_hole(self):
+        """The cron is an hour after the close and GitHub runs late; flagging at
+        the close would fail the job nightly for nothing."""
+        from tools import check_coverage
+        now = dt.datetime(2026, 9, 11, 21, 30, tzinfo=dt.timezone.utc)
+        with self._ledger(["2026-09-10"]):
+            self.assertEqual(check_coverage.missing(5, now=now), [])
+
+    def test_weekends_and_holidays_are_not_holes(self):
+        from tools import check_coverage
+        now = dt.datetime(2026, 9, 8, 6, tzinfo=dt.timezone.utc)   # after Labor Day
+        with self._ledger(["2026-09-04"]):
+            self.assertEqual(check_coverage.missing(5, now=now), [])
+
+    def test_nothing_before_the_chain_started_counts(self):
+        from tools import check_coverage
+        now = dt.datetime(2026, 9, 12, 6, tzinfo=dt.timezone.utc)
+        with self._ledger(["2026-09-11"]):
+            self.assertEqual(check_coverage.missing(10, now=now), [])
