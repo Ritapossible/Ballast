@@ -3,7 +3,7 @@
 **Hold tokenized US stocks through the night without holding the night's risk.**
 
 The US primary market is open 32.5 of every 168 hours. For the other ~81% of the week an
-rToken keeps trading while the market that prices its underlying is shut — through
+rToken keeps trading while the market that prices its underlying is shut - through
 earnings, through Fed decisions, through weekends. A holder's only options today are to
 exit before the close, surrendering the position, or to absorb whatever arrives.
 
@@ -50,7 +50,7 @@ file. Reproduce with `research/`; full detail and disclosed defects in
 
 Ballast is **priced protection, not alpha.** It does not claim a Sharpe improvement.
 [Gate 1](docs/RESEARCH.md#5-gate-1--can-risky-nights-be-selected-in-advance) measured that
-the nights worth hedging carry compensated return, so hedging them forgoes it — as
+the nights worth hedging carry compensated return, so hedging them forgoes it - as
 insurance always does. The claim is tail and drawdown reduction per basis point spent, and
 it is graded against reality every morning.
 
@@ -59,7 +59,7 @@ It also does not trade direction. It structurally **cannot**:
 > Every order Ballast is capable of emitting is opposite in sign to, and bounded in size
 > by, a spot position already held. There is no code path to a directional trade.
 
-Enforced by a separate process holding the only write-scoped credential — see
+Enforced by a separate process holding the only write-scoped credential - see
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ## Repository
@@ -71,7 +71,7 @@ Enforced by a separate process holding the only write-scoped credential — see
 | [`docs/RESEARCH.md`](docs/RESEARCH.md) | Measured findings, with defects disclosed |
 | [`docs/HACKATHON.md`](docs/HACKATHON.md) | Rules, deadlines, submission requirements |
 | [`research/`](research/) | The code behind every number quoted anywhere |
-| [`CLAUDE.md`](CLAUDE.md) | Working memory — links, verified facts, hard rules |
+| [`CLAUDE.md`](CLAUDE.md) | Working memory - links, verified facts, hard rules |
 
 ```bash
 python3 -m ballast.universe         # the hedgeable universe
@@ -79,20 +79,19 @@ python3 research/hedge_study.py     # hedge quality, stress conditioning, tail
 python3 research/gate1_selection.py # can risky nights be chosen in advance
 ```
 
-No API key needed. No dependencies beyond the Python standard library.
 
 ---
 
-Built for the **Bitget AI Base Camp Hackathon S2** — Agentic Trading, Event-Driven Agent.
+Built for the **Bitget AI Base Camp Hackathon S2** - Agentic Trading, Event-Driven Agent.
 Paper trading only; no live fill is claimed.
 
-## Running it
+## Running the loop
 
 ```bash
 python3 -m ballast.bootstrap          # build a paper position book
 python3 -m ballast.night              # decide, enforce, execute, record
 python3 -m ballast.morning            # settle against the exact counterfactual
-python3 -m unittest discover -s tests # 58 tests, no network, no key
+python3 -m unittest discover -s tests # the suite: no network, no key
 ```
 
 Optional environment:

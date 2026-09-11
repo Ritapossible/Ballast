@@ -111,11 +111,23 @@ class ReadmeIsGeneratedCase(unittest.TestCase):
         self.assertIn(block(facts.load()), self._readme(),
                       "README figures are stale - run python3 tools/readme_facts.py")
 
+    def test_no_hardcoded_test_count(self):
+        """The README said "58 tests" while the suite ran 221 - the same failure
+        as "224 of 704 rTokens", in the same file, three sections apart."""
+        import re
+        stale = re.findall(r"\b\d+ tests\b", self._readme())
+        self.assertEqual(stale, [], f"hardcoded test count in README: {stale}")
+
+    def test_headings_are_not_duplicated(self):
+        import re
+        headings = re.findall(r"^## (.+)$", self._readme(), re.M)
+        self.assertEqual(len(headings), len(set(headings)), headings)
+
     def test_the_runtime_is_declared(self):
         """Zero third-party dependencies is a real property and it was invisible."""
         readme = self._readme()
         self.assertIn("3.11", readme)
-        self.assertIn("No third-party", readme)
+        self.assertIn("No runtime\ndependencies at all", readme.replace("**", ""))
 
     def test_the_project_is_licensed(self):
         path = Path(__file__).resolve().parent.parent / "LICENSE"
