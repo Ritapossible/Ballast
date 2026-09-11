@@ -208,6 +208,13 @@ datacenter IPs** and are not usable here.
     Never re-run a past night to "test the loop" - settlement grades close-to-open and
     will credit the hedge with a move that already happened. Use `--dry-run`.
 
+17. **Every table stacks on a phone.** A 560px table on a 400px screen parks its last
+    column off-screen while that column's text still sets the row height - the Tonight
+    page shipped 450px-tall rows that looked empty. Each `<td>` carries `data-label`;
+    `tests/test_layout.py` fails if one does not.
+18. **A rationale is published text.** It renders on a public page and is signed into
+    the ledger, so format every number in it. `11.291999999999998bp` shipped.
+
 ## 7b. Operations
 
 - `.github/workflows/nightly.yml` — decides at 21:00 UTC, settles at 14:30 UTC, Mon–Fri.

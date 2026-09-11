@@ -73,8 +73,29 @@ class TestLayout(unittest.TestCase):
         """Tables have a min-width; they must sit in a scroller, not widen the page."""
         for name, html in self.each():
             if "<table" in html:
-                self.assertIn('class="scroll"', html, name)
+                self.assertRegex(html, r'class="scroll\b', name)
                 self.assertIn("overflow-x:auto", html, name)
+
+    def test_every_table_stacks_on_a_phone(self):
+        """A 560px table on a 400px screen parks its last column off-screen while
+        that column's text still sets the row height - which is how the Tonight
+        page came to show 450px-tall rows, blank below the first two cells. Every
+        table stacks instead, and every cell carries the label it stacks under."""
+        for name, html in self.each():
+            for wrapper in re.findall(r'<div class="scroll([^"]*)"><table', html):
+                self.assertIn("stacked", wrapper, f"{name}: a table does not stack")
+            for row in re.findall(r"<tr>(?!<th)(.*?)</tr>", html):
+                if "<td" not in row:
+                    continue
+                cells = re.findall(r"<td[^>]*>", row)
+                unlabelled = [c for c in cells if "data-label=" not in c]
+                self.assertEqual(unlabelled, [], f"{name}: cells without a label {unlabelled}")
+
+    def test_the_stacked_rules_are_present(self):
+        for name, html in self.each():
+            if "<table" in html:
+                self.assertIn("@media(max-width:720px)", html, name)
+                self.assertIn("content:attr(data-label)", html, name)
 
     def test_every_in_page_anchor_resolves(self):
         for name, html in self.each():

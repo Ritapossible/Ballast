@@ -118,3 +118,16 @@ class TestOutputTypography(unittest.TestCase):
             d = decide("X", "RXUSDT", volatile(), EARNINGS, 17.5, CFG,
                        model_judgment=judgment)
             self.assertNotIn("—", d.rationale)
+
+
+class RationaleFormattingCase(unittest.TestCase):
+    """Rationales are published verbatim on a public page and signed into the
+    ledger, so a raw float reaches both. '11.291999999999998bp' shipped."""
+
+    def test_no_unrounded_float_reaches_a_rationale(self):
+        import re
+        for risk in (CALM_RISK, EARNINGS):
+            for history in (QUIET, [0.02] * 60):
+                d = decide("X", "RXUSDT", history, risk, 17.5, CFG)
+                self.assertEqual(re.findall(r"\d+\.\d{3,}", d.rationale), [],
+                                 d.rationale)

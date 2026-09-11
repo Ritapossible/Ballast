@@ -84,12 +84,12 @@ which positions it cannot protect rather than pretending otherwise.</p>
 <p>Because a delta hedge is symmetric - it removes upside with downside - value exists
 only on nights carrying variance <em>without</em> compensation. Two selectors were
 tested against that bar.</p>
-<div class="scroll"><table><thead><tr><th>Selector</th><th class="num">Separation</th>
+<div class="scroll stacked"><table><thead><tr><th>Selector</th><th class="num">Separation</th>
 <th>Compensated?</th><th>Verdict</th></tr></thead><tbody>
-<tr><td>Trailing realised volatility</td><td class="num">1.41×</td>
-<td>yes - +19.3 bp, t=3.08</td><td class="dim">unusable</td></tr>
-<tr><td><strong>Earnings calendar</strong></td><td class="num">3.2×</td>
-<td>no - −61 bp, t=−1.59</td><td class="hl">the selector</td></tr>
+<tr><td data-label="">Trailing realised volatility</td><td class="num" data-label="Separation">1.41×</td>
+<td data-label="Compensated">yes - +19.3 bp, t=3.08</td><td class="dim" data-label="Verdict">unusable</td></tr>
+<tr><td data-label=""><strong>Earnings calendar</strong></td><td class="num" data-label="Separation">3.2×</td>
+<td data-label="Compensated">no - −61 bp, t=−1.59</td><td class="hl" data-label="Verdict">the selector</td></tr>
 </tbody></table></div>
 <p>Volatility barely distinguishes a risky night from an ordinary one, and the nights
 it picks carry positive expected return - so hedging them pays to remove return.
@@ -171,15 +171,15 @@ the whole session.</li>
 <h2 id="research">Research findings</h2>
 <p>All figures are produced by code in <code>research/</code> from public endpoints,
 labelled <em>observed</em>, <em>estimated</em> or <em>targeted</em>.</p>
-<div class="scroll"><table><thead><tr><th>Finding</th><th>Value</th></tr></thead><tbody>
-<tr><td>rTokens live on spot / with a perp leg</td><td class="num">{F['rtokens_total']} / {F['rtokens_hedgeable']}</td></tr>
-<tr><td>Median overnight variance removed</td><td class="num">{F['median_r2'] * 100:.1f}%</td></tr>
-<tr><td>R² on top-decile move nights</td><td class="num">0.978–0.999</td></tr>
-<tr><td>Median p95 tail reduction</td><td class="num">{F['median_tail_cut_pct']}%</td></tr>
-<tr><td>Earnings-night variance ratio</td><td class="num">3.2×</td></tr>
-<tr><td>Volatility-selector separation</td><td class="num">1.41×</td></tr>
-<tr><td>Hedge cost / exit cost</td><td class="num">{F['hedge_cost_bp']} bp / {F['exit_cost_bp']:.0f} bp</td></tr>
-<tr><td>Hourly history reachable per rToken</td><td class="num">2+ years</td></tr>
+<div class="scroll stacked"><table><thead><tr><th>Finding</th><th>Value</th></tr></thead><tbody>
+<tr><td data-label="">rTokens live on spot / with a perp leg</td><td class="num" data-label="Value">{F['rtokens_total']} / {F['rtokens_hedgeable']}</td></tr>
+<tr><td data-label="">Median overnight variance removed</td><td class="num" data-label="Value">{F['median_r2'] * 100:.1f}%</td></tr>
+<tr><td data-label="">R² on top-decile move nights</td><td class="num" data-label="Value">0.978–0.999</td></tr>
+<tr><td data-label="">Median p95 tail reduction</td><td class="num" data-label="Value">{F['median_tail_cut_pct']}%</td></tr>
+<tr><td data-label="">Earnings-night variance ratio</td><td class="num" data-label="Value">3.2×</td></tr>
+<tr><td data-label="">Volatility-selector separation</td><td class="num" data-label="Value">1.41×</td></tr>
+<tr><td data-label="">Hedge cost / exit cost</td><td class="num" data-label="Value">{F['hedge_cost_bp']} bp / {F['exit_cost_bp']:.0f} bp</td></tr>
+<tr><td data-label="">Hourly history reachable per rToken</td><td class="num" data-label="Value">2+ years</td></tr>
 </tbody></table></div>
 <p>The first policy replay is published as a <strong>negative result</strong>:
 a volatility-led policy hedged 45% of nights, cost roughly 13% a year and turned a
@@ -202,6 +202,12 @@ session to trade tested only for a weekday, while the rest of the calendar exclu
 holidays. On Thanksgiving it returned Thanksgiving: a session the exchange never opened,
 against a window that never existed. Fixed and moved beside the calendar it has to agree
 with.</li>
+<li><strong>Tables looked empty on a phone</strong> - a 560px table on a 400px screen
+parks its last column off-screen, but that column's text still sets the row height. The
+Reasoning sentence produced 450px-tall rows on the Tonight page showing two short cells
+and a wall of blank. The data was there, just where it could not be read. Every table now
+stacks into labelled rows below 720px, and a layout test fails if a cell ships without
+its label.</li>
 <li><strong>The calendar selector hedged a night early</strong> - the rule matched the
 session date or the next session's and ignored the release time. Nasdaq lists a report
 under the date it is released, and only two of the four combinations fall inside a
@@ -335,34 +341,34 @@ python3 research/facts_study.py         <span class="dim"># re-measure the unive
 runs the deterministic calendar rule alone.</p>
 
 <h2 id="env">Environment</h2>
-<div class="scroll"><table><thead><tr><th>Variable</th><th>Effect if unset</th>
+<div class="scroll stacked"><table><thead><tr><th>Variable</th><th>Effect if unset</th>
 </tr></thead><tbody>
-<tr><td><code>QWEN_API_KEY</code></td><td>the reader abstains, the calendar rule
+<tr><td data-label=""><code>QWEN_API_KEY</code></td><td data-label="Effect if unset" class="wrap">the reader abstains, the calendar rule
 decides, and the abstention is logged with its reason</td></tr>
-<tr><td><code>BALLAST_SECRET</code></td><td>writing is <strong>refused</strong>;
+<tr><td data-label=""><code>BALLAST_SECRET</code></td><td data-label="Effect if unset" class="wrap">writing is <strong>refused</strong>;
 set <code>BALLAST_DEV_SECRET=1</code> to accept an unverifiable key. Reading still
 works and the page says "signatures NOT verified".</td></tr>
-<tr><td><code>QWEN_BASE_URL</code></td><td>defaults to the hackathon endpoint</td></tr>
-<tr><td><code>QWEN_MODEL</code></td><td>defaults to <code>qwen3.8-max</code></td></tr>
+<tr><td data-label=""><code>QWEN_BASE_URL</code></td><td data-label="Effect if unset" class="wrap">defaults to the hackathon endpoint</td></tr>
+<tr><td data-label=""><code>QWEN_MODEL</code></td><td data-label="Effect if unset" class="wrap">defaults to <code>qwen3.8-max</code></td></tr>
 </tbody></table></div>
 <p>Degradation is transparent by design: a night decided without the model is visibly
 a night decided without the model.</p>
 
 <h2 id="glossary">Glossary</h2>
-<div class="scroll"><table><thead><tr><th>Term</th><th>Meaning</th></tr></thead><tbody>
-<tr><td><strong>rToken</strong></td><td>A tokenized US equity trading 24/7 against
+<div class="scroll stacked"><table><thead><tr><th>Term</th><th>Meaning</th></tr></thead><tbody>
+<tr><td data-label=""><strong>rToken</strong></td><td data-label="Meaning" class="wrap">A tokenized US equity trading 24/7 against
 USDT - <code>RTSLAUSDT</code> tracks Tesla.</td></tr>
-<tr><td><strong>Perp leg</strong></td><td>The matched stock perpetual, using the bare
+<tr><td data-label=""><strong>Perp leg</strong></td><td data-label="Meaning" class="wrap">The matched stock perpetual, using the bare
 ticker - <code>TSLAUSDT</code>. The hedge instrument.</td></tr>
-<tr><td><strong>Overnight window</strong></td><td>A session's 16:00 ET close to the
+<tr><td data-label=""><strong>Overnight window</strong></td><td data-label="Meaning" class="wrap">A session's 16:00 ET close to the
 next 09:30 ET open. Friday spans the weekend.</td></tr>
-<tr><td><strong>Basis point (bp)</strong></td><td>One hundredth of a percent. The
+<tr><td data-label=""><strong>Basis point (bp)</strong></td><td data-label="Meaning" class="wrap">One hundredth of a percent. The
 hedge costs {F['hedge_cost_bp']} bp; a bad night can cost 1,000.</td></tr>
-<tr><td><strong>Counterfactual</strong></td><td>What the position would have done
+<tr><td data-label=""><strong>Counterfactual</strong></td><td data-label="Meaning" class="wrap">What the position would have done
 unhedged - observed, not estimated.</td></tr>
-<tr><td><strong>Night Mandate</strong></td><td>The signed document bounding what may
+<tr><td data-label=""><strong>Night Mandate</strong></td><td data-label="Meaning" class="wrap">The signed document bounding what may
 be traded tonight. Expires at the open.</td></tr>
-<tr><td><strong>Uncompensated variance</strong></td><td>Risk carrying no expected
+<tr><td data-label=""><strong>Uncompensated variance</strong></td><td data-label="Meaning" class="wrap">Risk carrying no expected
 return. The only kind worth paying to remove.</td></tr>
 </tbody></table></div>
 """

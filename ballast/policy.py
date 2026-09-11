@@ -191,7 +191,7 @@ def decide(ticker: str, spot_symbol: str, history: list[float], risk: NightRisk,
     elif not cfg.vol_gate_enabled:
         action = Action.NO_HEDGE
         rationale = (f"nothing scheduled tonight - 1-sigma {sigma or 0:.0f}bp is not a "
-                     f"reason to spend {cfg.hedge_cost_bp}bp (Gate 1a: vol separates "
+                     f"reason to spend {cfg.hedge_cost_bp:.1f}bp (Gate 1a: vol separates "
                      f"only 1.41x and its nights are compensated)")
     elif sigma is None or pct is None:
         action = Action.NO_HEDGE
@@ -205,7 +205,7 @@ def decide(ticker: str, spot_symbol: str, history: list[float], risk: NightRisk,
     elif sigma < cfg.sigma_floor_bp:
         action = Action.NO_HEDGE
         rationale = (f"1-sigma {sigma:.0f}bp below the {cfg.sigma_floor_bp:.0f}bp floor - "
-                     f"not worth {cfg.hedge_cost_bp}bp")
+                     f"not worth {cfg.hedge_cost_bp:.1f}bp")
     else:
         action = Action.NO_HEDGE
         rationale = (f"1-sigma {sigma:.0f}bp is ordinary for this name "

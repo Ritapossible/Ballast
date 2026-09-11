@@ -151,6 +151,28 @@ tr:last-child td{{border-bottom:0}}
 .tag.on{{color:var(--accent);border-color:var(--accent-dim);background:rgba(0,217,236,.08)}}
 .empty{{padding:46px 22px;text-align:center;color:var(--dim);font-size:14.5px}}
 
+/* Narrow screens: stack each row into a card.
+   A 560px table on a 400px screen parks the last column off-screen, but its text
+   still sets the row height - so the Reasoning sentence produced 450px-tall rows
+   showing two short cells at the top and a wall of blank below. The data was
+   there, just where it could not be read. Labels come from data-label. */
+@media(max-width:720px){{
+  .stacked{{overflow-x:visible}}
+  .stacked table{{min-width:0;display:block}}
+  .stacked thead{{display:none}}
+  .stacked tbody,.stacked tr{{display:block;width:100%}}
+  .stacked tr{{padding:15px 17px;border-bottom:1px solid var(--line)}}
+  .stacked tr:last-child{{border-bottom:0}}
+  .stacked td{{display:flex;gap:16px;align-items:baseline;justify-content:space-between;
+    padding:4px 0;border:0}}
+  .stacked td::before{{content:attr(data-label);color:var(--dim);font-size:10.5px;
+    text-transform:uppercase;letter-spacing:.14em;flex:none}}
+  .stacked td[data-label=""]{{display:block;font-size:16px;margin-bottom:6px}}
+  .stacked td[data-label=""]::before{{content:none}}
+  .stacked td.wrap{{display:block}}
+  .stacked td.wrap::before{{display:block;margin-bottom:4px}}
+}}
+
 pre{{background:var(--surface);border:1px solid var(--line);border-radius:14px;
   padding:22px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;
   line-height:1.75;color:var(--mid);margin:26px 0;text-align:left}}

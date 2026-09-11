@@ -44,19 +44,22 @@ def _empty(msg: str) -> str:
 def _decisions(rows: list[dict]) -> str:
     if not rows:
         return _empty("No decisions recorded yet. The loop runs after the US close.")
-    out = ['<div class="scroll"><table><thead><tr><th>Position</th><th>Call</th>'
+    out = ['<div class="scroll stacked"><table><thead><tr><th>Position</th><th>Call</th>'
            '<th class="num">1σ forecast</th><th class="num">Notional</th>'
            '<th>Decided by</th><th>Reasoning</th></tr></thead><tbody>']
     for r in rows:
         on = r.get("action") == "HEDGE"
         by = (r.get("inputs") or {}).get("decided_by", "rule")
         out.append(
-            f'<tr><td><strong>{_e(r.get("ticker"))}</strong></td>'
-            f'<td><span class="tag {"on" if on else ""}">{_e(r.get("action"))}</span></td>'
-            f'<td class="num mid">{r.get("sigma_bp", 0):,.0f} bp</td>'
-            f'<td class="num mid">{r.get("notional_usdt", 0):,.0f}</td>'
-            f'<td><span class="tag {"on" if by == "model" else ""}">{_e(by)}</span></td>'
-            f'<td class="dim">{_e(r.get("rationale", ""))}</td></tr>')
+            f'<tr><td data-label=""><strong>{_e(r.get("ticker"))}</strong></td>'
+            f'<td data-label="Call"><span class="tag {"on" if on else ""}">'
+            f'{_e(r.get("action"))}</span></td>'
+            f'<td class="num mid" data-label="1σ forecast">{r.get("sigma_bp", 0):,.0f} bp</td>'
+            f'<td class="num mid" data-label="Notional">{r.get("notional_usdt", 0):,.0f}</td>'
+            f'<td data-label="Decided by"><span class="tag {"on" if by == "model" else ""}">'
+            f'{_e(by)}</span></td>'
+            f'<td class="dim wrap" data-label="Reasoning">'
+            f'{_e(r.get("rationale", ""))}</td></tr>')
     return "".join(out) + "</tbody></table></div>"
 
 
@@ -64,7 +67,7 @@ def _settled(rows: list[dict]) -> str:
     if not rows:
         return _empty("Nothing settled yet. Every decision is graded at the next "
                       "primary open, against the exact counterfactual.")
-    out = ['<div class="scroll"><table><thead><tr><th>Position</th><th>Call</th>'
+    out = ['<div class="scroll stacked"><table><thead><tr><th>Position</th><th>Call</th>'
            '<th class="num">Unhedged</th><th class="num">Realised</th>'
            '<th class="num">Value added</th><th>Verdict</th></tr></thead><tbody>']
     for r in sorted(rows, key=lambda x: -abs(x.get("unhedged_bp", 0))):
@@ -82,12 +85,13 @@ def _settled(rows: list[dict]) -> str:
         else:
             verdict, faint = "carried", True
         out.append(
-            f'<tr><td><strong>{_e(r.get("ticker"))}</strong></td>'
-            f'<td><span class="tag {"on" if on else ""}">{_e(r.get("action"))}</span></td>'
-            f'<td class="num mid">{r.get("unhedged_bp", 0):+,.0f} bp</td>'
-            f'<td class="num mid">{r.get("realised_bp", 0):+,.0f} bp</td>'
-            f'<td class="num {cls}">{va:+,.0f} bp</td>'
-            f'<td class="{"dim" if faint else ""}">{verdict}</td></tr>')
+            f'<tr><td data-label=""><strong>{_e(r.get("ticker"))}</strong></td>'
+            f'<td data-label="Call"><span class="tag {"on" if on else ""}">'
+            f'{_e(r.get("action"))}</span></td>'
+            f'<td class="num mid" data-label="Unhedged">{r.get("unhedged_bp", 0):+,.0f} bp</td>'
+            f'<td class="num mid" data-label="Realised">{r.get("realised_bp", 0):+,.0f} bp</td>'
+            f'<td class="num {cls}" data-label="Value added">{va:+,.0f} bp</td>'
+            f'<td class="{"dim" if faint else ""}" data-label="Verdict">{verdict}</td></tr>')
     return "".join(out) + "</tbody></table></div>"
 
 
@@ -358,9 +362,10 @@ settles at the next opening bell, so nothing can be quietly forgotten.</p>
 
     def evidence_page(self) -> str:
         claim_rows = "".join(
-            f'<tr><td>{_e(c)}</td>'
-            f'<td><span class="tag {"on" if s == "proven" else ""}">{_e(s)}</span></td>'
-            f'<td class="dim">{_e(n or "")}</td></tr>'
+            f'<tr><td class="wrap" data-label="">{_e(c)}</td>'
+            f'<td data-label="Status"><span class="tag {"on" if s == "proven" else ""}">'
+            f'{_e(s)}</span></td>'
+            f'<td class="dim wrap" data-label="Basis">{_e(n or "")}</td></tr>'
             for c, s, n in claims(self.f))
         return f"""
 <section class="bd"><div class="wrap center">
@@ -382,7 +387,7 @@ commits it, so each decision is timestamped before its outcome is known.</p></di
 </div></section>
 
 <section><div class="wrap">
-<div class="scroll"><table><thead><tr><th>Claim</th><th>Status</th><th>Basis</th>
+<div class="scroll stacked"><table><thead><tr><th>Claim</th><th>Status</th><th>Basis</th>
 </tr></thead><tbody>{claim_rows}</tbody></table></div>
 <div class="narrow" style="margin-top:44px">
 <p class="note">Ballast is <strong>priced protection, not alpha</strong>. It makes no
