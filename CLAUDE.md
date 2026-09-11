@@ -253,6 +253,13 @@ datacenter IPs** and are not usable here.
     it (`#e05068` / `#00a3b4`), checked for CVD separation and contrast. No script: an
     inline SVG is what lets the CSP stay `default-src 'none'`.
 
+28. **Out-of-sample beta is FROZEN.** `research/oos.py` fits on the first 70% of each
+    name's nights and applies it unchanged; refitting on the holdout measures nothing. Never
+    quote a global split date - histories differ in length, so each name splits at its own
+    and min/max across names produces windows that appear to overlap.
+29. **`python3 verify.py` is the judge's entry point.** It must keep covering every offline
+    claim, and must keep naming what it cannot check rather than implying it did.
+
 ## 7b. Operations
 
 - `.github/workflows/nightly.yml` — decides at 21:00 UTC, settles at 14:30 UTC, Mon–Fri.

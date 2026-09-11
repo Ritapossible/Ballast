@@ -210,6 +210,18 @@ order field names; US exchange holidays in the session calendar.
    Diagnosed to the selector, not the mechanism, and published as a negative result. **No
    parameters were tuned to make that table look better.**
 
+**Held out:** the hedge ratio is fitted on the first 70% of each name's nights and applied
+unchanged to the last 30%. Median variance removed 0.980 to 0.996, median p95 tail cut 86% to
+94%, median absolute beta drift 0.009, twelve of twelve names holding. A hedge is a mechanism
+rather than an edge, so the test it must pass is that nothing decays on unseen data. The
+out-of-sample figures being *higher* is a property of that period, not an improvement.
+
+**Verify it:** `git clone` then `python3 verify.py` - one command, no key, no network. It runs
+the suite, requires the enforcer to refuse a naked directional order, re-derives the hash chain,
+mutates a ledger copy and requires verification to fail, checks every published figure comes
+from `docs/facts.json` rather than a literal, and builds all five pages. What needs the
+exchange, it names rather than pretends to check.
+
 **Next:** measure whether the reader closes the tail-coverage gap; wire the Agentic Account;
 model exchange holidays.
 

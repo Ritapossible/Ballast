@@ -50,6 +50,10 @@ SELECTOR_BUG_SESSIONS = frozenset({"2026-09-09"})
 # the same night.
 DECIDE_GRACE_HOURS = 4
 
+# f-strings cannot carry a backslash escape, and _tile escapes its input, so the
+# arrow is the character itself rather than an entity.
+ARROW = "\u2192"
+
 
 def _selector_affected(row: dict) -> bool:
     """Only the hedges are affected, never the refusals.
@@ -461,6 +465,39 @@ declined is a decision it will be graded on.</p>
 </div></section>"""
 
     @property
+    def oos_block(self) -> str:
+        """Held-out test. Every other figure here is fitted on all the data it covers.
+
+        The hedge ratio is estimated on the first 70% of nights and applied
+        unchanged to the last 30%. Refitting on the holdout would measure nothing;
+        a frozen beta is the position a desk actually carries, having fitted only
+        on the past.
+        """
+        o = self.f.get("oos")
+        if not o:
+            return ""
+        held = sum(1 for r in o["rows"] if r["oos_r2"] >= 0.90)
+        return f"""
+<h3 style="margin-top:44px">Out of sample</h3>
+<p class="note">Every figure above is fitted on all the nights it covers. This one is not:
+beta is estimated on the first {o['split']:.0%} of each name's paired nights and applied
+<strong>unchanged</strong> to the last {1 - o['split']:.0%}. No refit - a frozen ratio is
+what a desk carries, having fitted only on the past. Each name splits at its own date,
+because the histories are different lengths ({_e(o['shortest'])} nights for the shortest,
+{_e(o['longest'])} for the longest), so there is no single cut-off across the sample.</p>
+<div class="tiles" style="margin:22px 0">
+{_tile(f"{o['is_median_r2']:.3f} {ARROW} {o['oos_median_r2']:.3f}", "median variance removed")}
+{_tile(f"{o['is_median_tail']}% {ARROW} {o['oos_median_tail']}%", "median p95 tail cut")}
+{_tile(f"{o['median_beta_drift']:.3f}", "median beta drift on refit")}
+{_tile(f"{held}/{o['names']}", "names holding out of sample")}
+</div>
+<p class="note"><strong>It holds, and that is the whole claim.</strong> A hedge is a
+mechanism rather than an edge, so the test it has to pass is that nothing decays on data
+it never saw - and nothing does. The out-of-sample figures come out <em>higher</em>, which
+is a property of that period rather than evidence the hedge improved: read it as stable,
+not as better. Reproduce with <code>python3 research/oos.py</code>.</p>"""
+
+    @property
     def tile_scope(self) -> str:
         """State what the tiles cover, and how few nights that is."""
         n = len(self.clean_sessions)
@@ -554,6 +591,7 @@ paper log.</p>
 <p class="note">Reproduce with <code>python3 research/hedge_study.py</code>. Worst single
 nights, not shown above: MSFT <strong>1,128 bp to 233 bp</strong>, AMD
 <strong>1,262 bp to 90 bp</strong>.</p>
+{self.oos_block}
 </div>
 </div></section>
 
@@ -566,6 +604,7 @@ Sharpe claim: the nights it hedges carry real variance and no reliable expected
 return, so removing them is insurance - which has a price, and is worth paying only
 on the right nights.</p>
 <pre style="margin-top:34px"><b>git clone {REPO} &amp;&amp; cd ballast</b>
+python3 verify.py                       <span class="dim"># every offline claim, one command</span>
 python3 -m unittest discover -s tests   <span class="dim"># full suite, no network, no key</span>
 python3 research/hedge_study.py         <span class="dim"># the hedge measurements</span>
 python3 research/gate1_calendar.py      <span class="dim"># why the calendar is the selector</span>

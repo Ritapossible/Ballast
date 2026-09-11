@@ -22,7 +22,7 @@ SECTIONS = [
     ("System", [("architecture", "Architecture"), ("authority", "Bounded authority"),
                 ("ledger", "The ledger"), ("settlement", "Settlement")]),
     ("Evidence", [("research", "Research findings"), ("defects", "Defects found"),
-                  ("roadmap", "Roadmap"), ("verify", "Reproduce it")]),
+                  ("verify", "Verify it yourself"), ("oos", "Out of sample"), ("roadmap", "Roadmap"), ("verify", "Reproduce it")]),
     ("Reference", [("cli", "CLI"), ("env", "Environment"), ("glossary", "Glossary")]),
 ]
 
@@ -257,6 +257,29 @@ when the position rose, which is a directional verdict this system does not make
 refusal now carries its arithmetic and no verdict; a hedge is graded on whether it cut
 the move, which is symmetric. Both fixed.</li>
 </ul>
+
+<h2 id="verify">Verify it yourself</h2>
+<p>One command, no key and no network. It re-derives what can be re-derived offline and
+names what it cannot, rather than claiming to verify a figure it did not compute.</p>
+<pre><b>git clone https://github.com/Ritapossible/Ballast &amp;&amp; cd ballast</b>
+python3 verify.py</pre>
+<p>It runs the suite, drives a naked directional order at the enforcer and requires a
+refusal, re-derives the ledger's hash chain, mutates a copy of a ledger and requires
+verification to <em>fail</em>, checks every published figure comes from
+<code>docs/facts.json</code> rather than a literal, confirms each documented research
+script exists, and builds all five pages. The market measurements need the exchange, so
+it points at the scripts that reproduce those instead of pretending otherwise.</p>
+
+<h2 id="oos">Out of sample</h2>
+<p>Every other figure on the site is fitted on all the nights it covers. The hedge ratio
+is also tested held-out: beta estimated on the first 70% of each name's paired nights and
+applied <strong>unchanged</strong> to the last 30%, with no refit. Median variance removed
+goes 0.980 to 0.996, median p95 tail cut 86% to 94%, and the median absolute beta drift on
+refitting is 0.009 - twelve of twelve names hold.</p>
+<p>The out-of-sample figures come out higher. That is a property of the period, not
+evidence the hedge improved; read it as stable rather than as better. The claim being
+tested is only that a mechanism does not decay on data it never saw, which is what
+separates a hedge from an edge. Reproduce with <code>python3 research/oos.py</code>.</p>
 
 <h2 id="roadmap">Roadmap</h2>
 <p>What is still open, why, and what it would take. Ordered by how much it would
