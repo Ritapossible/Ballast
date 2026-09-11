@@ -113,14 +113,33 @@ class StalenessCase(unittest.TestCase):
         self.assertEqual(site.behind, 0)
         self.assertEqual(site.freshness, "")
 
+    def test_the_hour_before_the_run_is_due_is_not_stale(self):
+        """The decide cron is an hour after the close. Flagging at the close made
+        the page read STALE nightly between 20:00Z and whenever the run landed."""
+        site = self._site("2026-09-10", dt.datetime(2026, 9, 11, 20, 58,
+                                                    tzinfo=dt.timezone.utc))
+        self.assertEqual(site.behind, 0)
+
+    def test_a_run_delayed_three_hours_is_not_stale(self):
+        """GitHub delayed one of ours by 3h17m; that must not raise an alarm."""
+        site = self._site("2026-09-10", dt.datetime(2026, 9, 11, 23, 30,
+                                                    tzinfo=dt.timezone.utc))
+        self.assertEqual(site.behind, 0)
+
+    def test_past_the_grace_period_it_is_stale(self):
+        site = self._site("2026-09-10", dt.datetime(2026, 9, 12, 0, 30,
+                                                    tzinfo=dt.timezone.utc))
+        self.assertEqual(site.behind, 1)
+
     def test_a_missed_run_is_stated_on_the_page(self):
-        site = self._site("2026-09-08", dt.datetime(2026, 9, 10, 21, tzinfo=dt.timezone.utc))
+        # Past the grace window on 09-10, so both 09-09 and 09-10 are genuinely due.
+        site = self._site("2026-09-08", dt.datetime(2026, 9, 11, 1, tzinfo=dt.timezone.utc))
         self.assertEqual(site.behind, 2)            # 09-09 and 09-10 both missed
         self.assertIn("2 sessions behind", site.freshness)
 
     def test_holidays_do_not_count_as_missed_sessions(self):
         """Labor Day 2026 is 09-07. Friday 09-04 to Tuesday 09-08 is one session."""
-        site = self._site("2026-09-04", dt.datetime(2026, 9, 8, 21, tzinfo=dt.timezone.utc))
+        site = self._site("2026-09-04", dt.datetime(2026, 9, 9, 1, tzinfo=dt.timezone.utc))
         self.assertEqual(site.behind, 1)
 
 

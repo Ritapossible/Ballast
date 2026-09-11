@@ -224,6 +224,10 @@ datacenter IPs** and are not usable here.
 21. **The page rounds; the ledger does not.** A rationale is signed as written, so a
     formatting bug in one is permanent. `_round_floats` formats at render only.
 
+24. **An alarm that fires nightly is one nobody reads.** Staleness is judged against the
+    newest session whose run is *overdue* (close + 4h), not the newest that exists - the
+    cron is close + 1h and GitHub has been 3h17m late, so flagging at the close made the
+    page read STALE every night between 20:00Z and the run landing.
 23. **A results page marks, it does not explain.** Which rows are unsound belongs on
     `/settled`; why the bug happened belongs once, under `/docs#defects`. A callout
     repeating the mechanism duplicated the tile scope note - the same fault the roadmap

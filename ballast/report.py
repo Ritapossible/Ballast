@@ -42,6 +42,14 @@ def _round_floats(text: str) -> str:
 # hedges may have been placed a night early; the settled page says so beside them.
 SELECTOR_BUG_SESSIONS = frozenset({"2026-09-09"})
 
+# How long after a close the decide run may take before the site calls it missed.
+# The cron is one hour after the close, and GitHub has delayed one of ours by
+# 3h17m. Flagging at the close itself made the page read STALE every night between
+# 20:00Z and whenever the run landed - an alarm that fires nightly is one nobody
+# reads. Four hours is well past any delay observed and still catches a real stall
+# the same night.
+DECIDE_GRACE_HOURS = 4
+
 
 def _e(v) -> str:
     return html.escape(str(v))
@@ -229,7 +237,12 @@ class Site:
         self.behind = 0
         try:
             shown = dt.date.fromisoformat(self.session)
-            elapsed = list(sessions_between(shown, current_session(now)))
+            # Judge against the newest session whose run is actually overdue, not
+            # the newest session that exists.
+            due = current_session(now)
+            if now < close_utc(due) + dt.timedelta(hours=DECIDE_GRACE_HOURS):
+                due = current_session(close_utc(due) - dt.timedelta(seconds=1))
+            elapsed = list(sessions_between(shown, due))
             self.behind = max(0, len(elapsed) - 1)
         except (ValueError, RuntimeError):
             self.behind = 0                    # no session yet, or a calendar fault
