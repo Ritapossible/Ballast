@@ -13,8 +13,7 @@ import datetime as dt
 import unittest
 import unittest.mock
 
-from ballast.holidays import (closes_early, early_closes, easter, holidays,
-                              is_trading_day)
+from ballast.holidays import closes_early, early_closes, easter, holidays, is_trading_day
 from ballast.sessions import next_session, window_hours
 
 
@@ -89,9 +88,10 @@ class TestSessionsRespectHolidays(unittest.TestCase):
         """Patch where the name is used, not where it is defined - `sessions`
         imported it directly, so patching `holidays` would have no effect."""
         from ballast import sessions
-        with unittest.mock.patch.object(sessions, "is_trading_day", return_value=False):
-            with self.assertRaises(RuntimeError):
-                next_session(dt.date(2026, 9, 8))
+        with unittest.mock.patch.object(sessions, "is_trading_day",
+                                        return_value=False), \
+             self.assertRaises(RuntimeError):
+            next_session(dt.date(2026, 9, 8))
 
 
 if __name__ == "__main__":

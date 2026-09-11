@@ -9,7 +9,6 @@ from __future__ import annotations
 import json
 import struct
 import unittest
-from pathlib import Path
 
 from ballast import config
 

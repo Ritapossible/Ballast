@@ -14,9 +14,19 @@ from __future__ import annotations
 import datetime as dt
 import unittest
 
-from ballast.enforcer import (Admitted, RULE_EXPIRED, RULE_NONPOSITIVE, RULE_NO_POSITION,
-                              RULE_NOTIONAL, RULE_NOT_OPPOSITE, RULE_ORDER_COUNT,
-                              RULE_RATIO, RULE_UNIVERSE, Enforcer, OrderIntent)
+from ballast.enforcer import (
+    RULE_EXPIRED,
+    RULE_NO_POSITION,
+    RULE_NONPOSITIVE,
+    RULE_NOT_OPPOSITE,
+    RULE_NOTIONAL,
+    RULE_ORDER_COUNT,
+    RULE_RATIO,
+    RULE_UNIVERSE,
+    Admitted,
+    Enforcer,
+    OrderIntent,
+)
 from ballast.executor import PaperExecutor
 from ballast.mandate import MandateError, NightMandate, SignedMandate
 
@@ -199,9 +209,9 @@ class AdmissionIsUnforgeable(unittest.TestCase):
 
     def test_the_executor_refuses_anything_that_is_not_an_admission(self):
         for impostor in (None, "ok", {"side": "buy"}, self.hedge):
-            with self.subTest(impostor=type(impostor).__name__):
-                with self.assertRaises(TypeError):
-                    self.executor.execute(impostor, 100.0, self.now)
+            with self.subTest(impostor=type(impostor).__name__), \
+                 self.assertRaises(TypeError):
+                self.executor.execute(impostor, 100.0, self.now)
 
     def test_a_rejected_intent_yields_no_admission_to_pass(self):
         naked = OrderIntent("RTSLAUSDT", "TSLAUSDT", "buy", 500.0)   # directional

@@ -143,7 +143,7 @@ class StalenessCase(unittest.TestCase):
         self.assertEqual(site.behind, 1)
 
 
-class ProvenanceCase(unittest.TestCase):
+class DecisionLagCase(unittest.TestCase):
     """The page must say when the night was decided, derived from the ledger's own
     timestamp for entries written before the field existed."""
 
@@ -395,14 +395,14 @@ class DevKeyBuildGuard(unittest.TestCase):
     """
 
     def test_refuses_without_a_signing_key(self):
-        with mock.patch.dict(os.environ, {}, clear=True):
-            with self.assertRaises(config.UnsignedError):
-                config.refuse_dev_build()
+        with mock.patch.dict(os.environ, {}, clear=True), \
+             self.assertRaises(config.UnsignedError):
+            config.refuse_dev_build()
 
     def test_refuses_with_only_the_development_key(self):
-        with mock.patch.dict(os.environ, {"BALLAST_DEV_SECRET": "1"}, clear=True):
-            with self.assertRaises(config.UnsignedError):
-                config.refuse_dev_build()
+        with mock.patch.dict(os.environ, {"BALLAST_DEV_SECRET": "1"}, clear=True), \
+             self.assertRaises(config.UnsignedError):
+            config.refuse_dev_build()
 
     def test_allows_a_deliberate_local_preview(self):
         env = {"BALLAST_DEV_SECRET": "1", config.DEV_BUILD_OVERRIDE: "1"}

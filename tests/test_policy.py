@@ -5,11 +5,19 @@ move that had already happened. The sentinel below fails if that ever returns.
 """
 from __future__ import annotations
 
+import datetime as dt
 import random
 import unittest
 
-from ballast.policy import (Action, EventType, Impact, NightRisk, PolicyConfig,
-                            decide, forecast_sigma_bp, sigma_percentile)
+from ballast.policy import (
+    Action,
+    EventType,
+    Impact,
+    NightRisk,
+    PolicyConfig,
+    decide,
+    forecast_sigma_bp,
+)
 
 CFG = PolicyConfig()
 # The volatility gate ships OFF (Gate 1a). These fixtures exercise the opt-in path.
@@ -26,17 +34,78 @@ def volatile(n=60, scale=0.03, seed=7):
 
 
 class TestNoLookAhead(unittest.TestCase):
-    def test_future_returns_cannot_change_tonights_decision(self):
-        """Append arbitrary future nights; the decision for tonight must not move."""
-        history = volatile()
-        before = decide("X", "RXUSDT", history, CALM_RISK, 17.5, CFG)
+    """The site claims a sentinel test fails if a future night ever moves a past
+    decision. For a while it could not fail. It built a polluted history, passed
+    the ORIGINAL to decide() both times, and compared a function against itself on
+    identical input; the one use of the polluted list was an assertion about its
+    length, which is why nothing flagged it as dead.
+
+    The property is also not a property of decide(), which is a pure function of
+    whatever list it is handed - appending nights to that list is simply a later
+    decision. Look-ahead can only enter where the history is SLICED, which is
+    research/replay.py:
+
+        prior = [v for d, v in hist[t] if d < session]
+
+    That `<` is the guard. These tests exercise it.
+    """
+
+    @staticmethod
+    def _prior(hist, session):
+        """The replay's slice, reproduced exactly."""
+        return [v for d, v in hist if d < session]
+
+    def _history(self, seed=7):
+        rng = random.Random(seed)
+        start = dt.date(2026, 1, 5)
+        return [(start + dt.timedelta(days=i), rng.gauss(0, 0.03)) for i in range(80)]
+
+    def test_corrupting_the_future_cannot_move_a_past_decision(self):
+        hist = self._history()
+        session = hist[60][0]
+        before = decide("X", "RXUSDT", self._prior(hist, session),
+                        CALM_RISK, 17.5, CFG)
+
         rng = random.Random(99)
-        for _ in range(40):
-            polluted = history + [rng.gauss(0, 0.5)]      # violent "future" nights
-            after = decide("X", "RXUSDT", history, CALM_RISK, 17.5, CFG)
-            self.assertEqual(before.action, after.action)
-            self.assertAlmostEqual(before.sigma_bp, after.sigma_bp, places=9)
-            self.assertEqual(len(polluted), len(history) + 1)
+        corrupted = [(d, (v if d < session else rng.gauss(0, 0.9)))
+                     for d, v in hist]
+        after = decide("X", "RXUSDT", self._prior(corrupted, session),
+                       CALM_RISK, 17.5, CFG)
+
+        self.assertEqual(before.action, after.action)
+        self.assertAlmostEqual(before.sigma_bp, after.sigma_bp, places=9)
+
+    def test_the_sentinel_can_fail(self):
+        """A test that cannot fail is worse than no test - it reads as coverage.
+
+        The same corruption applied to nights the decision IS entitled to see must
+        move it. If this passes silently, the test above proves nothing.
+        """
+        hist = self._history()
+        session = hist[60][0]
+        before = decide("X", "RXUSDT", self._prior(hist, session),
+                        CALM_RISK, 17.5, CFG)
+
+        rng = random.Random(99)
+        corrupted = [(d, (rng.gauss(0, 0.9) if d < session else v))
+                     for d, v in hist]
+        after = decide("X", "RXUSDT", self._prior(corrupted, session),
+                       CALM_RISK, 17.5, CFG)
+
+        self.assertNotAlmostEqual(before.sigma_bp, after.sigma_bp, places=6)
+
+    def test_an_inclusive_slice_would_be_caught(self):
+        """Proof the guard is the `<`: widen it to `<=` and the answer moves."""
+        hist = self._history()
+        session = hist[60][0]
+        rng = random.Random(99)
+        corrupted = [(d, (v if d < session else rng.gauss(0, 0.9))) for d, v in hist]
+
+        strict = decide("X", "RXUSDT", [v for d, v in corrupted if d < session],
+                        CALM_RISK, 17.5, CFG)
+        inclusive = decide("X", "RXUSDT", [v for d, v in corrupted if d <= session],
+                           CALM_RISK, 17.5, CFG)
+        self.assertNotAlmostEqual(strict.sigma_bp, inclusive.sigma_bp, places=6)
 
     def test_forecast_uses_only_the_trailing_window(self):
         history = volatile()

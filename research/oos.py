@@ -41,7 +41,9 @@ def _frozen_r2(xs: list[float], ys: list[float], beta: float) -> tuple[float, li
     is y - beta*x with beta held fixed, which is the position a desk actually
     carries: hedged at a ratio estimated from the past.
     """
-    resid = [v - beta * u for u, v in zip(xs, ys)]
+    # strict: a length mismatch here would silently truncate to the shorter
+    # series and return a plausible number for a different sample.
+    resid = [v - beta * u for u, v in zip(xs, ys, strict=True)]
     vy = st.pvariance(ys)
     return (1 - st.pvariance(resid) / vy if vy else float("nan")), resid
 

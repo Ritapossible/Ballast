@@ -55,7 +55,7 @@ class Ledger:
             size = min(size + block, end)
             fh.seek(end - size)
             chunk = fh.read(size)
-            lines = [l for l in chunk.split(b"\n") if l.strip()]
+            lines = [ln for ln in chunk.split(b"\n") if ln.strip()]
             if len(lines) >= 2 or size == end:
                 return lines[-1].decode() if lines else None
         return None

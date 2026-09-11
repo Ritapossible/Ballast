@@ -29,8 +29,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from ballast.earnings import build_calendar
 from ballast.costs import HEDGE_COST_BP
+from ballast.earnings import build_calendar
 from ballast.market import bars
 from ballast.overnight import overnight_returns
 from ballast.sessions import next_session

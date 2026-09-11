@@ -26,7 +26,7 @@ class TestTamperEvidence(unittest.TestCase):
         self.dir.cleanup()
 
     def _lines(self):
-        return [json.loads(l) for l in self.path.read_text().splitlines() if l.strip()]
+        return [json.loads(ln) for ln in self.path.read_text().splitlines() if ln.strip()]
 
     def _rewrite(self, entries):
         self.path.write_text("\n".join(json.dumps(e) for e in entries) + "\n")

@@ -101,7 +101,7 @@ def ico(sizes: list[int]) -> bytes:
     header = struct.pack("<HHH", 0, 1, len(images))
     offset = len(header) + 16 * len(images)
     entries, blob = b"", b""
-    for size, data in zip(sizes, images):
+    for size, data in zip(sizes, images, strict=True):
         entries += struct.pack("<BBBBHHII", size if size < 256 else 0,
                                size if size < 256 else 0, 0, 0, 1, 32,
                                len(data), offset)

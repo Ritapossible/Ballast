@@ -187,9 +187,9 @@ class TestEndpointResilience(unittest.TestCase):
         with mock.patch.dict("os.environ", {"QWEN_API_KEY": "k"}), \
              mock.patch.object(llm.urllib.request, "urlopen",
                                side_effect=urllib.error.HTTPError("u", 503, "x", {}, None)), \
-             mock.patch.object(llm.time, "sleep"):
-            with self.assertRaises(llm.LLMUnavailable) as ctx:
-                llm.complete("s", "u")
+             mock.patch.object(llm.time, "sleep"), \
+             self.assertRaises(llm.LLMUnavailable) as ctx:
+            llm.complete("s", "u")
         self.assertEqual(ctx.exception.detail, "HTTP 503")
 
     def test_retryable_statuses_are_distinguished_from_fatal_ones(self):
@@ -217,9 +217,9 @@ class TestEndpointResilience(unittest.TestCase):
 
         with mock.patch.dict("os.environ", {"QWEN_API_KEY": "bad"}), \
              mock.patch.object(llm.urllib.request, "urlopen", unauthorised), \
-             mock.patch.object(llm.time, "sleep"):
-            with self.assertRaises(llm.LLMUnavailable) as ctx:
-                llm.complete("s", "u")
+             mock.patch.object(llm.time, "sleep"), \
+             self.assertRaises(llm.LLMUnavailable) as ctx:
+            llm.complete("s", "u")
         self.assertEqual(calls["n"], 1, "a 401 must not be retried")
         self.assertEqual(ctx.exception.detail, "HTTP 401")
 

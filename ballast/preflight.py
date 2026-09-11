@@ -82,10 +82,12 @@ def run(ticker: str = "ORCL") -> int:
               f" · source: {'linked' if verdict.risk.source_url else 'none'}")
     else:
         # A refusal is a working gate, not a broken pipeline - say which one fired.
-        _line(WARN, "reader", f"refused by gate: {verdict.rejected_because.value}")
+        gate = verdict.rejected_because.value if verdict.rejected_because else "unspecified"
+        _line(WARN, "reader", f"refused by gate: {gate}")
         print("         the gates are doing their job; the calendar rule would decide")
 
-    print(f"\nledger untouched · {'FAILURES: %d' % failures if failures else 'all checks passed'}")
+    outcome = f"FAILURES: {failures}" if failures else "all checks passed"
+    print(f"\nledger untouched · {outcome}")
     return 1 if failures else 0
 
 

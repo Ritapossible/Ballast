@@ -24,8 +24,8 @@ from .costs import HEDGE_COST_BP
 from .ledger import Ledger
 from .market import bars as market_bars
 from .overnight import overnight_returns
-from .universe import hedgeable_pairs
 from .sessions import UTC
+from .universe import hedgeable_pairs
 
 # Settlement grades a session against the following open, so it needs days of
 # bars, not years. The default 12,000 pages back 60 times per symbol - 1,440

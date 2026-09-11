@@ -101,7 +101,7 @@ def complete(system: str, user: str, *, temperature: float = 0.0,
                 raise LLMUnavailable(f"{last} from {BASE_URL}", last) from exc
         except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
             last = f"{type(exc).__name__}: {exc}"
-        except Exception as exc:                    # noqa: BLE001
+        except Exception as exc:
             raise LLMUnavailable(f"{type(exc).__name__}: {exc}",
                                  type(exc).__name__) from exc
         if attempt < RETRIES - 1:

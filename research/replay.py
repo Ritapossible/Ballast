@@ -22,13 +22,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from ballast.earnings import scheduled_in_window
 from ballast.costs import HEDGE_COST_BP
+from ballast.earnings import scheduled_in_window
 from ballast.market import bars
 from ballast.overnight import overnight_returns
-from ballast.policy import (Action, EventType, Impact, NightRisk, PolicyConfig,
-                            decide)
-from ballast.sessions import next_session, window_hours
+from ballast.policy import Action, EventType, Impact, NightRisk, PolicyConfig, decide
+from ballast.sessions import window_hours
 
 TICKERS = ["TSLA", "NVDA", "PLTR", "COIN", "AMD", "MSFT",
            "ORCL", "ADBE", "MU", "NKE", "COST", "SPY"]

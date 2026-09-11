@@ -13,8 +13,8 @@ def ols(x: list[float], y: list[float]) -> tuple[float, float, list[float]]:
     sxx = sum((u - mx) ** 2 for u in x)
     if sxx == 0:
         raise ValueError("zero variance in regressor")
-    beta = sum((u - mx) * (v - my) for u, v in zip(x, y)) / sxx
-    resid = [v - my - beta * (u - mx) for u, v in zip(x, y)]
+    beta = sum((u - mx) * (v - my) for u, v in zip(x, y, strict=True)) / sxx
+    resid = [v - my - beta * (u - mx) for u, v in zip(x, y, strict=True)]
     vy = st.pvariance(y)
     r2 = 1 - st.pvariance(resid) / vy if vy else float("nan")
     return beta, r2, resid

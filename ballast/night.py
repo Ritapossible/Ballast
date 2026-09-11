@@ -13,21 +13,20 @@ import argparse
 import datetime as dt
 
 from . import config
-from .costs import HEDGE_COST_BP
-from .market import MarketDataUnavailable
-from .llm import available as llm_available
 from .book import Book
+from .costs import HEDGE_COST_BP
 from .earnings import scheduled_in_window
 from .enforcer import Enforcer, OrderIntent
 from .ledger import Ledger
+from .llm import available as llm_available
 from .mandate import NightMandate, SignedMandate
+from .market import MarketDataUnavailable
 from .market import bars as market_bars
-from .overnight import overnight_returns
 from .news import NewsUnavailable, fetch, in_window
+from .overnight import overnight_returns
 from .policy import Action, EventType, Impact, NightRisk, decide
 from .reader import read
-from .sessions import (UTC, close_utc, current_session, next_session, open_utc,
-                       window_hours)
+from .sessions import UTC, close_utc, current_session, next_session, open_utc, window_hours
 
 # The nightly run needs recent history for the sigma it reports, not the full
 # two-year series the research scripts page down. 100 sessions is ample and keeps
@@ -167,7 +166,7 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
             perp_marks[pos.perp_symbol] = perp_series[max(perp_series)][1]
             prior = overnight_returns(series)
             histories[pos.ticker] = [v for d, v in sorted(prior.items()) if d < session]
-        except Exception as exc:                       # noqa: BLE001 - isolate, then record
+        except Exception as exc:
             unreachable[pos.ticker] = f"{type(exc).__name__}: {exc}"
 
     notionals = book.notionals(spot_marks)
@@ -214,7 +213,7 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
             risk, judgment, verdict, provenance = assess(pos.ticker, session, use_reader)
             decision = decide(pos.ticker, pos.spot_symbol, histories[pos.ticker], risk,
                               window_hours(session), model_judgment=judgment)
-        except Exception as exc:                       # noqa: BLE001 - isolate, then record
+        except Exception as exc:
             errors += 1
             ledger.append("decision", {
                 "ticker": pos.ticker, "spot_symbol": pos.spot_symbol,
@@ -262,6 +261,8 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
 
         enforcer.commit(intent)          # budget is consumed in rehearsal too
         if not dry_run:
+            if verdict.admission is None:                # unreachable: rejected above
+                raise RuntimeError(f"admitted verdict carried no admission for {pos.ticker}")
             fill = executor.execute(verdict.admission, perp_marks[pos.perp_symbol], now)
             record["fill"] = fill.to_record()
         hedged += 1

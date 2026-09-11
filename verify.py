@@ -11,6 +11,7 @@ verify a number it did not compute.
 from __future__ import annotations
 
 import datetime as dt
+import os
 import subprocess
 import sys
 import unittest
@@ -30,7 +31,7 @@ failures: list[str] = []
 def check(name: str, fn) -> None:
     try:
         detail = fn()
-    except Exception as exc:                                  # noqa: BLE001
+    except Exception as exc:
         failures.append(name)
         print(f"[{BAD}] {name}: {type(exc).__name__}: {exc}")
     else:
@@ -39,7 +40,8 @@ def check(name: str, fn) -> None:
 
 def tests() -> str:
     loader = unittest.TestLoader().discover("tests")
-    result = unittest.TextTestRunner(verbosity=0, stream=open("/dev/null", "w")).run(loader)
+    with open(os.devnull, "w") as quiet:
+        result = unittest.TextTestRunner(verbosity=0, stream=quiet).run(loader)
     if not result.wasSuccessful():
         raise AssertionError(f"{len(result.failures + result.errors)} failing")
     return f"{result.testsRun} tests pass, no network and no key"
@@ -82,7 +84,7 @@ def ledger_is_tamper_evident() -> str:
         lines = path.read_text().splitlines()
         entry = json.loads(lines[0])
         entry["body"]["action"] = "NO_HEDGE"
-        path.write_text("\n".join([json.dumps(entry)] + lines[1:]) + "\n")
+        path.write_text("\n".join([json.dumps(entry), *lines[1:]]) + "\n")
         try:
             Ledger(path, b"verify").verify()
         except LedgerError:
@@ -131,7 +133,7 @@ def pages_build() -> str:
     return f"{r.stdout.strip()} pages render from the ledger"
 
 
-import tempfile  # noqa: E402  (used by pages_build)
+import tempfile
 
 if __name__ == "__main__":
     print("Ballast - verifying every claim that can be checked offline\n")

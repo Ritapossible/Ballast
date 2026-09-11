@@ -70,6 +70,6 @@ class SignedMandate:
     signature: str
 
     @staticmethod
-    def issue(mandate: NightMandate, secret: bytes) -> "SignedMandate":
+    def issue(mandate: NightMandate, secret: bytes) -> SignedMandate:
         mandate.validate()
         return SignedMandate(mandate=mandate, signature=mandate.sign(secret))

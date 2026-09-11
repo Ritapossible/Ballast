@@ -106,8 +106,8 @@ class ReadmeIsGeneratedCase(unittest.TestCase):
     def test_the_figures_match_facts_json(self):
         import sys
         sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-        from tools.readme_facts import block
         from ballast import facts
+        from tools.readme_facts import block
         self.assertIn(block(facts.load()), self._readme(),
                       "README figures are stale - run python3 tools/readme_facts.py")
 

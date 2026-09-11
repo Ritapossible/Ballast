@@ -14,9 +14,10 @@ stated price.**
 
 ## Running it
 
-Python **3.11+** (3.10 is the floor for the syntax; CI runs 3.11). **No third-party
-dependencies** - standard library only, so there is nothing to install and no lockfile
-to go stale.
+Python **3.11+** (3.10 is the floor for the syntax; CI runs 3.11). **No runtime
+dependencies at all** - the standard library runs everything, so there is nothing to
+install and no lockfile to go stale. `ruff` and `mypy` are development tools that CI
+installs and the project never imports; see [`pyproject.toml`](pyproject.toml).
 
 ```
 git clone https://github.com/Ritapossible/Ballast && cd ballast

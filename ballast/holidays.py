@@ -23,7 +23,6 @@ def easter(year: int) -> dt.date:
     exchange observes, and it does not follow a weekday rule."""
     a, b, c = year % 19, year // 100, year % 100
     d, e = b // 4, b % 4
-    f, g = (b + 8) // 25, 0
     g = (b - (b + 8) // 25 + 1) // 3
     h = (19 * a + b - d - g + 15) % 30
     i, k = c // 4, c % 4

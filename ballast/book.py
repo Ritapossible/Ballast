@@ -56,7 +56,7 @@ class Book:
         }
 
     @staticmethod
-    def load(path: Path) -> "Book":
+    def load(path: Path) -> Book:
         raw = json.loads(Path(path).read_text())
         return Book([Position(**p) for p in raw["positions"]])
 
@@ -66,7 +66,7 @@ class Book:
 
     @staticmethod
     def from_tickers(tickers: list[str], usdt_each: float,
-                     marks: dict[str, float]) -> "Book":
+                     marks: dict[str, float]) -> Book:
         """Build an equal-notional paper book. Tickers must be hedgeable."""
         pairs = {p.ticker: p for p in hedgeable_pairs()}
         positions = []

@@ -142,8 +142,14 @@ def sigma_percentile(history: list[float], cfg: PolicyConfig) -> float | None:
     return sum(1 for v in past if v <= current) / len(past)
 
 
+# A frozen dataclass, so one shared instance is safe and evaluating it once at
+# import is the intent. Named rather than called in the signature so that stays
+# obvious to a reader and to the linter.
+DEFAULT_POLICY = PolicyConfig()
+
+
 def decide(ticker: str, spot_symbol: str, history: list[float], risk: NightRisk,
-           window_hours: float, cfg: PolicyConfig = PolicyConfig(),
+           window_hours: float, cfg: PolicyConfig = DEFAULT_POLICY,
            model_judgment: str | None = None) -> Decision:
     """History must contain only nights strictly BEFORE the one being decided.
 

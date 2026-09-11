@@ -1,0 +1,62 @@
+# Configuration only. Ballast has no runtime dependencies - the standard library
+# runs everything in ballast/, research/ and tools/, and that is a property worth
+# keeping. ruff and mypy are development tools, installed by CI and never imported
+# by the project, so `python3 verify.py` still needs nothing but Python.
+
+[project]
+name = "ballast"
+version = "0.1.0"
+description = "Overnight risk transfer for tokenized US stocks"
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.ruff]
+line-length = 95
+target-version = "py310"
+extend-exclude = [".cache", "docs"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",      # pycodestyle
+    "F",           # pyflakes - unused names, undefined names
+    "I",           # import order
+    "UP",          # outdated syntax for the target version
+    "B",           # bugbear - mutable defaults, shadowed loop vars
+    "BLE",         # blind except, which this project already annotated for
+    "SIM",         # needless complexity
+    "RUF",
+]
+ignore = [
+    # The night run isolates one position's failure from the other eleven, and
+    # the reader must survive any shape the endpoint returns. Both catch broadly
+    # on purpose and both record what they caught; the annotations say so.
+    "BLE001",
+    # Long measured sentences in generated page copy read worse when wrapped.
+    "E501",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Page builders are HTML templates in Python. f-string density is the point, and
+# the copy uses real typography where it is correct: x for a multiplier reads as a
+# variable, and 1o is not a standard deviation. Em and en dashes are NOT exempt -
+# those were removed on purpose and the rule still catches them everywhere else.
+"ballast/report.py" = ["E501", "RUF001"]
+"ballast/docs_page.py" = ["E501", "RUF001"]
+"ballast/theme.py" = ["E501"]
+"tests/test_layout.py" = ["RUF002"]
+# Research scripts prepend the repo root before importing it.
+"research/*.py" = ["E402"]
+"tools/*.py" = ["E402"]
+"verify.py" = ["E402"]
+
+[tool.mypy]
+python_version = "3.10"
+files = ["ballast", "tools", "verify.py"]
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unreachable = true
+# Not strict mode: this codebase is annotated where a type carries meaning and
+# deliberately not where it would be noise. Turning on disallow_untyped_defs
+# would produce hundreds of findings that say nothing about correctness.
+check_untyped_defs = true

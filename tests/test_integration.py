@@ -18,9 +18,9 @@ from unittest import mock
 
 from ballast import config, morning, night, report
 from ballast.book import Book, Position
-from ballast.ledger import Ledger
+from ballast.ledger import Ledger, LedgerError
 from ballast.market import MarketDataUnavailable
-from ballast.sessions import UTC, close_utc, next_session, open_utc
+from ballast.sessions import close_utc, next_session, open_utc
 
 SECRET = b"integration-secret"
 SESSION = dt.date(2026, 9, 10)          # a Thursday
@@ -48,7 +48,10 @@ def _series(spot: bool, drift: float = 0.0) -> dict[int, tuple[float, float]]:
 def fake_bars(symbol, market="spot", **kw):
     if symbol == "RFAILUSDT":
         raise MarketDataUnavailable("simulated outage")
-    return _series(spot=market == "spot", drift=0.004 if symbol.startswith("R") else 0.004)
+    # Same drift on both legs: the fake perp tracks the fake token, which is what
+    # makes the hedge removable in these tests. This used to be written as a
+    # conditional whose branches were identical - an intent that never landed.
+    return _series(spot=market == "spot", drift=0.004)
 
 
 def build_book(path: Path, tickers=TICKERS) -> None:
@@ -120,12 +123,12 @@ class TestNightRun(LivePathCase):
             self.assertEqual(r["body"]["perp_symbol"], f"{r['body']['ticker']}USDT")
 
     def test_a_dead_symbol_does_not_abort_the_run(self):
-        build_book(self.book_path, TICKERS + ["FAIL"])
+        build_book(self.book_path, [*TICKERS, "FAIL"])
         summary = self.run_night()
         self.assertEqual(summary["errors"], 1)
         self.assertEqual(len(self.ledger().records("decision")), len(TICKERS) + 1)
-        failed = [r["body"] for r in self.ledger().records("decision")
-                  if r["body"]["ticker"] == "FAIL"][0]
+        failed = next(r["body"] for r in self.ledger().records("decision")
+                      if r["body"]["ticker"] == "FAIL")
         self.assertIn("simulated outage", failed["error"])
         self.assertEqual(failed["action"], "NO_HEDGE")
 
@@ -291,7 +294,7 @@ class TestMorningSettlement(LivePathCase):
         entry["body"]["action"] = "NO_HEDGE" if entry["body"]["action"] == "HEDGE" else "HEDGE"
         lines[1] = json.dumps(entry)
         self.ledger_path.write_text("\n".join(lines) + "\n")
-        with self.assertRaises(Exception):
+        with self.assertRaises(LedgerError):
             self.settle()
 
 

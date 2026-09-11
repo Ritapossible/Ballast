@@ -12,8 +12,7 @@ from pathlib import Path
 from unittest import mock
 
 from ballast import sessions
-from ballast.sessions import (close_utc, current_session, next_session, open_utc,
-                              window_hours)
+from ballast.sessions import close_utc, next_session, open_utc, window_hours
 
 
 class TestDaylightSaving(unittest.TestCase):
@@ -99,7 +98,6 @@ class CoverageCase(unittest.TestCase):
     scheduled run had actually landed; the job reported success for starting."""
 
     def _ledger(self, sessions):
-        import json
         from ballast import config
         from ballast.ledger import Ledger
         self.tmp = tempfile.TemporaryDirectory()

@@ -22,6 +22,17 @@ jobs:
       # The suite is deliberately network-free and key-free: the LLM is mocked and
       # no market endpoint is touched, so CI cannot go red because a third party
       # rate-limited us.
+      # Dev tooling only. It is installed here and never imported by the project,
+      # so `python3 verify.py` on a fresh clone still needs nothing but Python.
+      - name: Install lint and type tooling
+        run: pip install --quiet ruff==0.15.8 mypy==1.19.1
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Types
+        run: mypy
+
       - name: Tests
         run: python -m unittest discover -s tests -v
 

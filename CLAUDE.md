@@ -285,6 +285,11 @@ datacenter IPs** and are not usable here.
     can only rescue a night. `tools/check_coverage.py` fails the job when a due session has
     no decision - the job used to report success for having started.
 
+35. **`ruff check .` and `mypy` must both be clean.** Config in `pyproject.toml`; CI
+    installs them and the project never imports them, so "no runtime dependencies" stays
+    true. They are not cosmetic: the first run found a duplicated test class that had
+    silently disabled three tests, and a look-ahead sentinel that could not fail.
+
 ## 7b. Operations
 
 - `.github/workflows/nightly.yml` — decides at 21:00 UTC, settles at 14:30 UTC, Mon–Fri.

@@ -60,7 +60,7 @@ class Admitted:
 
     __slots__ = ("intent", "rule")
 
-    def __init__(self, intent: "OrderIntent", token: object = None):
+    def __init__(self, intent: OrderIntent, token: object = None):
         if token is not _ADMISSION:
             raise TypeError(
                 "Admitted cannot be constructed directly - it is issued by "
@@ -80,7 +80,7 @@ class Verdict:
     detail: str = ""
     capped_notional: float | None = None
     # Present only when admitted. The executor will not act without it.
-    admission: "Admitted | None" = None
+    admission: Admitted | None = None
 
     @property
     def rejected(self) -> bool:

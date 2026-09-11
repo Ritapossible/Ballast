@@ -267,8 +267,8 @@ class Site:
 
         # By session date, not by write order: a backfill or an out-of-order run
         # would otherwise make an older night look like tonight.
-        self.latest = max(summaries, key=lambda s: s.get("session", ""),
-                          default={}) if summaries else {}
+        self.latest: dict = max(summaries, key=lambda s: s.get("session", ""),
+                                default={}) if summaries else {}
         self.session = self.latest.get("session", "-")
 
         # How late the night was decided. Newer runs record it; for entries written
@@ -308,7 +308,8 @@ class Site:
         # market direction, and the number should not be read as more than that.
         self.excluded = [r for r in self.rows if _selector_affected(r)]
         self.clean = [r for r in self.rows if not _selector_affected(r)]
-        self.clean_sessions = sorted({r.get("session") for r in self.clean if r.get("session")})
+        self.clean_sessions: list[str] = sorted(
+            {s for s in (r.get("session") for r in self.clean) if isinstance(s, str)})
 
         self.hedges = [r for r in self.clean if r.get("action") == "HEDGE"]
         self.shrank = sum(1 for r in self.hedges
@@ -515,7 +516,7 @@ not as better. Reproduce with <code>python3 research/oos.py</code>.</p>"""
              "which nights carry a scheduled event - dates only, never a price"),
             ("Headlines", "Google News RSS, public",
              "shown to the reader, which may only quote what it was given"),
-            ("Event reader", f"Qwen via the hackathon endpoint",
+            ("Event reader", "Qwen via the hackathon endpoint",
              "a typed HEDGE / NO_HEDGE judgment - no sizing, no price, no order"),
         ]
         body = "".join(
