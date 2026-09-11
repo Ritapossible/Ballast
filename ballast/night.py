@@ -23,7 +23,7 @@ from .ledger import Ledger
 from .mandate import NightMandate, SignedMandate
 from .market import bars as market_bars
 from .overnight import overnight_returns
-from .news import fetch, in_window
+from .news import NewsUnavailable, fetch, in_window
 from .policy import Action, EventType, Impact, NightRisk, decide
 from .reader import read
 from .sessions import (UTC, close_utc, current_session, next_session, open_utc,
@@ -69,16 +69,26 @@ def assess(ticker: str, session: dt.date, use_reader: bool):
     if not use_reader:
         return risk, None, None, None
 
-    headlines = fetch(ticker)                       # one request, not two
     start, end = close_utc(session), open_utc(next_session(session))
-    windowed = in_window(headlines, start, end)
+    try:
+        headlines = fetch(ticker)                   # one request, not two
+    except NewsUnavailable as exc:
+        # Not fatal: the calendar rule still decides, and the reader will abstain
+        # on an empty brief. But it must not look like a quiet night - the ledger
+        # records that the feed failed and why, so a systemic outage is visible
+        # instead of arriving as a week of confident-looking refusals.
+        headlines, windowed = [], []
+        provenance = {"headlines_fetched": 0, "in_window": 0, "shown": 0,
+                      "source": "unavailable", "error": exc.reason}
+    else:
+        windowed = in_window(headlines, start, end)
+        provenance = {
+            "headlines_fetched": len(headlines),
+            "in_window": len(windowed),
+            "source": "window" if windowed else "recent_fallback",
+            "shown": len(windowed or headlines[:8]),
+        }
     items = windowed or headlines[:8]
-    provenance = {
-        "headlines_fetched": len(headlines),
-        "in_window": len(windowed),
-        "source": "window" if windowed else "recent_fallback",
-        "shown": len(items),
-    }
     verdict = read(ticker, session, window_hours(session), items, flagged)
     if not verdict.usable:
         return risk, None, verdict, provenance      # abstained or gated -> rule decides
@@ -135,7 +145,8 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
     decided = {e["body"].get("session") for e in ledger.records("night_summary")}
     if session.isoformat() in decided and not force:
         return {"session": session.isoformat(), "positions": 0, "hedged": 0,
-                "declined": 0, "errors": 0, "window_hours": round(total_hours, 1),
+                "declined": 0, "errors": 0, "news_unavailable": 0,
+                "window_hours": round(total_hours, 1),
                 "decided_after_close_hours": round(lag_hours, 2),
                 "window_elapsed_at_decision": round(elapsed, 3), "forced": False,
                 "usage": {}, "dry_run": dry_run, "reader": "not run",
@@ -181,7 +192,7 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
     executor = PaperExecutor()
     hedged = declined = 0
 
-    errors = 0
+    errors = news_down = 0
     for pos in book:
         if pos.ticker in unreachable:
             # Recorded as a decision, not dropped: a position Ballast could not
@@ -221,6 +232,8 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
             record["reader"] = verdict.to_record()
         if provenance is not None:
             record["news"] = provenance
+            if provenance.get("source") == "unavailable":
+                news_down += 1
         record["session"] = session.isoformat()
         record["perp_symbol"] = pos.perp_symbol        # settlement must not guess it
         record["spot_mark"] = spot_marks[pos.spot_symbol]
@@ -260,6 +273,7 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
         "window_hours": round(total_hours, 1),
         # How late the decision was taken, so the record says for itself whether it
         # was made before the outcome was known rather than asking to be trusted.
+        "news_unavailable": news_down,
         "decided_after_close_hours": round(lag_hours, 2),
         "window_elapsed_at_decision": round(elapsed, 3),
         "forced": bool(force),

@@ -275,6 +275,10 @@ datacenter IPs** and are not usable here.
     the `facts:` markers; CI runs it with `--check`. It once said 224 of 704 rTokens while
     facts.json said 241 of 1,173.
 
+33. **"Could not read" is never "nothing to read".** `news.fetch` raises `NewsUnavailable`
+    with a reason; callers record it. Collapsing them into an empty list let the reader
+    abstain for a wrong reason with nothing in the record to show it.
+
 ## 7b. Operations
 
 - `.github/workflows/nightly.yml` — decides at 21:00 UTC, settles at 14:30 UTC, Mon–Fri.

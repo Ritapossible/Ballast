@@ -13,7 +13,7 @@ import json
 import unittest
 from unittest import mock
 
-from ballast import llm, reader
+from ballast import llm, news, reader
 from ballast.news import NewsItem
 from ballast.policy import Action, EventType, Impact, decide
 from ballast.reader import Judgment, RejectReason, read
@@ -222,3 +222,58 @@ class TestEndpointResilience(unittest.TestCase):
                 llm.complete("s", "u")
         self.assertEqual(calls["n"], 1, "a 401 must not be retried")
         self.assertEqual(ctx.exception.detail, "HTTP 401")
+
+
+class NewsFailureIsDistinctCase(unittest.TestCase):
+    """A DNS failure, an HTTP 500, a timeout and "nothing published tonight" all
+    became an empty list. The reader then abstained for what looked like a
+    legitimate reason, so the model half of the product could degrade across every
+    name for days with nothing to show it."""
+
+    def _raises(self, exc):
+        return mock.patch.object(news.urllib.request, "urlopen", side_effect=exc)
+
+    def test_an_http_error_is_not_an_empty_feed(self):
+        err = news.urllib.error.HTTPError("u", 503, "down", None, None)
+        with self._raises(err), self.assertRaises(news.NewsUnavailable) as caught:
+            news.fetch("TSLA")
+        self.assertIn("503", caught.exception.reason)
+
+    def test_an_unreachable_host_is_not_an_empty_feed(self):
+        with self._raises(news.urllib.error.URLError("no route")), \
+             self.assertRaises(news.NewsUnavailable) as caught:
+            news.fetch("TSLA")
+        self.assertIn("unreachable", caught.exception.reason)
+
+    def test_a_timeout_is_not_an_empty_feed(self):
+        with self._raises(TimeoutError()), \
+             self.assertRaises(news.NewsUnavailable) as caught:
+            news.fetch("TSLA")
+        self.assertIn("timeout", caught.exception.reason)
+
+    def test_a_malformed_feed_is_not_an_empty_feed(self):
+        resp = mock.MagicMock()
+        resp.__enter__.return_value.read.return_value = b"<rss><unclosed>"
+        with mock.patch.object(news.urllib.request, "urlopen", return_value=resp), \
+             self.assertRaises(news.NewsUnavailable) as caught:
+            news.fetch("TSLA")
+        self.assertIn("malformed", caught.exception.reason)
+
+    def test_a_genuinely_empty_feed_is_still_empty(self):
+        """The distinction only matters if the ordinary case still works."""
+        resp = mock.MagicMock()
+        resp.__enter__.return_value.read.return_value = b"<rss><channel></channel></rss>"
+        with mock.patch.object(news.urllib.request, "urlopen", return_value=resp):
+            self.assertEqual(news.fetch("TSLA"), [])
+
+    def test_the_night_records_why_the_feed_was_empty(self):
+        from ballast import night
+        with mock.patch.object(night, "fetch",
+                               side_effect=news.NewsUnavailable("http 503")), \
+             mock.patch.object(night, "calendar_risk",
+                               return_value=(reader.NightRisk(ticker="TSLA"), False)), \
+             mock.patch.object(night, "read") as fake_read:
+            fake_read.return_value = mock.MagicMock(usable=False)
+            _, _, _, provenance = night.assess("TSLA", dt.date(2026, 9, 10), True)
+        self.assertEqual(provenance["source"], "unavailable")
+        self.assertEqual(provenance["error"], "http 503")

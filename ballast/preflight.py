@@ -14,7 +14,7 @@ import sys
 
 from . import config, llm
 from .earnings import scheduled_in_window
-from .news import fetch, in_window
+from .news import NewsUnavailable, fetch, in_window
 from .reader import read
 from .sessions import UTC, close_utc, next_session, open_utc, window_hours
 
@@ -50,7 +50,13 @@ def run(ticker: str = "ORCL") -> int:
 
     # --- news source -------------------------------------------------------
     session = next_session(dt.datetime.now(UTC).date() - dt.timedelta(days=1))
-    items = fetch(ticker)
+    try:
+        items = fetch(ticker)
+    except NewsUnavailable as exc:
+        # A preflight exists to tell these apart. "The feed is down" and "nothing
+        # was published" need different responses from whoever is reading this.
+        _line(BAD, "news", f"feed unreachable - {exc.reason}")
+        items, failures = [], failures + 1
     if not items:
         _line(BAD, "news", f"no headlines for {ticker}")
         failures += 1
