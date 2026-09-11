@@ -413,6 +413,17 @@ session to trade tested only for a weekday, while the rest of the calendar exclu
 holidays. On Thanksgiving it returned Thanksgiving: a session the exchange never opened,
 against a window that never existed. Fixed and moved beside the calendar it has to agree
 with.</li>
+<li><strong>The safety claim was caller-enforced, not structural</strong> - the executor
+took a symbol, a side and a size, so the only thing preventing a naked directional order was
+that the night run checked the verdict first. A new code path that forgot would have placed
+one, and the eighteen red-team tests could not have caught it: they drive the enforcer, and
+the gap was downstream of it. The executor now accepts only an <code>Admitted</code>, which
+the enforcer alone can mint and only for an intent opposite in sign to, and bounded by, a
+position already held. A caller that skips the enforcer has nothing to pass.</li>
+<li><strong>The README quoted stale figures</strong> - 224 of 704 rTokens, when the
+measured universe was 241 of 1,173. The one file exempt from the rule against literals was
+the one most people read. Its figures are generated from <code>docs/facts.json</code> now,
+and CI fails if they drift.</li>
 <li><strong>The landing page hid its own hedges</strong> - the live widget listed the
 first five positions in book order, and since the policy declines about ten nights in
 twelve those five were all refusals. The two hedges sat seventh and eighth and were never
