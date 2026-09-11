@@ -133,3 +133,30 @@ class ReadmeIsGeneratedCase(unittest.TestCase):
         path = Path(__file__).resolve().parent.parent / "LICENSE"
         self.assertTrue(path.exists(), "public repo inviting a clone, with no licence")
         self.assertIn("MIT", path.read_text())
+
+
+class ReadmeLeadsWithTheDemoCase(unittest.TestCase):
+    """The repo had no link to the live site anywhere in it.
+
+    A judge landing here had no route to the thing being judged, which for a
+    hackathon is worse than any figure being stale.
+    """
+
+    def _readme(self) -> str:
+        return (Path(__file__).resolve().parent.parent / "README.md").read_text()
+
+    def test_the_live_site_is_linked_above_the_fold(self):
+        head = self._readme().split("## ")[0]
+        self.assertIn("ballast-v1.vercel.app", head)
+
+    def test_the_licence_is_where_people_look_for_it(self):
+        sections = [s.split("\n", 1)[0] for s in self._readme().split("\n## ")[1:]]
+        self.assertEqual(sections[-1], "License")
+
+    def test_no_section_heading_is_orphaned_from_its_pair(self):
+        """Two "Running it" sections were split by three other sections, which is
+        how one of them kept a hardcoded test count nobody reread."""
+        sections = [s.split("\n", 1)[0] for s in self._readme().split("\n## ")[1:]]
+        running = [i for i, name in enumerate(sections) if name.startswith("Running")]
+        self.assertEqual(running, list(range(min(running), min(running) + len(running))),
+                         f"Running sections are not adjacent: {sections}")

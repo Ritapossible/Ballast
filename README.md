@@ -2,6 +2,16 @@
 
 **Hold tokenized US stocks through the night without holding the night's risk.**
 
+**[Live desk -> ballast-v1.vercel.app](https://ballast-v1.vercel.app)** &nbsp;·&nbsp;
+[Tonight's decisions](https://ballast-v1.vercel.app/tonight) &nbsp;·&nbsp;
+[Settled against reality](https://ballast-v1.vercel.app/settled) &nbsp;·&nbsp;
+[Evidence](https://ballast-v1.vercel.app/evidence) &nbsp;·&nbsp;
+[Docs](https://ballast-v1.vercel.app/docs)
+
+[![CI](https://github.com/Ritapossible/Ballast/actions/workflows/ci.yml/badge.svg)](https://github.com/Ritapossible/Ballast/actions/workflows/ci.yml)
+[![Nightly](https://github.com/Ritapossible/Ballast/actions/workflows/nightly.yml/badge.svg)](https://github.com/Ritapossible/Ballast/actions/workflows/nightly.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 The US primary market is open 32.5 of every 168 hours. For the other ~81% of the week an
 rToken keeps trading while the market that prices its underlying is shut - through
 earnings, through Fed decisions, through weekends. A holder's only options today are to
@@ -11,20 +21,6 @@ Ballast is a third option: **keep the position, and switch off the night's risk 
 stated price.**
 
 ---
-
-## Running it
-
-Python **3.11+** (3.10 is the floor for the syntax; CI runs 3.11). **No runtime
-dependencies at all** - the standard library runs everything, so there is nothing to
-install and no lockfile to go stale. `ruff` and `mypy` are development tools that CI
-installs and the project never imports; see [`pyproject.toml`](pyproject.toml).
-
-```
-git clone https://github.com/Ritapossible/Ballast && cd ballast
-python3 verify.py          # every offline claim, one command
-```
-
-Licensed MIT - see [`LICENSE`](LICENSE).
 
 ## What is measured
 
@@ -62,28 +58,17 @@ It also does not trade direction. It structurally **cannot**:
 Enforced by a separate process holding the only write-scoped credential - see
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
-## Repository
+## Running it
 
-| Path | Contents |
-|---|---|
-| [`PLAN.md`](PLAN.md) | Build plan, schedule, risk register |
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | System design and trust boundaries |
-| [`docs/RESEARCH.md`](docs/RESEARCH.md) | Measured findings, with defects disclosed |
-| [`docs/HACKATHON.md`](docs/HACKATHON.md) | Rules, deadlines, submission requirements |
-| [`research/`](research/) | The code behind every number quoted anywhere |
-| [`CLAUDE.md`](CLAUDE.md) | Working memory - links, verified facts, hard rules |
+Python **3.11+** (3.10 is the floor for the syntax; CI runs 3.11). **No runtime
+dependencies at all** - the standard library runs everything, so there is nothing to
+install and no lockfile to go stale. `ruff` and `mypy` are development tools that CI
+installs and the project never imports; see [`pyproject.toml`](pyproject.toml).
 
-```bash
-python3 -m ballast.universe         # the hedgeable universe
-python3 research/hedge_study.py     # hedge quality, stress conditioning, tail
-python3 research/gate1_selection.py # can risky nights be chosen in advance
 ```
-
-
----
-
-Built for the **Bitget AI Base Camp Hackathon S2** - Agentic Trading, Event-Driven Agent.
-Paper trading only; no live fill is claimed.
+git clone https://github.com/Ritapossible/Ballast && cd ballast
+python3 verify.py          # every offline claim, one command
+```
 
 ## Running the loop
 
@@ -100,3 +85,30 @@ Optional environment:
 |---|---|
 | `QWEN_API_KEY` | enables the event reader; without it the reader abstains, the calendar rule decides, and the abstention is logged |
 | `BALLAST_SECRET` | mandate and ledger signing; a development key is used otherwise, and every run says so |
+
+## Repository
+
+| Path | Contents |
+|---|---|
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | System design and trust boundaries |
+| [`docs/RESEARCH.md`](docs/RESEARCH.md) | Measured findings, with defects disclosed |
+| [`research/`](research/) | The code behind every number quoted anywhere |
+| [`verify.py`](verify.py) | One command that checks every offline claim |
+| [`CLAUDE.md`](CLAUDE.md) | The rules this was built under - most added after something broke |
+
+`PLAN.md` and `docs/HACKATHON.md` are the build plan and the competition rules. They are
+working notes rather than documentation, kept because the plan is part of the record.
+
+```bash
+python3 -m ballast.universe         # the hedgeable universe
+python3 research/hedge_study.py     # hedge quality, stress conditioning, tail
+python3 research/gate1_selection.py # can risky nights be chosen in advance
+```
+
+
+## License
+
+MIT - see [`LICENSE`](LICENSE).
+
+Built for the **Bitget AI Base Camp Hackathon S2** - Agentic Trading, Event-Driven Agent.
+Paper trading only; no live fill is claimed anywhere.
