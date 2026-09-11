@@ -413,6 +413,13 @@ session to trade tested only for a weekday, while the rest of the calendar exclu
 holidays. On Thanksgiving it returned Thanksgiving: a session the exchange never opened,
 against a window that never existed. Fixed and moved beside the calendar it has to agree
 with.</li>
+<li><strong>A failed news feed looked like a quiet night</strong> - every exception from
+the headline fetch became an empty list, so a DNS failure, an HTTP 500, a timeout and
+"nothing was published" were indistinguishable. The reader would abstain on an empty brief
+for what looked like a legitimate reason, which means the model half of the product could
+have degraded across every position for days without a single signal. The fetch now raises
+a typed failure, the ledger records the reason on the row, and the night summary counts how
+many positions lost the feed.</li>
 <li><strong>The safety claim was caller-enforced, not structural</strong> - the executor
 took a symbol, a side and a size, so the only thing preventing a naked directional order was
 that the night run checked the verdict first. A new code path that forgot would have placed
