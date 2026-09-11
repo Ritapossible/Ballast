@@ -420,6 +420,14 @@ session to trade tested only for a weekday, while the rest of the calendar exclu
 holidays. On Thanksgiving it returned Thanksgiving: a session the exchange never opened,
 against a window that never existed. Fixed and moved beside the calendar it has to agree
 with.</li>
+<li><strong>Measured figures were still being typed</strong> - MSFT's and AMD's worst
+nights appeared as literals in three places across the two page builders, and the whole
+out-of-sample paragraph was typed on the day it was measured, while both sat in
+<code>docs/facts.json</code> the entire time. That is the failure the universe counts had,
+in the files that exist to prevent it. Both render from the measurement now, and a test
+fails on any typed pair. The claim table was worse: it asserted "18 red-team tests" against
+a file holding 25, and "100-260 nights" against a sample running to 264 - counts are
+counted now.</li>
 <li><strong>The settled table hid the number that makes it checkable</strong> - it showed
 Unhedged, Realised and Value added, but value added is realised minus the
 <em>counterfactual</em>, and that column was not on the page. Unhedged is the same figure as
@@ -545,8 +553,10 @@ it points at the scripts that reproduce those instead of pretending otherwise.</
 <p>Every other figure on the site is fitted on all the nights it covers. The hedge ratio
 is also tested held-out: beta estimated on the first 70% of each name's paired nights and
 applied <strong>unchanged</strong> to the last 30%, with no refit. Median variance removed
-goes 0.980 to 0.996, median p95 tail cut 86% to 94%, and the median absolute beta drift on
-refitting is 0.009 - twelve of twelve names hold.</p>
+goes 0.980 to 0.996, median p95 tail cut
+86% to 94%, and the median absolute beta
+drift on refitting is 0.009 - 12 of
+12 names hold.</p>
 <p>The out-of-sample figures come out higher. That is a property of the period, not
 evidence the hedge improved; read it as stable rather than as better. The claim being
 tested is only that a mechanism does not decay on data it never saw, which is what
