@@ -136,6 +136,28 @@ tr:last-child td{border-bottom:0}
 .tag.on{color:var(--accent);border-color:var(--accent-dim);background:rgba(0,217,236,.08)}
 .empty{padding:46px 22px;text-align:center;color:var(--dim);font-size:14.5px}
 
+/* Narrow screens: stack each row into a card.
+   A 560px table on a 400px screen parks the last column off-screen, but its text
+   still sets the row height - so the Reasoning sentence produced 450px-tall rows
+   showing two short cells at the top and a wall of blank below. The data was
+   there, just where it could not be read. Labels come from data-label. */
+@media(max-width:720px){
+  .stacked{overflow-x:visible}
+  .stacked table{min-width:0;display:block}
+  .stacked thead{display:none}
+  .stacked tbody,.stacked tr{display:block;width:100%}
+  .stacked tr{padding:15px 17px;border-bottom:1px solid var(--line)}
+  .stacked tr:last-child{border-bottom:0}
+  .stacked td{display:flex;gap:16px;align-items:baseline;justify-content:space-between;
+    padding:4px 0;border:0}
+  .stacked td::before{content:attr(data-label);color:var(--dim);font-size:10.5px;
+    text-transform:uppercase;letter-spacing:.14em;flex:none}
+  .stacked td[data-label=""]{display:block;font-size:16px;margin-bottom:6px}
+  .stacked td[data-label=""]::before{content:none}
+  .stacked td.wrap{display:block}
+  .stacked td.wrap::before{display:block;margin-bottom:4px}
+}
+
 pre{background:var(--surface);border:1px solid var(--line);border-radius:14px;
   padding:22px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;
   line-height:1.75;color:var(--mid);margin:26px 0;text-align:left}
@@ -222,8 +244,8 @@ commits it, so each decision is timestamped before its outcome is known.</p></di
 </div></section>
 
 <section><div class="wrap">
-<div class="scroll"><table><thead><tr><th>Claim</th><th>Status</th><th>Basis</th>
-</tr></thead><tbody><tr><td>A matched perp removes a median 98.2% of overnight variance, β within 4% of 1.00</td><td><span class="tag ">observed</span></td><td class="dim">12 names, 100-260 nights each</td></tr><tr><td>The hedge strengthens under stress - R² 0.978-0.999 on top-decile nights</td><td><span class="tag ">observed</span></td><td class="dim">conditional regression</td></tr><tr><td>Median 88% cut in p95 tail; MSFT&#x27;s worst night 1,128 bp to 233 bp</td><td><span class="tag ">observed</span></td><td class="dim">same sample</td></tr><tr><td>Earnings nights carry 3.2× the variance and are not reliably compensated</td><td><span class="tag ">observed</span></td><td class="dim">15 names; 0 of 15 significant at |t|≥2</td></tr><tr><td>Trailing volatility cannot select risky nights - 1.41× separation</td><td><span class="tag ">observed</span></td><td class="dim">which is why the reader exists</td></tr><tr><td>Signed, tamper-evident decision ledger</td><td><span class="tag on">proven</span></td><td class="dim"></td></tr><tr><td>The enforcer refuses every directional intent</td><td><span class="tag on">proven</span></td><td class="dim">18 red-team tests</td></tr><tr><td>Improves risk-adjusted return</td><td><span class="tag ">not claimed</span></td><td class="dim">priced protection, not alpha</td></tr><tr><td>Any live fill</td><td><span class="tag ">not claimed</span></td><td class="dim">paper only</td></tr></tbody></table></div>
+<div class="scroll stacked"><table><thead><tr><th>Claim</th><th>Status</th><th>Basis</th>
+</tr></thead><tbody><tr><td class="wrap" data-label="">A matched perp removes a median 98.2% of overnight variance, β within 4% of 1.00</td><td data-label="Status"><span class="tag ">observed</span></td><td class="dim wrap" data-label="Basis">12 names, 100-260 nights each</td></tr><tr><td class="wrap" data-label="">The hedge strengthens under stress - R² 0.978-0.999 on top-decile nights</td><td data-label="Status"><span class="tag ">observed</span></td><td class="dim wrap" data-label="Basis">conditional regression</td></tr><tr><td class="wrap" data-label="">Median 88% cut in p95 tail; MSFT&#x27;s worst night 1,128 bp to 233 bp</td><td data-label="Status"><span class="tag ">observed</span></td><td class="dim wrap" data-label="Basis">same sample</td></tr><tr><td class="wrap" data-label="">Earnings nights carry 3.2× the variance and are not reliably compensated</td><td data-label="Status"><span class="tag ">observed</span></td><td class="dim wrap" data-label="Basis">15 names; 0 of 15 significant at |t|≥2</td></tr><tr><td class="wrap" data-label="">Trailing volatility cannot select risky nights - 1.41× separation</td><td data-label="Status"><span class="tag ">observed</span></td><td class="dim wrap" data-label="Basis">which is why the reader exists</td></tr><tr><td class="wrap" data-label="">Signed, tamper-evident decision ledger</td><td data-label="Status"><span class="tag on">proven</span></td><td class="dim wrap" data-label="Basis"></td></tr><tr><td class="wrap" data-label="">The enforcer refuses every directional intent</td><td data-label="Status"><span class="tag on">proven</span></td><td class="dim wrap" data-label="Basis">18 red-team tests</td></tr><tr><td class="wrap" data-label="">Improves risk-adjusted return</td><td data-label="Status"><span class="tag ">not claimed</span></td><td class="dim wrap" data-label="Basis">priced protection, not alpha</td></tr><tr><td class="wrap" data-label="">Any live fill</td><td data-label="Status"><span class="tag ">not claimed</span></td><td class="dim wrap" data-label="Basis">paper only</td></tr></tbody></table></div>
 <div class="narrow" style="margin-top:44px">
 <p class="note">Ballast is <strong>priced protection, not alpha</strong>. It makes no
 Sharpe claim: the nights it hedges carry real variance and no reliable expected
