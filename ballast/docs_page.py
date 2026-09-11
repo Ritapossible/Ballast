@@ -202,6 +202,12 @@ session to trade tested only for a weekday, while the rest of the calendar exclu
 holidays. On Thanksgiving it returned Thanksgiving: a session the exchange never opened,
 against a window that never existed. Fixed and moved beside the calendar it has to agree
 with.</li>
+<li><strong>The landing page hid its own hedges</strong> - the live widget listed the
+first five positions in book order, and since the policy declines about ten nights in
+twelve those five were all refusals. The two hedges sat seventh and eighth and were never
+shown, so the one element meant to prove the system is working read as a system doing
+nothing. Hedges now lead, and the five rows carry a count so they cannot misrepresent
+twelve.</li>
 <li><strong>Tables looked empty on a phone</strong> - a 560px table on a 400px screen
 parks its last column off-screen, but that column's text still sets the row height. The
 Reasoning sentence produced 450px-tall rows on the Tonight page showing two short cells

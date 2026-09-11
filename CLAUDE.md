@@ -215,6 +215,10 @@ datacenter IPs** and are not usable here.
 18. **A rationale is published text.** It renders on a public page and is signed into
     the ledger, so format every number in it. `11.291999999999998bp` shipped.
 
+19. **The landing widget leads with hedges.** The policy declines ~10 nights in 12, so
+    book order filled the page's only live element with refusals and showed neither hedge.
+    Five rows also carry a count, so they cannot misrepresent twelve.
+
 ## 7b. Operations
 
 - `.github/workflows/nightly.yml` — decides at 21:00 UTC, settles at 14:30 UTC, Mon–Fri.

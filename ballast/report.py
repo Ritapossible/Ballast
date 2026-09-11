@@ -215,13 +215,25 @@ class Site:
     # -- pages ---------------------------------------------------------------
 
     def index(self) -> str:
+        # Hedges first. The rows were in book order, and the policy declines about
+        # ten nights in twelve, so the first five were all NO_HEDGE - the landing
+        # page's one live widget showed a column of refusals and none of the two
+        # hedges, which reads as a system that does nothing. The count line keeps
+        # five rows from misrepresenting twelve.
+        ordered = sorted(self.tonight, key=lambda d: d.get("action") != "HEDGE")
+        shown = ordered[:5]
         term = "".join(
             f'<div class="term-r"><span class="mid">{_e(d.get("ticker"))}</span>'
             f'<span class="{"hl" if d.get("action") == "HEDGE" else "dim"}">'
             f'{_e(d.get("action"))}</span></div>'
-            for d in self.tonight[:5]) or (
+            for d in shown) or (
             '<div class="term-r"><span class="dim">awaiting the next close</span>'
             '<span class="dim">-</span></div>')
+        if len(self.tonight) > len(shown):
+            hedged = sum(1 for d in self.tonight if d.get("action") == "HEDGE")
+            term += (f'<div class="term-r"><span class="dim">'
+                     f'{len(self.tonight)} positions · {hedged} hedged</span>'
+                     f'<a class="dim" href="tonight.html">see all →</a></div>')
         return f"""
 <section class="bd"><div class="wrap center">
 <h1>Hold the position.<br>Not the night's risk.</h1>

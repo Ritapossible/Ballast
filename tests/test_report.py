@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import datetime as dt
 import os
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -159,6 +160,47 @@ class ProvenanceCase(unittest.TestCase):
                           {"decided_after_close_hours": 1.5})
         self.assertEqual(site.decided_after, 1.5)
         self.assertFalse(site.decided_late)
+
+
+class LandingWidgetCase(unittest.TestCase):
+    """The policy declines about ten nights in twelve, so book order put five
+    refusals in the landing page's only live widget and neither hedge - it read
+    as a system that does nothing."""
+
+    def _index(self, actions):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "ledger.jsonl"
+            lg = Ledger(path, config.DEV_SECRET)
+            lg.append("night_summary", {"session": "2026-09-10", "positions": len(actions),
+                                        "hedged": sum(a == "HEDGE" for a in actions),
+                                        "window_hours": 17.5})
+            for ticker, action in actions.items():
+                lg.append("decision", {"session": "2026-09-10", "ticker": ticker,
+                                       "action": action, "sigma_bp": 100.0,
+                                       "notional_usdt": 1000.0, "rationale": "x"})
+            with mock.patch.object(config, "LEDGER_PATH", path), \
+                 mock.patch.object(config, "secret", return_value=config.DEV_SECRET):
+                site = report.Site(now=dt.datetime(2026, 9, 10, 21,
+                                                   tzinfo=dt.timezone.utc))
+                return site.index()
+
+    def test_hedges_appear_before_refusals(self):
+        actions = {t: "NO_HEDGE" for t in
+                   ("TSLA", "NVDA", "PLTR", "COIN", "AMD", "MSFT")}
+        actions["ORCL"] = "HEDGE"
+        rows = re.findall(r'<div class="term-r">.*?</div>', self._index(actions))
+        self.assertIn("ORCL", rows[0])
+
+    def test_five_rows_do_not_misrepresent_twelve(self):
+        actions = {t: "NO_HEDGE" for t in
+                   ("TSLA", "NVDA", "PLTR", "COIN", "AMD", "MSFT")}
+        actions["ORCL"] = "HEDGE"
+        html = self._index(actions)
+        self.assertIn("7 positions \u00b7 1 hedged", html)
+
+    def test_a_short_night_needs_no_count_line(self):
+        html = self._index({"ORCL": "HEDGE", "TSLA": "NO_HEDGE"})
+        self.assertNotIn("see all", html)
 
 
 class SelectorCorrectionCase(unittest.TestCase):
