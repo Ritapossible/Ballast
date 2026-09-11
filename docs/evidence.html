@@ -261,6 +261,25 @@ paper log.</p>
 <p class="note">Reproduce with <code>python3 research/hedge_study.py</code>. Worst single
 nights, not shown above: MSFT <strong>1,128 bp to 233 bp</strong>, AMD
 <strong>1,262 bp to 90 bp</strong>.</p>
+
+<h3 style="margin-top:44px">Out of sample</h3>
+<p class="note">Every figure above is fitted on all the nights it covers. This one is not:
+beta is estimated on the first 70% of each name's paired nights and applied
+<strong>unchanged</strong> to the last 30%. No refit - a frozen ratio is
+what a desk carries, having fitted only on the past. Each name splits at its own date,
+because the histories are different lengths (100 nights for the shortest,
+264 for the longest), so there is no single cut-off across the sample.</p>
+<div class="tiles" style="margin:22px 0">
+<div class="tile"><div class="n">0.980 → 0.996</div><div class="l">median variance removed</div></div>
+<div class="tile"><div class="n">86% → 94%</div><div class="l">median p95 tail cut</div></div>
+<div class="tile"><div class="n">0.009</div><div class="l">median beta drift on refit</div></div>
+<div class="tile"><div class="n">12/12</div><div class="l">names holding out of sample</div></div>
+</div>
+<p class="note"><strong>It holds, and that is the whole claim.</strong> A hedge is a
+mechanism rather than an edge, so the test it has to pass is that nothing decays on data
+it never saw - and nothing does. The out-of-sample figures come out <em>higher</em>, which
+is a property of that period rather than evidence the hedge improved: read it as stable,
+not as better. Reproduce with <code>python3 research/oos.py</code>.</p>
 </div>
 </div></section>
 
@@ -273,6 +292,7 @@ Sharpe claim: the nights it hedges carry real variance and no reliable expected
 return, so removing them is insurance - which has a price, and is worth paying only
 on the right nights.</p>
 <pre style="margin-top:34px"><b>git clone https://github.com/Ritapossible/Ballast &amp;&amp; cd ballast</b>
+python3 verify.py                       <span class="dim"># every offline claim, one command</span>
 python3 -m unittest discover -s tests   <span class="dim"># full suite, no network, no key</span>
 python3 research/hedge_study.py         <span class="dim"># the hedge measurements</span>
 python3 research/gate1_calendar.py      <span class="dim"># why the calendar is the selector</span>
