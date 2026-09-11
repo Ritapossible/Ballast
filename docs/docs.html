@@ -413,6 +413,15 @@ session to trade tested only for a weekday, while the rest of the calendar exclu
 holidays. On Thanksgiving it returned Thanksgiving: a session the exchange never opened,
 against a window that never existed. Fixed and moved beside the calendar it has to agree
 with.</li>
+<li><strong>A missed night was unrecoverable and unnoticed</strong> - the decide run had one
+scheduled trigger, and GitHub treats schedules as best effort: this repository's were late by
+1h23m, 1h52m and 3h17m inside a single week. A settlement can catch up, because it grades
+whatever is outstanding; a decision cannot, because it is graded on having been written
+before the outcome was known. The job also reported success for having started, so a run that
+produced nothing looked exactly like one that worked. The decide half now has three
+independent triggers - deciding twice is already a no-op, so a backup can only rescue a night
+- and a coverage check fails the job when a session that was due has no decision on the
+chain.</li>
 <li><strong>A failed news feed looked like a quiet night</strong> - every exception from
 the headline fetch became an empty list, so a DNS failure, an HTTP 500, a timeout and
 "nothing was published" were indistinguishable. The reader would abstain on an empty brief
