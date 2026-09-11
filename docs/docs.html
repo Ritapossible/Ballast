@@ -263,7 +263,7 @@ this sample reach <strong>1,262 bp</strong> in a single night.</p>
 
 <h2 id="who">Who it is for</h2>
 <p>Conviction holders of tokenized US equities - someone holding one to ten positions
-for weeks or months, 500–50,000 USDT apiece, directionally bullish and
+for weeks or months, 500-50,000 USDT apiece, directionally bullish and
 drawdown-averse, who will not exit before a catalyst because exiting defeats a
 multi-month thesis.</p>
 <p>Their alternatives fail specifically: exiting a position costs <strong>20 bp</strong>
@@ -275,10 +275,10 @@ market is shut, so it cannot be hedged there.</p>
 24/7 clock. Shorting that perp against the token cancels almost all of the overnight
 move.</p>
 <ul>
-<li><strong>Median R² 0.980</strong> across 12 names, 100–260 nights each, with β
+<li><strong>Median R² 0.980</strong> across 12 names, 100-260 nights each, with β
 within 4% of 1.00 - close to a one-for-one hedge.</li>
-<li><strong>It strengthens under stress.</strong> R² is 0.978–0.999 on top-decile
-move nights and 0.77–0.96 on calm ones. On a big-news night the common factor
+<li><strong>It strengthens under stress.</strong> R² is 0.978-0.999 on top-decile
+move nights and 0.77-0.96 on calm ones. On a big-news night the common factor
 dominates and both instruments track it almost exactly; on a quiet night the residual
 is venue microstructure noise. The hedge is loosest only when little is at stake.</li>
 <li><strong>Median 88% reduction in the p95 tail.</strong> MSFT's worst night falls
@@ -300,7 +300,7 @@ tested against that bar.</p>
 <tr><td data-label="">Trailing realised volatility</td><td class="num" data-label="Separation">1.41×</td>
 <td data-label="Compensated">yes - +19.3 bp, t=3.08</td><td class="dim" data-label="Verdict">unusable</td></tr>
 <tr><td data-label=""><strong>Earnings calendar</strong></td><td class="num" data-label="Separation">3.2×</td>
-<td data-label="Compensated">no - −61 bp, t=−1.59</td><td class="hl" data-label="Verdict">the selector</td></tr>
+<td data-label="Compensated">no - -61 bp, t=-1.59</td><td class="hl" data-label="Verdict">the selector</td></tr>
 </tbody></table></div>
 <p>Volatility barely distinguishes a risky night from an ordinary one, and the nights
 it picks carry positive expected return - so hedging them pays to remove return.
@@ -385,7 +385,7 @@ labelled <em>observed</em>, <em>estimated</em> or <em>targeted</em>.</p>
 <div class="scroll stacked"><table><thead><tr><th>Finding</th><th>Value</th></tr></thead><tbody>
 <tr><td data-label="">rTokens live on spot / with a perp leg</td><td class="num" data-label="Value">1173 / 241</td></tr>
 <tr><td data-label="">Median overnight variance removed</td><td class="num" data-label="Value">98.2%</td></tr>
-<tr><td data-label="">R² on top-decile move nights</td><td class="num" data-label="Value">0.978–0.999</td></tr>
+<tr><td data-label="">R² on top-decile move nights</td><td class="num" data-label="Value">0.978-0.999</td></tr>
 <tr><td data-label="">Median p95 tail reduction</td><td class="num" data-label="Value">88%</td></tr>
 <tr><td data-label="">Earnings-night variance ratio</td><td class="num" data-label="Value">3.2×</td></tr>
 <tr><td data-label="">Volatility-selector separation</td><td class="num" data-label="Value">1.41×</td></tr>
@@ -394,7 +394,7 @@ labelled <em>observed</em>, <em>estimated</em> or <em>targeted</em>.</p>
 </tbody></table></div>
 <p>The first policy replay is published as a <strong>negative result</strong>:
 a volatility-led policy hedged 45% of nights, cost roughly 13% a year and turned a
-1.11% return into −6.96%. Switching to calendar-led selection cut the hedge rate to
+1.11% return into -6.96%. Switching to calendar-led selection cut the hedge rate to
 2.4% and the drag to 0.3 bp per position-night, with 15 of 16 hedges reducing the
 move - but coverage of the worst nights remains the open problem.</p>
 
@@ -413,6 +413,20 @@ session to trade tested only for a weekday, while the rest of the calendar exclu
 holidays. On Thanksgiving it returned Thanksgiving: a session the exchange never opened,
 against a window that never existed. Fixed and moved beside the calendar it has to agree
 with.</li>
+<li><strong>The look-ahead sentinel could not fail</strong> - the evidence page cited a
+test that fails if a future night moves a past decision. That test built a polluted history
+and then passed the <em>original</em> to the policy both times, comparing a function against
+itself on identical input; its one use of the polluted list was an assertion about the
+list's length, which is why nothing flagged the variable as dead. The property also is not
+one of the policy, which is a pure function of whatever history it is handed - look-ahead
+can only enter where the history is sliced. The sentinel now corrupts every night at or
+after the session and requires the decision not to move, with two companions proving it can
+fail: the same corruption applied to earlier nights does move it, and widening the slice
+from strictly-before to inclusive moves it too.</li>
+<li><strong>Three tests were silently disabled</strong> - two test classes shared a name, so
+the second shadowed the first and the suite ran 216 of 219 while reporting success. The
+lost ones covered the disclosure that a session was decided too late to be ex-ante. Found
+by the linter within a minute of adding one.</li>
 <li><strong>A missed night was unrecoverable and unnoticed</strong> - the decide run had one
 scheduled trigger, and GitHub treats schedules as best effort: this repository's were late by
 1h23m, 1h52m and 3h17m inside a single week. A settlement can catch up, because it grades
