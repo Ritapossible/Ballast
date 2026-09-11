@@ -137,6 +137,82 @@ def _settled(rows: list[dict]) -> str:
     return "".join(out) + "</tbody></table></div>"
 
 
+# Chart colours. The site's cyan and rose sit at OKLCH L 0.81 and 0.72 - outside the
+# 0.48-0.67 band a dark surface needs - so these are the same hues stepped down until
+# they pass. Validated, not eyeballed: CVD dE 11.9 (deutan), 29.0 normal-vision,
+# both over 3:1 on #101012.
+TAIL_UNHEDGED = "#e05068"
+TAIL_HEDGED = "#00a3b4"
+
+
+def _tail_chart(rows: list[dict]) -> str:
+    """p95 overnight move per name, unhedged against hedged.
+
+    A dumbbell, not bars: the data is one before-and-after per name, and the length
+    of the line IS the claim. Twenty-four bars would show the same numbers and none
+    of the collapse.
+
+    Inline SVG with no script - the page loads no JavaScript at all, which is what
+    lets the CSP be default-src 'none'. Every value is directly labelled, so nothing
+    is hidden behind a hover that cannot exist here; <title> adds the exact figures
+    for pointer users without costing a byte of JS.
+    """
+    rows = sorted(rows, key=lambda r: -r.get("p95_unhedged", 0))
+    if not rows:
+        return ""
+    top, row_h, x0, x1 = 46, 25, 58, 470
+    hi = max(r["p95_unhedged"] for r in rows)
+    step = 200 if hi <= 900 else 400
+    axis_hi = ((hi // step) + 1) * step
+    height = top + len(rows) * row_h + 30
+
+    def x(v: float) -> float:
+        return x0 + (v / axis_hi) * (x1 - x0)
+
+    grid = "".join(
+        f'<line x1="{x(v):.1f}" y1="{top - 10:.0f}" x2="{x(v):.1f}" '
+        f'y2="{top + len(rows) * row_h - 8:.0f}" stroke="#242429" stroke-width="1"/>'
+        f'<text x="{x(v):.1f}" y="{height - 12:.0f}" fill="#6c6c75" font-size="11" '
+        f'text-anchor="middle" font-family="ui-monospace,Menlo,monospace">{v:,}</text>'
+        for v in range(0, axis_hi + 1, step))
+
+    body = []
+    for i, r in enumerate(rows):
+        y = top + i * row_h
+        xu, xh = x(r["p95_unhedged"]), x(r["p95_hedged"])
+        body.append(
+            f'<g><title>{_e(r["name"])}: p95 {r["p95_unhedged"]:,} bp unhedged, '
+            f'{r["p95_hedged"]:,} bp hedged, over {r.get("nights", 0)} nights</title>'
+            f'<text x="46" y="{y + 4:.0f}" fill="#a6a6ad" font-size="13" '
+            f'text-anchor="end" font-family="ui-monospace,Menlo,monospace">'
+            f'{_e(r["name"])}</text>'
+            f'<line x1="{xh:.1f}" y1="{y:.0f}" x2="{xu:.1f}" y2="{y:.0f}" '
+            f'stroke="#3a3a42" stroke-width="2" stroke-linecap="round"/>'
+            f'<circle cx="{xu:.1f}" cy="{y:.0f}" r="4.5" fill="{TAIL_UNHEDGED}" '
+            f'stroke="#101012" stroke-width="2"/>'
+            f'<circle cx="{xh:.1f}" cy="{y:.0f}" r="4.5" fill="{TAIL_HEDGED}" '
+            f'stroke="#101012" stroke-width="2"/>'
+            f'<text x="482" y="{y + 4:.0f}" fill="#a6a6ad" font-size="12.5" '
+            f'font-family="ui-monospace,Menlo,monospace">{r["p95_unhedged"]:,} '
+            f'&#8594; {r["p95_hedged"]:,}</text></g>')
+
+    legend = (
+        f'<circle cx="62" cy="16" r="4.5" fill="{TAIL_UNHEDGED}"/>'
+        f'<text x="74" y="20" fill="#a6a6ad" font-size="12.5">p95 unhedged</text>'
+        f'<circle cx="176" cy="16" r="4.5" fill="{TAIL_HEDGED}"/>'
+        f'<text x="188" y="20" fill="#a6a6ad" font-size="12.5">p95 hedged</text>'
+        f'<text x="482" y="20" fill="#6c6c75" font-size="11.5">basis points</text>')
+
+    return (f'<figure class="chart">'
+            f'<svg viewBox="0 0 620 {height}" width="100%" role="img" '
+            f'aria-labelledby="tailt taild">'
+            f'<title id="tailt">Overnight tail risk, unhedged against hedged</title>'
+            f'<desc id="taild">For each of twelve names, the 95th-percentile overnight '
+            f'move in basis points with no hedge and with the matched perpetual short. '
+            f'Every pair is listed at the right of its row.</desc>'
+            f'{legend}{grid}{"".join(body)}</svg></figure>')
+
+
 def claims(f: dict) -> list[tuple[str, str, str | None]]:
     return [
     (f"A matched perp removes a median {f['median_r2'] * 100:.1f}% of overnight "
@@ -463,6 +539,21 @@ fabricated source cannot reach the book.</p></div>
 <div class="card"><h3>The record cannot be edited</h3><p>The ledger is hash-chained
 and signed; mutation, deletion or reordering breaks verification. A scheduled job
 commits it, so each decision is timestamped before its outcome is known.</p></div>
+</div>
+</div></section>
+
+<section><div class="wrap">
+<div class="narrow">
+<h2 style="font-size:26px;margin-bottom:10px">What the hedge does to the tail</h2>
+<p class="note" style="margin-bottom:0">The 95th-percentile overnight move for each name,
+with no hedge and with the matched perpetual short, over the nights listed on each row.
+Median reduction <strong>{self.f['median_tail_cut_pct']}%</strong>. This is the measurement
+the product rests on, and it is the one made over years rather than over this week's
+paper log.</p>
+{_tail_chart(self.f.get("tail", []))}
+<p class="note">Reproduce with <code>python3 research/hedge_study.py</code>. Worst single
+nights, not shown above: MSFT <strong>1,128 bp to 233 bp</strong>, AMD
+<strong>1,262 bp to 90 bp</strong>.</p>
 </div>
 </div></section>
 

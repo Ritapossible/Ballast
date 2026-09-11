@@ -5,5 +5,103 @@
   "median_r2": 0.982,
   "median_tail_cut_pct": 88,
   "rtokens_hedgeable": 241,
-  "rtokens_total": 1173
+  "rtokens_total": 1173,
+  "tail": [
+    {
+      "name": "TSLA",
+      "nights": 264,
+      "p95_hedged": 34,
+      "p95_unhedged": 411,
+      "worst_hedged": 177,
+      "worst_unhedged": 1099
+    },
+    {
+      "name": "NVDA",
+      "nights": 264,
+      "p95_hedged": 37,
+      "p95_unhedged": 341,
+      "worst_hedged": 282,
+      "worst_unhedged": 634
+    },
+    {
+      "name": "AAPL",
+      "nights": 259,
+      "p95_hedged": 37,
+      "p95_unhedged": 216,
+      "worst_hedged": 111,
+      "worst_unhedged": 567
+    },
+    {
+      "name": "MSFT",
+      "nights": 241,
+      "p95_hedged": 31,
+      "p95_unhedged": 256,
+      "worst_hedged": 233,
+      "worst_unhedged": 1128
+    },
+    {
+      "name": "AMZN",
+      "nights": 259,
+      "p95_hedged": 39,
+      "p95_unhedged": 316,
+      "worst_hedged": 136,
+      "worst_unhedged": 574
+    },
+    {
+      "name": "META",
+      "nights": 259,
+      "p95_hedged": 57,
+      "p95_unhedged": 340,
+      "worst_hedged": 238,
+      "worst_unhedged": 751
+    },
+    {
+      "name": "GOOGL",
+      "nights": 259,
+      "p95_hedged": 50,
+      "p95_unhedged": 312,
+      "worst_hedged": 189,
+      "worst_unhedged": 649
+    },
+    {
+      "name": "SPY",
+      "nights": 143,
+      "p95_hedged": 18,
+      "p95_unhedged": 131,
+      "worst_hedged": 52,
+      "worst_unhedged": 223
+    },
+    {
+      "name": "QQQ",
+      "nights": 217,
+      "p95_hedged": 20,
+      "p95_unhedged": 178,
+      "worst_hedged": 38,
+      "worst_unhedged": 315
+    },
+    {
+      "name": "COIN",
+      "nights": 258,
+      "p95_hedged": 66,
+      "p95_unhedged": 655,
+      "worst_hedged": 139,
+      "worst_unhedged": 1185
+    },
+    {
+      "name": "PLTR",
+      "nights": 203,
+      "p95_hedged": 40,
+      "p95_unhedged": 537,
+      "worst_hedged": 132,
+      "worst_unhedged": 1076
+    },
+    {
+      "name": "AMD",
+      "nights": 100,
+      "p95_hedged": 29,
+      "p95_unhedged": 766,
+      "worst_hedged": 90,
+      "worst_unhedged": 1262
+    }
+  ]
 }

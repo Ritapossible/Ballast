@@ -244,6 +244,15 @@ datacenter IPs** and are not usable here.
     tiles always state their session count, and say when a small n makes the mean one
     night's market direction rather than a record.
 
+26. **The tail chart's numbers come from `facts.json`, measured by
+    `research/hedge_study.py`.** That study is the slow half - twelve names over two
+    years of hourly bars - so it is run deliberately and its result stored, never
+    recomputed in the nightly job. `facts_study` preserves keys it does not own.
+27. **Chart colours are validated, not chosen.** The site's cyan and rose sit outside the
+    OKLCH 0.48-0.67 band a dark surface needs; the chart uses the same hues stepped into
+    it (`#e05068` / `#00a3b4`), checked for CVD separation and contrast. No script: an
+    inline SVG is what lets the CSP stay `default-src 'none'`.
+
 ## 7b. Operations
 
 - `.github/workflows/nightly.yml` — decides at 21:00 UTC, settles at 14:30 UTC, Mon–Fri.

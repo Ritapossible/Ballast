@@ -17,6 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import statistics as st
 
+from ballast import facts
 from ballast.market import bars
 from ballast.overnight import aligned, overnight_returns
 from ballast.sessions import window_hours
@@ -66,10 +67,13 @@ def run() -> None:
     print(f"median p95 tail reduction    : {100 * st.median(tails):.0f}%")
 
 
-def tail_table() -> None:
-    print(f"\n{'name':6s} {'worst_unhedged':>15s} {'worst_hedged':>13s} "
-          f"{'p95_unhedged':>13s} {'p95_hedged':>11s}")
-    print("-" * 62)
+def tail_rows() -> list[dict]:
+    """Per name: the p95 and worst overnight move, unhedged and hedged.
+
+    Returned rather than only printed, so the Evidence chart renders these exact
+    numbers instead of a second copy of the calculation living in the page.
+    """
+    out = []
     for name in NAMES:
         spot = overnight_returns(bars(f"R{name}USDT", "spot"))
         perp = overnight_returns(bars(f"{name}USDT", "mix"))
@@ -79,10 +83,31 @@ def tail_table() -> None:
         _, _, resid = ols(xs, ys)
         unh = [abs(bp(v)) for v in ys]
         hed = [abs(bp(v)) for v in resid]
-        print(f"{name:6s} {max(unh):15.0f} {max(hed):13.0f} "
-              f"{percentile(unh, 0.95):13.0f} {percentile(hed, 0.95):11.0f}")
+        out.append({"name": name, "nights": len(dates),
+                    "p95_unhedged": round(percentile(unh, 0.95)),
+                    "p95_hedged": round(percentile(hed, 0.95)),
+                    "worst_unhedged": round(max(unh)),
+                    "worst_hedged": round(max(hed))})
+    return out
+
+
+def tail_table(rows: list[dict] | None = None) -> list[dict]:
+    rows = rows if rows is not None else tail_rows()
+    print(f"\n{'name':6s} {'nights':>7s} {'worst_unhedged':>15s} {'worst_hedged':>13s} "
+          f"{'p95_unhedged':>13s} {'p95_hedged':>11s}")
+    print("-" * 70)
+    for r in rows:
+        print(f"{r['name']:6s} {r['nights']:7d} {r['worst_unhedged']:15d} "
+              f"{r['worst_hedged']:13d} {r['p95_unhedged']:13d} {r['p95_hedged']:11d}")
+    return rows
 
 
 if __name__ == "__main__":
     run()
-    tail_table()
+    rows = tail_table()
+    # The tail sample is the slow half of this study - twelve names over two years
+    # of hourly bars - so it is measured here and stored, not recomputed nightly.
+    # facts_study preserves keys it does not own, so the nightly refresh keeps it.
+    values = facts.load()
+    values["tail"] = rows
+    print(f"\nwrote {facts.save(values)} (tail: {len(rows)} names)")
