@@ -194,15 +194,30 @@ class Site:
         # never mutated.
         self.rows = [dict(r, session=s.get("session", ""))
                      for s in self.settlements for r in s.get("rows", [])]
-        self.hedges = [r for r in self.rows if r.get("action") == "HEDGE"]
+        # Headline tiles measure only sessions decided with the corrected calendar.
+        # A session whose hedges were placed a night early cannot support a claim
+        # about how well hedges work, so those rows stay in the table - where the
+        # correction sits beside them - and out of the summary.
+        #
+        # This makes the mean LARGER, not smaller: the excluded session was a broad
+        # down night, so dropping it moved the mean from +27 to +136 bp. That is why
+        # the tiles carry their session count. One session's mean is one night's
+        # market direction, and the number should not be read as more than that.
+        self.clean = [r for r in self.rows
+                      if r.get("session") not in SELECTOR_BUG_SESSIONS]
+        self.clean_sessions = sorted({r.get("session") for r in self.clean if r.get("session")})
+        self.excluded_sessions = sorted(
+            {r.get("session") for r in self.rows if r.get("session") in SELECTOR_BUG_SESSIONS})
+
+        self.hedges = [r for r in self.clean if r.get("action") == "HEDGE"]
         self.shrank = sum(1 for r in self.hedges
                           if abs(r.get("realised_bp", 0)) < abs(r.get("unhedged_bp", 0)))
-        self.worst = max((abs(r.get("unhedged_bp", 0)) for r in self.rows), default=0)
+        self.worst = max((abs(r.get("unhedged_bp", 0)) for r in self.clean), default=0)
         # Where a refusal is actually graded: the mean over every settled
         # position-night, against the choice not taken. One session is n=1 and the
         # page says so - but the number belongs on the page, not only in the ledger.
-        self.mean_va = (sum(r.get("value_added_bp", 0) for r in self.rows) / len(self.rows)
-                        if self.rows else 0)
+        self.mean_va = (sum(r.get("value_added_bp", 0) for r in self.clean) / len(self.clean)
+                        if self.clean else 0)
 
         # A scheduled run that stops running leaves the site showing its last good
         # night, which reads exactly like a working site. Settlement had in fact
@@ -344,6 +359,26 @@ declined is a decision it will be graded on.</p>
 </div></section>"""
 
     @property
+    def tile_scope(self) -> str:
+        """State what the tiles cover, and how few nights that is."""
+        n = len(self.clean_sessions)
+        if not n:
+            return ""
+        nights = "night" if n == 1 else "nights"
+        note = (f'<p class="note">Across <strong>{n} {nights}</strong> decided with the '
+                f'corrected calendar ({", ".join(self.clean_sessions)}). ')
+        if self.excluded_sessions:
+            note += (f'{", ".join(self.excluded_sessions)} is excluded from these figures '
+                     f'and corrected below - its hedges were placed a night early, so it '
+                     f'cannot say how well a hedge works. Excluding it <em>raises</em> the '
+                     f'mean, because that night fell broadly. ')
+        if n < 5:
+            note += ('At this sample size the mean is one night\'s market direction, not '
+                     'a performance record. The claims this project actually stands on are '
+                     'on the Evidence page, measured over years.')
+        return note + "</p>"
+
+    @property
     def selector_correction(self) -> str:
         """Sessions decided before the calendar window was fixed.
 
@@ -382,11 +417,12 @@ requires the release to fall inside the window; one event is hedged on exactly o
 <span class="hl">observed</span>, on the same window. Every decision, right or wrong,
 settles at the next opening bell, so nothing can be quietly forgotten.</p>
 <div class="tiles">
-{_tile(len(self.rows), "decisions settled")}
+{_tile(len(self.clean), "decisions settled")}
 {_tile(f"{self.shrank}/{len(self.hedges)}" if self.hedges else "-", "hedges that cut the move")}
 {_tile(f"{self.worst:,.0f} bp" if self.worst else "-", "worst night seen")}
-{_tile(f"{self.mean_va:+,.0f} bp" if self.rows else "-", "mean value added per position-night")}
+{_tile(f"{self.mean_va:+,.0f} bp" if self.clean else "-", "mean value added per position-night")}
 </div>
+{self.tile_scope}
 </div></section>
 
 <section><div class="wrap">

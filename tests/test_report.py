@@ -203,6 +203,51 @@ class LandingWidgetCase(unittest.TestCase):
         self.assertNotIn("see all", html)
 
 
+class TileScopeCase(unittest.TestCase):
+    """Tiles measure only sessions decided with the corrected calendar - a session
+    whose hedges were a night early cannot say how well a hedge works. Excluding it
+    raises the mean, so the scope note has to carry the sample size."""
+
+    def _site(self, sessions):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "ledger.jsonl"
+            lg = Ledger(path, config.DEV_SECRET)
+            for session, va in sessions.items():
+                lg.append("night_summary", {"session": session, "positions": 1,
+                                            "hedged": 1, "window_hours": 17.5})
+                lg.append("settlement", {"session": session, "decisions": 1, "hedged": 1,
+                                         "rows": [{"ticker": "ORCL", "action": "HEDGE",
+                                                   "unhedged_bp": -400.0, "realised_bp": -10.0,
+                                                   "value_added_bp": va}]})
+            with mock.patch.object(config, "LEDGER_PATH", path), \
+                 mock.patch.object(config, "secret", return_value=config.DEV_SECRET):
+                return report.Site(now=dt.datetime(2026, 9, 12, 21,
+                                                   tzinfo=dt.timezone.utc))
+
+    def test_the_flawed_session_is_out_of_the_tiles(self):
+        site = self._site({"2026-09-09": -900.0, "2026-09-10": 300.0})
+        self.assertEqual(len(site.clean), 1)
+        self.assertEqual(site.mean_va, 300.0)          # not the -300 average of both
+        self.assertEqual(len(site.hedges), 1)
+
+    def test_it_stays_in_the_table(self):
+        site = self._site({"2026-09-09": -900.0, "2026-09-10": 300.0})
+        self.assertEqual(len(site.rows), 2, "an excluded row was dropped from the record")
+        self.assertIn("2026-09-09", report._settled(site.rows))
+
+    def test_the_scope_note_carries_the_sample_size(self):
+        flat = " ".join(self._site({"2026-09-09": -900.0,
+                                    "2026-09-10": 300.0}).tile_scope.split())
+        self.assertIn("1 night", flat)
+        self.assertIn("2026-09-09 is excluded", flat)
+        self.assertIn("raises", flat)
+
+    def test_no_scope_note_without_an_exclusion(self):
+        flat = " ".join(self._site({"2026-09-10": 300.0}).tile_scope.split())
+        self.assertNotIn("excluded", flat)
+        self.assertIn("1 night", flat)
+
+
 class SettledTableCase(unittest.TestCase):
     """Two nights in, the table showed ORCL twice with near-identical numbers and
     nothing to tell them apart - which reads as a duplicate-row bug."""

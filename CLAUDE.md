@@ -224,6 +224,12 @@ datacenter IPs** and are not usable here.
 21. **The page rounds; the ledger does not.** A rationale is signed as written, so a
     formatting bug in one is permanent. `_round_floats` formats at render only.
 
+22. **Headline tiles cover clean sessions only; the table keeps everything.** A session
+    whose hedges were misattributed cannot support a claim about hedges. Excluding
+    2026-09-09 *raises* the mean (+27 to +136 bp) because that night fell broadly - so the
+    tiles always state their session count, and say when a small n makes the mean one
+    night's market direction rather than a record.
+
 ## 7b. Operations
 
 - `.github/workflows/nightly.yml` — decides at 21:00 UTC, settles at 14:30 UTC, Mon–Fri.
