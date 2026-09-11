@@ -243,28 +243,46 @@ class TileScopeCase(unittest.TestCase):
                 return report.Site(now=dt.datetime(2026, 9, 12, 21,
                                                    tzinfo=dt.timezone.utc))
 
-    def test_the_flawed_session_is_out_of_the_tiles(self):
+    def test_only_the_affected_hedges_leave_the_tiles(self):
         site = self._site({"2026-09-09": -900.0, "2026-09-10": 300.0})
         self.assertEqual(len(site.clean), 1)
         self.assertEqual(site.mean_va, 300.0)          # not the -300 average of both
         self.assertEqual(len(site.hedges), 1)
+
+    def test_a_refusal_on_an_affected_night_still_counts(self):
+        """The fault could add a hedge, never remove one, so a refusal that night
+        would have been a refusal under the corrected rule too. Excluding it would
+        drop a sound decision and overstate the result."""
+        row = {"ticker": "MU", "action": "NO_HEDGE", "unhedged_bp": -413.0,
+               "realised_bp": -413.0, "value_added_bp": -395.0, "session": "2026-09-09"}
+        self.assertFalse(report._selector_affected(row))
+        row["action"] = "HEDGE"
+        self.assertTrue(report._selector_affected(row))
+        row["session"] = "2026-09-10"
+        self.assertFalse(report._selector_affected(row))
 
     def test_it_stays_in_the_table(self):
         site = self._site({"2026-09-09": -900.0, "2026-09-10": 300.0})
         self.assertEqual(len(site.rows), 2, "an excluded row was dropped from the record")
         self.assertIn("2026-09-09", report._settled(site.rows))
 
-    def test_the_scope_note_carries_the_sample_size(self):
+    def test_the_scope_note_names_the_excluded_rows(self):
         flat = " ".join(self._site({"2026-09-09": -900.0,
                                     "2026-09-10": 300.0}).tile_scope.split())
-        self.assertIn("1 night", flat)
-        self.assertIn("2026-09-09 is excluded", flat)
-        self.assertIn("raises", flat)
+        self.assertIn("1 hedges are excluded", flat.replace("1 hedges", "1 hedges"))
+        self.assertIn("2026-09-09", flat)
+        self.assertIn("refusals that night stand", flat)
 
     def test_no_scope_note_without_an_exclusion(self):
         flat = " ".join(self._site({"2026-09-10": 300.0}).tile_scope.split())
         self.assertNotIn("excluded", flat)
         self.assertIn("1 night", flat)
+
+    def test_the_marker_reads_as_what_happened(self):
+        html = report._settled([{"ticker": "ORCL", "action": "HEDGE",
+                                 "unhedged_bp": -390.0, "realised_bp": -14.0,
+                                 "value_added_bp": 376.0, "session": "2026-09-09"}])
+        self.assertIn("hedged a night early", html)
 
 
 class SettledTableCase(unittest.TestCase):
@@ -304,11 +322,16 @@ class SelectorMarkCase(unittest.TestCase):
 
     def test_an_affected_row_is_marked(self):
         html = report._settled(self._rows("2026-09-09"))
-        self.assertIn("selector corrected", html)
+        self.assertIn("hedged a night early", html)
+
+    def test_a_refusal_on_the_same_night_is_not_marked(self):
+        rows = self._rows("2026-09-09")
+        rows[0]["action"] = "NO_HEDGE"
+        self.assertNotIn("hedged a night early", report._settled(rows))
 
     def test_a_clean_row_is_not(self):
         html = report._settled(self._rows("2026-09-10"))
-        self.assertNotIn("selector corrected", html)
+        self.assertNotIn("hedged a night early", html)
 
     def test_the_page_points_at_the_full_write_up_rather_than_repeating_it(self):
         with tempfile.TemporaryDirectory() as d:

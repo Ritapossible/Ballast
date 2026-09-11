@@ -233,6 +233,11 @@ datacenter IPs** and are not usable here.
     repeating the mechanism duplicated the tile scope note - the same fault the roadmap
     callout was removed for. This keeps happening: text written to justify a decision in
     conversation rarely belongs on the page.
+25. **Exclude the affected rows, not the session around them.** The selector fault could
+    add a hedge, never remove one, so refusals on an affected night are sound decisions.
+    Marking them is inaccuracy, and dropping them from the figures flattered the mean:
+    session-level exclusion read +136 bp, row-level reads +12 bp. Over-disclosure costs the
+    same credibility that disclosing is meant to buy.
 22. **Headline tiles cover clean sessions only; the table keeps everything.** A session
     whose hedges were misattributed cannot support a claim about hedges. Excluding
     2026-09-09 *raises* the mean (+27 to +136 bp) because that night fell broadly - so the

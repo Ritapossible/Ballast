@@ -51,6 +51,19 @@ SELECTOR_BUG_SESSIONS = frozenset({"2026-09-09"})
 DECIDE_GRACE_HOURS = 4
 
 
+def _selector_affected(row: dict) -> bool:
+    """Only the hedges are affected, never the refusals.
+
+    The old rule ORed an extra date in, so it could turn NO_HEDGE into HEDGE and
+    never the reverse. A refusal on an affected session would have been a refusal
+    under the corrected rule too - it is a sound decision and marking it says
+    otherwise. Over-disclosure is inaccuracy, and it costs the same credibility
+    that disclosing at all is meant to buy.
+    """
+    return (row.get("session") in SELECTOR_BUG_SESSIONS
+            and row.get("action") == "HEDGE")
+
+
 def _e(v) -> str:
     return html.escape(str(v))
 
@@ -105,8 +118,8 @@ def _settled(rows: list[dict]) -> str:
         # refusal exactly when the position rose, so a per-night verdict on it is
         # a directional scorecard, and this system makes no directional claim.
         # The number stays in the row; only the label is withheld.
-        mark = ('<span class="neg"> · selector corrected</span>'
-                if r.get("session") in SELECTOR_BUG_SESSIONS else "")
+        mark = ('<span class="neg"> · hedged a night early</span>'
+                if _selector_affected(r) else "")
         if on:
             cut = abs(r.get("realised_bp", 0)) < abs(r.get("unhedged_bp", 0))
             verdict, faint = ("cut the move", False) if cut else ("did not cut", True)
@@ -213,11 +226,9 @@ class Site:
         # down night, so dropping it moved the mean from +27 to +136 bp. That is why
         # the tiles carry their session count. One session's mean is one night's
         # market direction, and the number should not be read as more than that.
-        self.clean = [r for r in self.rows
-                      if r.get("session") not in SELECTOR_BUG_SESSIONS]
+        self.excluded = [r for r in self.rows if _selector_affected(r)]
+        self.clean = [r for r in self.rows if not _selector_affected(r)]
         self.clean_sessions = sorted({r.get("session") for r in self.clean if r.get("session")})
-        self.excluded_sessions = sorted(
-            {r.get("session") for r in self.rows if r.get("session") in SELECTOR_BUG_SESSIONS})
 
         self.hedges = [r for r in self.clean if r.get("action") == "HEDGE"]
         self.shrank = sum(1 for r in self.hedges
@@ -380,17 +391,20 @@ declined is a decision it will be graded on.</p>
         if not n:
             return ""
         nights = "night" if n == 1 else "nights"
-        note = (f'<p class="note">Across <strong>{n} {nights}</strong> decided with the '
-                f'corrected calendar ({", ".join(self.clean_sessions)}). ')
-        if self.excluded_sessions:
-            note += (f'{", ".join(self.excluded_sessions)} is excluded - its hedges were '
-                     f'placed a night early, so it cannot say how well a hedge works. '
-                     f'Excluding it <em>raises</em> the mean, because that night fell '
-                     f'broadly. Its rows are still in the table, marked. ')
+        note = (f'<p class="note">Across <strong>{n} {nights}</strong> '
+                f'({", ".join(self.clean_sessions)}). ')
+        if self.excluded:
+            names = ", ".join(sorted(r["ticker"] for r in self.excluded))
+            note += (f'{len(self.excluded)} hedges are excluded - {names} on '
+                     f'{", ".join(sorted({r["session"] for r in self.excluded}))}, placed a '
+                     f'night early, so they cannot say how well a hedge works. Only those '
+                     f'rows: the fault could add a hedge, never remove one, so the refusals '
+                     f'that night stand and are counted. They are still in the table, '
+                     f'marked. ')
         if n < 5:
-            note += ('At this sample size the mean is one night\'s market direction, not '
-                     'a performance record. The claims this project actually stands on are '
-                     'on the Evidence page, measured over years.')
+            note += (f'At {n} {nights} the mean is still mostly market direction rather than '
+                     f'a performance record. The claims this project stands on are on the '
+                     f'Evidence page, measured over years.')
         return note + "</p>"
 
     def settled_page(self) -> str:
@@ -417,9 +431,10 @@ settles at the next opening bell, so nothing can be quietly forgotten.</p>
 <ul class="bul">
 <li><strong>Value added</strong> is what the call returned minus what the other choice would have returned, over the same window, with the hedge cost charged to whichever side pays it. The counterfactual leg is not modelled - it is observed.</li>
 <li><strong>A hedge is graded on whether it cut the move.</strong> It is symmetric, so grading one by profit direction would be meaningless, and one night settles the question.</li>
-<li><strong>Rows marked "selector corrected"</strong> were hedged a night early, before the
-calendar rule checked the release time. They are kept, excluded from the figures above, and
-written up in full under <a href="docs.html#defects">defects</a>.</li>
+<li><strong>Rows marked "hedged a night early"</strong> were hedged before the calendar rule
+checked the release time. They are kept, excluded from the figures above, and written up in
+full under <a href="docs.html#defects">defects</a>. Only hedges are marked: the fault could
+add a hedge, never remove one, so refusals on the same night stand.</li>
 <li><strong>A refusal cannot be graded on one night.</strong> Its value added is positive exactly when the position rose, so a nightly verdict on a refusal is a directional scorecard - and this system makes no directional claim. On a broad down night every refusal scores badly, which is only the case for hedging everything, every night, at 11.3 bp a time. Refusals are graded across the run instead, on the mean above; each row still shows its own arithmetic.</li>
 </ul>
 </div>
