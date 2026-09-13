@@ -114,10 +114,10 @@ Incomplete productization or validation answers do **not** invalidate an entry b
 | X post with `#BitgetHackathon` + `@Bitget_AI` | ❌ **not posted** — an entry without this is invalid regardless of quality |
 | Six-part description | ✅ written — [`docs/SUBMISSION.md`](SUBMISSION.md); only the X post link is a placeholder |
 | Role of the LLM | ✅ event reader implemented — Qwen owns the hedge judgment behind schema, identity and grounding gates |
-| Agentic Account + `--paper-trading` | ❌ not wired; `PaperExecutor` simulates fills at observed prices |
+| Agentic Account + `--paper-trading` | ✅ via the Agent Hub (`ballast/bgc.py`); `PaperExecutor` remains the default and the fallback |
 | Qwen `qwen3.8-max` via `hackathon.bitgetops.com/v1` | ✅ wired (`ballast/llm.py`) — **needs `QWEN_API_KEY`**; endpoint verified live (401 on a dummy key) |
 | Scored metrics on the competition log (Sharpe, max drawdown, win rate) | ✅ `ballast/metrics.py`, rendered on the Settled page — computed on the live ledger for the book and for the same book with every hedge removed |
-| Agent Hub (`bgc` / `bitget-agent-mcp`) | ❌ not used — see §Agent Hub below |
+| Agent Hub (`bgc`) | ✅ wired — `BALLAST_VENUE=bgc` routes the admitted hedge through `bgc --paper-trading`; needs a Demo API key. Off by default; every fill records which venue filled it. |
 
 ### Sub-theme: Earnings-Driven Trading Agent (decided 2026-09-13)
 
@@ -149,18 +149,24 @@ unchanged: Agentic Trading.** Sub-theme sits inside the track; it does not move 
 against Bitget's Demo environment, a `--read-only` mode, and market-analysis skills
 (`bitget-signal`) that run **without credentials**. Trading operations need a Demo API key.
 
-Ballast uses none of it. It talks to public Bitget endpoints directly and simulates fills
-in `PaperExecutor`. That is a defensible engineering choice — zero runtime dependencies is
-a real property of this build — but "Agent architecture quality" is a named judging
-criterion, and an entry that ignores the organiser's own agent infrastructure invites the
-question of why.
+**Execution is now wired** (`ballast/bgc.py`). `BALLAST_VENUE=bgc` plus `BITGET_API_KEY`
+routes each admitted hedge through `bgc --paper-trading`; unset, Ballast simulates as
+before. `--paper-trading` is appended by the module with no parameter to disable it.
 
-Two levels of answer, in cost order:
-1. **Execute paper fills through `bgc --paper-trading`** behind the existing `Executor`
-   interface. The boundary is already the right shape: `execute()` takes only an `Admitted`,
-   so the venue swaps without touching the enforcer. Needs a Demo API key.
-2. **Say why not, on the record.** If the wiring does not land, the docs should state the
-   choice and its reason rather than leave a silent gap.
+The swap cost one class because the seam was already correct: `execute()` takes an
+`Admitted` and nothing else, so the venue changes *underneath* the enforcer. A model that
+reaches the venue still cannot express a directional trade — it has no way to construct
+the only argument the method accepts.
+
+The failure mode that mattered was not a crash but a **silent substitution**: if `bgc` is
+missing and Ballast quietly simulates while the ledger still reads `bgc-paper`, the chain
+carries a false claim about the venue and nothing downstream can detect it. So every
+failure is typed (`BgcUnavailable` with a reason), every fill row records `venue`, and a
+mid-session fallback also records `venue_fallback` with the reason. A test perturbs the
+labelling and fails.
+
+Still unused, and a fair question a judge could ask: the **MCP server** and the keyless
+`bitget-signal` research skills. Ballast reads its own news and earnings feeds.
 
 ### Prize opt-ins on the form
 

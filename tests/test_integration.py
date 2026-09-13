@@ -11,12 +11,13 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
 from unittest import mock
 
-from ballast import config, morning, night, report
+from ballast import bgc, config, morning, night, report
 from ballast.book import Book, Position
 from ballast.ledger import Ledger, LedgerError
 from ballast.market import MarketDataUnavailable
@@ -378,3 +379,64 @@ class TestBitgetExport(LivePathCase):
         a = export.build(Path(self.tmp.name) / "a.json").read_text()
         b = export.build(Path(self.tmp.name) / "b.json").read_text()
         self.assertEqual(json.loads(a)["data"], json.loads(b)["data"])
+
+
+class TestExecutionVenue(LivePathCase):
+    """Which venue filled is recorded, never inferred.
+
+    A simulated fill wearing the Agent Hub's label would be a false claim on the
+    chain that nothing downstream could detect, so every row and every summary
+    says which of the two actually happened.
+    """
+
+    def test_simulated_by_default(self):
+        summary = self.run_night()
+        self.assertEqual(summary["venue"], "simulated")
+        for r in self.ledger().records("decision"):
+            fill = r["body"].get("fill")
+            if fill:
+                self.assertEqual(fill["venue"], "simulated")
+                self.assertNotIn("venue_fallback", fill)
+
+    def test_routes_through_bgc_when_configured(self):
+        done = subprocess.CompletedProcess(
+            ["bgc"], 0, stdout=json.dumps({"avgPrice": 212.4, "fee": 0.6}), stderr="")
+        with mock.patch.dict("os.environ",
+                             {bgc.VENUE_ENV: "bgc", bgc.KEY_ENV: "demo-key"}), \
+             mock.patch.object(bgc.shutil, "which", lambda _: "/usr/bin/bgc"), \
+             mock.patch.object(bgc.subprocess, "run", return_value=done):
+            summary = self.run_night()
+        self.assertEqual(summary["venue"], "bgc-paper")
+        fills = [r["body"]["fill"] for r in self.ledger().records("decision")
+                 if r["body"].get("fill")]
+        self.assertTrue(fills, "the reporting name should have been hedged")
+        for fill in fills:
+            self.assertEqual(fill["venue"], "bgc-paper")
+            self.assertEqual(fill["price"], 212.4)
+
+    def test_a_mid_session_failure_is_labelled_simulated_and_explained(self):
+        """The substitution this guard exists to prevent."""
+        done = subprocess.CompletedProcess(["bgc"], 1, stdout="", stderr="rate limited")
+        with mock.patch.dict("os.environ",
+                             {bgc.VENUE_ENV: "bgc", bgc.KEY_ENV: "demo-key"}), \
+             mock.patch.object(bgc.shutil, "which", lambda _: "/usr/bin/bgc"), \
+             mock.patch.object(bgc.subprocess, "run", return_value=done):
+            summary = self.run_night()
+        # The run still intended bgc; the individual fill says it did not get there.
+        self.assertEqual(summary["venue"], "bgc-paper")
+        fills = [r["body"]["fill"] for r in self.ledger().records("decision")
+                 if r["body"].get("fill")]
+        self.assertTrue(fills)
+        for fill in fills:
+            self.assertEqual(fill["venue"], "simulated")
+            self.assertIn("rate limited", fill["venue_fallback"])
+
+    def test_the_night_still_completes_when_the_venue_is_down(self):
+        done = subprocess.CompletedProcess(["bgc"], 1, stdout="", stderr="down")
+        with mock.patch.dict("os.environ",
+                             {bgc.VENUE_ENV: "bgc", bgc.KEY_ENV: "demo-key"}), \
+             mock.patch.object(bgc.shutil, "which", lambda _: "/usr/bin/bgc"), \
+             mock.patch.object(bgc.subprocess, "run", return_value=done):
+            summary = self.run_night()
+        self.assertEqual(self.ledger().verify(), len(TICKERS) + 2)
+        self.assertGreater(summary["hedged"], 0)

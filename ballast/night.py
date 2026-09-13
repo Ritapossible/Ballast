@@ -187,8 +187,18 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
         "signature": signed.signature, "dev_secret": config.using_dev_secret(),
     }, now)
 
+    # Execution venue. BALLAST_VENUE=bgc routes the admitted hedge through the
+    # Bitget Agent Hub CLI in paper-trading mode, so the fill price comes from the
+    # exchange's Demo environment rather than from our own simulation. Unset, or
+    # unavailable for any reason, Ballast simulates as before - and the ledger says
+    # which of the two actually happened, per order. It is never inferred.
+    from .bgc import BgcExecutor, BgcUnavailable
+    from .bgc import available as bgc_available
     from .executor import PaperExecutor
-    executor = PaperExecutor()
+    paper = PaperExecutor()
+    bgc_ok, bgc_why = bgc_available()
+    executor = BgcExecutor() if bgc_ok else paper
+    venue = "bgc-paper" if bgc_ok else "simulated"
     hedged = declined = 0
 
     errors = news_down = 0
@@ -263,8 +273,18 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
         if not dry_run:
             if verdict.admission is None:                # unreachable: rejected above
                 raise RuntimeError(f"admitted verdict carried no admission for {pos.ticker}")
-            fill = executor.execute(verdict.admission, perp_marks[pos.perp_symbol], now)
-            record["fill"] = fill.to_record()
+            mark = perp_marks[pos.perp_symbol]
+            fill_venue, fallback = venue, None
+            try:
+                fill = executor.execute(verdict.admission, mark, now)
+            except BgcUnavailable as exc:
+                # Route failed mid-session. Simulate, and say so on this row rather
+                # than letting a simulated fill inherit the Agent Hub's label.
+                fill = paper.execute(verdict.admission, mark, now)
+                fill_venue, fallback = "simulated", exc.reason
+            record["fill"] = fill.to_record() | {"venue": fill_venue}
+            if fallback:
+                record["fill"]["venue_fallback"] = fallback
         hedged += 1
         ledger.append("decision", record, now)
 
@@ -280,6 +300,8 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
         "forced": bool(force),
         "usage": enforcer.usage, "dry_run": dry_run,
         "reader": "on" if use_reader and llm_available() else "off (no QWEN_API_KEY)",
+        "venue": venue,
+        "venue_detail": "Bitget Agent Hub, paper-trading" if bgc_ok else bgc_why,
     }
     ledger.append("night_summary", summary, now)
     return summary

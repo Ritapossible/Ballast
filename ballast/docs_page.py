@@ -378,16 +378,23 @@ tail-coverage cohorts re-run split by who decided.</li>
 implying otherwise.</li>
 </ul>
 
-<h4>2 &middot; Live execution through the Agentic Account</h4>
-<p>Fills are simulated against observed prices with the real fee schedule, and the
-ledger is exported in Bitget UTA order field names so it reads alongside a real log -
-but <strong>no order reaches an exchange</strong>. The executor interface is already the
-seam: a live implementation replaces one class and nothing upstream changes.</p>
+<h4>2 &middot; Execution through the Bitget Agent Hub</h4>
+<p><strong>Built, and off unless switched on.</strong> <code>BALLAST_VENUE=bgc</code>
+routes the admitted hedge through the Agent Hub CLI in <code>--paper-trading</code>
+mode, so the fill price comes from Bitget's Demo environment rather than from our own
+simulation. Unset, fills are simulated against observed prices with the real fee
+schedule, as before.</p>
+<p>The swap was one class because the seam was already right: <code>execute()</code>
+takes an <em>admission</em> and nothing else - no symbol, no side, no size - so the
+venue changes underneath the enforcer rather than beside it.</p>
 <ul>
-<li><strong>Needs</strong> OAuth credentials for a Bitget Agentic sub-account.</li>
-<li><strong>Blocked by</strong> credentials, which are the operator's to issue.</li>
-<li><strong>Risk if rushed</strong> - an untested live-order path is worse than an
-honest simulated one.</li>
+<li><strong>Every fill says which venue filled it</strong>, per order. If the route
+fails mid-session Ballast simulates and the row records that it did, with the reason.
+A simulated fill never inherits the Agent Hub's label.</li>
+<li><strong>Needs</strong> a Bitget Demo API key, which is the operator's to issue.</li>
+<li><strong>Still paper.</strong> <code>--paper-trading</code> is appended by the module
+and there is no parameter to turn it off; no order can reach a live venue by this
+path.</li>
 </ul>
 
 <h4>3 &middot; Position-level reporting</h4>
