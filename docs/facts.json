@@ -1,7 +1,7 @@
 {
   "exit_cost_bp": 20.0,
   "hedge_cost_bp": 11.3,
-  "measured_on": "2026-09-12",
+  "measured_on": "2026-09-13",
   "median_r2": 0.982,
   "median_tail_cut_pct": 88,
   "oos": {
