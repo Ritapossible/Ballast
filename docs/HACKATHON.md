@@ -109,12 +109,65 @@ Incomplete productization or validation answers do **not** invalidate an entry b
 |---|---|
 | Runnable demo | ✅ CLI plus a self-contained public page (`docs/index.html`, rebuilt nightly) — no login, no backend, no CDN |
 | Event → decision → execution flow | ✅ `docs/ARCHITECTURE.md`; every step is in the signed ledger |
-| Paper trading log, run during the competition | ✅ **automated** — scheduled workflow runs after the close and after the open, verifies the chain, and commits the ledger. GitHub timestamps each commit independently, so the record is provably not backfilled. |
+| Paper trading log, run during the competition | ✅ **automated**, ⚠️ **short** — the handbook recommends 2+ weeks; the loop went live 2026-09-09, so the deadline falls at roughly nine decided sessions. Nothing can be backfilled; the only lever left is that every remaining session lands. — scheduled workflow runs after the close and after the open, verifies the chain, and commits the ledger. GitHub timestamps each commit independently, so the record is provably not backfilled. |
 | X post with `#BitgetHackathon` + `@Bitget_AI` | ❌ **not posted** — an entry without this is invalid regardless of quality |
 | Six-part description | ✅ written — [`docs/SUBMISSION.md`](SUBMISSION.md); only the X post link is a placeholder |
 | Role of the LLM | ✅ event reader implemented — Qwen owns the hedge judgment behind schema, identity and grounding gates |
 | Agentic Account + `--paper-trading` | ❌ not wired; `PaperExecutor` simulates fills at observed prices |
 | Qwen `qwen3.8-max` via `hackathon.bitgetops.com/v1` | ✅ wired (`ballast/llm.py`) — **needs `QWEN_API_KEY`**; endpoint verified live (401 on a dummy key) |
+| Scored metrics on the competition log (Sharpe, max drawdown, win rate) | ✅ `ballast/metrics.py`, rendered on the Settled page — computed on the live ledger for the book and for the same book with every hedge removed |
+| Agent Hub (`bgc` / `bitget-agent-mcp`) | ❌ not used — see §Agent Hub below |
+
+### Sub-theme: Event-Driven or Earnings-Driven?
+
+The form asks for one sub-theme, and the Theme Prize is awarded per sub-theme, so the
+label picks the field this entry competes in. `docs/SUBMISSION.md` currently says
+**Event-Driven Agent**.
+
+The live record argues for **Earnings-Driven Trading Agent** instead, and not as
+positioning — as description:
+
+- Of 36 decisions on the chain, **every one of the 4 hedges was an earnings event**
+  (`event.type == "earnings"`). The other 32 read `none` and declined.
+- The only scheduled-event calendar in the codebase is the **earnings** calendar
+  (`ballast/earnings.py`, Nasdaq). `EventType` also names guidance, macro, legal and
+  product, but none of those has a feed behind it; they can only ever arrive through the
+  reader's headlines.
+- The deterministic fallback selector is the earnings calendar, so on the nights the
+  reader abstains the agent is *purely* earnings-driven.
+
+"Event-Driven Agent" is also true, and is the broader, more crowded description. The
+narrower label is the one the evidence actually supports.
+
+**Decision required before submission.** Either label is defensible; only one is on the form.
+
+### Agent Hub
+
+`https://github.com/Bitget-AI/agent_hub` ships an MCP server (`bitget-agent-mcp`), a CLI
+(`bgc`), 89 UTA v3 trading operations behind 14 intent verbs, a `--paper-trading` mode
+against Bitget's Demo environment, a `--read-only` mode, and market-analysis skills
+(`bitget-signal`) that run **without credentials**. Trading operations need a Demo API key.
+
+Ballast uses none of it. It talks to public Bitget endpoints directly and simulates fills
+in `PaperExecutor`. That is a defensible engineering choice — zero runtime dependencies is
+a real property of this build — but "Agent architecture quality" is a named judging
+criterion, and an entry that ignores the organiser's own agent infrastructure invites the
+question of why.
+
+Two levels of answer, in cost order:
+1. **Execute paper fills through `bgc --paper-trading`** behind the existing `Executor`
+   interface. The boundary is already the right shape: `execute()` takes only an `Admitted`,
+   so the venue swaps without touching the enforcer. Needs a Demo API key.
+2. **Say why not, on the record.** If the wiring does not land, the docs should state the
+   choice and its reason rather than leave a silent gap.
+
+### Prize opt-ins on the form
+
+- **University Special** (10 × 500 USDT) — mutually exclusive with main-track prizes, so it
+  is a trade, not a bonus: far better odds against a much smaller field. Only available if
+  a team member is a student.
+- **K3 subsidy** (30 USD, up to 60 combined) — a checkbox, post-event, costs nothing.
+- **Fan Favorite** stacks with everything; it follows from the X post, not the form.
 
 ### The track definition, and how it was resolved
 
