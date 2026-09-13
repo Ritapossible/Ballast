@@ -23,6 +23,10 @@ from ballast import facts
 
 SUBMISSION = Path(__file__).resolve().parent.parent / "docs" / "SUBMISSION.md"
 
+# The document writes ranges with an en dash, so the test has to match one. Spelled
+# as an escape because a literal en dash in source is what RUF001 exists to catch.
+EN_DASH = "\u2013"
+
 
 class SubmissionFigures(unittest.TestCase):
     @classmethod
@@ -77,9 +81,9 @@ class SubmissionFigures(unittest.TestCase):
 
     def test_night_range_matches_the_measured_sample(self) -> None:
         oos = self.f["oos"]
-        span = f"{oos['shortest']}–{oos['longest']}"
-        found = set(re.findall(r"\b(\d{2,3}–\d{2,3}) (?:overnight windows|nights each)",
-                               self.text))
+        span = f"{oos['shortest']}{EN_DASH}{oos['longest']}"
+        found = set(re.findall(rf"\b(\d{{2,3}}{EN_DASH}\d{{2,3}}) "
+                               rf"(?:overnight windows|nights each)", self.text))
         self.assertTrue(found, "part 1 and part 3 must state the sample length")
         self.assertEqual(
             found, {span},
