@@ -10,7 +10,7 @@ Read this before touching anything. It exists so facts are looked up, not recall
 **Ballast lets you hold tokenized US stocks through the night without holding the night's
 risk — one decision per position, priced before you sleep, settled at the opening bell.**
 
-Entry: **Bitget AI Base Camp Hackathon S2 · Agentic Trading track · Earnings-Driven Trading Agent sub-theme.**
+Entry: **Bitget AI Base Camp Hackathon S2 · Agentic Trading track · Event-Driven Agent sub-theme.**
 Deadline **2026-09-21 (UTC+8)**. Single entry unless the Day-9 checkpoint clears a second.
 
 ### The negative capability — enforce it, never merely claim it

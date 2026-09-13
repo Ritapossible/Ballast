@@ -12,7 +12,7 @@ from __future__ import annotations
 import datetime as dt
 import sys
 
-from . import config, llm
+from . import bgc, config, llm
 from .earnings import scheduled_in_window
 from .news import NewsUnavailable, fetch, in_window
 from .reader import read
@@ -85,6 +85,19 @@ def run(ticker: str = "ORCL") -> int:
         gate = verdict.rejected_because.value if verdict.rejected_because else "unspecified"
         _line(WARN, "reader", f"refused by gate: {gate}")
         print("         the gates are doing their job; the calendar rule would decide")
+
+    # --- execution venue ---------------------------------------------------
+    # Not a failure if absent: simulated fills are the documented default. This is
+    # here so the operator learns the route is wrong from a check that writes
+    # nothing, rather than from a night that quietly fell back.
+    ready, why = bgc.available()
+    if ready:
+        found, detail = bgc.discover()
+        _line(OK if found else WARN, "venue", f"Agent Hub paper-trading · {detail}")
+        if not found:
+            print("         orders would fail and fall back to simulated fills")
+    else:
+        _line(OK, "venue", f"simulated fills ({why})")
 
     outcome = f"FAILURES: {failures}" if failures else "all checks passed"
     print(f"\nledger untouched · {outcome}")

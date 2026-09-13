@@ -32,9 +32,9 @@ Captured 2026-09-08. Where this file and the handbook disagree, the handbook win
 
 ### Sub-themes (5 named + open, per track)
 
-**Agentic Trading:** Event-Driven Agent · Market Sentiment Agent ·
-**Earnings-Driven Trading Agent** ← *ours* · Cross-Asset Execution Agent ·
-Factor Discovery Agent · Open
+**Agentic Trading:** **Event-Driven Agent** ← *ours* · Market Sentiment Agent ·
+Earnings-Driven Trading Agent · Cross-Asset Execution Agent · Factor Discovery Agent ·
+Open *(selection is optional)*
 
 ## Prizes
 
@@ -119,28 +119,36 @@ Incomplete productization or validation answers do **not** invalidate an entry b
 | Scored metrics on the competition log (Sharpe, max drawdown, win rate) | ✅ `ballast/metrics.py`, rendered on the Settled page — computed on the live ledger for the book and for the same book with every hedge removed |
 | Agent Hub (`bgc`) | ✅ wired — `BALLAST_VENUE=bgc` routes the admitted hedge through `bgc --paper-trading`; needs a Demo API key. Off by default; every fill records which venue filled it. |
 
-### Sub-theme: Earnings-Driven Trading Agent (decided 2026-09-13)
+### Sub-theme: Event-Driven Agent (settled 2026-09-13)
 
-The form asks for one sub-theme, and the Theme Prize is awarded per sub-theme, so the
-label picks the field this entry competes in. It was **Event-Driven Agent** and is now
-**Earnings-Driven Trading Agent**, on the record rather than on positioning:
+The handbook states the question each sub-theme answers, and the two candidates differ on
+what the agent *reads*:
 
-- Of 36 decisions on the chain, **every one of the 4 hedges was an earnings event**
-  (`event.type == "earnings"`). The other 32 read `none` and declined.
-- The only scheduled-event calendar in the codebase is the **earnings** calendar
-  (`ballast/earnings.py`, Nasdaq). `EventType` also names guidance, macro, legal and
-  product, but none of those has a feed behind it; they can only ever arrive through the
-  reader's headlines.
-- The deterministic fallback selector is the earnings calendar, so on the nights the
-  reader abstains the agent is *purely* earnings-driven.
+> **Event-Driven Agent** — "How do news / announcements / macro events drive autonomous
+> Agent trading?" *Policy speech → LLM interpretation → rebalance; earnings beat → add
+> position; **rate decision → hedge rotation**."*
+>
+> **Earnings-Driven Trading Agent** — "How does the Agent autonomously **interpret
+> earnings / conference calls** and execute?" *EPS beat → add; guidance cut → reduce;
+> post-earnings anomaly tracking.*
 
-"Event-Driven Agent" is also true, and is the broader, more crowded description — which
-is the second reason to leave it: one Theme Prize per sub-theme means the generic label is
-the contested one. The narrower label is both the better-odds field and the one the
-evidence actually supports.
+**Ballast is Event-Driven.** It never reads earnings *content*. `ballast/earnings.py`
+pulls the Nasdaq **calendar** — dates only, and the module says the time field is "used
+when present to describe the event, never to gate it." A scheduled report means *tonight
+is dangerous*, not *the print will be good*. Every Earnings-Driven example is directional
+(add, reduce); Ballast is deliberately non-directional and the enforcer makes a
+directional order unrepresentable. Event-Driven's own example — "rate decision → hedge
+rotation" — is the mechanism.
 
-Changed in `docs/SUBMISSION.md`, `README.md`, `PLAN.md` and `CLAUDE.md`. The **track is
-unchanged: Agentic Trading.** Sub-theme sits inside the track; it does not move the entry.
+The reader also weighs macro: the live SPY row reasons about FOMC and CPI, not earnings.
+
+**An earlier revision of this file argued the opposite** from the abbreviated sub-theme
+list, on the evidence that all four hedges to date carry `event.type == "earnings"`. That
+count is real but does not support the claim: earnings is the only *calendar feed* wired,
+not the only event class considered, and using a calendar as a timing signal is not
+interpreting earnings. Recorded because it is the kind of mistake that gets made twice.
+
+Sub-theme selection is **optional** per the handbook, not mandatory.
 
 ### Agent Hub
 
@@ -164,6 +172,18 @@ carries a false claim about the venue and nothing downstream can detect it. So e
 failure is typed (`BgcUnavailable` with a reason), every fill row records `venue`, and a
 mid-session fallback also records `venue_fallback` with the reason. A test perturbs the
 labelling and fails.
+
+**One honest caveat.** The order verb (`bgc.ORDER_VERB`) follows Agent Hub's documented
+shape, but the published README does not spell out the argv for placing an order and no
+`bgc` binary has been run against this code. If the verb is wrong the order fails, the
+failure is typed, the fill is simulated and the row says so — nothing is mis-recorded, but
+nothing routes either. `python -m ballast.preflight` now runs `bgc discover` and reports
+whether the verb is on the CLI's actual tool surface, so that is learned from a check that
+writes nothing rather than from a night that quietly fell back.
+
+The nightly workflow installs the CLI and sets `BALLAST_VENUE=bgc` **only when a
+`BITGET_API_KEY` secret exists**. Adding that secret is the entire switch; no workflow edit
+is needed, and without it nothing changes.
 
 Still unused, and a fair question a judge could ask: the **MCP server** and the keyless
 `bitget-signal` research skills. Ballast reads its own news and earnings feeds.

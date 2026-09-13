@@ -53,6 +53,11 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
+    env:
+      # Job-level so a step `if` can test it: the `secrets` context is not
+      # available in `if`, but `env` is. Empty until the Demo key is added.
+      BITGET_API_KEY: ${{ secrets.BITGET_API_KEY }}
+      BALLAST_VENUE: ${{ secrets.BITGET_API_KEY != '' && 'bgc' || '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -60,7 +65,14 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Preflight (credentials and the live reader, writes nothing)
+      # The Agent Hub CLI, installed only when a Demo key exists to use it with.
+      # Without the secret the step is skipped, bgc.available() reports the key is
+      # unset, and fills are simulated exactly as they have been all along.
+      - name: Install the Bitget Agent Hub CLI
+        if: env.BITGET_API_KEY != ''
+        run: npx --yes @bitget-ai/bitget-agent-installer upgrade-all --target all
+
+      - name: Preflight (credentials, the live reader and the venue; writes nothing)
         if: inputs.task == 'check'
         env:
           QWEN_API_KEY: ${{ secrets.QWEN_API_KEY }}

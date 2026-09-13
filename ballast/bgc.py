@@ -27,6 +27,14 @@ Three things this deliberately does NOT do:
   written to the ledger, the pages, or an argv the process table can read.
 
 Enable with BALLAST_VENUE=bgc. Unset, Ballast runs exactly as before.
+
+UNVERIFIED, and deliberately so: the order verb below is Agent Hub's documented
+shape, but the published README does not spell out the argv for placing an order,
+and no `bgc` has been run against this code. `bgc discover` is the CLI's own tool
+surface - run `python -m ballast.preflight` on a machine that has the CLI and it
+prints what the binary actually exposes. If the verb is wrong the order fails, the
+failure is typed, the fill is simulated and the ledger row says so; nothing is
+silently mis-recorded. But it also would not route, so confirm before relying on it.
 """
 from __future__ import annotations
 
@@ -40,6 +48,9 @@ from .costs import PERP_TAKER_FEE, SLIPPAGE_BP
 from .enforcer import Admitted
 from .executor import Fill
 
+# The order verb. Confirm against `bgc discover` before enabling - see the module
+# docstring. Kept as a constant so correcting it is a one-line change.
+ORDER_VERB = ("trade", "place-order")
 BGC_BIN = "bgc"
 TIMEOUT_S = 45
 VENUE_ENV = "BALLAST_VENUE"
@@ -142,7 +153,7 @@ class BgcExecutor:
             raise ValueError("notional must be positive")
 
         payload = _run([
-            "trade", "place-order",
+            *ORDER_VERB,
             "--symbol", intent.perp_symbol,
             "--side", intent.side,
             "--order-type", "market",
@@ -166,3 +177,27 @@ class BgcExecutor:
             notional_usdt=notional, price=price, fee_usdt=fee_usdt,
             slippage_bp=round(realised_bp, 2), at=at, paper=True,
         )
+
+
+def discover() -> tuple[bool, str]:
+    """Ask the CLI what it actually exposes, and whether our order verb is there.
+
+    Read-only: `bgc discover` places nothing. This exists because the order argv
+    above is inferred from documentation rather than from a binary we have run, and
+    a scheduled night is a poor place to find that out.
+    """
+    if shutil.which(BGC_BIN) is None:
+        return False, f"{BGC_BIN} is not on PATH"
+    try:
+        proc = subprocess.run([BGC_BIN, "discover"], capture_output=True, text=True,
+                              timeout=TIMEOUT_S, check=False)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return False, f"could not run {BGC_BIN} discover: {exc}"
+    if proc.returncode != 0:
+        return False, f"discover exited {proc.returncode}"
+    surface = proc.stdout
+    verb = " ".join(ORDER_VERB)
+    if verb in surface or ORDER_VERB[-1] in surface:
+        return True, f"{verb!r} is on the tool surface"
+    return False, (f"{verb!r} NOT found on the tool surface - correct "
+                   f"bgc.ORDER_VERB before enabling")

@@ -92,7 +92,7 @@ class SubmissionFigures(unittest.TestCase):
 
     def test_track_and_subtheme_are_stated(self) -> None:
         self.assertIn("| **Track** | Agentic Trading |", self.text)
-        self.assertIn("| **Sub-theme** | Earnings-Driven Trading Agent |", self.text)
+        self.assertIn("| **Sub-theme** | Event-Driven Agent |", self.text)
 
 
 if __name__ == "__main__":

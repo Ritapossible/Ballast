@@ -7,7 +7,7 @@ each is reproducible from `research/` with no API key.
 | Field | Value |
 |---|---|
 | **Track** | Agentic Trading |
-| **Sub-theme** | Earnings-Driven Trading Agent |
+| **Sub-theme** | Event-Driven Agent |
 | **Project** | Ballast |
 | **Demo** | https://ballast-v1.vercel.app · docs at `/docs` |
 | **Code** | https://github.com/Ritapossible/Ballast |
