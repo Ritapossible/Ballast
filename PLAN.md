@@ -1,5 +1,5 @@
 # Ballast - Build Plan
-**Bitget AI Base Camp Hackathon S2 · Agentic Trading · Event-Driven Agent**
+**Bitget AI Base Camp Hackathon S2 · Agentic Trading · Earnings-Driven Trading Agent**
 Deadline **2026-09-21 (UTC+8)**. Written 2026-09-08, with 13 days remaining at the time of writing - a snapshot, not a live countdown.
 
 ---
@@ -75,7 +75,7 @@ calendar and re-run (b) on calendar-selected nights.** Do not fabricate dates.
 | | Decision |
 |---|---|
 | **Track** | Agentic Trading - **single entry** |
-| **Sub-theme** | Event-Driven Agent |
+| **Sub-theme** | Earnings-Driven Trading Agent |
 | **Why not Alpha Factory** | Pure-quantitative scoring on Sharpe/Sortino of a *return stream*. Ballast is an overlay; scored standalone the hedge leg is meaningless, and asking a judge to adopt our benchmark framing is a risk in a track that says "pure quantitative." |
 | **Second entry** | **Not committed.** Candidate exists (is the post-hedge basis tradeable?) but is unmeasured. Decide at Day 9 checkpoint, not before. Two thin entries lose to one complete one. |
 | **Universe** | The 219 rTokens with a matched perp. Everything else is explicitly out of scope and *reported as such* - knowing which positions are unprotectable is part of the product. |

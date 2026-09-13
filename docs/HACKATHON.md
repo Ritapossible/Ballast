@@ -32,8 +32,9 @@ Captured 2026-09-08. Where this file and the handbook disagree, the handbook win
 
 ### Sub-themes (5 named + open, per track)
 
-**Agentic Trading:** Event-Driven Agent ← *ours* · Market Sentiment Agent ·
-Earnings-Driven Trading Agent · Cross-Asset Execution Agent · Factor Discovery Agent · Open
+**Agentic Trading:** Event-Driven Agent · Market Sentiment Agent ·
+**Earnings-Driven Trading Agent** ← *ours* · Cross-Asset Execution Agent ·
+Factor Discovery Agent · Open
 
 ## Prizes
 
@@ -118,14 +119,11 @@ Incomplete productization or validation answers do **not** invalidate an entry b
 | Scored metrics on the competition log (Sharpe, max drawdown, win rate) | ✅ `ballast/metrics.py`, rendered on the Settled page — computed on the live ledger for the book and for the same book with every hedge removed |
 | Agent Hub (`bgc` / `bitget-agent-mcp`) | ❌ not used — see §Agent Hub below |
 
-### Sub-theme: Event-Driven or Earnings-Driven?
+### Sub-theme: Earnings-Driven Trading Agent (decided 2026-09-13)
 
 The form asks for one sub-theme, and the Theme Prize is awarded per sub-theme, so the
-label picks the field this entry competes in. `docs/SUBMISSION.md` currently says
-**Event-Driven Agent**.
-
-The live record argues for **Earnings-Driven Trading Agent** instead, and not as
-positioning — as description:
+label picks the field this entry competes in. It was **Event-Driven Agent** and is now
+**Earnings-Driven Trading Agent**, on the record rather than on positioning:
 
 - Of 36 decisions on the chain, **every one of the 4 hedges was an earnings event**
   (`event.type == "earnings"`). The other 32 read `none` and declined.
@@ -136,10 +134,13 @@ positioning — as description:
 - The deterministic fallback selector is the earnings calendar, so on the nights the
   reader abstains the agent is *purely* earnings-driven.
 
-"Event-Driven Agent" is also true, and is the broader, more crowded description. The
-narrower label is the one the evidence actually supports.
+"Event-Driven Agent" is also true, and is the broader, more crowded description — which
+is the second reason to leave it: one Theme Prize per sub-theme means the generic label is
+the contested one. The narrower label is both the better-odds field and the one the
+evidence actually supports.
 
-**Decision required before submission.** Either label is defensible; only one is on the form.
+Changed in `docs/SUBMISSION.md`, `README.md`, `PLAN.md` and `CLAUDE.md`. The **track is
+unchanged: Agentic Trading.** Sub-theme sits inside the track; it does not move the entry.
 
 ### Agent Hub
 

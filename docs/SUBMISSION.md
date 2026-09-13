@@ -7,7 +7,7 @@ each is reproducible from `research/` with no API key.
 | Field | Value |
 |---|---|
 | **Track** | Agentic Trading |
-| **Sub-theme** | Event-Driven Agent |
+| **Sub-theme** | Earnings-Driven Trading Agent |
 | **Project** | Ballast |
 | **Demo** | https://ballast-v1.vercel.app · docs at `/docs` |
 | **Code** | https://github.com/Ritapossible/Ballast |
@@ -27,9 +27,9 @@ single night** (`observed`).
 Ballast adds a third option: **keep the position, and switch the night's risk off for a
 stated price.**
 
-**The mechanism.** Of 699 live rTokens, **219 have a matched stock perpetual** trading the
-same 24/7 clock (`observed`). Shorting that perp against the token removes a **median 98.0%
-of overnight variance at β within 4% of 1.00** across 12 names and 100–260 nights each
+**The mechanism.** Of 1,173 live rTokens, **241 have a matched stock perpetual** trading the
+same 24/7 clock (`observed`). Shorting that perp against the token removes a **median 98.2%
+of overnight variance at β within 4% of 1.00** across 12 names and 100–264 nights each
 (`observed`). It costs **11.3 bp** taker round trip net of funding received - against
 **20 bp** to exit the position and lose it (`estimated` from observed fee schedules).
 
@@ -99,11 +99,11 @@ into earnings - they want the position and not the gap.
 **The value, stated plainly:** for ~11 bp they keep the position and remove ~98% of a
 specific night's variance - median **88% off the p95 tail**, MSFT's worst night **1,128 bp →
 233 bp**, AMD's **1,262 bp → 90 bp** (`observed`). Ballast also states which of their
-positions it *cannot* protect: **480 of 699 rTokens have no perp leg.**
+positions it *cannot* protect: **932 of 1,173 rTokens have no perp leg.**
 
 ## 3 · Validation data and key metrics
 
-**Test period.** Hedge measurements: 2024-05 → 2026-09, 12 names, 100–260 overnight windows
+**Test period.** Hedge measurements: 2024-05 → 2026-09, 12 names, 100–264 overnight windows
 each. Selector tests: 2025-10 → 2026-09, 15 names. Policy replay: 55 sessions × 12
 equal-weighted positions. Forward paper log: from 2026-09-08, running to submission.
 
@@ -116,7 +116,7 @@ upside and never assumed.
 
 | Metric | Value |
 |---|---|
-| Median overnight variance removed | **98.0%** |
+| Median overnight variance removed | **98.2%** |
 | Hedge ratio β | 0.985–1.040 (12 names) |
 | R² on top-decile move nights | **0.978–0.999** |
 | R² on calm nights | 0.77–0.96 |

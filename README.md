@@ -110,5 +110,5 @@ python3 research/gate1_selection.py # can risky nights be chosen in advance
 
 MIT - see [`LICENSE`](LICENSE).
 
-Built for the **Bitget AI Base Camp Hackathon S2** - Agentic Trading, Event-Driven Agent.
+Built for the **Bitget AI Base Camp Hackathon S2** - Agentic Trading, Earnings-Driven Trading Agent.
 Paper trading only; no live fill is claimed anywhere.
