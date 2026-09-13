@@ -121,6 +121,10 @@ jobs:
         run: |
           python -m ballast.report
           python -m ballast.docs_page
+          # The README quotes the same measurements. CI checks it matches
+          # facts.json, so a nightly refresh that moved a figure and left the
+          # README behind would turn CI red until someone ran this by hand.
+          python tools/readme_facts.py
           # Every page the builder declares must exist on disk afterwards.
           python - <<'EOF'
           from pathlib import Path
@@ -143,7 +147,7 @@ jobs:
           # were rebuilt on the runner and thrown away, so the Tonight and Settled
           # pages never showed a scheduled decision. A named list silently goes
           # stale every time a page is added - a directory cannot.
-          git add -A state/ docs/
+          git add -A state/ docs/ README.md
           if git diff --cached --quiet; then
             echo "nothing changed"
             exit 0
@@ -155,7 +159,7 @@ jobs:
           git stash push --staged --message "pending ledger"
           git pull --rebase --autostash origin main
           git stash pop
-          git add -A state/ docs/
+          git add -A state/ docs/ README.md
           git commit -m "ledger: $(date -u '+%Y-%m-%d %H:%MZ')"
 
           for attempt in 1 2 3; do

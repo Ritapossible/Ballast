@@ -21,6 +21,7 @@ from . import config
 from .facts import load as load_facts
 from .facts import worst_night
 from .ledger import Ledger, LedgerError
+from .metrics import paper_metrics
 from .sessions import UTC, close_utc, current_session, sessions_between, window_hours
 from .theme import REPO, page
 
@@ -580,6 +581,57 @@ order log re-encodes the ledger into Bitget's field names rather than reporting 
 state.</p>"""
 
     @property
+    def paper_metrics_block(self) -> str:
+        """The metrics the track scores, on the log run during the competition.
+
+        Ballast makes no Sharpe claim and that does not change here. But refusing
+        to claim a number is not a reason to withhold it: half this track is scored
+        on paper-trading Sharpe, max drawdown and win rate, and the live log
+        reported none of the three. Both columns, so the comparison is the one the
+        product is actually about.
+        """
+        m = paper_metrics(self.rows)
+        if not m["nights"]:
+            return ""
+
+        def bp(v):
+            return f"{v:+,.0f} bp"
+
+        rows = [
+            ("Max drawdown", bp(m["hedged_max_dd_bp"]), bp(m["unhedged_max_dd_bp"]),
+             "the claim: protection is measured in drawdown, not return"),
+            ("Total return", bp(m["hedged_total_bp"]), bp(m["unhedged_total_bp"]),
+             "equal-weight across the book, net of hedge cost"),
+            ("Sharpe, annualised",
+             f"{m['hedged_sharpe']:+.2f}" if m["hedged_sharpe"] is not None else "-",
+             f"{m['unhedged_sharpe']:+.2f}" if m["unhedged_sharpe"] is not None else "-",
+             f"noise at {m['nights']} nights - shown because the track asks for it"),
+            ("Win rate", f"{m['win_rate_pct']}%" if m["win_rate_pct"] is not None else "-",
+             "-", f"{m['hedges_that_cut']} of {m['hedges']} hedges cut the move"),
+            ("Orders placed", f"{m['orders']}", "0",
+             f"{m['positions']} position-nights, so {m['orders']} orders in total"),
+        ]
+        body = "".join(
+            f'<tr><td data-label=""><strong>{_e(name)}</strong></td>'
+            f'<td class="num" data-label="Ballast">{_e(ours)}</td>'
+            f'<td class="num dim" data-label="Untouched">{_e(theirs)}</td>'
+            f'<td class="dim wrap" data-label="Note">{_e(note)}</td></tr>'
+            for name, ours, theirs, note in rows)
+
+        return f"""
+<h3 style="margin-top:52px">Paper trading metrics</h3>
+<p class="note">Over <strong>{m['nights']} settled
+{"night" if m['nights'] == 1 else "nights"}</strong> and {m['positions']}
+position-nights, against the same book with every hedge removed - observed, not modelled.</p>
+<div class="scroll stacked"><table><thead><tr><th>Metric</th><th class="num">Ballast</th>
+<th class="num">Untouched</th><th>Note</th></tr></thead><tbody>{body}</tbody></table></div>
+<p class="note"><strong>Read the drawdown, not the Sharpe.</strong> This is insurance: it
+should show up as a smaller worst-case, and it does. Sharpe over {m['nights']} nights is
+noise in either column and both are negative here - it is on the page because the track
+names it, not because it means anything yet. The figures that carry weight are on the
+Evidence page, measured over 100 to 264 nights per name.</p>"""
+
+    @property
     def tile_scope(self) -> str:
         """State what the tiles cover, and how few nights that is."""
         n = len(self.clean_sessions)
@@ -622,7 +674,9 @@ settles at the next opening bell, so nothing can be quietly forgotten.</p>
 <section><div class="wrap">
 {_settled(self.rows)}
 <div class="narrow" style="margin-top:52px">
-<h3>How these are scored</h3>
+{self.paper_metrics_block}
+
+<h3 style="margin-top:52px">How these are scored</h3>
 <ul class="bul">
 <li><strong>Value added is Realised minus Counterfactual</strong>, and both are in the row, so every number here can be checked by subtracting two others. The counterfactual is what the choice <em>not</em> taken would have returned over the same window, with the hedge cost charged to whichever side pays it - not modelled, observed.</li>
 <li><strong>A hedge is graded on whether it cut the move.</strong> It is symmetric, so grading one by profit direction would be meaningless, and one night settles the question.</li>

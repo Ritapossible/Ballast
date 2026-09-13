@@ -203,6 +203,18 @@ session to trade tested only for a weekday, while the rest of the calendar exclu
 holidays. On Thanksgiving it returned Thanksgiving: a session the exchange never opened,
 against a window that never existed. Fixed and moved beside the calendar it has to agree
 with.</li>
+<li><strong>The live log had none of the metrics this track is scored on</strong> - half the
+score is quantitative and names paper-trading Sharpe, max drawdown and win rate. The
+historical replay computed all three; the log running during the competition computed none,
+so the arithmetic half of the score had nothing to read. They are on the Settled page now,
+for the book and for the same book with every hedge removed, with the drawdown comparison
+leading because that is what insurance is measured in and the Sharpe labelled as the noise
+it is at this sample size.</li>
+<li><strong>A nightly refresh could turn CI red</strong> - the README quotes measured
+figures and CI checks they match <code>docs/facts.json</code>, but only the pages were
+regenerated when the nightly re-measured. Any night a figure moved, CI went red until
+someone ran the generator by hand. The scheduled job regenerates and commits the README
+too.</li>
 <li><strong>Measured figures were still being typed</strong> - MSFT's and AMD's worst
 nights appeared as literals in three places across the two page builders, and the whole
 out-of-sample paragraph was typed on the day it was measured, while both sat in
