@@ -103,7 +103,7 @@ Incomplete productization or validation answers do **not** invalidate an entry b
 - The exact retweet target the X post requirement refers to
 - Whether paper-mode perp shorting is available on the Agentic Account
 
-## Compliance check against the build (reviewed 2026-09-09)
+## Compliance check against the build (reviewed 2026-09-13)
 
 | Requirement | Status |
 |---|---|
@@ -111,12 +111,12 @@ Incomplete productization or validation answers do **not** invalidate an entry b
 | Event → decision → execution flow | ✅ `docs/ARCHITECTURE.md`; every step is in the signed ledger |
 | Paper trading log, run during the competition | ✅ **automated** — scheduled workflow runs after the close and after the open, verifies the chain, and commits the ledger. GitHub timestamps each commit independently, so the record is provably not backfilled. |
 | X post with `#BitgetHackathon` + `@Bitget_AI` | ❌ **not posted** — an entry without this is invalid regardless of quality |
-| Six-part description | ❌ not written; parts 1–3 carry the most weight |
+| Six-part description | ✅ written — [`docs/SUBMISSION.md`](SUBMISSION.md); only the X post link is a placeholder |
 | Role of the LLM | ✅ event reader implemented — Qwen owns the hedge judgment behind schema, identity and grounding gates |
 | Agentic Account + `--paper-trading` | ❌ not wired; `PaperExecutor` simulates fills at observed prices |
 | Qwen `qwen3.8-max` via `hackathon.bitgetops.com/v1` | ✅ wired (`ballast/llm.py`) — **needs `QWEN_API_KEY`**; endpoint verified live (401 on a dummy key) |
 
-### ⚠️ One requirement the current architecture is in tension with
+### The track definition, and how it was resolved
 
 The handbook defines the Agentic Trading track as:
 
@@ -124,9 +124,20 @@ The handbook defines the Agentic Trading track as:
 > sense the environment, make independent judgments, and autonomously place orders with
 > risk controls."
 
-Ballast's design principle has been *"the model translates; it never decides"* — chosen to
-maximise the risk-control half of the score. Read literally, that is the opposite of what
-this track asks for.
+An earlier design principle here was *"the model translates; it never decides"*, chosen to
+maximise the risk-control half of the score. Read literally that is the opposite of what the
+track asks, and the architecture was changed rather than the wording.
+
+**The reader now owns the hedge judgment.** `policy.decide` takes `model_judgment` and it
+*leads* when present (`ballast/policy.py:172-182`): a HEDGE from the reader hedges, a
+NO_HEDGE declines, and the calendar rule only decides when the reader abstained or was
+gated. On the live record so far the model decided **20 of 36** calls, and each decision
+names its author in the ledger and on the Tonight page.
+
+Its authority stops at the judgment. Size, side, price and admission stay in deterministic
+code, and the executor accepts only an `Admitted` the enforcer minted — so the model is the
+decision-maker the track describes, and still cannot place a directional order. That is the
+"with risk controls" half of the same sentence, not a contradiction of the first half.
 
 **RESOLVED 2026-09-09.** The reader now returns the HEDGE / NO_HEDGE judgment and that call
 leads in `policy.decide()`. Sizing, limits and the enforcer stay deterministic, so bounded
