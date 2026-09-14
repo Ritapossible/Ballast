@@ -74,8 +74,10 @@ class Gating(unittest.TestCase):
             self.assertIn(bgc.KEY_ENV, why)
 
     def test_ready_when_all_three_hold(self):
+        """Venue, binary, key. Companion credentials are reported, not required."""
         with configured(), on_path():
-            self.assertEqual(bgc.available(), (True, "ready"))
+            ok, _ = bgc.available()
+        self.assertTrue(ok)
 
 
 class AuthorityBoundary(unittest.TestCase):
@@ -169,3 +171,18 @@ class FailuresAreTypedNeverInvented(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CompanionCredentials(unittest.TestCase):
+    """Bitget signs with a triplet. Missing halves are reported, never fatal."""
+
+    def test_reported_when_unset(self):
+        with configured(), on_path():
+            ok, why = bgc.available()
+        self.assertTrue(ok, "a missing companion must not block the venue")
+        for name in bgc.COMPANION_ENV:
+            self.assertIn(name, why)
+
+    def test_clean_when_all_present(self):
+        with configured(**dict.fromkeys(bgc.COMPANION_ENV, "x")), on_path():
+            self.assertEqual(bgc.available(), (True, "ready"))

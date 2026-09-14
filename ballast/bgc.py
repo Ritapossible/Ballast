@@ -55,6 +55,12 @@ BGC_BIN = "bgc"
 TIMEOUT_S = 45
 VENUE_ENV = "BALLAST_VENUE"
 KEY_ENV = "BITGET_API_KEY"
+# Bitget signs REST requests with a triplet, not a single key, and the Agent Hub
+# README says credentials are "read from environment variables only" without naming
+# them. So the key is required and these are reported-but-not-required: if the CLI
+# spells them differently, demanding our guess would block a correct setup, and if
+# it does want them, a missing one shows up in preflight instead of at 21:00.
+COMPANION_ENV = ("BITGET_SECRET_KEY", "BITGET_PASSPHRASE")
 
 
 class BgcUnavailable(RuntimeError):
@@ -83,7 +89,15 @@ def available() -> tuple[bool, str]:
         return False, f"{BGC_BIN} is not on PATH"
     if not os.environ.get(KEY_ENV):
         return False, f"{KEY_ENV} is not set"
+    missing = missing_companions()
+    if missing:
+        return True, f"ready, but {', '.join(missing)} unset - signing may fail"
     return True, "ready"
+
+
+def missing_companions() -> list[str]:
+    """Credential vars Bitget's request signing usually needs, that are not set."""
+    return [name for name in COMPANION_ENV if not os.environ.get(name)]
 
 
 def _run(args: list[str]) -> dict:

@@ -58,6 +58,9 @@ jobs:
       # available in `if`, but `env` is. Empty until the Demo key is added.
       BITGET_API_KEY: ${{ secrets.BITGET_API_KEY }}
       BALLAST_VENUE: ${{ secrets.BITGET_API_KEY != '' && 'bgc' || '' }}
+      # Bitget signs with a triplet; passed through so the CLI can find them.
+      BITGET_SECRET_KEY: ${{ secrets.BITGET_SECRET_KEY }}
+      BITGET_PASSPHRASE: ${{ secrets.BITGET_PASSPHRASE }}
     steps:
       - uses: actions/checkout@v4
 
