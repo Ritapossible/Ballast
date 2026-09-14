@@ -25,7 +25,7 @@ stated price.**
 ## What is measured
 
 <!-- facts:start -->
-All figures measured **2026-09-13** from public Bitget endpoints and
+All figures measured **2026-09-14** from public Bitget endpoints and
 regenerated from [`docs/facts.json`](docs/facts.json) - none is a literal in this
 file. Reproduce with `research/`; full detail and disclosed defects in
 [`docs/RESEARCH.md`](docs/RESEARCH.md).
@@ -39,7 +39,7 @@ file. Reproduce with `research/`; full detail and disclosed defects in
 | Worst nights | MSFT 1,128 bp -> 233 bp · AMD 1,262 bp -> 90 bp |
 | Cost of protection | **11.3 bp** taker, net of funding received |
 | Cost of exiting instead | **20 bp**, and you lose the position |
-| Hedgeable universe | **241** of 1,173 live rTokens |
+| Hedgeable universe | **240** of 1,173 live rTokens |
 <!-- facts:end -->
 
 ## What it does not claim

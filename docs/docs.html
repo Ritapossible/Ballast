@@ -282,8 +282,7 @@ market is shut, so it cannot be hedged there.</p>
 24/7 clock. Shorting that perp against the token cancels almost all of the overnight
 move.</p>
 <ul>
-<li><strong>Median R² 0.980</strong> across 12 names, 100-260 nights each, with β
-within 4% of 1.00 - close to a one-for-one hedge.</li>
+<li><strong>Median R² 0.982</strong> across 12 names, 100-264 nights each, with β within 3% of 1.00 (0.992-1.027) - close to a one-for-one hedge.</li>
 <li><strong>It strengthens under stress.</strong> R² is 0.978-0.999 on top-decile
 move nights and 0.77-0.96 on calm ones. On a big-news night the common factor
 dominates and both instruments track it almost exactly; on a quiet night the residual
@@ -295,7 +294,7 @@ short. Cheaper than the 20 bp it costs to exit - and you keep the position.</li>
 <li><strong>Crypto is not a hedge.</strong> Median R² against BTC is 0.114. Crypto
 legs are excluded by measurement, not preference.</li>
 </ul>
-<p>Of 1173 live rTokens, <strong>241 have a perp leg</strong> (measured 2026-09-13). Ballast states plainly
+<p>Of 1173 live rTokens, <strong>240 have a perp leg</strong> (measured 2026-09-14). Ballast states plainly
 which positions it cannot protect rather than pretending otherwise.</p>
 
 <h2 id="selector">Choosing the night</h2>
@@ -390,7 +389,7 @@ the whole session.</li>
 <p>All figures are produced by code in <code>research/</code> from public endpoints,
 labelled <em>observed</em>, <em>estimated</em> or <em>targeted</em>.</p>
 <div class="scroll stacked"><table><thead><tr><th>Finding</th><th>Value</th></tr></thead><tbody>
-<tr><td data-label="">rTokens live on spot / with a perp leg</td><td class="num" data-label="Value">1173 / 241</td></tr>
+<tr><td data-label="">rTokens live on spot / with a perp leg</td><td class="num" data-label="Value">1173 / 240</td></tr>
 <tr><td data-label="">Median overnight variance removed</td><td class="num" data-label="Value">98.2%</td></tr>
 <tr><td data-label="">R² on top-decile move nights</td><td class="num" data-label="Value">0.978-0.999</td></tr>
 <tr><td data-label="">Median p95 tail reduction</td><td class="num" data-label="Value">88%</td></tr>
@@ -595,16 +594,23 @@ tail-coverage cohorts re-run split by who decided.</li>
 implying otherwise.</li>
 </ul>
 
-<h4>2 &middot; Live execution through the Agentic Account</h4>
-<p>Fills are simulated against observed prices with the real fee schedule, and the
-ledger is exported in Bitget UTA order field names so it reads alongside a real log -
-but <strong>no order reaches an exchange</strong>. The executor interface is already the
-seam: a live implementation replaces one class and nothing upstream changes.</p>
+<h4>2 &middot; Execution through the Bitget Agent Hub</h4>
+<p><strong>Built, and off unless switched on.</strong> <code>BALLAST_VENUE=bgc</code>
+routes the admitted hedge through the Agent Hub CLI in <code>--paper-trading</code>
+mode, so the fill price comes from Bitget's Demo environment rather than from our own
+simulation. Unset, fills are simulated against observed prices with the real fee
+schedule, as before.</p>
+<p>The swap was one class because the seam was already right: <code>execute()</code>
+takes an <em>admission</em> and nothing else - no symbol, no side, no size - so the
+venue changes underneath the enforcer rather than beside it.</p>
 <ul>
-<li><strong>Needs</strong> OAuth credentials for a Bitget Agentic sub-account.</li>
-<li><strong>Blocked by</strong> credentials, which are the operator's to issue.</li>
-<li><strong>Risk if rushed</strong> - an untested live-order path is worse than an
-honest simulated one.</li>
+<li><strong>Every fill says which venue filled it</strong>, per order. If the route
+fails mid-session Ballast simulates and the row records that it did, with the reason.
+A simulated fill never inherits the Agent Hub's label.</li>
+<li><strong>Needs</strong> a Bitget Demo API key, which is the operator's to issue.</li>
+<li><strong>Still paper.</strong> <code>--paper-trading</code> is appended by the module
+and there is no parameter to turn it off; no order can reach a live venue by this
+path.</li>
 </ul>
 
 <h4>3 &middot; Position-level reporting</h4>
