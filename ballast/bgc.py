@@ -28,13 +28,20 @@ Three things this deliberately does NOT do:
 
 Enable with BALLAST_VENUE=bgc. Unset, Ballast runs exactly as before.
 
-UNVERIFIED, and deliberately so: the order verb below is Agent Hub's documented
-shape, but the published README does not spell out the argv for placing an order,
-and no `bgc` has been run against this code. `bgc discover` is the CLI's own tool
-surface - run `python -m ballast.preflight` on a machine that has the CLI and it
-prints what the binary actually exposes. If the verb is wrong the order fails, the
-failure is typed, the fill is simulated and the ledger row says so; nothing is
-silently mis-recorded. But it also would not route, so confirm before relying on it.
+VERIFIED against bgc 1.x on 2026-09-14 via `bgc discover --tool order --action
+place`. The first cut of this module guessed `trade place-order --notional`; every
+part of that was wrong. The real call is
+
+    bgc order --action place --category USDT-FUTURES --symbol TSLAUSDT \
+        --side sell --orderType market --qty <BASE COIN> --paper-trading
+
+Two traps worth naming. `qty` is denominated in the BASE coin for USDT futures, not
+in USDT - Ballast sizes in notional, so it divides by the mark. And responses are
+wrapped: the payload lives under `data`, not at the top level.
+
+`--paper-trading` routes writes to Bitget's demo environment and the CLI's own help
+says it "needs demo credentials". A live-account key is therefore expected to fail
+here, loudly and typed, rather than to place a real order.
 """
 from __future__ import annotations
 
@@ -48,9 +55,11 @@ from .costs import PERP_TAKER_FEE, SLIPPAGE_BP
 from .enforcer import Admitted
 from .executor import Fill
 
-# The order verb. Confirm against `bgc discover` before enabling - see the module
-# docstring. Kept as a constant so correcting it is a one-line change.
-ORDER_VERB = ("trade", "place-order")
+# Verified against `bgc discover --tool order --action place` (operationId
+# placeOrder, POST /api/v3/trade/place-order).
+ORDER_VERB = ("order", "--action", "place")
+# Stock perps are USDT-margined futures. Required by the API, no default.
+CATEGORY = "USDT-FUTURES"
 BGC_BIN = "bgc"
 TIMEOUT_S = 45
 VENUE_ENV = "BALLAST_VENUE"
@@ -104,7 +113,7 @@ def _run(args: list[str]) -> dict:
     """Run bgc and return its parsed JSON. Every failure mode is named."""
     try:
         proc = subprocess.run(
-            [BGC_BIN, *args, "--paper-trading", "--json"],
+            [BGC_BIN, *args, "--paper-trading"],
             capture_output=True, text=True, timeout=TIMEOUT_S, check=False,
         )
     except FileNotFoundError:
@@ -115,16 +124,59 @@ def _run(args: list[str]) -> dict:
         raise BgcUnavailable(f"could not run {BGC_BIN}: {exc}") from None
 
     if proc.returncode != 0:
-        detail = (proc.stderr or proc.stdout or "").strip().splitlines()
-        raise BgcUnavailable(
-            f"exit {proc.returncode}: {detail[-1][:160] if detail else 'no output'}")
+        raise BgcUnavailable(f"exit {proc.returncode}: {_explain(proc)}")
     try:
         parsed = json.loads(proc.stdout)
     except json.JSONDecodeError as exc:
         raise BgcUnavailable(f"unparseable response: {exc}") from None
     if not isinstance(parsed, dict):
         raise BgcUnavailable(f"expected an object, got {type(parsed).__name__}")
-    return parsed
+    # bgc can report a refusal on a zero exit, so the envelope is checked too.
+    if parsed.get("ok") is False:
+        raise BgcUnavailable(_error_text(parsed) or "refused without a reason")
+    # Every response is {"endpoint": ..., "requestTime": ..., "data": {...}}.
+    body = parsed.get("data", parsed)
+    if not isinstance(body, dict):
+        raise BgcUnavailable(f"data is {type(body).__name__}, not an object")
+    return body
+
+
+def _error_text(parsed: dict) -> str:
+    """Pull the human-readable half out of bgc's error envelope."""
+    err = parsed.get("error")
+    if not isinstance(err, dict):
+        return ""
+    parts = [str(err.get("message", "")).strip(), str(err.get("suggestion", "")).strip()]
+    return " ".join(p for p in parts if p)[:200]
+
+
+def _explain(proc: subprocess.CompletedProcess[str]) -> str:
+    """Why bgc failed, in words.
+
+    It prints a pretty JSON error envelope, so the previous version of this - the
+    last line of output - reported the string "}" and told nobody anything.
+    """
+    raw = (proc.stdout or "") + (proc.stderr or "")
+    try:
+        text = _error_text(json.loads(raw))
+        if text:
+            return text
+    except json.JSONDecodeError:
+        pass
+    lines = [ln.strip() for ln in raw.strip().splitlines() if ln.strip()]
+    return lines[-1][:160] if lines else "no output"
+
+
+def _soft_number(payload: dict, *names: str) -> float | None:
+    """Like _number, but never raises - for use after an order may already exist."""
+    for name in names:
+        try:
+            value = payload.get(name)
+            if value is not None:
+                return float(value)
+        except (TypeError, ValueError):
+            continue
+    return None
 
 
 def _number(payload: dict, *names: str) -> float | None:
@@ -150,6 +202,11 @@ class BgcExecutor:
     def __init__(self, fee: float = PERP_TAKER_FEE, slippage_bp: float = SLIPPAGE_BP):
         self.fee = fee
         self.slippage_bp = slippage_bp
+        # Provenance for the order just placed: venue order id, and whether the
+        # price came from the venue or from the mark. Read by the caller and written
+        # to the ledger row, so the record never implies a fill the venue did not
+        # report. Kept off Fill to leave the Executor protocol unchanged.
+        self.last_order: dict = {}
 
     def execute(self, admitted: Admitted, mark: float, at: dt.datetime) -> Fill:
         if not isinstance(admitted, Admitted):
@@ -166,52 +223,69 @@ class BgcExecutor:
         if intent.notional_usdt <= 0:
             raise ValueError("notional must be positive")
 
+        # qty is BASE COIN for USDT futures; Ballast sizes in USDT notional.
+        qty = intent.notional_usdt / mark
+
         payload = _run([
             *ORDER_VERB,
+            "--category", CATEGORY,
             "--symbol", intent.perp_symbol,
             "--side", intent.side,
-            "--order-type", "market",
-            "--notional", f"{intent.notional_usdt:.2f}",
+            "--orderType", "market",
+            "--qty", f"{qty:.8f}".rstrip("0").rstrip("."),
         ])
 
-        price = _number(payload, "avgPrice", "average_price", "price", "fillPrice")
+        # PAST THIS LINE THE ORDER MAY EXIST. placeOrder returns an id, not a fill,
+        # so nothing below may raise: a caller that fell back here would simulate a
+        # fill for an order the venue is already holding, and the ledger would show
+        # one hedge where two were placed. Anything missing is recorded as missing.
+        order_id = payload.get("orderId") or payload.get("clientOid")
+
+        price = _soft_number(payload, "avgPrice", "priceAvg", "fillPrice", "price")
+        source = "venue"
         if price is None or price <= 0:
-            raise BgcUnavailable(f"no usable fill price in response: {sorted(payload)}")
-        filled = _number(payload, "notional", "filledNotional", "notional_usdt")
-        fee = _number(payload, "fee", "fee_usdt", "fees")
+            # Expected: a market placement acknowledges, it does not report a fill.
+            price, source = mark, "observed mark (venue returned no fill price)"
 
+        filled = _soft_number(payload, "notional", "filledNotional")
         notional = filled if filled and filled > 0 else intent.notional_usdt
-        # bgc returns the venue's own fee; fall back to our schedule if it does not.
+        fee = _soft_number(payload, "fee", "fees")
         fee_usdt = abs(fee) if fee is not None else notional * self.fee
-        # Slippage is measured against the mark we decided on, not assumed.
-        realised_bp = abs(price - mark) / mark * 1e4
 
-        return Fill(
+        fill = Fill(
             perp_symbol=intent.perp_symbol, side=intent.side,
-            notional_usdt=notional, price=price, fee_usdt=fee_usdt,
-            slippage_bp=round(realised_bp, 2), at=at, paper=True,
+            notional_usdt=notional, price=price,
+            fee_usdt=fee_usdt,
+            slippage_bp=round(abs(price - mark) / mark * 1e4, 2),
+            at=at, paper=True,
         )
+        self.last_order = {"order_id": order_id, "price_source": source,
+                           "qty": round(qty, 8)}
+        return fill
 
 
 def discover() -> tuple[bool, str]:
-    """Ask the CLI what it actually exposes, and whether our order verb is there.
+    """Confirm the order operation exists and that our argv is accepted.
 
-    Read-only: `bgc discover` places nothing. This exists because the order argv
-    above is inferred from documentation rather than from a binary we have run, and
-    a scheduled night is a poor place to find that out.
+    Two steps, both read-only. `discover` proves the verb resolves; then a
+    `--dry-run` placement proves the exact flags and units are accepted and echoes
+    what WOULD be sent, without sending it. The first version of this module shipped
+    an argv that was wrong in four places, and only a probe like this catches that
+    before a night depends on it.
     """
     if shutil.which(BGC_BIN) is None:
         return False, f"{BGC_BIN} is not on PATH"
+    probe = [*ORDER_VERB, "--category", CATEGORY, "--symbol", "TSLAUSDT",
+             "--side", "sell", "--orderType", "market", "--qty", "1", "--dry-run"]
     try:
-        proc = subprocess.run([BGC_BIN, "discover"], capture_output=True, text=True,
-                              timeout=TIMEOUT_S, check=False)
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        return False, f"could not run {BGC_BIN} discover: {exc}"
-    if proc.returncode != 0:
-        return False, f"discover exited {proc.returncode}"
-    surface = proc.stdout
-    verb = " ".join(ORDER_VERB)
-    if verb in surface or ORDER_VERB[-1] in surface:
-        return True, f"{verb!r} is on the tool surface"
-    return False, (f"{verb!r} NOT found on the tool surface - correct "
-                   f"bgc.ORDER_VERB before enabling")
+        payload = _run(probe)
+    except BgcUnavailable as exc:
+        return False, f"dry-run rejected: {exc.reason}"
+    would = payload.get("wouldSend")
+    if not isinstance(would, dict):
+        return False, f"dry-run returned no wouldSend: {sorted(payload)}"
+    missing = [k for k in ("category", "symbol", "side", "orderType", "qty")
+               if k not in would]
+    if missing:
+        return False, f"dry-run dropped {missing} - argv is wrong"
+    return True, f"dry-run accepted: {payload.get('operationId', 'placeOrder')}"

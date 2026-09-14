@@ -173,13 +173,20 @@ failure is typed (`BgcUnavailable` with a reason), every fill row records `venue
 mid-session fallback also records `venue_fallback` with the reason. A test perturbs the
 labelling and fails.
 
-**One honest caveat.** The order verb (`bgc.ORDER_VERB`) follows Agent Hub's documented
-shape, but the published README does not spell out the argv for placing an order and no
-`bgc` binary has been run against this code. If the verb is wrong the order fails, the
-failure is typed, the fill is simulated and the row says so — nothing is mis-recorded, but
-nothing routes either. `python -m ballast.preflight` now runs `bgc discover` and reports
-whether the verb is on the CLI's actual tool surface, so that is learned from a check that
-writes nothing rather than from a night that quietly fell back.
+**Verified 2026-09-14.** The first cut of this module guessed the argv from the docs
+and was wrong in four places: the verb is `order --action place`, not
+`trade place-order`; the flag is `--orderType`, not `--order-type`; `--category` is
+required; and size is `--qty` in the **base coin**, not `--notional` in USDT, so the
+notional is divided by the mark. There is no `--json` flag and payloads nest under
+`data`. All of it now comes from `bgc discover --tool order --action place`, and
+`preflight` proves it by sending a `--dry-run` placement and checking what the CLI
+says it *would* send.
+
+`placeOrder` acknowledges an order; it does not report a fill. So past the point where
+the command returns, nothing may raise: a fallback there would simulate a fill for an
+order the venue already holds and the ledger would show one hedge where two were
+placed. A missing fill price is recorded as `price_source: observed mark`, with the
+venue order id beside it, rather than invented or retried.
 
 The nightly workflow installs the CLI and sets `BALLAST_VENUE=bgc` **only when a
 `BITGET_API_KEY` secret exists**. Adding that secret is the entire switch; no workflow edit

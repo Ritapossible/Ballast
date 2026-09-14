@@ -146,22 +146,63 @@ class FailuresAreTypedNeverInvented(unittest.TestCase):
             BgcExecutor().execute(admitted(), MARK, NOW)
         self.assertIn("unparseable", caught.exception.reason)
 
-    def test_response_without_a_price(self):
-        with configured(), on_path(), responds(json.dumps({"status": "ok"})), \
-             self.assertRaises(BgcUnavailable) as caught:
-            BgcExecutor().execute(admitted(), MARK, NOW)
-        self.assertIn("fill price", caught.exception.reason)
 
-    def test_nonsense_price(self):
-        with configured(), on_path(), responds(json.dumps({"avgPrice": 0})), \
-             self.assertRaises(BgcUnavailable):
-            BgcExecutor().execute(admitted(), MARK, NOW)
+class AfterTheOrderMayExist(unittest.TestCase):
+    """placeOrder acknowledges; it does not report a fill.
 
-    def test_non_numeric_price(self):
-        with configured(), on_path(), responds(json.dumps({"avgPrice": "abc"})), \
-             self.assertRaises(BgcUnavailable):
-            BgcExecutor().execute(admitted(), MARK, NOW)
+    Once the command has returned 0 the venue may be holding the order, so nothing
+    downstream may raise. A caller that fell back here would simulate a fill for an
+    order that already exists and the ledger would show one hedge where two were
+    placed. Missing fields are recorded as missing instead.
+    """
 
+    def test_no_fill_price_falls_back_to_the_mark_and_says_so(self):
+        with configured(), on_path(), responds(json.dumps(
+                {"data": {"orderId": "994431"}})):
+            ex = BgcExecutor()
+            fill = ex.execute(admitted(), MARK, NOW)
+        self.assertEqual(fill.price, MARK)
+        self.assertIn("observed mark", ex.last_order["price_source"])
+        self.assertEqual(ex.last_order["order_id"], "994431")
+
+    def test_a_venue_price_is_labelled_as_the_venue(self):
+        with configured(), on_path(), responds(json.dumps(
+                {"data": {"orderId": "1", "avgPrice": 212.4}})):
+            ex = BgcExecutor()
+            fill = ex.execute(admitted(), MARK, NOW)
+        self.assertEqual(fill.price, 212.4)
+        self.assertEqual(ex.last_order["price_source"], "venue")
+
+    def test_unusable_price_does_not_raise(self):
+        for bad in (0, "abc", None, {"nested": 1}):
+            with self.subTest(bad=bad), configured(), on_path(), \
+                 responds(json.dumps({"data": {"orderId": "1", "avgPrice": bad}})):
+                fill = BgcExecutor().execute(admitted(), MARK, NOW)
+            self.assertEqual(fill.price, MARK)
+
+    def test_notional_is_converted_to_base_coin_quantity(self):
+        """qty is base coin for USDT futures; Ballast sizes in USDT."""
+        with configured(), on_path(), responds(json.dumps(
+                {"data": {"orderId": "1"}})) as run:
+            ex = BgcExecutor()
+            ex.execute(admitted(), MARK, NOW)     # 1,000 USDT at a mark of 100
+        argv = run.call_args[0][0]
+        self.assertEqual(argv[argv.index("--qty") + 1], "10")
+        self.assertEqual(ex.last_order["qty"], 10.0)
+
+    def test_the_verified_argv_is_what_gets_sent(self):
+        with configured(), on_path(), responds(json.dumps(
+                {"data": {"orderId": "1"}})) as run:
+            BgcExecutor().execute(admitted(), MARK, NOW)
+        argv = run.call_args[0][0]
+        for flag, value in (("--category", "USDT-FUTURES"), ("--symbol", "TSLAUSDT"),
+                            ("--side", "sell"), ("--orderType", "market")):
+            self.assertEqual(argv[argv.index(flag) + 1], value)
+        self.assertEqual(argv[1:4], ["order", "--action", "place"])
+        self.assertNotIn("--json", argv)      # bgc has no such flag
+
+
+class StillTypedBeforeTheOrderExists(unittest.TestCase):
     def test_unconfigured_raises_rather_than_simulating(self):
         """The substitution this module exists to prevent."""
         with mock.patch.dict("os.environ", {bgc.VENUE_ENV: ""}, clear=False), \
@@ -186,3 +227,27 @@ class CompanionCredentials(unittest.TestCase):
     def test_clean_when_all_present(self):
         with configured(**dict.fromkeys(bgc.COMPANION_ENV, "x")), on_path():
             self.assertEqual(bgc.available(), (True, "ready"))
+
+
+class FailuresAreReadable(unittest.TestCase):
+    """bgc prints a pretty JSON error envelope. The reason has to survive it."""
+
+    ENVELOPE = json.dumps({
+        "ok": False,
+        "error": {"type": "ConfigError", "message": "Partial API credentials detected.",
+                  "suggestion": "Provide apiKey, secretKey and passphrase together."},
+    }, indent=2)
+
+    def test_the_message_not_the_last_brace(self):
+        """Reading the last line of pretty JSON reported '}' and explained nothing."""
+        with configured(), on_path(), responds(self.ENVELOPE, returncode=1), \
+             self.assertRaises(BgcUnavailable) as caught:
+            BgcExecutor().execute(admitted(), MARK, NOW)
+        self.assertIn("Partial API credentials", caught.exception.reason)
+        self.assertNotEqual(caught.exception.reason.strip()[-1], "}")
+
+    def test_a_refusal_on_a_zero_exit_still_raises(self):
+        with configured(), on_path(), responds(self.ENVELOPE, returncode=0), \
+             self.assertRaises(BgcUnavailable) as caught:
+            BgcExecutor().execute(admitted(), MARK, NOW)
+        self.assertIn("Partial API credentials", caught.exception.reason)

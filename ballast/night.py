@@ -283,6 +283,7 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
                 fill = paper.execute(verdict.admission, mark, now)
                 fill_venue, fallback = "simulated", exc.reason
             record["fill"] = fill.to_record() | {"venue": fill_venue}
+            record["fill"] |= getattr(executor, "last_order", {}) or {}
             if fallback:
                 record["fill"]["venue_fallback"] = fallback
         hedged += 1
