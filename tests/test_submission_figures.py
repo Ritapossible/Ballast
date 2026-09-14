@@ -97,3 +97,36 @@ class SubmissionFigures(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class BetaFigures(unittest.TestCase):
+    """The last measured literal in the repo, and the quietest way one goes stale.
+
+    SUBMISSION.md claimed a hedge ratio of 0.985-1.040 and "within 4% of 1.00".
+    Nothing regenerated either, so both drifted as the sample grew: the measured
+    range was 0.992-1.027, which is TIGHTER. The claim stayed true while the
+    measurement got better - so no check that only asked "is this still correct?"
+    would ever have fired.
+    """
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.text = SUBMISSION.read_text()
+        cls.f = facts.load()
+
+    def test_range_matches_the_measurement(self) -> None:
+        f = self.f
+        self.assertIn(
+            f"| Hedge ratio \u03b2 | {f['beta_min']:.3f}{EN_DASH}{f['beta_max']:.3f} "
+            f"({f['beta_names']} names) |",
+            self.text, "the part 3 beta range disagrees with facts.json")
+
+    def test_tolerance_claim_is_derived_not_asserted(self) -> None:
+        pct = facts.beta_within_pct(self.f)
+        self.assertIn(f"β within {pct}% of 1.00", self.text)
+
+    def test_the_tolerance_actually_bounds_both_ends(self) -> None:
+        """The claim must hold for the worst name, not just on average."""
+        pct = facts.beta_within_pct(self.f)
+        for edge in (self.f["beta_min"], self.f["beta_max"]):
+            self.assertLessEqual(abs(edge - 1.0) * 100, pct)

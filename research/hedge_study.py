@@ -32,12 +32,12 @@ def _subset(idx, xs, ys):
     return ols([xs[i] for i in idx], [ys[i] for i in idx])
 
 
-def run() -> None:
+def run() -> dict:
     print(f"{'name':6s} {'n':>4s} | {'ALL beta':>9s} {'R2':>6s} | "
           f"{'STRESS beta':>12s} {'R2':>6s} | {'CALM beta':>10s} {'R2':>6s} | {'wknd R2':>8s}")
     print("-" * 88)
 
-    r2s, tails = [], []
+    r2s, tails, betas = [], [], []
     for name in NAMES:
         spot = overnight_returns(bars(f"R{name}USDT", "spot"))
         perp = overnight_returns(bars(f"{name}USDT", "mix"))
@@ -55,6 +55,7 @@ def run() -> None:
         r2_w = _subset(wk, xs, ys)[1] if len(wk) >= 20 else float("nan")
 
         r2s.append(r2)
+        betas.append(beta)
         unh = [abs(v) for v in ys]
         hed = [abs(v) for v in resid]
         tails.append(1 - percentile(hed, 0.95) / percentile(unh, 0.95))
@@ -65,6 +66,13 @@ def run() -> None:
     print("-" * 88)
     print(f"median R2 (variance removed) : {st.median(r2s):.3f}")
     print(f"median p95 tail reduction    : {100 * st.median(tails):.0f}%")
+    print(f"beta range                   : {min(betas):.3f} - {max(betas):.3f} "
+          f"({len(betas)} names)")
+    # Returned so the caller can store it. SUBMISSION.md quoted this range as a
+    # literal - the last measured figure in the repo that nothing regenerated - so
+    # it drifted silently every time the sample grew.
+    return {"beta_min": round(min(betas), 3), "beta_max": round(max(betas), 3),
+            "beta_names": len(betas)}
 
 
 def tail_rows() -> list[dict]:
@@ -103,11 +111,12 @@ def tail_table(rows: list[dict] | None = None) -> list[dict]:
 
 
 if __name__ == "__main__":
-    run()
+    measured = run()
     rows = tail_table()
     # The tail sample is the slow half of this study - twelve names over two years
     # of hourly bars - so it is measured here and stored, not recomputed nightly.
     # facts_study preserves keys it does not own, so the nightly refresh keeps it.
     values = facts.load()
     values["tail"] = rows
+    values.update(measured)
     print(f"\nwrote {facts.save(values)} (tail: {len(rows)} names)")

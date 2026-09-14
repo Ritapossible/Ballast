@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from . import config
+from . import config, facts
 from .facts import load as load_facts
 from .facts import worst_night
 from .theme import REPO, page
@@ -65,8 +65,7 @@ market is shut, so it cannot be hedged there.</p>
 24/7 clock. Shorting that perp against the token cancels almost all of the overnight
 move.</p>
 <ul>
-<li><strong>Median R² 0.980</strong> across 12 names, 100-260 nights each, with β
-within 4% of 1.00 - close to a one-for-one hedge.</li>
+<li><strong>Median R² {facts.load()['median_r2']:.3f}</strong> across {len(facts.load().get('tail', []))} names, {min(r['nights'] for r in facts.load()['tail'])}-{max(r['nights'] for r in facts.load()['tail'])} nights each, with β within {facts.beta_within_pct()}% of 1.00 ({facts.beta_range()}) - close to a one-for-one hedge.</li>
 <li><strong>It strengthens under stress.</strong> R² is 0.978-0.999 on top-decile
 move nights and 0.77-0.96 on calm ones. On a big-news night the common factor
 dominates and both instruments track it almost exactly; on a quiet night the residual

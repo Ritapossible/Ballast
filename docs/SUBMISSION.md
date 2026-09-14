@@ -29,7 +29,7 @@ stated price.**
 
 **The mechanism.** Of 1,173 live rTokens, **241 have a matched stock perpetual** trading the
 same 24/7 clock (`observed`). Shorting that perp against the token removes a **median 98.2%
-of overnight variance at β within 4% of 1.00** across 12 names and 100–264 nights each
+of overnight variance at β within 3% of 1.00** across 12 names and 100–264 nights each
 (`observed`). It costs **11.3 bp** taker round trip net of funding received - against
 **20 bp** to exit the position and lose it (`estimated` from observed fee schedules).
 
@@ -117,7 +117,7 @@ upside and never assumed.
 | Metric | Value |
 |---|---|
 | Median overnight variance removed | **98.2%** |
-| Hedge ratio β | 0.985–1.040 (12 names) |
+| Hedge ratio β | 0.992–1.027 (12 names) |
 | R² on top-decile move nights | **0.978–0.999** |
 | R² on calm nights | 0.77–0.96 |
 | Median p95 tail reduction | **88%** |

@@ -11,6 +11,7 @@ so it cannot drift for longer than a day.
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 
 from . import config
@@ -27,6 +28,9 @@ DEFAULTS = {
     "exit_cost_bp": 20.0,
     "median_r2": 0.980,
     "median_tail_cut_pct": 88,
+    "beta_min": 0.992,
+    "beta_max": 1.027,
+    "beta_names": 12,
 }
 
 
@@ -57,3 +61,20 @@ def save(values: dict) -> Path:
     FACTS_PATH.parent.mkdir(parents=True, exist_ok=True)
     FACTS_PATH.write_text(json.dumps(values, indent=2, sort_keys=True) + "\n")
     return FACTS_PATH
+
+
+def beta_within_pct(data: dict | None = None) -> int:
+    """How far the worst-fitting name's beta sits from 1.00, rounded up, in percent.
+
+    Every page said "within 4% of 1.00" as a literal. The measured range was 0.992
+    to 1.027 - the claim was true, and weaker than the measurement, which is the
+    quiet way a number goes stale. Derived here so it tracks the sample.
+    """
+    d = data or load()
+    worst = max(abs(d["beta_max"] - 1.0), abs(1.0 - d["beta_min"]))
+    return max(1, math.ceil(round(worst, 6) * 100))
+
+
+def beta_range(data: dict | None = None) -> str:
+    d = data or load()
+    return f"{d['beta_min']:.3f}-{d['beta_max']:.3f}"

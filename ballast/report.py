@@ -17,7 +17,7 @@ import html
 import re
 from pathlib import Path
 
-from . import config
+from . import config, facts
 from .facts import load as load_facts
 from .facts import worst_night
 from .ledger import Ledger, LedgerError
@@ -253,7 +253,7 @@ def _red_team_count() -> int:
 def claims(f: dict) -> list[tuple[str, str, str | None]]:
     return [
     (f"A matched perp removes a median {f['median_r2'] * 100:.1f}% of overnight "
-     f"variance, β within 4% of 1.00", "observed",
+     f"variance, β within {facts.beta_within_pct(f)}% of 1.00", "observed",
      f"{len(f.get('tail', []))} names, {_nights_range(f)} nights each"),
     ("The hedge strengthens under stress - R² 0.978-0.999 on top-decile nights",
      "observed", "conditional regression"),

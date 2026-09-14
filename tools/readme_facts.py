@@ -27,7 +27,8 @@ def block(f: dict) -> str:
     oos = f.get("oos") or {}
     rows = [
         ("Overnight variance removed by a matched perp hedge",
-         f"**median R² {f['median_r2']:.3f}**, β within 4% of 1.00"),
+         f"**median R² {f['median_r2']:.3f}**, β within "
+         f"{facts.beta_within_pct(f)}% of 1.00 ({facts.beta_range(f)})"),
         ("R² on the largest-move nights",
          "**0.978 - 0.999** - the hedge strengthens under stress"),
         ("p95 tail reduction", f"**median {f['median_tail_cut_pct']}%**"),
