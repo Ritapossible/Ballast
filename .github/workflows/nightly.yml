@@ -71,9 +71,32 @@ jobs:
       # The Agent Hub CLI, installed only when a Demo key exists to use it with.
       # Without the secret the step is skipped, bgc.available() reports the key is
       # unset, and fills are simulated exactly as they have been all along.
+      #
+      # `bgc` comes from @bitget-ai/bitget-agent-cli, NOT from the installer
+      # package - and it has to be a global install, because `npx --yes` runs a
+      # package once and leaves nothing on PATH for the next step. Getting this
+      # wrong is silent: shutil.which("bgc") returns None, bgc.available() is
+      # False, and every fill is simulated while the credentials sit correctly
+      # configured. Six nights of hedges went through simulation that way.
       - name: Install the Bitget Agent Hub CLI
         if: env.BITGET_API_KEY != ''
-        run: npx --yes @bitget-ai/bitget-agent-installer upgrade-all --target all
+        run: |
+          npm install -g @bitget-ai/bitget-agent-cli
+          npx --yes @bitget-ai/bitget-agent-installer upgrade-all --target all || true
+
+      # Fail loudly rather than quietly simulating. A key configured but a CLI
+      # missing is the one combination that looks fine and produces nothing.
+      - name: The venue must be reachable when a key is configured
+        if: env.BITGET_API_KEY != ''
+        run: |
+          command -v bgc || { echo "::error::bgc is not on PATH"; exit 1; }
+          python - <<'CHECK'
+          from ballast.bgc import available
+          ok, why = available()
+          print(f"venue: {'ready' if ok else 'UNAVAILABLE'} - {why}")
+          raise SystemExit(0 if ok else "the venue is not reachable; fills would "
+                                        "silently fall back to simulation")
+          CHECK
 
       - name: Preflight (credentials, the live reader and the venue; writes nothing)
         if: inputs.task == 'check'
