@@ -125,6 +125,22 @@ p{{margin:0 0 16px}}
 .tile .l{{font-size:11.5px;text-transform:uppercase;letter-spacing:.14em;
   color:var(--dim);margin-top:8px}}
 .stack{{display:flex;flex-direction:column;gap:16px;margin-top:40px;text-align:left}}
+/* ---- coverage lookup ---- */
+.sr-only{{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}}
+.lk{{max-width:620px;margin:0 auto}}
+.lk input{{width:100%;padding:16px 18px;background:var(--surface);color:var(--fg);
+  border:1px solid var(--line);border-radius:0;font-family:var(--mono);
+  font-size:19px;letter-spacing:.06em;text-transform:uppercase}}
+.lk input::placeholder{{color:var(--dim);letter-spacing:.03em;text-transform:none}}
+.lk input:focus{{outline:none;border-color:var(--accent)}}
+.lk input:disabled{{opacity:.55}}
+.lk .hint{{color:var(--dim);font-size:13px;margin:10px 2px 0}}
+.lk .out{{margin-top:22px}}
+.lk .out:empty{{display:none}}
+.lk .card h3{{margin-top:0}}
+.lk .card.ok{{border-left:3px solid var(--accent)}}
+.lk .card.no{{border-left:3px solid var(--dim)}}
+.lk .tiles{{margin:0 0 18px}}
 .card{{background:rgba(16,16,18,.72);border:1px solid var(--line);
   border-radius:14px;padding:28px}}
 .card p:last-child{{margin-bottom:0}}

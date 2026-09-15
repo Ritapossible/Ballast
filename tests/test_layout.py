@@ -151,8 +151,20 @@ class TestLayout(unittest.TestCase):
 
     def test_no_external_resources(self):
         for name, html in self.each():
-            for forbidden in ("<script", "http://", "cdn.", "fonts.googleapis", "@import"):
+            for forbidden in ("http://", "cdn.", "fonts.googleapis", "@import"):
                 self.assertNotIn(forbidden, html, f"{name} pulls in {forbidden}")
+
+    def test_every_script_is_a_local_file(self):
+        """The coverage lookup added the site's first script, so this replaced a
+        blanket ban on `<script`. The CSP is `script-src 'self'` with no
+        'unsafe-inline', so an inline block would silently not run and an
+        off-origin src would be refused - both must fail here instead."""
+        for name, html in self.each():
+            for tag in re.findall(r"<script\b[^>]*>", html):
+                src = re.search(r'src="([^"]+)"', tag)
+                self.assertIsNotNone(src, f"{name} has an inline script: {tag}")
+                self.assertNotRegex(src.group(1), r"^(?:[a-z]+:)?//",
+                                    f"{name} loads a script off-origin: {tag}")
 
 
 if __name__ == "__main__":

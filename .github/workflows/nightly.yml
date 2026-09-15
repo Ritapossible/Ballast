@@ -152,6 +152,20 @@ jobs:
           print(f"ledger verified: {Ledger(config.LEDGER_PATH, config.secret()).verify()} entries")
           EOF
 
+      # The coverage index the site's lookup reads: 206 measured hedge fits, one
+      # bounded fetch per leg. ~3 minutes, so it runs on the first cron only --
+      # listings move on the scale of days, not hours. continue-on-error because
+      # a decision must never be lost to a market-data hiccup in a display file:
+      # when it fails the committed index simply keeps its earlier measured_on,
+      # which the page shows.
+      - name: Refresh the coverage index
+        if: >-
+          inputs.task != 'check' &&
+          (github.event.schedule == '0 21 * * 1-5' ||
+           github.event_name == 'workflow_dispatch')
+        continue-on-error: true
+        run: python -m ballast.coverage
+
       - name: Rebuild the public site
         if: inputs.task != 'check'
         env:

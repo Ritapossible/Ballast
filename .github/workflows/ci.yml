@@ -39,6 +39,21 @@ jobs:
       - name: Compile every module
         run: python -m compileall -q ballast research
 
+      # The unit tests can see that the lookup's markup was rendered. They cannot
+      # see whether the browser was ALLOWED to run it: `script-src` lives in
+      # vercel.json, and a policy that forbids the file produces a page that looks
+      # perfect and does nothing. So this drives the real page in a real browser
+      # under the policy read from vercel.json itself.
+      - name: Coverage lookup works in a browser
+        run: |
+          npm install --no-save --silent playwright
+          npx playwright install --with-deps chromium
+          # Build from THIS commit's source, not from the pages the last scheduled
+          # run happened to publish, so a page change is checked before it ships.
+          python tools/build_preview.py "$RUNNER_TEMP/site"
+          SITE_DIR="$RUNNER_TEMP/site" node tools/check_lookup.mjs
+
+
       # The chain status is baked into the HTML when the pages are built, so a
       # rebuild carrying the development key publishes "CHAIN BROKEN" against a
       # ledger that is in fact intact. That reached the live site once. The

@@ -150,6 +150,7 @@ defect — that is what insurance is.
 | First Gate 1 run selected nights by *realised* move — look-ahead | **Fixed** — ex-ante selector only; the invalid version is preserved behind `--lookahead` to document the bug |
 | US exchange holidays are not modelled | **Fixed** — `ballast/holidays.py` computes NYSE closures and early closes from rules. A Good Friday window measured 17.5 hours and is now 89.5. |
 | Maker fills assumed to be available in a 4am book | **Avoided** — all costs default to taker |
+| Hedgeable universe paired on the bare ticker alone, so 34 rTokens were matched to a *crypto* perp sharing their ticker (`rF`/Ford against `FUSDT`, `rSUI` against the Sui perp, and 32 more). Measured tracking on those pairs is R² ≈ 0.00 against ≈ 0.99 on a real one. | **Fixed** — the perp leg must also be `symbolType: stock`, which only the v3 instruments endpoint reports; v2 returns "perpetual" for every contract. The universe is 206 of 1,173, not 240. No position in the book was ever mispaired (all 12 legs are stock perps) but `Book.from_tickers` would have accepted one, so it is a gate, not a display filter. Pinned by `tests/test_universe.py`. Found by building the public coverage index, which measures every pair instead of assuming it. |
 
 ## 6b. Gate 1b — the event calendar as the selector ✅ PASSES BOTH CONDITIONS
 

@@ -56,6 +56,18 @@ def futures_tickers() -> list[dict]:
     return _get(f"{BASE}/api/v2/mix/market/tickers?productType=usdt-futures")["data"]
 
 
+def instruments(category: str) -> list[dict]:
+    """v3 listing metadata. `category` is "SPOT" or "USDT-FUTURES".
+
+    The v2 endpoints above carry no usable asset classification: spot returns
+    `symbolType: null` and futures returns "perpetual" for everything. v3 returns
+    "stock", "crypto", "metal" or "commodity", and it is the ONLY authoritative
+    way to tell a stock perp from a crypto perp that happens to share a ticker.
+    See `universe.split_universe` for why that distinction is load-bearing.
+    """
+    return _get(f"{BASE}/api/v3/market/instruments?category={category}")["data"]
+
+
 def contract(symbol: str) -> dict:
     url = f"{BASE}/api/v2/mix/market/contracts?productType=usdt-futures&symbol={symbol}"
     return _get(url)["data"][0]

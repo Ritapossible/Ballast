@@ -514,7 +514,42 @@ declined is a decision it will be graded on.</p>
 <div class="row" style="justify-content:center;margin-top:34px">
 <a class="btn btn-s" href="settled.html">See what settled →</a></div>
 </div>
+{self.lookup_block}
 </div></section>"""
+
+    @property
+    def lookup_block(self) -> str:
+        """"Where is MY stock?" - the question this page provokes and never answered.
+
+        Twelve rows is the book, not the market, so a visitor holding one of the
+        other 1,161 rTokens had no way in. This answers for any of them from
+        docs/coverage.json, which is measured rather than asserted: a name counts
+        as hedgeable because its perp demonstrably tracked it, not because a symbol
+        with a matching ticker exists.
+
+        It answers coverage, never tonight's call. A decision is only meaningful
+        for a position in the book and is a ledger entry written before the outcome
+        was known; one invented on demand would render identically and prove
+        nothing. The copy says so where a reader will actually see it.
+        """
+        book = ",".join(sorted(
+            str(d.get("ticker")) for d in self.tonight if d.get("ticker")))
+        return f"""
+<div class="narrow" style="margin-top:64px">
+<h3>Not on this list? Check your own position.</h3>
+<p class="note">These twelve are the demo book. Ballast can hedge far more than
+twelve names - and refuses many more than it can. Type any tokenized stock to see
+which half it falls in, and how well the hedge actually tracked it.</p>
+<div class="lk" id="lookup" data-book="{_e(book)}">
+<label class="sr-only" for="lk-in">Ticker</label>
+<input id="lk-in" type="text" data-role="input" autocomplete="off"
+ autocapitalize="characters" spellcheck="false" disabled
+ placeholder="loading the coverage index…">
+<p class="hint" data-role="hint">Loading the coverage index…</p>
+<div class="out" data-role="out" aria-live="polite"></div>
+</div>
+</div>
+<script src="lookup.js" defer></script>"""
 
     @property
     def oos_block(self) -> str:

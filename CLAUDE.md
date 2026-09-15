@@ -95,6 +95,11 @@ Base: `https://api.bitget.com`. All of the below need **no API key**.
   rToken data (RTSLA reaches 2024-05-28). A prior S1 project published the 41-day figure as a hard cap; it is wrong.
 - rToken identification: `baseCoin` matches `^r[A-Z]` (e.g. `rPBR`). Do **not** regex the
   `symbol` field — `RUNEUSDT`, `ROSEUSDT`, `RAYUSDT`, `REDUSDT` are crypto, not stocks.
+- A bare ticker is **not sufficient to pair on**. Stock perps and crypto perps share one
+  USDT-futures namespace and 34 tickers collide — `rF` is Ford, `FUSDT` is a crypto perp.
+  The perp leg must also be `symbolType: stock`, which **only `api/v3/market/instruments`
+  reports**; the v2 contracts endpoint returns `"perpetual"` for everything and v2 spot
+  returns `null`. Pairing on the name alone gave 240 pairs, 34 of them nonsense.
 - Stock **perps use the bare ticker**: `TSLAUSDT`, `NVDAUSDT` — no `R` prefix. `RTXSTOCKUSDT`
   is the disambiguated form for RTX the defense company.
 
@@ -103,7 +108,7 @@ Base: `https://api.bitget.com`. All of the below need **no API key**.
 | Fact | Value | Date |
 |---|---|---|
 | rTokens live on spot | **699**, all `status: online` | 2026-09-08 |
-| **rTokens with a matched perp leg** | **219** — this is our tradeable universe | 2026-09-08 |
+| **rTokens with a matched *stock* perp leg** | **206** of 1,173 — this is our tradeable universe | 2026-09-15 |
 | rToken spot fees | taker **0.10%** / maker **0.10%** — *no maker discount* | 2026-09-08 |
 | rToken spot round-trip exit cost | **20 bp** | derived |
 | Perp fees | taker 0.06% / maker 0.02%, `fundInterval` 8h, min 5 USDT | 2026-09-08 |
