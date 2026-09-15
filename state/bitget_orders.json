@@ -1,7 +1,7 @@
 {
   "code": "00000",
   "msg": "success",
-  "requestTime": "1789502554545",
+  "requestTime": "1789515161500",
   "data": [
     {
       "orderId": "BAL1F91F3BE9E288DB2AE0C3836",
@@ -162,6 +162,33 @@
       "ballastReason": "event reader judged HEDGE - macro (medium impact, confidence 62%)",
       "ballastDecidedBy": "model",
       "ballastSpotSymbol": "RMUUSDT",
+      "ballastSlippageBp": 2.0,
+      "paper": true
+    },
+    {
+      "orderId": "BAL3122D303D395C6C74955E30A",
+      "clientOid": "BAL3122D303D395C6C74955E30A",
+      "symbol": "COINUSDT",
+      "productType": "USDT-FUTURES",
+      "marginCoin": "USDT",
+      "side": "sell",
+      "tradeSide": "open",
+      "orderType": "market",
+      "force": "gtc",
+      "price": "171.275738",
+      "priceAvg": "171.275738",
+      "size": "5.536277",
+      "baseVolume": "5.536277",
+      "quoteVolume": "948.2300",
+      "fee": "-0.568900",
+      "feeCoin": "USDT",
+      "status": "filled",
+      "cTime": "1789514637120",
+      "uTime": "1789514637120",
+      "ballastSession": "2026-09-15",
+      "ballastReason": "event reader judged HEDGE - legal (high impact, confidence 90%)",
+      "ballastDecidedBy": "model",
+      "ballastSpotSymbol": "RCOINUSDT",
       "ballastSlippageBp": 2.0,
       "paper": true
     }
