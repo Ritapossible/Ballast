@@ -342,10 +342,15 @@ class Site:
         # about how well hedges work, so those rows stay in the table - where the
         # correction sits beside them - and out of the summary.
         #
-        # This makes the mean LARGER, not smaller: the excluded session was a broad
-        # down night, so dropping it moved the mean from +27 to +136 bp. That is why
-        # the tiles carry their session count. One session's mean is one night's
-        # market direction, and the number should not be read as more than that.
+        # Which DIRECTION this moves the mean is incidental and changes as nights
+        # accumulate - it raised the mean when the record was one session long and
+        # lowers it now. The figure that used to sit here said "larger, +27 to +136
+        # bp"; it was true when written, went stale silently, and by the time anyone
+        # reread it the sign had flipped. So no figure is pinned here: the rows are
+        # excluded because hedges placed a night early cannot evidence how well a
+        # hedge works, and that reason holds whichever way the mean happens to move.
+        # The tiles carry their session count for the same reason - a mean over a
+        # handful of nights is market direction, not a performance record.
         self.excluded = [r for r in self.rows if _selector_affected(r)]
         self.clean = [r for r in self.rows if not _selector_affected(r)]
         self.clean_sessions: list[str] = sorted(

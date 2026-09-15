@@ -235,14 +235,18 @@ datacenter IPs** and are not usable here.
     conversation rarely belongs on the page.
 25. **Exclude the affected rows, not the session around them.** The selector fault could
     add a hedge, never remove one, so refusals on an affected night are sound decisions.
-    Marking them is inaccuracy, and dropping them from the figures flattered the mean:
-    session-level exclusion read +136 bp, row-level reads +12 bp. Over-disclosure costs the
-    same credibility that disclosing is meant to buy.
+    Marking them is inaccuracy, and dropping a whole session flattered the mean at the
+    time it was measured. Over-disclosure costs the same credibility that disclosing is
+    meant to buy. No figure is quoted here on purpose - see rule 22.
 22. **Headline tiles cover clean sessions only; the table keeps everything.** A session
-    whose hedges were misattributed cannot support a claim about hedges. Excluding
-    2026-09-09 *raises* the mean (+27 to +136 bp) because that night fell broadly - so the
-    tiles always state their session count, and say when a small n makes the mean one
-    night's market direction rather than a record.
+    whose hedges were misattributed cannot support a claim about hedges. Which way the
+    exclusion moves the mean is incidental and FLIPS as nights accumulate: this rule once
+    read "*raises* the mean (+27 to +136 bp)", which was true when written and was the
+    opposite of true a week later, with nobody noticing because a prose claim has no test
+    behind it. Never pin that figure again - the rows are excluded because hedges placed a
+    night early cannot evidence how well a hedge works, and that reason holds in either
+    direction. The tiles always state their session count, and say when a small n makes the
+    mean one night's market direction rather than a record.
 
 26. **The tail chart's numbers come from `facts.json`, measured by
     `research/hedge_study.py`.** That study is the slow half - twelve names over two
