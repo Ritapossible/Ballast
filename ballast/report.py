@@ -425,6 +425,11 @@ class Site:
             term += (f'<div class="term-r"><span class="dim">'
                      f'{len(self.tonight)} positions · {hedged} hedged</span>'
                      f'<a class="dim" href="tonight.html">see all →</a></div>')
+        # The book is the second filter and the one a reader is most likely to
+        # misread: a small hedge count looks like a broken agent until you know
+        # Ballast can only ever act on a position it did not open.
+        book = (f"{len(self.tonight)} positions tonight"
+                if self.tonight else "the positions you already hold")
         return f"""
 <section class="bd"><div class="wrap center">
 <h1>Hold the position.<br>Not the night's risk.</h1>
@@ -461,6 +466,7 @@ less than selling the position and buying it back.</p>
 <li>The hedge is <strong>strongest exactly when it matters</strong> - R² reaches 0.999 on the largest moves, and is loosest on quiet nights where little is at stake.</li>
 <li>Worst nights measured: MSFT <strong>{worst_night(self.f, "MSFT")}</strong>, AMD <strong>{worst_night(self.f, "AMD")}</strong>.</li>
 <li><strong>{self.f['rtokens_hedgeable']} of {self.f['rtokens_total']}</strong> listed rTokens have a perp leg, measured {self.f['measured_on']}. Ballast says plainly which positions it cannot protect.</li>
+<li>Of those, Ballast hedges only what is <strong>already in the book</strong> - {book}. It never opens, closes or resizes a spot position, which is what lets the enforcer bound every order by a holding that already exists.</li>
 </ul></div>
 </div></section>
 
