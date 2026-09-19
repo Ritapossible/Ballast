@@ -264,7 +264,6 @@ declined is a decision it will be graded on.</p>
 65.5 hours · event reader
 <strong>on</strong> · 120 ledger entries · chain verified</p>
 <p class="note">Decided <strong>3.0 hours</strong> after the close.</p>
-<p class="note">Execution routed to the <strong>Bitget Agent Hub, paper-trading</strong> through <code>bgc --paper-trading</code>. The exchange refused the order - <em>exit 1: HTTP 400 from Bitget: exchange environment is incorrect Retry later or verify endpoint parameters.</em> - so the fill was simulated and every affected row carries that reason. <strong>No fill on this ledger carries an exchange order id</strong>, and none is claimed.</p><p class="note">Why it refuses: Bitget's demo environment is a separate venue with its own instrument list, and that list is <strong>nine contracts</strong> - BTC, ETH and XRP, all S-prefixed - across every demo product type. <strong>No tokenized stock perpetual is listed on it</strong>, so no position in this book can be filled there under any credentials. The only venue carrying these symbols is the live one, and this executor appends <code>--paper-trading</code> with no parameter to turn it off. Check it in one command:<br><code>curl -s "https://api.bitget.com/api/v2/mix/market/contracts?productType=SUSDT-FUTURES"</code><br>Checked 2026-09-19; the live <code>USDT-FUTURES</code> list carries 797 contracts including every name in this book.</p>
 
 <div class="tiles">
 <div class="tile"><div class="n">1</div><div class="l">hedged tonight</div></div>
@@ -281,6 +280,7 @@ hedging policy loses 13% a year. The earnings calendar separates at
 <strong>3.2x</strong> on variance that is <em>not</em> compensated, and the reader
 exists to find the unscheduled events a calendar cannot. So most nights are refusals,
 and each one is graded.</p></div>
+<p class="note"><strong>Where the order went.</strong> Ballast sent tonight's hedge to the <strong>Bitget Agent Hub, paper-trading</strong>. Bitget refused it:</p><p class="note"><code>exit 1: HTTP 400 from Bitget: exchange environment is incorrect Retry later or verify endpoint parameters.</code></p><p class="note">So the fill was priced against the market instead, and every row it affected says so. <strong>No fill here claims an exchange order id.</strong></p><p class="note"><strong>Why it refuses.</strong> Bitget's practice environment is a separate venue, and it lists only <strong>nine contracts</strong> - all of them BTC, ETH or XRP. None of the twelve stocks in this book trades there, so no hedge Ballast places could ever fill on it, whatever credentials it used. The only venue carrying these symbols is the live one, and Ballast has no code path to a live order. Check it yourself:<br><code>curl -s "https://api.bitget.com/api/v2/mix/market/contracts?productType=SUSDT-FUTURES"</code><br>Checked 2026-09-19. The live list carries 797 contracts, including all twelve.</p>
 </div></section>
 
 <section><div class="wrap">
