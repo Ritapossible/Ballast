@@ -27,7 +27,7 @@ single night** (`observed`).
 Ballast adds a third option: **keep the position, and switch the night's risk off for a
 stated price.**
 
-**The mechanism.** Of 1,173 live rTokens, **206 have a matched stock perpetual** trading the
+**The mechanism.** Of 1,653 live rTokens, **218 have a matched stock perpetual** trading the
 same 24/7 clock (`observed`). Shorting that perp against the token removes a **median 98.2%
 of overnight variance at β within 3% of 1.00** across 12 names and 100–264 nights each
 (`observed`). It costs **11.3 bp** taker round trip net of funding received - against
@@ -99,7 +99,7 @@ into earnings - they want the position and not the gap.
 **The value, stated plainly:** for ~11 bp they keep the position and remove ~98% of a
 specific night's variance - median **88% off the p95 tail**, MSFT's worst night **1,128 bp →
 233 bp**, AMD's **1,262 bp → 90 bp** (`observed`). Ballast also states which of their
-positions it *cannot* protect: **967 of 1,173 rTokens have no perp leg.**
+positions it *cannot* protect: **1,435 of 1,653 rTokens have no perp leg.**
 
 ## 3 · Validation data and key metrics
 

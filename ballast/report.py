@@ -436,7 +436,9 @@ class Site:
 <p class="lede">Tokenized US stocks trade around the clock. The market that prices
 them is shut for <span class="hl">81% of the week</span> - through earnings, through
 the Fed, through weekends. Ballast keeps the position and switches the night off for
-about <span class="hl">{self.f['hedge_cost_bp']:.0f} basis points</span>.</p>
+about <span class="hl">{self.f['hedge_cost_gross_bp']:.0f} basis points</span> - less
+the funding a short collects, which averages {self.f['hedge_cost_bp']:.0f} bp a night but
+is a rate rather than a promise.</p>
 <div class="row">
 <a class="btn btn-p" href="tonight.html">Tonight's decisions</a>
 <a class="btn btn-s" href="docs.html">Read the docs</a>
@@ -459,7 +461,7 @@ less than selling the position and buying it back.</p>
 {_tile(f"{self.f['median_r2'] * 100:.1f}%", "median variance removed")}
 {_tile("β 1.00", "hedge ratio, ±4%")}
 {_tile(f"{self.f['median_tail_cut_pct']}%", "median p95 tail cut")}
-{_tile(f"{self.f['hedge_cost_bp']} bp", "cost to protect")}
+{_tile(f"{self.f['hedge_cost_gross_bp']} bp", "cost to protect, certain")}
 {_tile(f"{self.f['exit_cost_bp']:.0f} bp", "cost to exit instead")}
 </div>
 <div class="narrow"><ul class="bul">

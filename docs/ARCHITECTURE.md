@@ -34,10 +34,11 @@ conventions, so that a compromise of the reasoning layer cannot become a trade.
                     └────────────────────┬─────────────────────┘
                                          │ permitted order
                     ┌────────────────────▼─────────────────────┐
-                    │ EXECUTOR  Bitget SDK · paper mode        │
-                    │ Agentic Account: fund isolation, quota,  │
-                    │ no withdrawals — ceiling enforced by the │
-                    │ exchange, not by us                      │
+                    │  EXECUTOR  Bitget Agent Hub CLI (bgc)    │
+                    │  --paper-trading -> Bitget Demo, which   │
+                    │  prices and fills the order. No live     │
+                    │  order is sent. Falls back to a          │
+                    │  simulated fill; the ledger says which.  │
                     └────────────────────┬─────────────────────┘
                                          │
                     ┌────────────────────▼─────────────────────┐
@@ -158,9 +159,23 @@ right or wrong, is precisely graded at the next primary open.
 This is why the design is verifiable inside a 13-day competition: the alpha thesis and the
 evidence mechanism are the same structural choice.
 
+### What the executor is, and is not
+
+`BgcExecutor` shells out to Bitget's Agent Hub CLI with `--paper-trading`, which routes the
+order to Bitget's Demo environment; Demo prices and fills it and hands back a record. When
+`bgc` is absent, unconfigured, times out or refuses, Ballast falls back to `PaperExecutor`
+and the night summary records `venue: simulated` with the reason. It never invents a fill.
+
+Two things this deliberately does NOT claim. There is no Bitget SDK in the tree - the
+integration is the CLI. And the spending ceiling is **not** enforced by the exchange: it is
+the signed mandate's `max_notional_usdt` and `max_orders`, checked by the enforcer, which
+is the only component holding a write-scoped credential. Saying the venue enforced it would
+be borrowing someone else's guarantee for a property this project actually provides itself.
+
 ## Data layer
 
-Public Bitget endpoints only for research; the Agentic Account for paper execution. Two
+Public Bitget endpoints only for research; the Agent Hub CLI in `--paper-trading` mode for
+execution, which routes to Bitget's Demo environment. Two
 traps are encoded in `research/bitget.py` rather than left to memory: granularity casing
 differs between spot (`1h`) and futures (`1H`) and fails **silently**, and `/market/candles`
 caps at 1000 bars while `/market/history-candles` pages back over two years.

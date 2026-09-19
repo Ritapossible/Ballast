@@ -51,7 +51,12 @@ gating (`read` < `write` < `high`), high-risk self-gate via `{confirmationRequir
 in-memory `MockServer` under `@bitget-ai/bitget-agent-sdk/testing` for network-free tests.
 
 **Agentic Account** — OAuth sub-account with fund isolation, quota control, **no withdrawals**.
-This is our capital ceiling, enforced by the exchange rather than by our code. Use it.
+Considered and NOT used. What shipped is the Agent Hub CLI in `--paper-trading` mode, which
+routes to Bitget's Demo environment; no sub-account is provisioned. So the capital ceiling
+is **ours**: `max_notional_usdt` and `max_orders` in the signed mandate, checked by the
+enforcer. Do not write that the exchange enforces it - borrowing someone else's guarantee
+for a property this code actually provides is the kind of claim a judge is right to treat
+as fake.
 
 ## 4. Prior art — read before designing anything
 

@@ -29,6 +29,25 @@ SECTIONS = [
 
 F = load_facts()
 
+
+def _funding_range(f: dict) -> str:
+    """The per-name funding spread, or an honest silence.
+
+    One averaged credit used to be subtracted from every hedge and the result
+    published as the price. Across the book the credit is negative on some
+    names and several basis points on others, so the average is the favourable
+    case for some of them. Saying the range is the whole correction.
+    """
+    fund = f.get("funding") or {}
+    if not fund.get("names"):
+        return "from negative to positive depending on the name"
+    paying = fund.get("names_paying") or 0
+    tail = (f", and is against the hedge on {paying} of {fund['names']} names"
+            if paying else "")
+    return (f"from {fund['min_bp']:+.2f} bp ({fund['min_name']}) to "
+            f"{fund['max_bp']:+.2f} bp ({fund['max_name']}) a night{tail}")
+
+
 BODY = f"""
 <h2 id="what">What Ballast is</h2>
 <p>Ballast is an autonomous overnight risk desk for <strong>tokenized US
@@ -72,8 +91,11 @@ dominates and both instruments track it almost exactly; on a quiet night the res
 is venue microstructure noise. The hedge is loosest only when little is at stake.</li>
 <li><strong>Median {F['median_tail_cut_pct']}% reduction in the p95 tail.</strong> MSFT's worst night falls
 from {worst_night(F, 'MSFT')}; AMD's from {worst_night(F, 'AMD')}.</li>
-<li><strong>Cost {F['hedge_cost_bp']} bp</strong> taker round trip, net of funding received on the
-short. Cheaper than the {F['exit_cost_bp']:.0f} bp it costs to exit - and you keep the position.</li>
+<li><strong>Cost {F['hedge_cost_gross_bp']} bp</strong> taker round trip - the part that is
+certain. A short also collects funding, which brings the average night to
+{F['hedge_cost_bp']} bp, but that credit is a rate and not a promise: measured across the
+book it runs {_funding_range(F)}. Either way it is cheaper than the
+{F['exit_cost_bp']:.0f} bp it costs to exit - and you keep the position.</li>
 <li><strong>Crypto is not a hedge.</strong> Median R² against BTC is 0.114. Crypto
 legs are excluded by measurement, not preference.</li>
 </ul>

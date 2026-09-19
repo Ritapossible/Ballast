@@ -31,9 +31,15 @@ or to absorb whatever the night brings.
 
 | | |
 |---|---|
-| rTokens live on Bitget spot | **699** (all `status: online`) |
-| …with a matched stock perp leg | **219** — the hedgeable universe |
-| …without | 480 — Ballast cannot protect these, and says so |
+| rTokens live on Bitget spot | **1,653** (all `status: online`) |
+| …with a matched stock perp leg | **218** — the hedgeable universe |
+| …without | 1,435 — Ballast cannot protect these, and names them |
+
+These move, and fast: the first measurement here was 219 of 699 on 2026-09-08, then 206 of
+1,173 once the perp leg was required to be `symbolType: stock` (see §6), and Bitget listed
+480 more rTokens in a single wave on 2026-09-17. Nothing on the site types a count —
+`docs/facts.json` is regenerated on every nightly run and the pages render whatever is in
+it, so treat the numbers in this table as of 2026-09-19 and the site as current.
 
 rTokens are identified by `baseCoin` matching `^r[A-Z]`. Stock perps use the **bare
 ticker**: `RTSLAUSDT` (spot) pairs with `TSLAUSDT` (perp).
