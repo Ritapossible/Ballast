@@ -62,17 +62,16 @@ ARROW = "\u2192"
 # --paper-trading with no parameter to turn it off.
 DEMO_UNIVERSE_CHECKED = "2026-09-19"
 DEMO_LIMIT = (
-    '<p class="note">Why it refuses: Bitget\'s demo environment is a separate venue '
-    'with its own instrument list, and that list is <strong>nine contracts</strong> - '
-    'BTC, ETH and XRP, all S-prefixed - across every demo product type. '
-    '<strong>No tokenized stock perpetual is listed on it</strong>, so no position in '
-    'this book can be filled there under any credentials. The only venue carrying '
-    'these symbols is the live one, and this executor appends '
-    '<code>--paper-trading</code> with no parameter to turn it off. Check it in one '
-    'command:<br><code>curl -s "https://api.bitget.com/api/v2/mix/market/contracts'
-    '?productType=SUSDT-FUTURES"</code><br>Checked ' + DEMO_UNIVERSE_CHECKED +
-    '; the live <code>USDT-FUTURES</code> list carries 797 contracts including every '
-    'name in this book.</p>')
+    '<p class="note"><strong>Why it refuses.</strong> Bitget\'s practice environment '
+    'is a separate venue, and it lists only <strong>nine contracts</strong> - all of '
+    'them BTC, ETH or XRP. None of the twelve stocks in this book trades there, so no '
+    'hedge Ballast places could ever fill on it, whatever credentials it used. The only '
+    'venue carrying these symbols is the live one, and Ballast has no code path to a '
+    'live order. Check it yourself:<br>'
+    '<code>curl -s "https://api.bitget.com/api/v2/mix/market/contracts'
+    '?productType=SUSDT-FUTURES"</code><br>'
+    'Checked ' + DEMO_UNIVERSE_CHECKED + '. The live list carries 797 contracts, '
+    'including all twelve.</p>')
 
 
 def _selector_affected(row: dict) -> bool:
@@ -705,19 +704,22 @@ plus the commands to reproduce every figure yourself.</p></div>
                     f'Bitget prices{" - " + _e(detail) if detail else ""}. No order was sent '
                     f'to an exchange.</p>')
 
-        head = (f'<p class="note">Execution routed to the <strong>{_e(detail or venue)}</strong> '
-                f'through <code>bgc --paper-trading</code>')
+        head = (f'<p class="note"><strong>Where the order went.</strong> Ballast sent '
+                f'tonight\'s hedge to the <strong>{_e(detail or venue)}</strong>')
         if live:
-            return (head + f', and {len(live)} of {len(fills)} fills came back with an '
+            return (head + f', and {len(live)} of {len(fills)} came back with an '
                     f'exchange order id.</p>')
         if fell_back:
-            # The exchange's own words, not a summary of them. A paraphrase here
-            # would be the one unverifiable sentence on the page.
+            # The exchange's own words, on their own line. Buried mid-sentence this
+            # was unreadable, and a paraphrase would be the one unverifiable
+            # sentence on a page whose argument is that its claims are checkable.
             why = str(fell_back[0]["venue_fallback"]).strip()
-            return (head + f'. The exchange refused the order - <em>{_e(why)}</em> - so the '
-                    f'fill was simulated and every affected row carries that reason. '
-                    f'<strong>No fill on this ledger carries an exchange order id</strong>, '
-                    f'and none is claimed.</p>{DEMO_LIMIT}')
+            return (head + f'. Bitget refused it:</p>'
+                    f'<p class="note"><code>{_e(why)}</code></p>'
+                    f'<p class="note">So the fill was priced against the market instead, '
+                    f'and every row it affected says so. '
+                    f'<strong>No fill here claims an exchange order id.</strong></p>'
+                    f'{DEMO_LIMIT}')
         return head + '.</p>'
 
     @property
@@ -767,8 +769,8 @@ declined is a decision it will be graded on.</p>
 {self.latest.get('window_hours', 0)} hours · event reader
 <strong>{_e(self.latest.get('reader', 'unknown'))}</strong> · {_e(self.chain)}{self.freshness}</p>
 {self.provenance}
-{self.venue_line}
 {self.tonight_strip}
+{self.venue_line}
 </div></section>
 
 <section><div class="wrap">

@@ -746,14 +746,14 @@ class TheVenueIsOnThePage(unittest.TestCase):
                         {"venue": "simulated", "venue_fallback": self.REFUSAL})
         self.assertIn("Bitget Agent Hub, paper-trading", out)
         self.assertIn("exchange environment is incorrect", out)
-        self.assertIn("No fill on this ledger carries an exchange order id", out)
+        self.assertIn("No fill here claims an exchange order id", out)
 
     def test_a_real_order_id_is_reported_as_one(self):
         out = self.page({"venue": "bgc-paper",
                          "venue_detail": "Bitget Agent Hub, paper-trading"},
                         {"venue": "bgc-paper", "orderId": "1234567890"})
         self.assertIn("came back with an exchange order id", out)
-        self.assertNotIn("No fill on this ledger carries", out)
+        self.assertNotIn("No fill here claims", out)
 
     def test_simulation_says_no_order_was_sent(self):
         out = self.page({"venue": "simulated", "venue_detail": "BITGET_API_KEY unset"},
@@ -776,7 +776,7 @@ class TheVenueIsOnThePage(unittest.TestCase):
         out = self.page({"venue": "bgc-paper",
                          "venue_detail": "Bitget Agent Hub, paper-trading"},
                         {"venue": "simulated", "venue_fallback": self.REFUSAL})
-        self.assertIn("No tokenized stock perpetual is listed on it", out)
+        self.assertIn("None of the twelve stocks in this book trades there", out)
         self.assertIn("productType=SUSDT-FUTURES", out)
         self.assertIn(report.DEMO_UNIVERSE_CHECKED, out)
 
@@ -784,4 +784,4 @@ class TheVenueIsOnThePage(unittest.TestCase):
         out = self.page({"venue": "bgc-paper",
                          "venue_detail": "Bitget Agent Hub, paper-trading"},
                         {"venue": "bgc-paper", "orderId": "1234567890"})
-        self.assertNotIn("No tokenized stock perpetual", out)
+        self.assertNotIn("Why it refuses", out)
