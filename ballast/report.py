@@ -79,17 +79,95 @@ def _empty(msg: str) -> str:
     return f'<div class="scroll"><div class="empty">{_e(msg)}</div></div>'
 
 
+# What each gate means in English. The ledger stores the enum value; a judge
+# reading the page should not have to look it up, and "ticker_mismatch" on a card
+# is the single most convincing thing this project can show about the reader being
+# fenced rather than trusted.
+GATE_ENGLISH = {
+    "model_unavailable": "the model could not be reached",
+    "schema_violation": "its answer did not parse into the contract",
+    "ticker_mismatch": "it answered about a different ticker",
+    "quote_not_in_sources": "its quote was not in the supplied headlines",
+    "below_confidence_floor": "it was below the confidence floor for a hedge",
+}
+
+# The book is twelve names and a ticker is not a word. "COST" sits one column from
+# a tile reading "cost to protect", and "MU", "NKE" and "SPY" are no clearer. These
+# are labels, not measurements - nothing here is derived from them.
+COMPANY = {
+    "TSLA": "Tesla", "NVDA": "NVIDIA", "PLTR": "Palantir", "COIN": "Coinbase",
+    "AMD": "AMD", "MSFT": "Microsoft", "ORCL": "Oracle", "ADBE": "Adobe",
+    "MU": "Micron", "NKE": "Nike", "COST": "Costco", "SPY": "S&P 500 ETF",
+    "AAPL": "Apple", "AMZN": "Amazon", "META": "Meta", "GOOGL": "Alphabet",
+}
+
+
+def _name(ticker: object) -> str:
+    company = COMPANY.get(str(ticker).upper())
+    return (f'<strong>{_e(ticker)}</strong>'
+            + (f'<div class="dim" style="font-size:12.5px">{_e(company)}</div>'
+               if company else ""))
+
+
+def _sources(news: dict) -> str:
+    """What the model was actually shown, so a judgment cannot be read out of context."""
+    if not news:
+        return ""
+    if news.get("source") == "unavailable":
+        return '<div class="dim" style="font-size:12.5px">news feed unavailable</div>'
+    got, inw, shown = (news.get("headlines_fetched", 0), news.get("in_window", 0),
+                       news.get("shown", 0))
+    body = (f"{got} headlines · {inw} in tonight's window" if inw
+            else f"{got} headlines · none in tonight's window, showed {shown} recent")
+    return f'<div class="dim" style="font-size:12.5px">{_e(body)}</div>'
+
+
+def _who(row: dict) -> str:
+    """MODEL, RULE, or the gate that refused the model and handed the night back."""
+    reader = row.get("reader") or {}
+    by = (row.get("inputs") or {}).get("decided_by", "rule")
+    if reader and not reader.get("accepted"):
+        why = GATE_ENGLISH.get(reader.get("rejected_because") or "",
+                               reader.get("rejected_because") or "")
+        return (f'<span class="tag">ABSTAIN {ARROW} RULE</span>'
+                f'<div class="dim" style="font-size:12.5px">{_e(why)}</div>')
+    return (f'<span class="tag {"on" if by == "model" else ""}">{_e(by)}</span>'
+            + _sources(row.get("news") or {}))
+
+
+def _why(row: dict) -> str:
+    """The model's own words where it decided, ours where the rule did.
+
+    The page used to print `rationale` on every card. That string is a template in
+    policy.decide, so twelve names that the model had read twelve different ways all
+    rendered as "event reader judged NO_HEDGE - nothing tonight can move this name".
+    96 decisions carry 68 distinct model reasonings and the page showed 32 distinct
+    lines - it was hiding the one thing that demonstrates the reader is deciding
+    rather than rubber-stamping.
+    """
+    reader = row.get("reader") or {}
+    if reader.get("accepted") and reader.get("reasoning"):
+        quote = (reader.get("verbatim_quote") or "").strip()
+        tail = (f'<div class="dim" style="font-size:12.5px;margin-top:5px">'
+                f'quoted: &ldquo;{_e(quote)}&rdquo;</div>' if quote else
+                '<div class="dim" style="font-size:12.5px;margin-top:5px">'
+                'no quote - judged on the absence of an event</div>')
+        return f'<span class="wrap">{_e(reader["reasoning"])}</span>{tail}'
+    return _e(_round_floats(row.get("rationale", "")))
+
+
 def _decisions(rows: list[dict]) -> str:
     if not rows:
         return _empty("No decisions recorded yet. The loop runs after the US close.")
     out = ['<div class="scroll stacked"><table><thead><tr><th>Position</th><th>Call</th>'
            '<th class="num">1-sigma move</th><th class="num">Position USDT</th>'
            '<th>Decided by</th><th>Reasoning</th></tr></thead><tbody>']
-    for r in rows:
+    # Hedges first. A night of refusals is the normal case and the correct one, but
+    # a page that opens on twelve NO_HEDGE cards reads as a system doing nothing.
+    for r in sorted(rows, key=lambda x: (x.get("action") != "HEDGE", x.get("ticker", ""))):
         on = r.get("action") == "HEDGE"
-        by = (r.get("inputs") or {}).get("decided_by", "rule")
         out.append(
-            f'<tr><td data-label=""><strong>{_e(r.get("ticker"))}</strong></td>'
+            f'<tr><td data-label="">{_name(r.get("ticker"))}</td>'
             f'<td data-label="Call"><span class="tag {"on" if on else ""}">'
             f'{_e(r.get("action"))}</span></td>'
             f'<td class="num mid" data-label="1-sigma move">{r.get("sigma_bp", 0):,.0f} bp</td>'
@@ -99,10 +177,8 @@ def _decisions(rows: list[dict]) -> str:
             # this page exists to make.
             f'<td class="num mid" data-label="Position USDT">'
             f'{r.get("notional_usdt", 0):,.0f} {"hedged" if on else "exposed"}</td>'
-            f'<td data-label="Decided by"><span class="tag {"on" if by == "model" else ""}">'
-            f'{_e(by)}</span></td>'
-            f'<td class="dim wrap" data-label="Reasoning">'
-            f'{_e(_round_floats(r.get("rationale", "")))}</td></tr>')
+            f'<td data-label="Decided by">{_who(r)}</td>'
+            f'<td class="dim wrap" data-label="Reasoning">{_why(r)}</td></tr>')
     return "".join(out) + "</tbody></table></div>"
 
 
@@ -112,15 +188,21 @@ def _settled(rows: list[dict]) -> str:
                       "primary open, against the exact counterfactual.")
     out = ['<div class="scroll stacked"><table><thead><tr><th>Position</th>'
            '<th>Session</th><th>Call</th>'
-           '<th class="num">Realised</th><th class="num">Counterfactual</th>'
+           '<th class="num">Realised</th><th class="num">If reversed</th>'
            '<th class="num">Value added</th><th>Verdict</th></tr></thead><tbody>']
     # Newest night first, then by size within it. Sorting by size across sessions
     # interleaved them, so consecutive rows came from different nights.
     for r in sorted(rows, key=lambda x: (x.get("session", ""),
                                          abs(x.get("unhedged_bp", 0))), reverse=True):
         va = r.get("value_added_bp", 0)
-        cls = "pos" if va > 0 else "neg" if va < 0 else "dim"
         on = r.get("action") == "HEDGE"
+        # Colour is a verdict, and this page spends a paragraph explaining that a
+        # refusal cannot be given one: its value added is positive exactly when the
+        # position rose, so green on a refused rally says "we were right to stand
+        # down" when all it means is that the stock went up. The number stays - it
+        # is the row's own arithmetic and it feeds the mean - but only a hedge,
+        # which answers the symmetric question, is coloured.
+        cls = ("pos" if va > 0 else "neg" if va < 0 else "dim") if on else "mid"
         # A hedge answers a symmetric question - did it cut the move - and one
         # night answers it. A refusal does not: value added is positive for a
         # refusal exactly when the position rose, so a per-night verdict on it is
@@ -134,7 +216,7 @@ def _settled(rows: list[dict]) -> str:
         else:
             verdict, faint = "carried", True
         out.append(
-            f'<tr><td data-label=""><strong>{_e(r.get("ticker"))}</strong></td>'
+            f'<tr><td data-label="">{_name(r.get("ticker"))}</td>'
             f'<td class="dim" data-label="Session">{_e(r.get("session", "-"))}{mark}</td>'
             f'<td data-label="Call"><span class="tag {"on" if on else ""}">'
             f'{_e(r.get("action"))}</span></td>'
@@ -144,7 +226,7 @@ def _settled(rows: list[dict]) -> str:
             # value that makes value-added checkable off the page entirely: a
             # refusal showed +439, +439 and +440 with nothing to derive 440 from.
             f'<td class="num mid" data-label="Realised">{r.get("realised_bp", 0):+,.0f} bp</td>'
-            f'<td class="num mid" data-label="Counterfactual">'
+            f'<td class="num mid" data-label="If reversed">'
             f'{r.get("counterfactual_bp", 0):+,.0f} bp</td>'
             f'<td class="num {cls}" data-label="Value added">{va:+,.0f} bp</td>'
             f'<td class="{"dim" if faint else ""}" data-label="Verdict">{verdict}</td></tr>')
@@ -343,13 +425,13 @@ class Site:
             ledger = Ledger(config.LEDGER_PATH, config.secret())
         except config.UnsignedError:
             ledger = Ledger(config.LEDGER_PATH, config.DEV_SECRET)
-            self.chain = f"{len(ledger.records())} entries · signatures NOT verified"
+            self.chain = f"{len(ledger.records())} ledger entries · signatures NOT verified"
             self.broken = False
             self.unverified = True
         else:
             self.unverified = False
             try:
-                self.chain = f"{ledger.verify()} entries · chain verified"
+                self.chain = f"{ledger.verify()} ledger entries · chain verified"
                 self.broken = False
             except LedgerError as exc:
                 self.chain, self.broken = f"CHAIN BROKEN - {exc}", True
@@ -591,6 +673,41 @@ plus the commands to reproduce every figure yourself.</p></div>
 </div>
 </div></section>"""
 
+    @property
+    def tonight_strip(self) -> str:
+        """Tonight at a glance, and why a night of refusals is the expected case.
+
+        Twelve NO_HEDGE cards with no framing read as a system doing nothing. The
+        reason they are refusals is the measurement the whole project rests on, and
+        it was buried in the last line of each card's rationale: volatility does not
+        find the nights worth hedging, so a 221 bp typical move is not a reason to
+        spend 11.3 bp. A judge should not have to infer that from twelve cards.
+        """
+        rows = self.tonight
+        if not rows:
+            return ""
+        hedged = sum(1 for r in rows if r.get("action") == "HEDGE")
+        model = sum(1 for r in rows
+                    if (r.get("inputs") or {}).get("decided_by") == "model")
+        gated = sum(1 for r in rows
+                    if (r.get("reader") or {}) and not (r.get("reader") or {}).get("accepted"))
+        return f"""
+<div class="tiles">
+{_tile(hedged, "hedged tonight")}
+{_tile(len(rows) - hedged, "left exposed, deliberately")}
+{_tile(model, "decided by the model")}
+{_tile(gated, "model answers refused by a gate")}
+</div>
+<div class="narrow"><p class="note">Ballast does not hedge volatility; it hedges
+<strong>scheduled events</strong>. A typical overnight move of 200-300 bp is not a
+reason to spend {self.f['hedge_cost_bp']} bp, because trailing volatility separates
+risky nights from ordinary ones by only <strong>1.41x</strong> and the nights it
+picks carry positive expected return - paying to remove compensated return is how a
+hedging policy loses 13% a year. The earnings calendar separates at
+<strong>3.2x</strong> on variance that is <em>not</em> compensated, and the reader
+exists to find the unscheduled events a calendar cannot. So most nights are refusals,
+and each one is graded.</p></div>"""
+
     def tonight_page(self) -> str:
         return f"""
 <section class="bd"><div class="wrap center">
@@ -603,6 +720,7 @@ declined is a decision it will be graded on.</p>
 {self.latest.get('window_hours', 0)} hours · event reader
 <strong>{_e(self.latest.get('reader', 'unknown'))}</strong> · {_e(self.chain)}{self.freshness}</p>
 {self.provenance}
+{self.tonight_strip}
 </div></section>
 
 <section><div class="wrap">
@@ -828,7 +946,8 @@ settles at the next opening bell, so nothing can be quietly forgotten.</p>
 
 <h3 style="margin-top:52px">How these are scored</h3>
 <ul class="bul">
-<li><strong>Value added is Realised minus Counterfactual</strong>, and both are in the row, so every number here can be checked by subtracting two others. The counterfactual is what the choice <em>not</em> taken would have returned over the same window, with the hedge cost charged to whichever side pays it - not modelled, observed.</li>
+<li><strong>Value added is Realised minus "If reversed"</strong>, and both are in the row, so every number here can be checked by subtracting two others. <em>Realised</em> is what the position actually returned over the window; <em>if reversed</em> is what the other choice would have returned over the same window - for a refusal, the rToken held against a short perp, less the hedge cost; for a hedge, the rToken held alone. Not modelled, observed.</li>
+<li><strong>Only hedges are coloured.</strong> A refusal's value added is positive exactly when the position rose, so colouring it green would be a directional scorecard, and this system makes no directional claim. A refused night on which the name rallied is not a win and is not shown as one; the number is still in the row, and refusals are graded across the run on the mean above.</li>
 <li><strong>A hedge is graded on whether it cut the move.</strong> It is symmetric, so grading one by profit direction would be meaningless, and one night settles the question.</li>
 <li><strong>Rows marked "hedged a night early"</strong> were hedged before the calendar rule
 checked the release time. They are kept, excluded from the figures above, and written up in

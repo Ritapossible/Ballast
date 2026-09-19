@@ -74,7 +74,7 @@ class TestPages(unittest.TestCase):
         self.assertIn("+771 bp", settled)         # the difference
 
     def test_every_settled_row_can_be_checked_by_subtraction(self):
-        """The page tells a reader value added is realised minus counterfactual.
+        """The page tells a reader value added is realised minus "if reversed".
         A row that does not satisfy that is a row nobody can verify - and the
         column was missing entirely until the arithmetic stopped reconciling on
         screen for every refusal."""
@@ -82,11 +82,11 @@ class TestPages(unittest.TestCase):
         settled = build_site(POPULATED)["settled.html"]
         row = re.search(r"<tr><td data-label=\"\">.*?</tr>", settled).group(0)
         nums = [int(n.replace(",", "")) for n in
-                re.findall(r'data-label="(?:Realised|Counterfactual|Value added)">'
+                re.findall(r'data-label="(?:Realised|If reversed|Value added)">'
                            r'([+-][\d,]+) bp', row)]
         self.assertEqual(len(nums), 3, row)
-        realised, counterfactual, value_added = nums
-        self.assertEqual(realised - counterfactual, value_added)
+        realised, if_reversed, value_added = nums
+        self.assertEqual(realised - if_reversed, value_added)
 
     def test_states_what_is_not_claimed(self):
         pages = build_site([])
@@ -570,3 +570,149 @@ class SettledTape(unittest.TestCase):
         out = self.tape([{"session": "2026-09-02", "hedged": 1,
                           "hedges_that_cut": 1}])
         self.assertIn('href="settled.html"', out)
+
+
+class TheTonightCardShowsTheModelsWork(unittest.TestCase):
+    """The page used to print a template string on every card.
+
+    `rationale` comes from `policy.decide`, so twelve names the model had read
+    twelve different ways all rendered as the same sentence - and a reader whose
+    answer a gate had thrown out still rendered as MODEL. Both made the reader look
+    like a rubber stamp on a page whose whole argument is that it is not one.
+    """
+
+    def card(self, **over) -> str:
+        body = {"ticker": "NVDA", "session": "2026-09-10", "action": "NO_HEDGE",
+                "sigma_bp": 218.0, "notional_usdt": 965.0,
+                "rationale": "event reader judged NO_HEDGE - nothing tonight can move this name",
+                "inputs": {"decided_by": "model"},
+                "reader": {"accepted": True, "judgment": "NO_HEDGE",
+                           "reasoning": "Routine insider selling, no overnight catalyst.",
+                           "verbatim_quote": "NVIDIA CFO sells 34,918 shares"},
+                "news": {"headlines_fetched": 12, "in_window": 8, "shown": 8,
+                         "source": "window"}}
+        body.update(over)
+        return build_site([
+            ("decision", body),
+            ("night_summary", {"session": "2026-09-10", "positions": 1, "hedged": 0,
+                               "window_hours": 17.5, "reader": "on"}),
+        ])["tonight.html"]
+
+    def test_the_models_own_reasoning_is_shown_not_the_template(self):
+        out = self.card()
+        self.assertIn("Routine insider selling", out)
+        self.assertNotIn("nothing tonight can move this name", out)
+
+    def test_the_quote_it_was_grounded_on_is_shown(self):
+        self.assertIn("NVIDIA CFO sells 34,918 shares", self.card())
+
+    def test_a_judgment_with_no_quote_says_so_rather_than_showing_nothing(self):
+        out = self.card(reader={"accepted": True, "judgment": "NO_HEDGE",
+                                "reasoning": "Nothing specific tonight.",
+                                "verbatim_quote": ""})
+        self.assertIn("no quote - judged on the absence of an event", out)
+
+    def test_what_the_model_was_shown_is_on_the_card(self):
+        self.assertIn("12 headlines", self.card())
+        self.assertIn("8 in tonight&#x27;s window", self.card())
+
+    def test_a_fallback_brief_is_not_passed_off_as_tonights_news(self):
+        out = self.card(news={"headlines_fetched": 12, "in_window": 0, "shown": 8,
+                              "source": "recent_fallback"})
+        self.assertIn("none in tonight&#x27;s window, showed 8 recent", out)
+
+    def test_an_unreachable_feed_is_stated(self):
+        out = self.card(news={"source": "unavailable", "error": "timeout",
+                              "headlines_fetched": 0, "in_window": 0, "shown": 0})
+        self.assertIn("news feed unavailable", out)
+
+    def test_a_gated_reader_is_never_labelled_model(self):
+        """A refused answer handed the night back to the rule; the card must say so."""
+        out = self.card(
+            inputs={"decided_by": "rule"},
+            reader={"accepted": False, "rejected_because": "quote_not_in_sources",
+                    "judgment": "ABSTAIN"})
+        self.assertIn("ABSTAIN", out)
+        self.assertIn("its quote was not in the supplied headlines", out)
+        self.assertNotIn('class="tag on">model', out)
+
+    def test_every_gate_has_an_english_sentence(self):
+        from ballast.reader import RejectReason
+        for reason in RejectReason:
+            self.assertIn(reason.value, report.GATE_ENGLISH, reason.value)
+
+    def test_hedges_are_listed_before_refusals(self):
+        pages = build_site([
+            ("decision", {"ticker": "AAA", "session": "2026-09-10", "action": "NO_HEDGE",
+                          "sigma_bp": 1.0, "notional_usdt": 1.0, "rationale": "r",
+                          "inputs": {"decided_by": "rule"}}),
+            ("decision", {"ticker": "ZZZ", "session": "2026-09-10", "action": "HEDGE",
+                          "sigma_bp": 1.0, "notional_usdt": 1.0, "rationale": "r",
+                          "inputs": {"decided_by": "rule"}}),
+            ("night_summary", {"session": "2026-09-10", "positions": 2, "hedged": 1,
+                               "window_hours": 17.5, "reader": "on"}),
+        ])["tonight.html"]
+        body = pages.split("<tbody>")[1]
+        self.assertLess(body.index("ZZZ"), body.index("AAA"))
+
+    def test_a_ticker_carries_the_company_it_names(self):
+        self.assertIn("NVIDIA", self.card())
+        self.assertIn("Costco", self.card(ticker="COST"))
+
+    def test_the_strip_says_why_a_night_of_refusals_is_expected(self):
+        out = self.card()
+        self.assertIn("left exposed, deliberately", out)
+        self.assertIn("does not hedge volatility", out)
+
+
+class ARefusalIsNotColouredLikeAVerdict(unittest.TestCase):
+    """Colour is a verdict, and the same page spends a paragraph refusing to give
+    a refusal one. Green on a refused rally says "we were right to stand down" when
+    all it means is that the position rose."""
+
+    def settled(self, rows) -> str:
+        return build_site([
+            ("night_summary", {"session": "2026-09-16", "positions": len(rows),
+                               "hedged": 0, "window_hours": 17.5, "reader": "on"}),
+            ("settlement", {"session": "2026-09-16", "rows": rows}),
+        ])["settled.html"]
+
+    def row(self, **over) -> dict:
+        r = {"ticker": "MU", "action": "NO_HEDGE", "unhedged_bp": 567.0,
+             "realised_bp": 567.0, "counterfactual_bp": -8.0, "value_added_bp": 575.0}
+        r.update(over)
+        return r
+
+    def cell(self, html_text: str, value: str) -> str:
+        import re as _re
+        m = _re.search(r'<td class="num ([a-z]+)"[^>]*>' + _re.escape(value), html_text)
+        self.assertIsNotNone(m, f"no value-added cell for {value}")
+        return m.group(1)
+
+    def test_a_refused_rally_is_not_green(self):
+        out = self.settled([self.row()])
+        self.assertEqual(self.cell(out, "+575 bp"), "mid")
+
+    def test_a_refused_fall_is_not_red(self):
+        out = self.settled([self.row(unhedged_bp=-500.0, realised_bp=-500.0,
+                                     value_added_bp=-490.0)])
+        self.assertEqual(self.cell(out, "-490 bp"), "mid")
+
+    def test_a_hedge_that_paid_is_still_green(self):
+        out = self.settled([self.row(ticker="COST", action="HEDGE", unhedged_bp=-40.0,
+                                     realised_bp=-11.0, counterfactual_bp=-40.0,
+                                     value_added_bp=28.0)])
+        self.assertEqual(self.cell(out, "+28 bp"), "pos")
+
+    def test_a_hedge_that_cost_is_still_red(self):
+        out = self.settled([self.row(ticker="MU", action="HEDGE", unhedged_bp=10.0,
+                                     realised_bp=-107.0, counterfactual_bp=10.0,
+                                     value_added_bp=-117.0)])
+        self.assertEqual(self.cell(out, "-117 bp"), "neg")
+
+    def test_the_page_says_why_only_hedges_are_coloured(self):
+        self.assertIn("Only hedges are coloured", self.settled([self.row()]))
+
+    def test_the_counterfactual_column_names_the_choice_not_taken(self):
+        out = self.settled([self.row()])
+        self.assertIn("If reversed", out)

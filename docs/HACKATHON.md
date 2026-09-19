@@ -114,10 +114,10 @@ Incomplete productization or validation answers do **not** invalidate an entry b
 | X post with `#BitgetHackathon` + `@Bitget_AI` | ❌ **not posted** — an entry without this is invalid regardless of quality |
 | Six-part description | ✅ written — [`docs/SUBMISSION.md`](SUBMISSION.md); only the X post link is a placeholder |
 | Role of the LLM | ✅ event reader implemented — Qwen owns the hedge judgment behind schema, identity and grounding gates |
-| Agentic Account + `--paper-trading` | ✅ via the Agent Hub (`ballast/bgc.py`); `PaperExecutor` remains the default and the fallback |
+| Agentic Account + `--paper-trading` | ⚠️ **implemented, not yet the venue of record** — the executor (`ballast/bgc.py`) routes an admitted hedge through `bgc --paper-trading`, but it only engages when a Demo API key is present, and no key has been configured. **Every fill on the ledger so far is simulated against observed Bitget prices**, labelled `venue: simulated` per order, and `state/bitget_orders.json` says so in its own header. Setting the Demo credentials as repository secrets switches the next hedge over; old rows keep their label, which is what makes a mixed log honest rather than retrofitted. |
 | Qwen `qwen3.8-max` via `hackathon.bitgetops.com/v1` | ✅ wired (`ballast/llm.py`) — **needs `QWEN_API_KEY`**; endpoint verified live (401 on a dummy key) |
 | Scored metrics on the competition log (Sharpe, max drawdown, win rate) | ✅ `ballast/metrics.py`, rendered on the Settled page — computed on the live ledger for the book and for the same book with every hedge removed |
-| Agent Hub (`bgc`) | ✅ wired — `BALLAST_VENUE=bgc` routes the admitted hedge through `bgc --paper-trading`; needs a Demo API key. Off by default; every fill records which venue filled it. |
+| Agent Hub (`bgc`) | ⚠️ **code shipped, no fill placed through it** — `BALLAST_VENUE=bgc` routes the admitted hedge through `bgc --paper-trading` and the workflow sets it automatically once `BITGET_API_KEY` exists as a secret. Until then the CLI install step is skipped, `bgc.available()` reports the key is unset, and fills are simulated. Claiming this as done before an order carries an exchange `orderId` would be the one unverifiable claim in a project whose entire argument is that its claims are checkable. |
 
 ### Sub-theme: Event-Driven Agent (settled 2026-09-13)
 
