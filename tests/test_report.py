@@ -478,9 +478,9 @@ class ClaimTableCase(unittest.TestCase):
     sample running to 264."""
 
     def test_the_red_team_count_is_counted(self):
-        from ballast import report
+        from ballast import suite
         path = Path(__file__).resolve().parent / "test_enforcer.py"
-        self.assertEqual(report._red_team_count(), path.read_text().count("def test_"))
+        self.assertEqual(suite.red_team(), path.read_text().count("def test_"))
 
     def test_the_night_range_comes_from_the_sample(self):
         from ballast import report

@@ -67,7 +67,7 @@ rather than an assumption.
 An enforcer runs as a separate process holding the only write-scoped credential. It never
 sees the model's reasoning; it checks arithmetic against a signed, expiring mandate - a
 position exists, the order opposes it, size within ratio, symbol in universe, night caps
-intact. **18 red-team tests** drive hostile intents at it, each asserting the specific rule
+intact. **25 red-team tests** drive hostile intents at it, each asserting the specific rule
 that refused it.
 
 ## 2 · Target user and product value
@@ -165,7 +165,7 @@ Gate 1 result behaving as measured, on live data, decided by a job nobody was wa
 executor → ledger), morning settlement against the exact counterfactual, the signed
 tamper-evident ledger, the enforcer and its red-team suite, the Qwen event reader with three
 verification gates, the research suite behind every number, a scheduled workflow that runs
-and commits unattended, and a public site with full documentation. **79 tests, network-free
+and commits unattended, and a public site with full documentation. **352 tests, network-free
 and key-free.**
 
 **Not built:** live execution (paper only, by choice); Bitget Agentic Account OAuth wiring -
@@ -240,12 +240,13 @@ market API (spot + USDT-futures), Nasdaq earnings calendar, Google News RSS, Qwe
 | | |
 |---|---|
 | **Live demo** | https://ballast-v1.vercel.app |
-| **Documentation** | https://ballast-v1.vercel.app/docs - 17 sections incl. the defects found and the roadmap |
+| **Reader vs calendar** | https://ballast-v1.vercel.app/reader - every night the model reached a different answer from the deterministic rule, with the derivation checked against the ledger |
+| **Documentation** | https://ballast-v1.vercel.app/docs - 19 sections incl. the defects found and the roadmap |
 | **Source** | https://github.com/Ritapossible/Ballast |
 | **Paper trading log** | `state/ledger.jsonl` - hash-chained, signed, committed by the scheduled job |
 | **Bitget-schema log** | `state/bitget_orders.json` - the same fills in UTA order field names |
 | **Research suite** | `research/` - reproduces every figure, no API key needed |
-| **Tests** | `python3 -m unittest discover -s tests` - 103, network-free, incl. 17 end-to-end |
+| **Tests** | `python3 -m unittest discover -s tests` - 352, network-free, incl. 31 end-to-end |
 | **Workflows** | `.github/workflows/` - nightly loop and CI |
 
 **Why the log is evidence rather than assertion:** each decision is written before its

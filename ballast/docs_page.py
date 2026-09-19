@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from . import config, facts
+from . import config, facts, suite
 from .facts import load as load_facts
 from .facts import worst_night
 from .theme import REPO, page
@@ -165,7 +165,7 @@ supplied sources. This is what stops a fabricated source reaching the book.</li>
 It never sees the model's reasoning; it checks arithmetic against a signed mandate -
 a position exists, the order opposes it, the size is within the ratio, the symbol is
 in the universe, the mandate has not expired, the night's caps are intact.
-<strong>18 red-team tests</strong> drive hostile intents at it, each asserting the
+<strong>{suite.red_team()} red-team tests</strong> drive hostile intents at it, each asserting the
 specific rule that refused it.</p>
 <p>Bounded authority is worth nothing if the model never uses it, so whether the
 reader is load-bearing is measured rather than asserted. Every decision carries the

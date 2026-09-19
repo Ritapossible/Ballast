@@ -17,7 +17,7 @@ import html
 import re
 from pathlib import Path
 
-from . import config, counterfactual, facts
+from . import config, counterfactual, facts, suite
 from .earnings import SELECTOR_BUG_SESSIONS
 from .facts import load as load_facts
 from .facts import worst_night
@@ -373,19 +373,6 @@ def _nights_range(f: dict) -> str:
     return f"{min(r['nights'] for r in rows)}-{max(r['nights'] for r in rows)}"
 
 
-def _red_team_count() -> int:
-    """Counted, because the page said 18 while the file held 25.
-
-    Seven were added the same day the executor boundary was closed, which is
-    exactly when the number mattered most and was least likely to be reread.
-    """
-    path = config.ROOT / "tests" / "test_enforcer.py"
-    try:
-        return path.read_text().count("def test_")
-    except OSError:
-        return 0
-
-
 def claims(f: dict) -> list[tuple[str, str, str | None]]:
     return [
     (f"A matched perp removes a median {f['median_r2'] * 100:.1f}% of overnight "
@@ -401,7 +388,7 @@ def claims(f: dict) -> list[tuple[str, str, str | None]]:
      "observed", "which is why the reader exists"),
     ("Signed, tamper-evident decision ledger", "proven", None),
     ("The enforcer refuses every directional intent", "proven",
-     f"{_red_team_count()} red-team tests, and the executor takes only an admission"),
+     f"{suite.red_team()} red-team tests, and the executor takes only an admission"),
     (f"The hedge holds out of sample - β fitted on the first "
      f"{f['oos']['split']:.0%} of each name's nights and applied unchanged",
      "observed",
@@ -1111,7 +1098,7 @@ the derivation check.</p>
 <div class="card"><h3>It cannot place a bet</h3><p>Every order Ballast can emit is
 opposite in sign to, and bounded in size by, a position already held. The enforcer
 holds the only write-scoped key, sees no model reasoning, and does arithmetic against
-a signed mandate. Eighteen red-team tests drive hostile intents at it.</p></div>
+a signed mandate. {suite.red_team()} red-team tests drive hostile intents at it.</p></div>
 <div class="card"><h3>The model is fenced, not trusted</h3><p>Qwen owns the hedge
 judgment. Three gates stand between it and an order - schema, ticker identity, and a
 grounding check that the quoted headline actually appears in the supplied sources. A

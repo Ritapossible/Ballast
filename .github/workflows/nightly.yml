@@ -188,6 +188,10 @@ jobs:
           # facts.json, so a nightly refresh that moved a figure and left the
           # README behind would turn CI red until someone ran this by hand.
           python tools/readme_facts.py
+          # SUBMISSION.md describes this repo with counts nobody generated:
+          # 18 red-team tests against a file holding 25, and 79 tests in one
+          # sentence and 103 in another against a suite of 347.
+          python tools/submission_counts.py
           # Every page the builder declares must exist on disk afterwards.
           python - <<'EOF'
           from pathlib import Path
