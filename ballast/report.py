@@ -661,6 +661,45 @@ plus the commands to reproduce every figure yourself.</p></div>
 </div></section>"""
 
     @property
+    def venue_line(self) -> str:
+        """Where tonight's admitted hedges were actually sent, and what came back.
+
+        The site said nothing about execution at all, which left the strongest
+        infrastructure evidence in the project invisible: the Agent Hub route is
+        wired, runs on every scheduled night, and when the exchange refuses the
+        order Ballast records the refusal verbatim and simulates instead. A page
+        that shows only the simulated fill looks like a project that never
+        attempted the integration.
+        """
+        venue = self.latest.get("venue")
+        if not venue:
+            return ""
+        detail = self.latest.get("venue_detail") or ""
+        fills = [r.get("fill") or {} for r in self.tonight if r.get("fill")]
+        fell_back = [f for f in fills if f.get("venue_fallback")]
+        live = [f for f in fills if f.get("orderId")]
+
+        if venue == "simulated":
+            return (f'<p class="note">Execution <strong>simulated</strong> against observed '
+                    f'Bitget prices{" - " + _e(detail) if detail else ""}. No order was sent '
+                    f'to an exchange.</p>')
+
+        head = (f'<p class="note">Execution routed to the <strong>{_e(detail or venue)}</strong> '
+                f'through <code>bgc --paper-trading</code>')
+        if live:
+            return (head + f', and {len(live)} of {len(fills)} fills came back with an '
+                    f'exchange order id.</p>')
+        if fell_back:
+            # The exchange's own words, not a summary of them. A paraphrase here
+            # would be the one unverifiable sentence on the page.
+            why = str(fell_back[0]["venue_fallback"]).strip()
+            return (head + f'. The exchange refused the order - <em>{_e(why)}</em> - so the '
+                    f'fill was simulated and every affected row carries that reason. '
+                    f'<strong>No fill on this ledger carries an exchange order id</strong>, '
+                    f'and none is claimed.</p>')
+        return head + '.</p>'
+
+    @property
     def tonight_strip(self) -> str:
         """Tonight at a glance, and why a night of refusals is the expected case.
 
@@ -707,6 +746,7 @@ declined is a decision it will be graded on.</p>
 {self.latest.get('window_hours', 0)} hours · event reader
 <strong>{_e(self.latest.get('reader', 'unknown'))}</strong> · {_e(self.chain)}{self.freshness}</p>
 {self.provenance}
+{self.venue_line}
 {self.tonight_strip}
 </div></section>
 

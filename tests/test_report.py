@@ -716,3 +716,50 @@ class ARefusalIsNotColouredLikeAVerdict(unittest.TestCase):
     def test_the_counterfactual_column_names_the_choice_not_taken(self):
         out = self.settled([self.row()])
         self.assertIn("If reversed", out)
+
+
+class TheVenueIsOnThePage(unittest.TestCase):
+    """The site said nothing about execution, which hid the strongest piece of
+    infrastructure evidence in the project: the Agent Hub route runs on every
+    scheduled night, and when the exchange refuses the order Ballast records the
+    refusal verbatim and simulates instead. A page showing only a simulated fill
+    looks like a project that never attempted the integration."""
+
+    REFUSAL = "exit 1: HTTP 400 from Bitget: exchange environment is incorrect"
+
+    def page(self, summary_extra: dict, fill: dict | None) -> str:
+        decision = {"ticker": "COIN", "session": "2026-09-18", "action": "HEDGE",
+                    "sigma_bp": 388.0, "notional_usdt": 1074.0, "rationale": "r",
+                    "inputs": {"decided_by": "model"}}
+        if fill is not None:
+            decision["fill"] = fill
+        return build_site([
+            ("decision", decision),
+            ("night_summary", dict({"session": "2026-09-18", "positions": 1,
+                                    "hedged": 1, "window_hours": 17.5,
+                                    "reader": "on"}, **summary_extra)),
+        ])["tonight.html"]
+
+    def test_a_refusal_is_quoted_in_the_exchanges_own_words(self):
+        out = self.page({"venue": "bgc-paper",
+                         "venue_detail": "Bitget Agent Hub, paper-trading"},
+                        {"venue": "simulated", "venue_fallback": self.REFUSAL})
+        self.assertIn("Bitget Agent Hub, paper-trading", out)
+        self.assertIn("exchange environment is incorrect", out)
+        self.assertIn("No fill on this ledger carries an exchange order id", out)
+
+    def test_a_real_order_id_is_reported_as_one(self):
+        out = self.page({"venue": "bgc-paper",
+                         "venue_detail": "Bitget Agent Hub, paper-trading"},
+                        {"venue": "bgc-paper", "orderId": "1234567890"})
+        self.assertIn("came back with an exchange order id", out)
+        self.assertNotIn("No fill on this ledger carries", out)
+
+    def test_simulation_says_no_order_was_sent(self):
+        out = self.page({"venue": "simulated", "venue_detail": "BITGET_API_KEY unset"},
+                        {"venue": "simulated"})
+        self.assertIn("No order was sent to an exchange", out)
+        self.assertNotIn("bgc --paper-trading", out)
+
+    def test_a_night_with_no_venue_recorded_claims_nothing(self):
+        self.assertNotIn("Execution", self.page({}, None))
