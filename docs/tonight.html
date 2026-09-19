@@ -271,16 +271,10 @@ declined is a decision it will be graded on.</p>
 <div class="tile"><div class="n">10</div><div class="l">decided by the model</div></div>
 <div class="tile"><div class="n">2</div><div class="l">model answers refused by a gate</div></div>
 </div>
-<div class="narrow"><p class="note">Ballast does not hedge volatility; it hedges
-<strong>scheduled events</strong>. A typical overnight move of 200-300 bp is not a
-reason to spend 11.3 bp, because trailing volatility separates
-risky nights from ordinary ones by only <strong>1.41x</strong> and the nights it
-picks carry positive expected return - paying to remove compensated return is how a
-hedging policy loses 13% a year. The earnings calendar separates at
-<strong>3.2x</strong> on variance that is <em>not</em> compensated, and the reader
-exists to find the unscheduled events a calendar cannot. So most nights are refusals,
-and each one is graded.</p></div>
-<p class="note"><strong>Where the order went.</strong> Ballast sent tonight's hedge to the <strong>Bitget Agent Hub, paper-trading</strong>. Bitget refused it:</p><p class="note"><code>exit 1: HTTP 400 from Bitget: exchange environment is incorrect Retry later or verify endpoint parameters.</code></p><p class="note">So the fill was priced against the market instead, and every row it affected says so. <strong>No fill here claims an exchange order id.</strong></p><p class="note"><strong>Why it refuses.</strong> Bitget's practice environment is a separate venue, and it lists only <strong>nine contracts</strong> - all of them BTC, ETH or XRP. None of the twelve stocks in this book trades there, so no hedge Ballast places could ever fill on it, whatever credentials it used. The only venue carrying these symbols is the live one, and Ballast has no code path to a live order. Check it yourself:<br><code>curl -s "https://api.bitget.com/api/v2/mix/market/contracts?productType=SUSDT-FUTURES"</code><br>Checked 2026-09-19. The live list carries 797 contracts, including all twelve.</p>
+<div class="narrow"><p class="note">Most nights are refusals, by design: Ballast
+hedges <strong>scheduled events</strong>, not volatility. Every refusal is graded.
+<a href="docs.html#selector">Why &rarr;</a></p></div>
+<p class="note"><strong>Execution</strong> &middot; Bitget Agent Hub, paper-trading. Bitget refused tonight's order - <code>HTTP 400 from Bitget: exchange environment is incorrect</code> - so the fill was priced against the market and every affected row says so. <strong>No fill here claims an exchange order id.</strong> <a href="docs.html#execution">How execution works &rarr;</a></p>
 </div></section>
 
 <section><div class="wrap">
