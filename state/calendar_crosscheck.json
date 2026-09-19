@@ -1,0 +1,785 @@
+{
+ "built_on": "2026-09-19T23:36:58+00:00",
+ "counts": {
+  "agreed": 0,
+  "checked": 0,
+  "decisions": 96,
+  "disagreed": 0,
+  "unknown": 96
+ },
+ "rows": [
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "HTTP 404 from https://agent.bitget.com/mcp",
+   "nasdaq": "no",
+   "session": "2026-09-09",
+   "ticker": "ADBE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "HTTP 404 from https://agent.bitget.com/mcp",
+   "nasdaq": "no",
+   "session": "2026-09-09",
+   "ticker": "AMD"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "upstream 503: None",
+   "nasdaq": "no",
+   "session": "2026-09-09",
+   "ticker": "COIN"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-09",
+   "ticker": "COST"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-09",
+   "ticker": "MSFT"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-09",
+   "ticker": "MU"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-09",
+   "ticker": "NKE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-09",
+   "ticker": "NVDA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-09",
+   "ticker": "ORCL"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-09",
+   "ticker": "PLTR"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-09",
+   "ticker": "SPY"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-09",
+   "ticker": "TSLA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "yes",
+   "session": "2026-09-10",
+   "ticker": "ADBE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-10",
+   "ticker": "AMD"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-10",
+   "ticker": "COIN"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-10",
+   "ticker": "COST"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-10",
+   "ticker": "MSFT"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-10",
+   "ticker": "MU"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-10",
+   "ticker": "NKE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-10",
+   "ticker": "NVDA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "yes",
+   "session": "2026-09-10",
+   "ticker": "ORCL"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-10",
+   "ticker": "PLTR"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-10",
+   "ticker": "SPY"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-10",
+   "ticker": "TSLA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-11",
+   "ticker": "ADBE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-11",
+   "ticker": "AMD"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-11",
+   "ticker": "COIN"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-11",
+   "ticker": "COST"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-11",
+   "ticker": "MSFT"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-11",
+   "ticker": "MU"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-11",
+   "ticker": "NKE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-11",
+   "ticker": "NVDA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-11",
+   "ticker": "ORCL"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-11",
+   "ticker": "PLTR"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-11",
+   "ticker": "SPY"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-11",
+   "ticker": "TSLA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-14",
+   "ticker": "ADBE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-14",
+   "ticker": "AMD"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-14",
+   "ticker": "COIN"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-14",
+   "ticker": "COST"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-14",
+   "ticker": "MSFT"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-14",
+   "ticker": "MU"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-14",
+   "ticker": "NKE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-14",
+   "ticker": "NVDA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-14",
+   "ticker": "ORCL"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-14",
+   "ticker": "PLTR"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-14",
+   "ticker": "SPY"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-14",
+   "ticker": "TSLA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-15",
+   "ticker": "ADBE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-15",
+   "ticker": "AMD"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-15",
+   "ticker": "COIN"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-15",
+   "ticker": "COST"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-15",
+   "ticker": "MSFT"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-15",
+   "ticker": "MU"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-15",
+   "ticker": "NKE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-15",
+   "ticker": "NVDA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-15",
+   "ticker": "ORCL"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-15",
+   "ticker": "PLTR"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-15",
+   "ticker": "SPY"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-15",
+   "ticker": "TSLA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-16",
+   "ticker": "ADBE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-16",
+   "ticker": "AMD"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-16",
+   "ticker": "COIN"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-16",
+   "ticker": "COST"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-16",
+   "ticker": "MSFT"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-16",
+   "ticker": "MU"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-16",
+   "ticker": "NKE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-16",
+   "ticker": "NVDA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-16",
+   "ticker": "ORCL"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-16",
+   "ticker": "PLTR"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-16",
+   "ticker": "SPY"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-16",
+   "ticker": "TSLA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-17",
+   "ticker": "ADBE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-17",
+   "ticker": "AMD"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-17",
+   "ticker": "COIN"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-17",
+   "ticker": "COST"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-17",
+   "ticker": "MSFT"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-17",
+   "ticker": "MU"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-17",
+   "ticker": "NKE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-17",
+   "ticker": "NVDA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-17",
+   "ticker": "ORCL"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-17",
+   "ticker": "PLTR"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-17",
+   "ticker": "SPY"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-17",
+   "ticker": "TSLA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-18",
+   "ticker": "ADBE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-18",
+   "ticker": "AMD"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-18",
+   "ticker": "COIN"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-18",
+   "ticker": "COST"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-18",
+   "ticker": "MSFT"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-18",
+   "ticker": "MU"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-18",
+   "ticker": "NKE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-18",
+   "ticker": "NVDA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-18",
+   "ticker": "ORCL"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-18",
+   "ticker": "PLTR"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-18",
+   "ticker": "SPY"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "stopped after 3 failures",
+   "nasdaq": "no",
+   "session": "2026-09-18",
+   "ticker": "TSLA"
+  }
+ ],
+ "service": {
+  "detail": "bitget-mcp-server \u00b7 categories: crypto, equity, etf, news, sentiment",
+  "reachable": true
+ },
+ "source": "https://agent.bitget.com/mcp"
+}

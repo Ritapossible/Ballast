@@ -170,6 +170,18 @@ jobs:
       # from is already warm in the cache the decide step filled - but it touches a
       # public feed, so a failure must not cost the night. continue-on-error leaves
       # the previously committed index in place, and the page renders that.
+      # A second opinion on the calendar, from the organiser's US-stock data
+      # service. It audits what was already decided rather than deciding - see
+      # ballast/crosscheck.py. continue-on-error because the upstream has been
+      # answering 503: a display file must never cost a night, and an unreachable
+      # second source is recorded as "unknown", never as agreement.
+      - name: Cross-check the calendar against bitget-mcp-server
+        if: inputs.task != 'check'
+        continue-on-error: true
+        env:
+          BALLAST_SECRET: ${{ secrets.BALLAST_SECRET }}
+        run: python -m ballast.crosscheck
+
       - name: Refresh the reader-vs-calendar comparison
         if: inputs.task != 'check'
         continue-on-error: true
