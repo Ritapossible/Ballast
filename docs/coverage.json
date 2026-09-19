@@ -1,9 +1,9 @@
 {
  "counts": {
-  "covered": 212,
-  "fitted": 197,
+  "covered": 218,
+  "fitted": 194,
   "rtokens": 1653,
-  "uncovered": 1441
+  "uncovered": 1435
  },
  "covered": [
   {
@@ -17,12 +17,14 @@
    "typical_bp": 110.4
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 0.981,
+   "fit": true,
+   "nights": 28,
    "perp": "AAOIUSDT",
+   "r2": 0.997,
    "spot": "RAAOIUSDT",
    "ticker": "AAOI",
-   "why": "BitgetError"
+   "typical_bp": 254.2
   },
   {
    "beta": 0.999,
@@ -55,14 +57,12 @@
    "typical_bp": 214.6
   },
   {
-   "beta": 1.006,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "ADBEUSDT",
-   "r2": 0.996,
    "spot": "RADBEUSDT",
    "ticker": "ADBE",
-   "typical_bp": 148.7
+   "why": "BitgetError"
   },
   {
    "beta": 1.004,
@@ -225,12 +225,14 @@
    "typical_bp": 235.3
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 0.977,
+   "fit": true,
+   "nights": 28,
    "perp": "ASXUSDT",
+   "r2": 0.975,
    "spot": "RASXUSDT",
    "ticker": "ASX",
-   "why": "BitgetError"
+   "typical_bp": 182.0
   },
   {
    "beta": 1.009,
@@ -273,12 +275,14 @@
    "typical_bp": 54.3
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 1.025,
+   "fit": true,
+   "nights": 28,
    "perp": "BABAUSDT",
+   "r2": 0.996,
    "spot": "RBABAUSDT",
    "ticker": "BABA",
-   "why": "BitgetError"
+   "typical_bp": 165.1
   },
   {
    "beta": 0.896,
@@ -291,22 +295,22 @@
    "typical_bp": 52.8
   },
   {
-   "beta": 0.997,
-   "fit": true,
-   "nights": 28,
-   "perp": "BEUSDT",
-   "r2": 0.998,
-   "spot": "RBEUSDT",
-   "ticker": "BE",
-   "typical_bp": 291.1
-  },
-  {
    "fit": null,
    "nights": 0,
+   "perp": "BEUSDT",
+   "spot": "RBEUSDT",
+   "ticker": "BE",
+   "why": "BitgetError"
+  },
+  {
+   "beta": 1.014,
+   "fit": true,
+   "nights": 28,
    "perp": "BITOUSDT",
+   "r2": 0.984,
    "spot": "RBITOUSDT",
    "ticker": "BITO",
-   "why": "BitgetError"
+   "typical_bp": 113.0
   },
   {
    "beta": 1.061,
@@ -367,14 +371,12 @@
    "why": "too few paired nights"
   },
   {
-   "beta": 1.016,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "CBRSUSDT",
-   "r2": 0.998,
    "spot": "RCBRSUSDT",
    "ticker": "CBRS",
-   "typical_bp": 264.1
+   "why": "BitgetError"
   },
   {
    "beta": 1.056,
@@ -407,14 +409,20 @@
    "typical_bp": 229.3
   },
   {
-   "beta": 1.011,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 1,
+   "perp": "CLSKUSDT",
+   "spot": "RCLSKUSDT",
+   "ticker": "CLSK",
+   "why": "too few paired nights"
+  },
+  {
+   "fit": null,
+   "nights": 0,
    "perp": "CMCSAUSDT",
-   "r2": 0.94,
    "spot": "RCMCSAUSDT",
    "ticker": "CMCSA",
-   "typical_bp": 97.1
+   "why": "BitgetError"
   },
   {
    "beta": 1.016,
@@ -557,12 +565,14 @@
    "typical_bp": 79.6
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 1.005,
+   "fit": true,
+   "nights": 28,
    "perp": "DELLUSDT",
+   "r2": 0.998,
    "spot": "RDELLUSDT",
    "ticker": "DELL",
-   "why": "BitgetError"
+   "typical_bp": 316.9
   },
   {
    "beta": 1.029,
@@ -595,22 +605,22 @@
    "typical_bp": 193.6
   },
   {
-   "beta": 0.925,
-   "fit": true,
-   "nights": 28,
-   "perp": "DXYZUSDT",
-   "r2": 0.947,
-   "spot": "RDXYZUSDT",
-   "ticker": "DXYZ",
-   "typical_bp": 158.5
-  },
-  {
    "fit": null,
    "nights": 0,
+   "perp": "DXYZUSDT",
+   "spot": "RDXYZUSDT",
+   "ticker": "DXYZ",
+   "why": "BitgetError"
+  },
+  {
+   "beta": 1.014,
+   "fit": true,
+   "nights": 28,
    "perp": "ECHOUSDT",
+   "r2": 0.872,
    "spot": "RECHOUSDT",
    "ticker": "ECHO",
-   "why": "BitgetError"
+   "typical_bp": 127.5
   },
   {
    "beta": 1.087,
@@ -703,12 +713,14 @@
    "typical_bp": 130.1
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 0.972,
+   "fit": true,
+   "nights": 28,
    "perp": "FUTUUSDT",
+   "r2": 0.959,
    "spot": "RFUTUUSDT",
    "ticker": "FUTU",
-   "why": "BitgetError"
+   "typical_bp": 72.3
   },
   {
    "beta": 1.065,
@@ -781,6 +793,14 @@
    "typical_bp": 64.8
   },
   {
+   "fit": null,
+   "nights": 0,
+   "perp": "GNRCUSDT",
+   "spot": "RGNRCUSDT",
+   "ticker": "GNRC",
+   "why": "too few paired nights"
+  },
+  {
    "beta": 1.01,
    "fit": true,
    "nights": 28,
@@ -791,24 +811,20 @@
    "typical_bp": 74.9
   },
   {
-   "beta": 0.964,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "GSUSDT",
-   "r2": 0.967,
    "spot": "RGSUSDT",
    "ticker": "GS",
-   "typical_bp": 75.5
+   "why": "BitgetError"
   },
   {
-   "beta": 0.973,
-   "fit": true,
-   "nights": 11,
+   "fit": null,
+   "nights": 0,
    "perp": "GTLBUSDT",
-   "r2": 0.94,
    "spot": "RGTLBUSDT",
    "ticker": "GTLB",
-   "typical_bp": 112.6
+   "why": "BitgetError"
   },
   {
    "beta": 0.989,
@@ -833,10 +849,28 @@
   {
    "fit": null,
    "nights": 0,
+   "perp": "HUTUSDT",
+   "spot": "RHUTUSDT",
+   "ticker": "HUT",
+   "why": "too few paired nights"
+  },
+  {
+   "beta": 0.925,
+   "fit": true,
+   "nights": 28,
    "perp": "IBBUSDT",
+   "r2": 0.941,
    "spot": "RIBBUSDT",
    "ticker": "IBB",
-   "why": "BitgetError"
+   "typical_bp": 81.2
+  },
+  {
+   "fit": null,
+   "nights": 1,
+   "perp": "IBITUSDT",
+   "spot": "RIBITUSDT",
+   "ticker": "IBIT",
+   "why": "too few paired nights"
   },
   {
    "beta": 1.02,
@@ -869,22 +903,22 @@
    "typical_bp": 291.9
   },
   {
-   "fit": null,
-   "nights": 0,
-   "perp": "INTCUSDT",
-   "spot": "RINTCUSDT",
-   "ticker": "INTC",
-   "why": "BitgetError"
-  },
-  {
-   "beta": 1.013,
+   "beta": 1.007,
    "fit": true,
    "nights": 28,
+   "perp": "INTCUSDT",
+   "r2": 1.0,
+   "spot": "RINTCUSDT",
+   "ticker": "INTC",
+   "typical_bp": 260.4
+  },
+  {
+   "fit": null,
+   "nights": 0,
    "perp": "IONQUSDT",
-   "r2": 0.993,
    "spot": "RIONQUSDT",
    "ticker": "IONQ",
-   "typical_bp": 288.6
+   "why": "BitgetError"
   },
   {
    "beta": 1.0,
@@ -947,14 +981,12 @@
    "typical_bp": 123.0
   },
   {
-   "beta": 0.901,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "JPMUSDT",
-   "r2": 0.838,
    "spot": "RJPMUSDT",
    "ticker": "JPM",
-   "typical_bp": 56.8
+   "why": "BitgetError"
   },
   {
    "beta": 1.05,
@@ -1077,24 +1109,20 @@
    "typical_bp": 221.3
   },
   {
-   "beta": 0.946,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "MARUSDT",
-   "r2": 0.806,
    "spot": "RMARUSDT",
    "ticker": "MAR",
-   "typical_bp": 64.2
+   "why": "BitgetError"
   },
   {
-   "beta": 0.997,
-   "fit": true,
-   "nights": 16,
+   "fit": null,
+   "nights": 0,
    "perp": "MARAUSDT",
-   "r2": 0.992,
    "spot": "RMARAUSDT",
    "ticker": "MARA",
-   "typical_bp": 300.2
+   "why": "BitgetError"
   },
   {
    "beta": 1.012,
@@ -1107,12 +1135,14 @@
    "typical_bp": 46.8
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 1.111,
+   "fit": true,
+   "nights": 28,
    "perp": "MDBUSDT",
+   "r2": 0.942,
    "spot": "RMDBUSDT",
    "ticker": "MDB",
-   "why": "BitgetError"
+   "typical_bp": 170.8
   },
   {
    "beta": 1.006,
@@ -1215,14 +1245,12 @@
    "typical_bp": 147.3
   },
   {
-   "beta": 0.998,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "MVLLUSDT",
-   "r2": 0.997,
    "spot": "RMVLLUSDT",
    "ticker": "MVLL",
-   "typical_bp": 729.3
+   "why": "BitgetError"
   },
   {
    "beta": 0.987,
@@ -1245,14 +1273,12 @@
    "typical_bp": 144.1
   },
   {
-   "beta": 1.001,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "NFLXUSDT",
-   "r2": 0.991,
    "spot": "RNFLXUSDT",
    "ticker": "NFLX",
-   "typical_bp": 107.5
+   "why": "BitgetError"
   },
   {
    "beta": 0.93,
@@ -1405,12 +1431,22 @@
    "typical_bp": 102.0
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 1.032,
+   "fit": true,
+   "nights": 28,
    "perp": "PANWUSDT",
+   "r2": 0.989,
    "spot": "RPANWUSDT",
    "ticker": "PANW",
-   "why": "BitgetError"
+   "typical_bp": 135.0
+  },
+  {
+   "fit": null,
+   "nights": 0,
+   "perp": "PATHUSDT",
+   "spot": "RPATHUSDT",
+   "ticker": "PATH",
+   "why": "too few paired nights"
   },
   {
    "beta": 0.962,
@@ -1483,14 +1519,12 @@
    "typical_bp": 85.5
   },
   {
-   "beta": 1.017,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "QBTSUSDT",
-   "r2": 0.985,
    "spot": "RQBTSUSDT",
    "ticker": "QBTS",
-   "typical_bp": 172.8
+   "why": "BitgetError"
   },
   {
    "beta": 0.993,
@@ -1503,6 +1537,14 @@
    "typical_bp": 142.7
   },
   {
+   "fit": null,
+   "nights": 1,
+   "perp": "QLDUSDT",
+   "spot": "RQLDUSDT",
+   "ticker": "QLD",
+   "why": "too few paired nights"
+  },
+  {
    "beta": 1.021,
    "fit": true,
    "nights": 28,
@@ -1513,22 +1555,22 @@
    "typical_bp": 45.7
   },
   {
-   "beta": 1.012,
-   "fit": true,
-   "nights": 28,
-   "perp": "QUBTUSDT",
-   "r2": 0.961,
-   "spot": "RQUBTUSDT",
-   "ticker": "QUBT",
-   "typical_bp": 125.2
-  },
-  {
    "fit": null,
    "nights": 0,
+   "perp": "QUBTUSDT",
+   "spot": "RQUBTUSDT",
+   "ticker": "QUBT",
+   "why": "BitgetError"
+  },
+  {
+   "beta": 1.016,
+   "fit": true,
+   "nights": 28,
    "perp": "RAMUSDT",
+   "r2": 0.998,
    "spot": "RRAMUSDT",
    "ticker": "RAM",
-   "why": "BitgetError"
+   "typical_bp": 386.2
   },
   {
    "beta": 1.025,
@@ -1801,12 +1843,14 @@
    "typical_bp": 26.5
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 1.026,
+   "fit": true,
+   "nights": 11,
    "perp": "TEAMUSDT",
+   "r2": 0.985,
    "spot": "RTEAMUSDT",
    "ticker": "TEAM",
-   "why": "BitgetError"
+   "typical_bp": 177.7
   },
   {
    "beta": 1.049,
@@ -1907,14 +1951,12 @@
    "typical_bp": 80.2
   },
   {
-   "beta": 1.054,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "TZAUSDT",
-   "r2": 0.984,
    "spot": "RTZAUSDT",
    "ticker": "TZA",
-   "typical_bp": 151.7
+   "why": "BitgetError"
   },
   {
    "beta": 1.016,
@@ -2098,7 +2140,7 @@
   }
  ],
  "hedge_cost_bp": 11.291999999999998,
- "measured_on": "2026-09-18",
+ "measured_on": "2026-09-19",
  "uncovered": [
   "AAON",
   "AA",
@@ -2360,7 +2402,6 @@
   "CLOA",
   "CLOI",
   "CLOV",
-  "CLSK",
   "CLS",
   "CL",
   "CLW",
@@ -2659,7 +2700,6 @@
   "GMAB",
   "GMED",
   "GM",
-  "GNRC",
   "GNTX",
   "GOLF",
   "GPC",
@@ -2721,7 +2761,6 @@
   "HUBS",
   "HUM",
   "H",
-  "HUT",
   "HWC",
   "HWM",
   "HXL",
@@ -2729,7 +2768,6 @@
   "HYS",
   "IAG",
   "IAU",
-  "IBIT",
   "IBKR",
   "IBOC",
   "IBP",
@@ -3066,7 +3104,6 @@
   "PAG",
   "PALL",
   "PAM",
-  "PATH",
   "PAVE",
   "PAYC",
   "PAYP",
@@ -3137,7 +3174,6 @@
   "P",
   "PWR",
   "QGEN",
-  "QLD",
   "QLYS",
   "QQQI",
   "QQQM",

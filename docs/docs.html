@@ -253,7 +253,7 @@ code{font-family:var(--mono);font-size:.9em;background:var(--surface);
 
 footer{padding:48px 0 76px;color:var(--dim);font-size:13.5px}
 footer a{color:var(--mid)}
-</style></head><body><div class="chrome"><header class="top"><div class="top-in"><a class="brand" href="index.html"><svg class="mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 8h14M5 16h14" stroke="#00d9ec" stroke-width="1.5" stroke-linecap="round" opacity=".38"/><path d="M12 2.5v19" stroke="#00d9ec" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="3.6" fill="#00d9ec"/></svg>BALLAST</a><a class="btn btn-p" href="tonight.html">See tonight</a></div></header><nav class="nav"><div class="nav-in"><a class="" href="index.html">Overview</a><a class="" href="tonight.html">Tonight</a><a class="" href="settled.html">Settled</a><a class="" href="evidence.html">Evidence</a><a class="on" href="docs.html">Docs</a></div></nav></div><main><section class="bd bd-deep" style="border-bottom:1px solid var(--line)">
+</style></head><body><div class="chrome"><header class="top"><div class="top-in"><a class="brand" href="index.html"><svg class="mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 8h14M5 16h14" stroke="#00d9ec" stroke-width="1.5" stroke-linecap="round" opacity=".38"/><path d="M12 2.5v19" stroke="#00d9ec" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="3.6" fill="#00d9ec"/></svg>BALLAST</a><a class="btn btn-p" href="tonight.html">See tonight</a></div></header><nav class="nav"><div class="nav-in"><a class="" href="index.html">Overview</a><a class="" href="tonight.html">Tonight</a><a class="" href="settled.html">Settled</a><a class="" href="reader.html">Reader</a><a class="" href="evidence.html">Evidence</a><a class="on" href="docs.html">Docs</a></div></nav></div><main><section class="bd bd-deep" style="border-bottom:1px solid var(--line)">
 <div class="wrap center" style="padding:26px 0 6px">
 <p class="eyebrow">Documentation</p>
 <h1>How Ballast works,<br>and how to check it.</h1>
@@ -305,12 +305,15 @@ dominates and both instruments track it almost exactly; on a quiet night the res
 is venue microstructure noise. The hedge is loosest only when little is at stake.</li>
 <li><strong>Median 88% reduction in the p95 tail.</strong> MSFT's worst night falls
 from 1,128 bp to 233 bp; AMD's from 1,262 bp to 90 bp.</li>
-<li><strong>Cost 11.3 bp</strong> taker round trip, net of funding received on the
-short. Cheaper than the 20 bp it costs to exit - and you keep the position.</li>
+<li><strong>Cost 12.0 bp</strong> taker round trip - the part that is
+certain. A short also collects funding, which brings the average night to
+11.3 bp, but that credit is a rate and not a promise: measured across the
+book it runs from -0.19 bp (PLTR) to +3.13 bp (NKE) a night, and is against the hedge on 2 of 12 names. Either way it is cheaper than the
+20 bp it costs to exit - and you keep the position.</li>
 <li><strong>Crypto is not a hedge.</strong> Median R² against BTC is 0.114. Crypto
 legs are excluded by measurement, not preference.</li>
 </ul>
-<p>Of 1653 live rTokens, <strong>212 have a perp leg</strong> (measured 2026-09-19). Ballast states plainly
+<p>Of 1653 live rTokens, <strong>218 have a perp leg</strong> (measured 2026-09-19). Ballast states plainly
 which positions it cannot protect rather than pretending otherwise.</p>
 
 <h2 id="selector">Choosing the night</h2>
@@ -378,6 +381,12 @@ a position exists, the order opposes it, the size is within the ratio, the symbo
 in the universe, the mandate has not expired, the night's caps are intact.
 <strong>18 red-team tests</strong> drive hostile intents at it, each asserting the
 specific rule that refused it.</p>
+<p>Bounded authority is worth nothing if the model never uses it, so whether the
+reader is load-bearing is measured rather than asserted. Every decision carries the
+answer the deterministic calendar rule alone would have produced for the same night,
+and the <a href="reader.html">Reader</a> page puts the two side by side for every
+position-night on the chain - including the derivation check that makes the
+comparison auditable, and the nights the model's override lost money.</p>
 
 <h2 id="ledger">The ledger</h2>
 <p>Every decision, including every refusal, is appended to a hash-chained, signed
@@ -405,7 +414,7 @@ the whole session.</li>
 <p>All figures are produced by code in <code>research/</code> from public endpoints,
 labelled <em>observed</em>, <em>estimated</em> or <em>targeted</em>.</p>
 <div class="scroll stacked"><table><thead><tr><th>Finding</th><th>Value</th></tr></thead><tbody>
-<tr><td data-label="">rTokens live on spot / with a perp leg</td><td class="num" data-label="Value">1653 / 212</td></tr>
+<tr><td data-label="">rTokens live on spot / with a perp leg</td><td class="num" data-label="Value">1653 / 218</td></tr>
 <tr><td data-label="">Median overnight variance removed</td><td class="num" data-label="Value">98.2%</td></tr>
 <tr><td data-label="">R² on top-decile move nights</td><td class="num" data-label="Value">0.978-0.999</td></tr>
 <tr><td data-label="">Median p95 tail reduction</td><td class="num" data-label="Value">88%</td></tr>

@@ -1,0 +1,330 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ballast - the reader against the calendar</title><meta name="description" content="Every night the model reached a different answer from the deterministic rule."><link rel="icon" href="favicon.ico" sizes="32x32"><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="site.webmanifest"><meta name="theme-color" content="#070708"><style>
+:root{
+  --bg:#070708; --surface:#101012; --raised:#16161a; --line:#242429;
+  --fg:#fafafa; --mid:#a6a6ad; --dim:#6c6c75;
+  --accent:#00d9ec; --accent-dim:#0a8fa0;
+  --pos:#4ade80; --neg:#fb7185;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);
+  font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;
+  overflow-wrap:break-word}
+html{overflow-x:clip}
+img,svg,table,pre{max-width:100%}
+.wrap,.narrow,.docs,.prose{min-width:0}
+section[id]{scroll-margin-top:112px}
+a{color:inherit}
+
+/* ---- chrome ---- */
+.chrome{position:sticky;top:0;z-index:30;background:rgba(7,7,8,.94);
+  backdrop-filter:blur(14px)}
+.top{border-bottom:1px solid var(--line)}
+.top-in{max-width:1120px;margin:0 auto;padding:15px 22px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:700;
+  letter-spacing:-.01em;font-size:20px;text-decoration:none}
+.mark{width:24px;height:24px;flex:none}
+.nav{border-bottom:1px solid var(--line);
+  overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-in{max-width:1120px;margin:0 auto;padding:0 22px;display:flex;gap:30px;white-space:nowrap}
+.nav a{color:var(--mid);text-decoration:none;font-size:15px;padding:14px 0;
+  border-bottom:2px solid transparent}
+.nav a:hover{color:var(--fg)}
+.nav a.on{color:var(--fg);border-bottom-color:var(--accent)}
+
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+.narrow{max-width:780px;margin:0 auto}
+section{padding:88px 0;border-bottom:1px solid var(--line);position:relative}
+section:last-of-type{border-bottom:0}
+
+/* ---- atmospheric backdrops (pure CSS, no images) ---- */
+.bd{position:relative;isolation:isolate;border-bottom:1px solid var(--line)}
+.bd::before{content:"";position:absolute;inset:0;z-index:-1;
+  background:
+    radial-gradient(120% 90% at 50% -20%,rgba(0,217,236,.13),transparent 62%),
+    radial-gradient(80% 70% at 15% 110%,rgba(0,217,236,.06),transparent 60%),
+    linear-gradient(180deg,#0b0b0f 0%,#070708 100%);}
+.bd::after{content:"";position:absolute;inset:0;z-index:-1;opacity:.5;
+  background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(90% 70% at 50% 30%,#000,transparent 78%);
+  mask-image:radial-gradient(90% 70% at 50% 30%,#000,transparent 78%)}
+.bd-deep::before{background:
+    radial-gradient(100% 80% at 50% 0%,rgba(0,217,236,.09),transparent 58%),
+    linear-gradient(180deg,#0a0a0d 0%,#070708 70%)}
+
+/* ---- type ---- */
+.eyebrow{font-size:11.5px;text-transform:uppercase;letter-spacing:.24em;
+  color:var(--dim);margin:0 0 20px}
+h1{font-size:clamp(38px,7.4vw,66px);line-height:1.04;letter-spacing:-.035em;
+  font-weight:700;margin:0 0 24px}
+h2{font-size:clamp(28px,5vw,46px);line-height:1.1;letter-spacing:-.032em;
+  font-weight:700;margin:0 0 20px}
+h3{font-size:19px;letter-spacing:-.015em;font-weight:650;margin:0 0 10px}
+h4{font-size:15px;font-weight:650;margin:30px 0 8px;letter-spacing:-.005em}
+.lede{font-size:clamp(16px,2.1vw,19.5px);color:var(--mid);margin:0 0 32px}
+.note{color:var(--dim);font-size:14px}
+.hl{color:var(--accent)}
+.center{text-align:center}
+.center .lede{margin-left:auto;margin-right:auto;max-width:62ch}
+.center .row{justify-content:center}
+p{margin:0 0 16px}
+
+/* ---- buttons ---- */
+.row{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-block;padding:13px 24px;border-radius:9px;font-size:15px;
+  font-weight:600;text-decoration:none;border:1px solid transparent;transition:.15s}
+.btn-p{background:var(--fg);color:#07070a}
+.btn-p:hover{background:var(--accent)}
+.btn-s{background:rgba(255,255,255,.04);color:var(--fg);border-color:var(--line)}
+.btn-s:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ---- terminal ---- */
+.term{background:rgba(16,16,18,.82);border:1px solid var(--line);border-radius:14px;
+  overflow:hidden;margin:40px auto 0;max-width:720px;text-align:left}
+.term-bar{display:flex;align-items:center;gap:9px;padding:13px 17px;
+  border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+.dot{width:9px;height:9px;border-radius:50%;background:#2b2b31;flex:none}
+.live{margin-left:auto;display:flex;align-items:center;gap:7px;
+  color:var(--accent);font-size:11px;letter-spacing:.16em}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--accent);
+  animation:p 2.2s ease-in-out infinite}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.2}}
+.term-b{padding:8px 17px 14px;font-family:var(--mono);font-size:13.5px}
+.term-r{display:flex;justify-content:space-between;gap:14px;padding:10px 0;
+  border-bottom:1px solid var(--line)}
+.term-r:last-child{border-bottom:0}
+
+/* ---- tiles / cards ---- */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;
+  overflow:hidden;margin:36px 0;text-align:left}
+.tile{background:var(--surface);padding:22px 20px}
+.tile .n{font-size:30px;font-weight:700;letter-spacing:-.035em;line-height:1.1;
+  font-variant-numeric:tabular-nums}
+.tile .l{font-size:11.5px;text-transform:uppercase;letter-spacing:.14em;
+  color:var(--dim);margin-top:8px}
+.stack{display:flex;flex-direction:column;gap:16px;margin-top:40px;text-align:left}
+/* ---- coverage lookup ---- */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.lk{max-width:620px;margin:0 auto}
+.lk input{width:100%;padding:16px 18px;background:var(--surface);color:var(--fg);
+  border:1px solid var(--line);border-radius:0;font-family:var(--mono);
+  font-size:19px;letter-spacing:.06em;text-transform:uppercase}
+.lk input::placeholder{color:var(--dim);letter-spacing:.03em;text-transform:none}
+.lk input:focus{outline:none;border-color:var(--accent)}
+.lk input:disabled{opacity:.55}
+.lk .hint{color:var(--dim);font-size:13px;margin:10px 2px 0}
+.lk .out{margin-top:22px}
+.lk .out:empty{display:none}
+.lk .card h3{margin-top:0}
+.lk .card.ok{border-left:3px solid var(--accent)}
+.lk .card.no{border-left:3px solid var(--dim)}
+.lk .tiles{margin:0 0 18px}
+.card{background:rgba(16,16,18,.72);border:1px solid var(--line);
+  border-radius:14px;padding:28px}
+.card p:last-child{margin-bottom:0}
+.card p{color:var(--mid);font-size:15.5px}
+.bul{list-style:none;padding:0;margin:26px 0 0;text-align:left}
+.bul li{position:relative;padding:8px 0 8px 24px;color:var(--mid);font-size:15.5px}
+.bul li::before{content:"";position:absolute;left:2px;top:19px;
+  width:6px;height:6px;border-radius:50%;background:var(--accent)}
+
+/* ---- tables ---- */
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;
+  border:1px solid var(--line);border-radius:14px;margin-top:30px;text-align:left}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:14.5px}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.14em;
+  color:var(--dim);font-weight:600;padding:14px 17px;background:var(--raised);
+  border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:14px 17px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pos{color:var(--pos)} .neg{color:var(--neg)} .dim{color:var(--dim)} .mid{color:var(--mid)}
+.tag{display:inline-block;font-size:11px;font-family:var(--mono);padding:3px 9px;
+  border-radius:5px;border:1px solid var(--line);color:var(--dim);
+  white-space:nowrap;text-transform:uppercase;letter-spacing:.08em}
+.tag.on{color:var(--accent);border-color:var(--accent-dim);background:rgba(0,217,236,.08)}
+.empty{padding:46px 22px;text-align:center;color:var(--dim);font-size:14.5px}
+
+/* A chart is genuinely wide content. Scaling one to 352px renders its labels at
+   about 7px, so it keeps a minimum width and scrolls inside its own box - the
+   treatment code blocks get - rather than shrinking until it cannot be read. */
+.chart{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:34px 0}
+.chart svg{min-width:560px;display:block}
+
+/* Narrow screens: stack each row into a card.
+   A 560px table on a 400px screen parks the last column off-screen, but its text
+   still sets the row height - so the Reasoning sentence produced 450px-tall rows
+   showing two short cells at the top and a wall of blank below. The data was
+   there, just where it could not be read. Labels come from data-label. */
+@media(max-width:720px){
+  /* A hero section and the content section under it stacked their padding, and
+     the table added its own top margin on top of that: 159px of empty screen
+     above the first row on a 400px-tall-ish viewport, pushing the thing the page
+     exists to show below the fold. */
+  .bd + section{padding-top:30px}
+  .wrap > .scroll:first-child{margin-top:0}
+
+  .stacked{overflow-x:visible}
+  .stacked table{min-width:0;display:block}
+  .stacked thead{display:none}
+  .stacked tbody,.stacked tr{display:block;width:100%}
+  .stacked tr{padding:15px 17px;border-bottom:1px solid var(--line)}
+  .stacked tr:last-child{border-bottom:0}
+  .stacked td{display:flex;gap:16px;align-items:baseline;justify-content:space-between;
+    padding:4px 0;border:0}
+  .stacked td::before{content:attr(data-label);color:var(--dim);font-size:10.5px;
+    text-transform:uppercase;letter-spacing:.14em;flex:none}
+  .stacked td[data-label=""]{display:block;font-size:16px;margin-bottom:6px}
+  .stacked td[data-label=""]::before{content:none}
+  .stacked td.wrap{display:block}
+  .stacked td.wrap::before{display:block;margin-bottom:4px}
+}
+
+pre{background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:22px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;
+  line-height:1.75;color:var(--mid);margin:26px 0;text-align:left}
+pre b{color:var(--fg);font-weight:400}
+code{font-family:var(--mono);font-size:.9em;background:var(--surface);
+  border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--fg)}
+
+/* ---- docs ---- */
+.docs{display:grid;grid-template-columns:216px 1fr;gap:56px;
+  align-items:start;padding:60px 0}
+.toc{position:sticky;top:120px;font-size:14px}
+.toc a{display:block;color:var(--dim);text-decoration:none;padding:6px 0;
+  border-left:2px solid var(--line);padding-left:14px}
+.toc a:hover{color:var(--fg);border-left-color:var(--accent)}
+.toc .h{font-size:11px;text-transform:uppercase;letter-spacing:.18em;
+  color:var(--dim);margin:22px 0 10px;padding-left:14px}
+.toc .h:first-child{margin-top:0}
+.prose h2{font-size:26px;margin:56px 0 14px;scroll-margin-top:130px}
+.prose h2:first-child{margin-top:0}
+.prose h4{font-size:16.5px;font-weight:650;color:var(--fg);margin:32px 0 10px;
+  letter-spacing:-.01em;scroll-margin-top:130px}
+.prose h4 + p,.prose h4 + ul{margin-top:0}
+.prose p,.prose li{color:var(--mid);font-size:15.5px}
+.prose strong{color:var(--fg);font-weight:620}
+.prose ul{padding-left:20px}
+.prose li{margin:7px 0}
+.callout{border-left:3px solid var(--accent);background:rgba(0,217,236,.05);
+  border-radius:0 10px 10px 0;padding:18px 22px;margin:24px 0}
+.callout p:last-child{margin-bottom:0}
+@media(max-width:860px){
+  .docs{grid-template-columns:1fr;gap:0;padding:34px 0}
+  .toc{position:sticky;top:104px;z-index:20;display:flex;gap:8px;
+    overflow-x:auto;scrollbar-width:none;margin:0 0 30px;padding:12px 0;
+    background:rgba(7,7,8,.96);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line)}
+  .toc::-webkit-scrollbar{display:none}
+  .toc .h{display:none}
+  .toc a{border-left:0;border:1px solid var(--line);border-radius:99px;
+    padding:7px 15px;white-space:nowrap;font-size:13.5px}
+  .toc a:hover{border-color:var(--accent)}
+  .prose h2{scroll-margin-top:170px;font-size:23px;margin:44px 0 12px}
+}
+@media(max-width:700px){
+  .tiles{grid-template-columns:1fr 1fr}
+  .tiles .tile:last-child:nth-child(odd){grid-column:1/-1}
+  .tile .n{font-size:25px}
+}
+@media(max-width:640px){
+  section{padding:56px 0}
+  .top-in{padding:12px 18px}
+  .nav-in{padding:0 18px;gap:22px}
+  .wrap{padding:0 18px}
+  .brand{font-size:18px}
+  .btn{padding:11px 18px;font-size:14.5px}
+  h1{letter-spacing:-.03em}
+  .card{padding:22px 20px}
+  .term{margin-top:32px}
+  section[id]{scroll-margin-top:104px}
+}
+@media(max-width:380px){
+  .top-in .btn{padding:9px 14px;font-size:13.5px}
+  .nav-in{gap:18px}
+}
+
+footer{padding:48px 0 76px;color:var(--dim);font-size:13.5px}
+footer a{color:var(--mid)}
+</style></head><body><div class="chrome"><header class="top"><div class="top-in"><a class="brand" href="index.html"><svg class="mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 8h14M5 16h14" stroke="#00d9ec" stroke-width="1.5" stroke-linecap="round" opacity=".38"/><path d="M12 2.5v19" stroke="#00d9ec" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="3.6" fill="#00d9ec"/></svg>BALLAST</a><a class="btn btn-p" href="tonight.html">See tonight</a></div></header><nav class="nav"><div class="nav-in"><a class="" href="index.html">Overview</a><a class="" href="tonight.html">Tonight</a><a class="" href="settled.html">Settled</a><a class="on" href="reader.html">Reader</a><a class="" href="evidence.html">Evidence</a><a class="" href="docs.html">Docs</a></div></nav></div><main>
+<section class="bd"><div class="wrap center">
+<p class="eyebrow">Reader against calendar</p>
+<h1>Does the model<br>ever change the answer?</h1>
+<p class="lede">A deterministic calendar rule can decide every night on its own. So
+the only question worth asking about the model is whether it ever reaches a
+different answer - and what happened when it did. On <span class="hl">5 of 65</span> nights the reader reached a different answer from the calendar, and Ballast did what the reader said. Those are the only nights on which the model can be said to have decided anything.</p>
+<div class="tiles">
+<div class="tile"><div class="n">94</div><div class="l">decisions compared</div></div>
+<div class="tile"><div class="n">65</div><div class="l">read by the model</div></div>
+<div class="tile"><div class="n">5</div><div class="l">changed the rule&#x27;s answer</div></div>
+<div class="tile"><div class="n">8%</div><div class="l">of the model&#x27;s nights</div></div>
+</div>
+<p class="note">Every one of them turned a NO_HEDGE into a HEDGE. Built from the signed ledger; rebuilt nightly.</p>
+</div></section>
+
+<section><div class="wrap">
+<div class="narrow">
+<h2 style="font-size:26px;margin-bottom:10px">The overrides</h2>
+<p class="note" style="margin-bottom:0">4 of them have settled. Against the calendar's answer on the same nights, they cost <strong>42 bp</strong> in total - a loss, published because it is what the record says. Four nights is not a performance measurement; it is a count of the times the model mattered and what happened next.</p>
+</div>
+<div class="scroll stacked"><table><thead><tr><th>Position</th><th>Session</th><th>Calendar said</th><th>Ballast did</th><th class="num">Value added</th><th>What the model read</th></tr></thead><tbody><tr><td data-label=""><strong>COIN</strong></td><td class="dim" data-label="Session">2026-09-18</td><td data-label="Calendar said"><span class="tag ">NO_HEDGE</span></td><td data-label="Ballast did"><span class="tag on">HEDGE</span></td><td class="num dim" data-label="Value added">not settled</td><td class="dim wrap" data-label="What the model read">Coinbase Global jumps 12% after on regulatory win for tokenized stock trading (COIN:NASDAQ) - Seeking Alpha</td></tr><tr><td data-label=""><strong>COST</strong></td><td class="dim" data-label="Session">2026-09-16</td><td data-label="Calendar said"><span class="tag ">NO_HEDGE</span></td><td data-label="Ballast did"><span class="tag on">HEDGE</span></td><td class="num pos" data-label="Value added">+28 bp</td><td class="dim wrap" data-label="What the model read">Stock Market Today, Sept. 16: Stocks Slip as Fed Raises Rates</td></tr><tr><td data-label=""><strong>COIN</strong></td><td class="dim" data-label="Session">2026-09-15</td><td data-label="Calendar said"><span class="tag ">NO_HEDGE</span></td><td data-label="Ballast did"><span class="tag on">HEDGE</span></td><td class="num pos" data-label="Value added">+104 bp</td><td class="dim wrap" data-label="What the model read">Crypto stocks sink after Senate rejects Clarity Act, Coinbase slides nearly 9%</td></tr><tr><td data-label=""><strong>MU</strong></td><td class="dim" data-label="Session">2026-09-14</td><td data-label="Calendar said"><span class="tag ">NO_HEDGE</span></td><td data-label="Ballast did"><span class="tag on">HEDGE</span></td><td class="num neg" data-label="Value added">-117 bp</td><td class="dim wrap" data-label="What the model read">Micron, Nvidia and other chip stocks fall after tech leaders call for an AI slowdown. Here’s what to know.</td></tr><tr><td data-label=""><strong>NVDA</strong></td><td class="dim" data-label="Session">2026-09-14</td><td data-label="Calendar said"><span class="tag ">NO_HEDGE</span></td><td data-label="Ballast did"><span class="tag on">HEDGE</span></td><td class="num neg" data-label="Value added">-57 bp</td><td class="dim wrap" data-label="What the model read">Trump Phones Jensen Huang Live Against AI Slowdown Fears. NVIDIA Stock Reacts</td></tr></tbody></table></div>
+<div class="narrow" style="margin-top:44px">
+<div class="card"><h3>The derivation is checked, not asserted</h3>
+<p>The calendar's answer for a past night is re-derived by calling the same
+<code>policy.decide</code> the nightly run calls, with the model's judgment removed.
+On a night the reader abstained or failed a gate, the recorded decision <em>is</em>
+the calendar's - so every one of the
+<strong>30</strong> rule-decided rows is a test of that
+derivation. <strong>29 of 30</strong> reproduce exactly. The exception is ORCL on 2026-09-09, decided before the calendar rule checked the release time - the <a href="docs.html#defects">published defect</a>, not a fault in this derivation.</p></div>
+<div class="card"><h3>The count is a floor</h3>
+<p>Nasdaq publishes a release-time flag for upcoming dates and drops it to
+<em>not supplied</em> for past ones, and an unsupplied flag passes both window
+gates. A re-derivation can therefore only ever flag <em>more</em> nights for the
+calendar than the live run saw, never fewer - which can only shrink the count of
+"calendar said no, model said hedge". Nights decided from now on carry the rule's
+own answer in the ledger entry beside the decision, so they need no re-derivation
+at all - <strong>0</strong> of the
+96 rows on the chain do so far.</p></div>
+</div>
+</div></section>
+
+<section><div class="wrap">
+<div class="narrow">
+<h2 style="font-size:26px;margin-bottom:10px">Every decision, both answers</h2>
+<p class="note" style="margin-bottom:0">One row per position-night on the chain.
+<em>Calendar</em> is what the rule alone would have done; <em>Taken</em> is what
+Ballast did.</p>
+</div>
+<div class="scroll stacked"><table><thead><tr><th>Position</th><th>Session</th><th>Calendar</th><th>Taken</th><th>Decided by</th><th>Verdict</th></tr></thead><tbody><tr><td data-label=""><strong>TSLA</strong></td><td class="dim" data-label="Session">2026-09-18</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>SPY</strong></td><td class="dim" data-label="Session">2026-09-18</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>PLTR</strong></td><td class="dim" data-label="Session">2026-09-18</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>ORCL</strong></td><td class="dim" data-label="Session">2026-09-18</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>NVDA</strong></td><td class="dim" data-label="Session">2026-09-18</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>NKE</strong></td><td class="dim" data-label="Session">2026-09-18</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>MU</strong></td><td class="dim" data-label="Session">2026-09-18</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>MSFT</strong></td><td class="dim" data-label="Session">2026-09-18</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>COST</strong></td><td class="dim" data-label="Session">2026-09-18</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>COIN</strong></td><td class="dim" data-label="Session">2026-09-18</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag on">HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="pos" data-label="Verdict">model overrode the rule</td></tr><tr><td data-label=""><strong>AMD</strong></td><td class="dim" data-label="Session">2026-09-18</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>ADBE</strong></td><td class="dim" data-label="Session">2026-09-18</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>TSLA</strong></td><td class="dim" data-label="Session">2026-09-17</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>SPY</strong></td><td class="dim" data-label="Session">2026-09-17</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>PLTR</strong></td><td class="dim" data-label="Session">2026-09-17</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>ORCL</strong></td><td class="dim" data-label="Session">2026-09-17</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>NVDA</strong></td><td class="dim" data-label="Session">2026-09-17</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>NKE</strong></td><td class="dim" data-label="Session">2026-09-17</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>MU</strong></td><td class="dim" data-label="Session">2026-09-17</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>MSFT</strong></td><td class="dim" data-label="Session">2026-09-17</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>COST</strong></td><td class="dim" data-label="Session">2026-09-17</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>COIN</strong></td><td class="dim" data-label="Session">2026-09-17</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>AMD</strong></td><td class="dim" data-label="Session">2026-09-17</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>ADBE</strong></td><td class="dim" data-label="Session">2026-09-17</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>TSLA</strong></td><td class="dim" data-label="Session">2026-09-16</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>SPY</strong></td><td class="dim" data-label="Session">2026-09-16</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>PLTR</strong></td><td class="dim" data-label="Session">2026-09-16</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>ORCL</strong></td><td class="dim" data-label="Session">2026-09-16</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>NVDA</strong></td><td class="dim" data-label="Session">2026-09-16</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>NKE</strong></td><td class="dim" data-label="Session">2026-09-16</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>MU</strong></td><td class="dim" data-label="Session">2026-09-16</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>MSFT</strong></td><td class="dim" data-label="Session">2026-09-16</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>COST</strong></td><td class="dim" data-label="Session">2026-09-16</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag on">HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="pos" data-label="Verdict">model overrode the rule</td></tr><tr><td data-label=""><strong>COIN</strong></td><td class="dim" data-label="Session">2026-09-16</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>AMD</strong></td><td class="dim" data-label="Session">2026-09-16</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>ADBE</strong></td><td class="dim" data-label="Session">2026-09-16</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>TSLA</strong></td><td class="dim" data-label="Session">2026-09-15</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>SPY</strong></td><td class="dim" data-label="Session">2026-09-15</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>PLTR</strong></td><td class="dim" data-label="Session">2026-09-15</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>ORCL</strong></td><td class="dim" data-label="Session">2026-09-15</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>NVDA</strong></td><td class="dim" data-label="Session">2026-09-15</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>NKE</strong></td><td class="dim" data-label="Session">2026-09-15</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>MU</strong></td><td class="dim" data-label="Session">2026-09-15</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>MSFT</strong></td><td class="dim" data-label="Session">2026-09-15</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>COST</strong></td><td class="dim" data-label="Session">2026-09-15</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>COIN</strong></td><td class="dim" data-label="Session">2026-09-15</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag on">HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="pos" data-label="Verdict">model overrode the rule</td></tr><tr><td data-label=""><strong>AMD</strong></td><td class="dim" data-label="Session">2026-09-15</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>ADBE</strong></td><td class="dim" data-label="Session">2026-09-15</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>TSLA</strong></td><td class="dim" data-label="Session">2026-09-14</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>SPY</strong></td><td class="dim" data-label="Session">2026-09-14</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>PLTR</strong></td><td class="dim" data-label="Session">2026-09-14</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>ORCL</strong></td><td class="dim" data-label="Session">2026-09-14</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>NVDA</strong></td><td class="dim" data-label="Session">2026-09-14</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag on">HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="pos" data-label="Verdict">model overrode the rule</td></tr><tr><td data-label=""><strong>NKE</strong></td><td class="dim" data-label="Session">2026-09-14</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>MU</strong></td><td class="dim" data-label="Session">2026-09-14</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag on">HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="pos" data-label="Verdict">model overrode the rule</td></tr><tr><td data-label=""><strong>MSFT</strong></td><td class="dim" data-label="Session">2026-09-14</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>COST</strong></td><td class="dim" data-label="Session">2026-09-14</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>COIN</strong></td><td class="dim" data-label="Session">2026-09-14</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>AMD</strong></td><td class="dim" data-label="Session">2026-09-14</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>ADBE</strong></td><td class="dim" data-label="Session">2026-09-14</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>TSLA</strong></td><td class="dim" data-label="Session">2026-09-11</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>SPY</strong></td><td class="dim" data-label="Session">2026-09-11</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>PLTR</strong></td><td class="dim" data-label="Session">2026-09-11</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>ORCL</strong></td><td class="dim" data-label="Session">2026-09-11</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>NVDA</strong></td><td class="dim" data-label="Session">2026-09-11</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>NKE</strong></td><td class="dim" data-label="Session">2026-09-11</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>MU</strong></td><td class="dim" data-label="Session">2026-09-11</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>MSFT</strong></td><td class="dim" data-label="Session">2026-09-11</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>COST</strong></td><td class="dim" data-label="Session">2026-09-11</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>COIN</strong></td><td class="dim" data-label="Session">2026-09-11</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>AMD</strong></td><td class="dim" data-label="Session">2026-09-11</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>ADBE</strong></td><td class="dim" data-label="Session">2026-09-11</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>TSLA</strong></td><td class="dim" data-label="Session">2026-09-10</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>SPY</strong></td><td class="dim" data-label="Session">2026-09-10</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>PLTR</strong></td><td class="dim" data-label="Session">2026-09-10</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>ORCL</strong></td><td class="dim" data-label="Session">2026-09-10</td><td data-label="Calendar"><span class="tag on">HEDGE</span></td><td data-label="Taken"><span class="tag on">HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>NVDA</strong></td><td class="dim" data-label="Session">2026-09-10</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>NKE</strong></td><td class="dim" data-label="Session">2026-09-10</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>MU</strong></td><td class="dim" data-label="Session">2026-09-10</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>MSFT</strong></td><td class="dim" data-label="Session">2026-09-10</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>COST</strong></td><td class="dim" data-label="Session">2026-09-10</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>COIN</strong></td><td class="dim" data-label="Session">2026-09-10</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>AMD</strong></td><td class="dim" data-label="Session">2026-09-10</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>ADBE</strong></td><td class="dim" data-label="Session">2026-09-10</td><td data-label="Calendar"><span class="tag on">HEDGE</span></td><td data-label="Taken"><span class="tag on">HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>TSLA</strong></td><td class="dim" data-label="Session">2026-09-09</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>SPY</strong></td><td class="dim" data-label="Session">2026-09-09</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>PLTR</strong></td><td class="dim" data-label="Session">2026-09-09</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>ORCL</strong></td><td class="dim" data-label="Session">2026-09-09</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag on">HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="neg" data-label="Verdict">excluded - hedged a night early</td></tr><tr><td data-label=""><strong>NVDA</strong></td><td class="dim" data-label="Session">2026-09-09</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>NKE</strong></td><td class="dim" data-label="Session">2026-09-09</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>MU</strong></td><td class="dim" data-label="Session">2026-09-09</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>MSFT</strong></td><td class="dim" data-label="Session">2026-09-09</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>COST</strong></td><td class="dim" data-label="Session">2026-09-09</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>COIN</strong></td><td class="dim" data-label="Session">2026-09-09</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag ">rule</span></td><td class="dim" data-label="Verdict">reader abstained - rule decided</td></tr><tr><td data-label=""><strong>AMD</strong></td><td class="dim" data-label="Session">2026-09-09</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag ">NO_HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="dim" data-label="Verdict">model agreed with the rule</td></tr><tr><td data-label=""><strong>ADBE</strong></td><td class="dim" data-label="Session">2026-09-09</td><td data-label="Calendar"><span class="tag ">NO_HEDGE</span></td><td data-label="Taken"><span class="tag on">HEDGE</span></td><td data-label="Decided by"><span class="tag on">model</span></td><td class="neg" data-label="Verdict">excluded - hedged a night early</td></tr></tbody></table></div>
+<div class="narrow" style="margin-top:44px">
+<h3>How to read this</h3>
+<ul class="bul">
+<li><strong>The model's authority stops at the judgment.</strong> An override can
+only ever add or remove a bounded hedge against a position already held. Size,
+direction and price stay with the policy and the enforcer, so a model that flips
+every night still cannot place a bet.</li>
+<li><strong>An override is the only attributable row.</strong> Where the reader
+agreed with the calendar, the night's outcome says nothing about the model - the
+rule would have produced the same decision with no model at all. Value added is
+shown only on the rows where the two disagreed.</li>
+<li><strong>Rows marked "hedged a night early"</strong> sit on a session decided
+before the release-time fix. The model was shown the buggy calendar flag, so
+comparing its call against the corrected calendar compares two different questions.
+They stay in the table and out of the counts.</li>
+<li><strong>Nothing here is a Sharpe claim.</strong> A handful of overrides over a
+handful of nights measures whether the model is load-bearing, not whether it is
+profitable. The claims this project stands on are on the
+<a href="evidence.html">Evidence</a> page, measured over years.</li>
+</ul>
+<p class="note">Reproduce with <code>python3 -m ballast.counterfactual</code>, which
+writes <code>state/counterfactual.json</code> - every row on this page, including
+the derivation check.</p>
+</div>
+</div></section></main><footer><div class="wrap">Ballast - overnight risk transfer for tokenized US stocks.<br><a href="https://github.com/Ritapossible/Ballast">source</a> · paper trading only, not financial advice.</div></footer></body></html>

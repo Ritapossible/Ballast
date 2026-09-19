@@ -253,13 +253,15 @@ code{font-family:var(--mono);font-size:.9em;background:var(--surface);
 
 footer{padding:48px 0 76px;color:var(--dim);font-size:13.5px}
 footer a{color:var(--mid)}
-</style></head><body><div class="chrome"><header class="top"><div class="top-in"><a class="brand" href="index.html"><svg class="mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 8h14M5 16h14" stroke="#00d9ec" stroke-width="1.5" stroke-linecap="round" opacity=".38"/><path d="M12 2.5v19" stroke="#00d9ec" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="3.6" fill="#00d9ec"/></svg>BALLAST</a><a class="btn btn-p" href="tonight.html">See tonight</a></div></header><nav class="nav"><div class="nav-in"><a class="on" href="index.html">Overview</a><a class="" href="tonight.html">Tonight</a><a class="" href="settled.html">Settled</a><a class="" href="evidence.html">Evidence</a><a class="" href="docs.html">Docs</a></div></nav></div><main>
+</style></head><body><div class="chrome"><header class="top"><div class="top-in"><a class="brand" href="index.html"><svg class="mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 8h14M5 16h14" stroke="#00d9ec" stroke-width="1.5" stroke-linecap="round" opacity=".38"/><path d="M12 2.5v19" stroke="#00d9ec" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="3.6" fill="#00d9ec"/></svg>BALLAST</a><a class="btn btn-p" href="tonight.html">See tonight</a></div></header><nav class="nav"><div class="nav-in"><a class="on" href="index.html">Overview</a><a class="" href="tonight.html">Tonight</a><a class="" href="settled.html">Settled</a><a class="" href="reader.html">Reader</a><a class="" href="evidence.html">Evidence</a><a class="" href="docs.html">Docs</a></div></nav></div><main>
 <section class="bd"><div class="wrap center">
 <h1>Hold the position.<br>Not the night's risk.</h1>
 <p class="lede">Tokenized US stocks trade around the clock. The market that prices
 them is shut for <span class="hl">81% of the week</span> - through earnings, through
 the Fed, through weekends. Ballast keeps the position and switches the night off for
-about <span class="hl">11 basis points</span>.</p>
+about <span class="hl">12 basis points</span> - less
+the funding a short collects, which averages 11 bp a night but
+is a rate rather than a promise.</p>
 <div class="row">
 <a class="btn btn-p" href="tonight.html">Tonight's decisions</a>
 <a class="btn btn-s" href="docs.html">Read the docs</a>
@@ -268,7 +270,7 @@ about <span class="hl">11 basis points</span>.</p>
 <div class="term-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>
 <span>ballast / session 2026-09-18</span>
 <span class="live"><span class="pulse"></span>LEDGER OK</span></div>
-<div class="term-b"><div class="term-r"><span class="mid">COIN</span><span class="hl">HEDGE</span></div><div class="term-r"><span class="mid">TSLA</span><span class="dim">NO_HEDGE</span></div><div class="term-r"><span class="mid">NVDA</span><span class="dim">NO_HEDGE</span></div><div class="term-r"><span class="mid">PLTR</span><span class="dim">NO_HEDGE</span></div><div class="term-r"><span class="mid">AMD</span><span class="dim">NO_HEDGE</span></div><div class="term-r"><span class="dim">12 positions · 1 hedged</span><a class="dim" href="tonight.html">see all →</a></div></div>
+<div class="term-b"><div class="term-r"><span class="mid">COIN</span><span class="hl">HEDGE</span></div><div class="term-r"><span class="mid">TSLA</span><span class="dim">NO_HEDGE</span></div><div class="term-r"><span class="mid">NVDA</span><span class="dim">NO_HEDGE</span></div><div class="term-r"><span class="mid">PLTR</span><span class="dim">NO_HEDGE</span></div><div class="term-r"><span class="mid">AMD</span><span class="dim">NO_HEDGE</span></div><div class="term-r"><span class="dim">12 positions · 1 hedged</span><a class="dim" href="tonight.html">see all →</a></div><div class="term-r"><span class="dim">settled 2026-09-17 · no hedge was called for</span><a class="dim" href="settled.html">settled →</a></div><div class="term-r"><span class="dim">last hedge 2026-09-16 · 1 of 1 cut the move</span><a class="dim" href="settled.html">settled →</a></div></div>
 </div>
 </div></section>
 
@@ -282,13 +284,13 @@ less than selling the position and buying it back.</p>
 <div class="tile"><div class="n">98.2%</div><div class="l">median variance removed</div></div>
 <div class="tile"><div class="n">β 1.00</div><div class="l">hedge ratio, ±4%</div></div>
 <div class="tile"><div class="n">88%</div><div class="l">median p95 tail cut</div></div>
-<div class="tile"><div class="n">11.3 bp</div><div class="l">cost to protect</div></div>
+<div class="tile"><div class="n">12.0 bp</div><div class="l">cost to protect, certain</div></div>
 <div class="tile"><div class="n">20 bp</div><div class="l">cost to exit instead</div></div>
 </div>
 <div class="narrow"><ul class="bul">
 <li>The hedge is <strong>strongest exactly when it matters</strong> - R² reaches 0.999 on the largest moves, and is loosest on quiet nights where little is at stake.</li>
 <li>Worst nights measured: MSFT <strong>1,128 bp to 233 bp</strong>, AMD <strong>1,262 bp to 90 bp</strong>.</li>
-<li><strong>212 of 1653</strong> listed rTokens have a perp leg, measured 2026-09-19. Ballast says plainly which positions it cannot protect.</li>
+<li><strong>218 of 1653</strong> listed rTokens have a perp leg, measured 2026-09-19. Ballast says plainly which positions it cannot protect.</li>
 <li>Of those, Ballast hedges only what is <strong>already in the book</strong> - 12 positions tonight. It never opens, closes or resizes a spot position, which is what lets the enforcer bound every order by a holding that already exists.</li>
 </ul></div>
 </div></section>
