@@ -13,6 +13,7 @@ import tempfile
 import unittest
 import urllib.error
 from pathlib import Path
+from typing import ClassVar
 from unittest import mock
 
 from ballast import config, crosscheck, mcp
@@ -35,6 +36,12 @@ class TheTransport(unittest.TestCase):
 
     def test_it_still_reads_plain_json(self):
         self.assertEqual(mcp._unframe('{"a": 1}'), {"a": 1})
+
+    def test_a_stream_that_opens_with_a_ping_comment_still_parses(self):
+        """One service sends `: ping - <time>` before the message frame, so a
+        startswith("event:") check reads the whole stream as JSON and fails."""
+        raw = ": ping - 2026-09-19\r\n\r\nevent: message\r\ndata: {\"a\": 1}\r\n\r\n"
+        self.assertEqual(mcp._unframe(raw), {"a": 1})
 
     def test_an_empty_body_is_not_a_crash(self):
         self.assertEqual(mcp._unframe("  "), {})
@@ -92,7 +99,7 @@ class TheCallContract(unittest.TestCase):
     def test_a_transient_failure_is_retried(self):
         calls = {"n": 0}
 
-        def flaky(tool, args):
+        def flaky(tool, args, endpoint=None):
             calls["n"] += 1
             if calls["n"] == 1:
                 raise mcp.McpUnavailable("upstream 503: None")
@@ -102,6 +109,51 @@ class TheCallContract(unittest.TestCase):
              mock.patch.object(mcp.time, "sleep"):
             self.assertEqual(mcp.call("guide", {}, retries=3), {"ok": True})
         self.assertEqual(calls["n"], 2)
+
+
+class TheSignalService(unittest.TestCase):
+    """bitget-signal answers with one envelope per source, and reports a dead
+    upstream as an empty string rather than an error."""
+
+    FEEDS: ClassVar[list] = [{"feed": "coindesk", "error": "", "items": [{"title": "A"},
+                                                         {"title": "B"}]},
+             {"feed": "decrypt", "error": "", "items": []}]
+
+    def test_articles_are_flattened_out_of_their_per_feed_envelopes(self):
+        got = mcp.signal_headlines(self.FEEDS)
+        self.assertEqual([a["title"] for a in got], ["A", "B"])
+
+    def test_a_dead_service_reads_as_no_articles_not_as_44_headlines(self):
+        dead = [{"feed": f, "error": "", "items": []} for f in ("a", "b", "c")]
+        self.assertEqual(mcp.signal_headlines(dead), [])
+
+    def test_signal_live_is_false_when_every_feed_is_empty(self):
+        dead = [{"feed": "a", "error": "", "items": []}]
+        with mock.patch.object(mcp, "signal", return_value=dead):
+            live, why = mcp.signal_live()
+        self.assertFalse(live)
+        self.assertIn("no articles", why)
+
+    def test_signal_live_is_true_when_articles_arrive(self):
+        with mock.patch.object(mcp, "signal", return_value=self.FEEDS):
+            live, why = mcp.signal_live()
+        self.assertTrue(live)
+        self.assertIn("2 articles", why)
+
+    def test_an_unreachable_signal_service_is_reported_not_raised(self):
+        with mock.patch.object(mcp, "signal",
+                               side_effect=mcp.McpUnavailable("HTTP 503")):
+            live, why = mcp.signal_live()
+        self.assertFalse(live)
+        self.assertIn("503", why)
+
+    def test_it_targets_the_signal_host_not_the_data_host(self):
+        seen = {}
+        with mock.patch.object(mcp, "call",
+                               side_effect=lambda t, a, endpoint=None:
+                               seen.update(endpoint=endpoint) or {}):
+            mcp.signal("news_feed", action="latest")
+        self.assertEqual(seen["endpoint"], mcp.SIGNAL_ENDPOINT)
 
 
 class TheQueryShape(unittest.TestCase):

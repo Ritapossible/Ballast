@@ -40,7 +40,11 @@ import time
 import urllib.error
 import urllib.request
 
+# Two of the organiser's MCP services, same transport, different catalogues.
+# DATA is bitget-mcp-server (US stock quotes, fundamentals, earnings calendar).
+# SIGNAL is bitget-signal (macro, sentiment, technical, news - no key needed).
 ENDPOINT = "https://agent.bitget.com/mcp"
+SIGNAL_ENDPOINT = "https://datahub.noxiaohao.com/mcp"
 PROTOCOL = "2024-11-05"
 TIMEOUT = 30
 RETRIES = 3
@@ -61,31 +65,44 @@ class McpUnavailable(RuntimeError):
         self.reason = reason
 
 
-def _post(payload: dict, session: str | None = None) -> tuple[dict, str]:
+def _post(payload: dict, session: str | None = None,
+          endpoint: str | None = None) -> tuple[dict, str]:
     headers = {"Content-Type": "application/json", "User-Agent": _UA,
                "Accept": "application/json, text/event-stream"}
     if session:
         headers["mcp-session-id"] = session
-    req = urllib.request.Request(ENDPOINT, data=json.dumps(payload).encode(),
-                                 headers=headers)
+    req = urllib.request.Request(endpoint or ENDPOINT,
+                                 data=json.dumps(payload).encode(), headers=headers)
     with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
         return dict(resp.headers), resp.read().decode()
 
 
 def _unframe(text: str) -> dict:
-    """SSE frames or plain JSON, whichever the server felt like sending."""
-    if text.lstrip().startswith("event:"):
-        text = "".join(line[6:] for line in text.splitlines()
-                       if line.startswith("data: "))
+    """SSE frames or plain JSON, whichever the server felt like sending.
+
+    Detected by the presence of `data:` lines rather than by the first token. One
+    of these services opens the stream with an SSE comment - `: ping - <time>` -
+    before the message frame, so a startswith("event:") check reads the whole
+    stream as JSON and fails on the colon.
+    """
+    lines = text.splitlines()
+    data = [line[6:] for line in lines if line.startswith("data: ")]
+    if data:
+        text = "".join(data)
     return json.loads(text) if text.strip() else {}
 
 
-def call(tool: str, arguments: dict | None = None, retries: int = RETRIES) -> dict:
+def call(tool: str, arguments: dict | None = None, retries: int = RETRIES,
+         endpoint: str | None = None) -> object:
+    """A tool may answer with an object or a list - `news_feed` returns one
+    envelope per source - so the return type is deliberately not `dict`. Claiming
+    dict here is how `isinstance(payload, list)` became unreachable code that the
+    live service exercises on every call."""
     """One tool call, with its own session. Raises McpUnavailable, never guesses."""
     last = "not attempted"
     for attempt in range(retries):
         try:
-            return _once(tool, arguments)
+            return _once(tool, arguments, endpoint)
         except McpUnavailable as exc:
             last = exc.reason
             if attempt < retries - 1:
@@ -93,21 +110,24 @@ def call(tool: str, arguments: dict | None = None, retries: int = RETRIES) -> di
     raise McpUnavailable(last)
 
 
-def _once(tool: str, arguments: dict | None) -> dict:
+def _once(tool: str, arguments: dict | None,
+          endpoint: str | None = None) -> object:
     try:
         headers, _ = _post({"jsonrpc": "2.0", "id": 1, "method": "initialize",
                             "params": {"protocolVersion": PROTOCOL, "capabilities": {},
                                        "clientInfo": {"name": "ballast",
-                                                      "version": "1"}}})
+                                                      "version": "1"}}},
+                           endpoint=endpoint)
         session = headers.get("mcp-session-id") or headers.get("Mcp-Session-Id")
         if not session:
             raise McpUnavailable("initialize returned no session id")
-        _post({"jsonrpc": "2.0", "method": "notifications/initialized"}, session)
+        _post({"jsonrpc": "2.0", "method": "notifications/initialized"}, session,
+              endpoint)
         _, body = _post({"jsonrpc": "2.0", "id": 2, "method": "tools/call",
                          "params": {"name": tool,
-                                    "arguments": arguments or {}}}, session)
+                                    "arguments": arguments or {}}}, session, endpoint)
     except urllib.error.HTTPError as exc:
-        raise McpUnavailable(f"HTTP {exc.code} from {ENDPOINT}") from exc
+        raise McpUnavailable(f"HTTP {exc.code} from {endpoint or ENDPOINT}") from exc
     except (urllib.error.URLError, TimeoutError, OSError) as exc:
         raise McpUnavailable(f"{type(exc).__name__}: {exc}") from exc
 
@@ -137,10 +157,13 @@ def _once(tool: str, arguments: dict | None) -> dict:
 
 def catalog(category: str | None = None) -> dict:
     """The data catalog: categories, or the entries inside one."""
-    return call("guide", {"category": category} if category else {})
+    out = call("guide", {"category": category} if category else {})
+    if not isinstance(out, dict):
+        raise McpUnavailable(f"guide returned {type(out).__name__}, expected an object")
+    return out
 
 
-def query(entry_id: str, **params) -> dict:
+def query(entry_id: str, **params) -> object:
     """Run one catalog entry.
 
     The argument is `entry_id`, not `id`, and the entry's own parameters go in a
@@ -166,3 +189,54 @@ if __name__ == "__main__":
     print(f"{'reachable' if ok else 'UNAVAILABLE'} - {why}")
     if ok:
         print(json.dumps(catalog("equity"), ensure_ascii=False, indent=1)[:3000])
+
+
+def signal(tool: str, **arguments) -> object:
+    """Call a `bitget-signal` research tool. No account or API key required.
+
+    Same transport, different host. Its 19 tools cover macro, sentiment,
+    technical analysis and a 44-feed news aggregator - the perception layer the
+    handbook suggests for an event-driven agent.
+    """
+    return call(tool, arguments, endpoint=SIGNAL_ENDPOINT)
+
+
+def signal_headlines(payload: object) -> list[dict]:
+    """Flatten `news_feed`'s per-feed envelopes into one list of articles.
+
+    The tool answers with one object per source - 44 of them - each carrying its
+    own `error` string and an `items` list. A caller that treats the outer list as
+    the articles gets 44 "headlines" that are really source names, and a caller
+    that ignores the shape gets nothing. Both are worse than a typed accessor.
+
+    An upstream that failed reports it as an empty string rather than an error, so
+    a fully dead service returns 44 envelopes with `items: []` and no error at all.
+    That is why emptiness is measured here, on the articles, rather than inferred
+    from the absence of an exception.
+    """
+    out: list[dict] = []
+    feeds = payload if isinstance(payload, list) else [payload]
+    for feed in feeds:
+        if isinstance(feed, dict):
+            for item in feed.get("items") or []:
+                if isinstance(item, dict):
+                    out.append(item)
+    return out
+
+
+def signal_live() -> tuple[bool, str]:
+    """(carrying data, detail) - reachable is not the same as useful.
+
+    Verified against the live service on 2026-09-19, and separately through a
+    second client on a different network, so an empty answer is the service and
+    not this transport.
+    """
+    try:
+        payload = signal("news_feed", action="latest", limit=5)
+    except McpUnavailable as exc:
+        return False, exc.reason
+    articles = signal_headlines(payload)
+    sources = len(payload) if isinstance(payload, list) else 0
+    if articles:
+        return True, f"{len(articles)} articles across {sources} feeds"
+    return False, f"{sources} feeds reachable, all returning no articles"
