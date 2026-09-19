@@ -662,7 +662,10 @@ class TheTonightCardShowsTheModelsWork(unittest.TestCase):
     def test_the_strip_says_why_a_night_of_refusals_is_expected(self):
         out = self.card()
         self.assertIn("left exposed, deliberately", out)
-        self.assertIn("does not hedge volatility", out)
+        # One line and a link. The full argument lives at docs.html#selector and
+        # used to be repeated here in full, above the decisions.
+        self.assertIn("not volatility", out)
+        self.assertIn('href="docs.html#selector"', out)
 
 
 class ARefusalIsNotColouredLikeAVerdict(unittest.TestCase):
@@ -752,7 +755,7 @@ class TheVenueIsOnThePage(unittest.TestCase):
         out = self.page({"venue": "bgc-paper",
                          "venue_detail": "Bitget Agent Hub, paper-trading"},
                         {"venue": "bgc-paper", "orderId": "1234567890"})
-        self.assertIn("came back with an exchange order id", out)
+        self.assertIn("fills returned an exchange order id", out)
         self.assertNotIn("No fill here claims", out)
 
     def test_simulation_says_no_order_was_sent(self):
@@ -764,21 +767,38 @@ class TheVenueIsOnThePage(unittest.TestCase):
     def test_a_night_with_no_venue_recorded_claims_nothing(self):
         self.assertNotIn("Execution", self.page({}, None))
 
-    def test_the_refusal_is_explained_by_a_checkable_fact(self):
-        """Why no demo fill exists is a measurement, not an excuse.
+    def test_the_refusal_links_to_the_explanation_rather_than_repeating_it(self):
+        """The reason belongs in the docs; the page needs only the fact and a link.
 
-        Bitget's demo environment carries nine contracts across all three demo
-        product types, every one of them BTC, ETH or XRP. No position in this book
-        can be filled there under any credentials - so the page states it with the
-        one command that checks it, rather than implying a configuration someone
-        could have fixed.
+        Roughly 230 words of prose sat between the tiles and the decisions, which
+        buried what the page exists to show. The measurement itself - nine demo
+        contracts, none of this book's twelve - is not dropped, only moved.
         """
         out = self.page({"venue": "bgc-paper",
                          "venue_detail": "Bitget Agent Hub, paper-trading"},
                         {"venue": "simulated", "venue_fallback": self.REFUSAL})
+        self.assertIn('href="docs.html#execution"', out)
+        self.assertNotIn("productType=SUSDT-FUTURES", out)
+
+    def test_the_docs_carry_the_measurement_the_page_no_longer_repeats(self):
+        """Moved, not dropped - with the command that checks it."""
+        import tempfile
+        from unittest import mock
+
+        from ballast import config, docs_page
+        from ballast.ledger import Ledger
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "ledger.jsonl"
+            Ledger(path, b"t").append("night_summary", {"session": "2026-09-18"})
+            with mock.patch.object(config, "LEDGER_PATH", path), \
+                 mock.patch.object(config, "secret", return_value=b"t"), \
+                 mock.patch.object(config, "STATE", Path(d)), \
+                 mock.patch.object(docs_page, "OUT", Path(d) / "docs.html"):
+                out = docs_page.build().read_text()
+        self.assertIn('id="execution"', out)
         self.assertIn("None of the twelve stocks in this book trades there", out)
         self.assertIn("productType=SUSDT-FUTURES", out)
-        self.assertIn(report.DEMO_UNIVERSE_CHECKED, out)
+        self.assertIn("no fill on this ledger carries", out.lower())
 
     def test_the_explanation_is_not_offered_when_nothing_failed(self):
         out = self.page({"venue": "bgc-paper",

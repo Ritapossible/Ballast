@@ -53,25 +53,12 @@ DECIDE_GRACE_HOURS = 4
 # arrow is the character itself rather than an entity.
 ARROW = "\u2192"
 
-# Why a demo fill is not available to this book, measured rather than assumed.
-# Bitget's demo environment is a separate venue with its own instrument list, and
-# that list is nine crypto contracts. None of the twelve stock perpetuals Ballast
-# hedges exists there, so routing one to demo cannot succeed whatever credentials
-# are used - which is what the exchange means by "environment is incorrect". The
-# only venue carrying these symbols is the live one, and bgc.py appends
-# --paper-trading with no parameter to turn it off.
-DEMO_UNIVERSE_CHECKED = "2026-09-19"
-DEMO_LIMIT = (
-    '<p class="note"><strong>Why it refuses.</strong> Bitget\'s practice environment '
-    'is a separate venue, and it lists only <strong>nine contracts</strong> - all of '
-    'them BTC, ETH or XRP. None of the twelve stocks in this book trades there, so no '
-    'hedge Ballast places could ever fill on it, whatever credentials it used. The only '
-    'venue carrying these symbols is the live one, and Ballast has no code path to a '
-    'live order. Check it yourself:<br>'
-    '<code>curl -s "https://api.bitget.com/api/v2/mix/market/contracts'
-    '?productType=SUSDT-FUTURES"</code><br>'
-    'Checked ' + DEMO_UNIVERSE_CHECKED + '. The live list carries 797 contracts, '
-    'including all twelve.</p>')
+# The full explanation lives at docs.html#execution. It was on this page in full -
+# roughly 230 words of prose between the tiles and the decisions - which buried the
+# thing the page exists to show. A link costs a reader one tap and costs this page
+# nothing.
+DEMO_LIMIT = ' <a href="docs.html#execution">How execution works &rarr;</a>'
+
 
 
 def _selector_affected(row: dict) -> bool:
@@ -704,22 +691,20 @@ plus the commands to reproduce every figure yourself.</p></div>
                     f'Bitget prices{" - " + _e(detail) if detail else ""}. No order was sent '
                     f'to an exchange.</p>')
 
-        head = (f'<p class="note"><strong>Where the order went.</strong> Ballast sent '
-                f'tonight\'s hedge to the <strong>{_e(detail or venue)}</strong>')
+        head = (f'<p class="note"><strong>Execution</strong> &middot; '
+                f'{_e(detail or venue)}')
         if live:
-            return (head + f', and {len(live)} of {len(fills)} came back with an '
+            return (head + f' &middot; {len(live)} of {len(fills)} fills returned an '
                     f'exchange order id.</p>')
         if fell_back:
-            # The exchange's own words, on their own line. Buried mid-sentence this
-            # was unreadable, and a paraphrase would be the one unverifiable
-            # sentence on a page whose argument is that its claims are checkable.
+            # The exchange's own words, never a paraphrase: this page's whole
+            # argument is that its claims are checkable.
             why = str(fell_back[0]["venue_fallback"]).strip()
-            return (head + f'. Bitget refused it:</p>'
-                    f'<p class="note"><code>{_e(why)}</code></p>'
-                    f'<p class="note">So the fill was priced against the market instead, '
-                    f'and every row it affected says so. '
-                    f'<strong>No fill here claims an exchange order id.</strong></p>'
-                    f'{DEMO_LIMIT}')
+            short = why.split("Retry later")[0].replace("exit 1: ", "").strip()
+            return (head + f'. Bitget refused tonight\'s order - <code>{_e(short)}</code> '
+                    f'- so the fill was priced against the market and every affected row '
+                    f'says so. <strong>No fill here claims an exchange order id.</strong>'
+                    f'{DEMO_LIMIT}</p>')
         return head + '.</p>'
 
     @property
@@ -747,15 +732,9 @@ plus the commands to reproduce every figure yourself.</p></div>
 {_tile(model, "decided by the model")}
 {_tile(gated, "model answers refused by a gate")}
 </div>
-<div class="narrow"><p class="note">Ballast does not hedge volatility; it hedges
-<strong>scheduled events</strong>. A typical overnight move of 200-300 bp is not a
-reason to spend {self.f['hedge_cost_bp']} bp, because trailing volatility separates
-risky nights from ordinary ones by only <strong>1.41x</strong> and the nights it
-picks carry positive expected return - paying to remove compensated return is how a
-hedging policy loses 13% a year. The earnings calendar separates at
-<strong>3.2x</strong> on variance that is <em>not</em> compensated, and the reader
-exists to find the unscheduled events a calendar cannot. So most nights are refusals,
-and each one is graded.</p></div>"""
+<div class="narrow"><p class="note">Most nights are refusals, by design: Ballast
+hedges <strong>scheduled events</strong>, not volatility. Every refusal is graded.
+<a href="docs.html#selector">Why &rarr;</a></p></div>"""
 
     def tonight_page(self) -> str:
         return f"""

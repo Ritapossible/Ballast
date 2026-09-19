@@ -20,7 +20,8 @@ SECTIONS = [
                ("who", "Who it is for")]),
     ("Mechanism", [("hedge", "The hedge"), ("selector", "Choosing the night"),
                    ("policy", "The decision policy")]),
-    ("System", [("architecture", "Architecture"), ("authority", "Bounded authority"),
+    ("System", [("architecture", "Architecture"), ("execution", "Where orders go"),
+                ("authority", "Bounded authority"),
                 ("ledger", "The ledger"), ("settlement", "Settlement")]),
     ("Evidence", [("research", "Research findings"), ("defects", "Defects found"),
                   ("verify", "Verify it yourself"), ("oos", "Out of sample"), ("roadmap", "Roadmap"), ("verify", "Reproduce it")]),
@@ -147,6 +148,31 @@ SETTLEMENT graded at the primary open against the exact counterfactual</pre>
 <p>Sources are deliberately keyless where possible: Nasdaq for scheduled events,
 Google News RSS per ticker for unscheduled ones, filtered to the window being decided
 so a headline published after the open cannot inform a decision taken before it.</p>
+
+<h2 id="execution">Where orders go</h2>
+<p>An admitted hedge is routed to the <strong>Bitget Agent Hub</strong> in
+paper-trading mode - <code>bgc --paper-trading</code>, the organiser's execution
+surface. The flag is appended by <code>ballast/bgc.py</code> and there is no
+parameter to turn it off, so no code path in this project can reach a live order.</p>
+<p>Every scheduled session since 2026-09-14 has taken that route, and the ledger
+records which venue filled each order. <strong>None has filled.</strong> Bitget
+answers every one with:</p>
+<pre>HTTP 400: exchange environment is incorrect</pre>
+<p>Ballast then prices the fill against the observed market and writes the
+exchange's own sentence onto the row as <code>venue_fallback</code>. A simulated
+fill never wears the Agent Hub's name, and <strong>no fill on this ledger carries
+an exchange order id</strong>.</p>
+<div class="callout"><p><strong>It cannot be fixed from this side.</strong> Bitget's
+practice environment is a separate venue with its own instrument list, and that list
+is <strong>nine contracts</strong> - BTC, ETH and XRP - across every demo product
+type. None of the twelve stocks in this book trades there, so no hedge Ballast
+places could fill on it under any credentials. The only venue carrying these symbols
+is the live one.</p></div>
+<p>Check it in one command:</p>
+<pre>curl -s "https://api.bitget.com/api/v2/mix/market/contracts?productType=SUSDT-FUTURES"</pre>
+<p>Checked 2026-09-19. The live <code>USDT-FUTURES</code> list carries 797 contracts,
+including all twelve. So the choice was a labelled simulation or a real order with
+real money; it simulates, and says so on every row.</p>
 
 <h2 id="authority">Bounded authority</h2>
 <div class="callout"><p><strong>Ballast cannot place a bet.</strong> Every order it is
