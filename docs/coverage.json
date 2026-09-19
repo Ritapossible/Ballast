@@ -1,7 +1,7 @@
 {
  "counts": {
   "covered": 218,
-  "fitted": 204,
+  "fitted": 187,
   "rtokens": 1653,
   "uncovered": 1435
  },
@@ -87,14 +87,12 @@
    "typical_bp": 440.2
   },
   {
-   "beta": 1.025,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "ALABUSDT",
-   "r2": 0.989,
    "spot": "RALABUSDT",
    "ticker": "ALAB",
-   "typical_bp": 301.0
+   "why": "BitgetError"
   },
   {
    "beta": 1.001,
@@ -127,14 +125,12 @@
    "typical_bp": 271.4
   },
   {
-   "beta": 0.933,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "AMGNUSDT",
-   "r2": 0.898,
    "spot": "RAMGNUSDT",
    "ticker": "AMGN",
-   "typical_bp": 57.5
+   "why": "BitgetError"
   },
   {
    "beta": 1.038,
@@ -287,14 +283,12 @@
    "typical_bp": 165.1
   },
   {
-   "beta": 0.896,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "BACUSDT",
-   "r2": 0.957,
    "spot": "RBACUSDT",
    "ticker": "BAC",
-   "typical_bp": 52.8
+   "why": "BitgetError"
   },
   {
    "beta": 0.997,
@@ -347,12 +341,14 @@
    "typical_bp": 86.0
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 1.001,
+   "fit": true,
+   "nights": 28,
    "perp": "BSPUSDT",
+   "r2": 0.968,
    "spot": "RBSPUSDT",
    "ticker": "BSP",
-   "why": "BitgetError"
+   "typical_bp": 209.8
   },
   {
    "beta": 1.015,
@@ -421,12 +417,14 @@
    "why": "too few paired nights"
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 1.011,
+   "fit": true,
+   "nights": 28,
    "perp": "CMCSAUSDT",
+   "r2": 0.94,
    "spot": "RCMCSAUSDT",
    "ticker": "CMCSA",
-   "why": "BitgetError"
+   "typical_bp": 97.1
   },
   {
    "beta": 1.016,
@@ -449,14 +447,12 @@
    "typical_bp": 212.6
   },
   {
-   "beta": 1.021,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "CONLUSDT",
-   "r2": 0.992,
    "spot": "RCONLUSDT",
    "ticker": "CONL",
-   "typical_bp": 400.9
+   "why": "BitgetError"
   },
   {
    "beta": 1.024,
@@ -559,14 +555,12 @@
    "typical_bp": 175.0
   },
   {
-   "beta": 0.873,
-   "fit": true,
-   "nights": 18,
+   "fit": null,
+   "nights": 0,
    "perp": "DEUSDT",
-   "r2": 0.892,
    "spot": "RDEUSDT",
    "ticker": "DE",
-   "typical_bp": 79.6
+   "why": "BitgetError"
   },
   {
    "beta": 1.005,
@@ -659,14 +653,12 @@
    "typical_bp": 113.3
   },
   {
-   "beta": 1.005,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "EWYUSDT",
-   "r2": 0.996,
    "spot": "REWYUSDT",
    "ticker": "EWY",
-   "typical_bp": 164.1
+   "why": "BitgetError"
   },
   {
    "beta": 0.979,
@@ -769,14 +761,12 @@
    "typical_bp": 155.6
   },
   {
-   "beta": 0.94,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "GILDUSDT",
-   "r2": 0.931,
    "spot": "RGILDUSDT",
    "ticker": "GILD",
-   "typical_bp": 70.2
+   "why": "BitgetError"
   },
   {
    "beta": 0.985,
@@ -903,14 +893,12 @@
    "typical_bp": 39.7
   },
   {
-   "beta": 1.066,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "INFQUSDT",
-   "r2": 0.987,
    "spot": "RINFQUSDT",
    "ticker": "INFQ",
-   "typical_bp": 291.9
+   "why": "BitgetError"
   },
   {
    "beta": 1.007,
@@ -923,14 +911,12 @@
    "typical_bp": 260.4
   },
   {
-   "beta": 1.013,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "IONQUSDT",
-   "r2": 0.993,
    "spot": "RIONQUSDT",
    "ticker": "IONQ",
-   "typical_bp": 288.6
+   "why": "BitgetError"
   },
   {
    "beta": 1.0,
@@ -1013,24 +999,20 @@
    "typical_bp": 157.7
   },
   {
-   "beta": 1.019,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "KOUSDT",
-   "r2": 0.954,
    "spot": "RKOUSDT",
    "ticker": "KO",
-   "typical_bp": 41.8
+   "why": "BitgetError"
   },
   {
-   "beta": 1.004,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "KSTRUSDT",
-   "r2": 0.972,
    "spot": "RKSTRUSDT",
    "ticker": "KSTR",
-   "typical_bp": 160.7
+   "why": "BitgetError"
   },
   {
    "beta": 0.965,
@@ -1153,14 +1135,12 @@
    "typical_bp": 46.8
   },
   {
-   "beta": 1.111,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "MDBUSDT",
-   "r2": 0.942,
    "spot": "RMDBUSDT",
    "ticker": "MDB",
-   "typical_bp": 170.8
+   "why": "BitgetError"
   },
   {
    "beta": 1.006,
@@ -1193,14 +1173,12 @@
    "typical_bp": 187.4
   },
   {
-   "beta": 0.993,
-   "fit": true,
-   "nights": 20,
+   "fit": null,
+   "nights": 0,
    "perp": "MRKUSDT",
-   "r2": 0.925,
    "spot": "RMRKUSDT",
    "ticker": "MRK",
-   "typical_bp": 116.7
+   "why": "BitgetError"
   },
   {
    "beta": 1.02,
@@ -1213,12 +1191,14 @@
    "typical_bp": 297.8
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 1.002,
+   "fit": true,
+   "nights": 28,
    "perp": "MRVLUSDT",
+   "r2": 1.0,
    "spot": "RMRVLUSDT",
    "ticker": "MRVL",
-   "why": "BitgetError"
+   "typical_bp": 369.5
   },
   {
    "beta": 0.993,
@@ -1231,14 +1211,12 @@
    "typical_bp": 81.9
   },
   {
-   "beta": 1.002,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "MSTRUSDT",
-   "r2": 0.999,
    "spot": "RMSTRUSDT",
    "ticker": "MSTR",
-   "typical_bp": 235.6
+   "why": "BitgetError"
   },
   {
    "beta": 0.038,
@@ -1311,22 +1289,22 @@
    "typical_bp": 120.1
   },
   {
-   "beta": 0.985,
-   "fit": true,
-   "nights": 28,
-   "perp": "NKEUSDT",
-   "r2": 0.982,
-   "spot": "RNKEUSDT",
-   "ticker": "NKE",
-   "typical_bp": 93.4
-  },
-  {
    "fit": null,
    "nights": 0,
+   "perp": "NKEUSDT",
+   "spot": "RNKEUSDT",
+   "ticker": "NKE",
+   "why": "BitgetError"
+  },
+  {
+   "beta": 1.098,
+   "fit": true,
+   "nights": 28,
    "perp": "NOCUSDT",
+   "r2": 0.873,
    "spot": "RNOCUSDT",
    "ticker": "NOC",
-   "why": "BitgetError"
+   "typical_bp": 58.7
   },
   {
    "beta": 0.983,
@@ -1449,12 +1427,14 @@
    "typical_bp": 102.0
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 1.032,
+   "fit": true,
+   "nights": 28,
    "perp": "PANWUSDT",
+   "r2": 0.989,
    "spot": "RPANWUSDT",
    "ticker": "PANW",
-   "why": "BitgetError"
+   "typical_bp": 135.0
   },
   {
    "fit": null,
@@ -1465,14 +1445,12 @@
    "why": "too few paired nights"
   },
   {
-   "beta": 0.962,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "PDDUSDT",
-   "r2": 0.963,
    "spot": "RPDDUSDT",
    "ticker": "PDD",
-   "typical_bp": 114.3
+   "why": "BitgetError"
   },
   {
    "beta": 1.088,
@@ -1495,14 +1473,12 @@
    "typical_bp": 80.5
   },
   {
-   "beta": 0.995,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "PLTRUSDT",
-   "r2": 0.999,
    "spot": "RPLTRUSDT",
    "ticker": "PLTR",
-   "typical_bp": 117.6
+   "why": "BitgetError"
   },
   {
    "beta": 0.962,
@@ -1573,14 +1549,12 @@
    "typical_bp": 45.7
   },
   {
-   "beta": 1.012,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "QUBTUSDT",
-   "r2": 0.961,
    "spot": "RQUBTUSDT",
    "ticker": "QUBT",
-   "typical_bp": 125.2
+   "why": "BitgetError"
   },
   {
    "beta": 1.016,
@@ -1643,12 +1617,14 @@
    "typical_bp": 210.1
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 0.915,
+   "fit": true,
+   "nights": 28,
    "perp": "ROKUSDT",
+   "r2": 0.853,
    "spot": "RROKUSDT",
    "ticker": "ROK",
-   "why": "BitgetError"
+   "typical_bp": 75.2
   },
   {
    "beta": 0.12,
@@ -1681,14 +1657,12 @@
    "typical_bp": 272.8
   },
   {
-   "beta": 1.028,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "SITMUSDT",
-   "r2": 0.964,
    "spot": "RSITMUSDT",
    "ticker": "SITM",
-   "typical_bp": 216.4
+   "why": "BitgetError"
   },
   {
    "beta": 1.008,
@@ -1771,14 +1745,12 @@
    "typical_bp": 90.5
   },
   {
-   "beta": 0.99,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "SONYUSDT",
-   "r2": 0.954,
    "spot": "RSONYUSDT",
    "ticker": "SONY",
-   "typical_bp": 114.2
+   "why": "BitgetError"
   },
   {
    "beta": 1.002,
@@ -1791,14 +1763,12 @@
    "typical_bp": 503.8
   },
   {
-   "beta": 1.004,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "SOXSUSDT",
-   "r2": 0.999,
    "spot": "RSOXSUSDT",
    "ticker": "SOXS",
-   "typical_bp": 487.5
+   "why": "BitgetError"
   },
   {
    "beta": 1.037,
@@ -1811,12 +1781,14 @@
    "typical_bp": 168.6
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 1.018,
+   "fit": true,
+   "nights": 28,
    "perp": "SPCXUSDT",
+   "r2": 0.999,
    "spot": "RSPCXUSDT",
    "ticker": "SPCX",
-   "why": "BitgetError"
+   "typical_bp": 173.9
   },
   {
    "beta": 1.039,
@@ -1919,14 +1891,12 @@
    "typical_bp": 177.4
   },
   {
-   "beta": 1.02,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "TSLAUSDT",
-   "r2": 0.999,
    "spot": "RTSLAUSDT",
    "ticker": "TSLA",
-   "typical_bp": 123.5
+   "why": "BitgetError"
   },
   {
    "beta": 1.002,
@@ -2029,14 +1999,12 @@
    "typical_bp": 51.9
   },
   {
-   "beta": 0.783,
-   "fit": true,
-   "nights": 14,
+   "fit": null,
+   "nights": 0,
    "perp": "VEEVUSDT",
-   "r2": 0.867,
    "spot": "RVEEVUSDT",
    "ticker": "VEEV",
-   "typical_bp": 105.9
+   "why": "BitgetError"
   },
   {
    "beta": 0.894,
@@ -2049,14 +2017,12 @@
    "typical_bp": 25.5
   },
   {
-   "beta": 1.027,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "VRTUSDT",
-   "r2": 0.99,
    "spot": "RVRTUSDT",
    "ticker": "VRT",
-   "typical_bp": 265.5
+   "why": "BitgetError"
   },
   {
    "beta": 1.075,
