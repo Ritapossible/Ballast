@@ -53,6 +53,27 @@ DECIDE_GRACE_HOURS = 4
 # arrow is the character itself rather than an entity.
 ARROW = "\u2192"
 
+# Why a demo fill is not available to this book, measured rather than assumed.
+# Bitget's demo environment is a separate venue with its own instrument list, and
+# that list is nine crypto contracts. None of the twelve stock perpetuals Ballast
+# hedges exists there, so routing one to demo cannot succeed whatever credentials
+# are used - which is what the exchange means by "environment is incorrect". The
+# only venue carrying these symbols is the live one, and bgc.py appends
+# --paper-trading with no parameter to turn it off.
+DEMO_UNIVERSE_CHECKED = "2026-09-19"
+DEMO_LIMIT = (
+    '<p class="note">Why it refuses: Bitget\'s demo environment is a separate venue '
+    'with its own instrument list, and that list is <strong>nine contracts</strong> - '
+    'BTC, ETH and XRP, all S-prefixed - across every demo product type. '
+    '<strong>No tokenized stock perpetual is listed on it</strong>, so no position in '
+    'this book can be filled there under any credentials. The only venue carrying '
+    'these symbols is the live one, and this executor appends '
+    '<code>--paper-trading</code> with no parameter to turn it off. Check it in one '
+    'command:<br><code>curl -s "https://api.bitget.com/api/v2/mix/market/contracts'
+    '?productType=SUSDT-FUTURES"</code><br>Checked ' + DEMO_UNIVERSE_CHECKED +
+    '; the live <code>USDT-FUTURES</code> list carries 797 contracts including every '
+    'name in this book.</p>')
+
 
 def _selector_affected(row: dict) -> bool:
     """Only the hedges are affected, never the refusals.
@@ -696,7 +717,7 @@ plus the commands to reproduce every figure yourself.</p></div>
             return (head + f'. The exchange refused the order - <em>{_e(why)}</em> - so the '
                     f'fill was simulated and every affected row carries that reason. '
                     f'<strong>No fill on this ledger carries an exchange order id</strong>, '
-                    f'and none is claimed.</p>')
+                    f'and none is claimed.</p>{DEMO_LIMIT}')
         return head + '.</p>'
 
     @property

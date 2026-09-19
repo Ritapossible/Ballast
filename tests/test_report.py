@@ -763,3 +763,25 @@ class TheVenueIsOnThePage(unittest.TestCase):
 
     def test_a_night_with_no_venue_recorded_claims_nothing(self):
         self.assertNotIn("Execution", self.page({}, None))
+
+    def test_the_refusal_is_explained_by_a_checkable_fact(self):
+        """Why no demo fill exists is a measurement, not an excuse.
+
+        Bitget's demo environment carries nine contracts across all three demo
+        product types, every one of them BTC, ETH or XRP. No position in this book
+        can be filled there under any credentials - so the page states it with the
+        one command that checks it, rather than implying a configuration someone
+        could have fixed.
+        """
+        out = self.page({"venue": "bgc-paper",
+                         "venue_detail": "Bitget Agent Hub, paper-trading"},
+                        {"venue": "simulated", "venue_fallback": self.REFUSAL})
+        self.assertIn("No tokenized stock perpetual is listed on it", out)
+        self.assertIn("productType=SUSDT-FUTURES", out)
+        self.assertIn(report.DEMO_UNIVERSE_CHECKED, out)
+
+    def test_the_explanation_is_not_offered_when_nothing_failed(self):
+        out = self.page({"venue": "bgc-paper",
+                         "venue_detail": "Bitget Agent Hub, paper-trading"},
+                        {"venue": "bgc-paper", "orderId": "1234567890"})
+        self.assertNotIn("No tokenized stock perpetual", out)
