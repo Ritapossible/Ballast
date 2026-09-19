@@ -691,20 +691,17 @@ plus the commands to reproduce every figure yourself.</p></div>
                     f'Bitget prices{" - " + _e(detail) if detail else ""}. No order was sent '
                     f'to an exchange.</p>')
 
-        head = (f'<p class="note"><strong>Execution</strong> &middot; '
-                f'{_e(detail or venue)}')
+        head = f'<p class="note"><strong>Execution</strong> &middot; {_e(detail or venue)}'
         if live:
             return (head + f' &middot; {len(live)} of {len(fills)} fills returned an '
                     f'exchange order id.</p>')
         if fell_back:
-            # The exchange's own words, never a paraphrase: this page's whole
-            # argument is that its claims are checkable.
-            why = str(fell_back[0]["venue_fallback"]).strip()
-            short = why.split("Retry later")[0].replace("exit 1: ", "").strip()
-            return (head + f'. Bitget refused tonight\'s order - <code>{_e(short)}</code> '
-                    f'- so the fill was priced against the market and every affected row '
-                    f'says so. <strong>No fill here claims an exchange order id.</strong>'
-                    f'{DEMO_LIMIT}</p>')
+            # Short, but never silent. This page prints "1,074 hedged"; a reader who
+            # sees that number has to be able to see, without leaving the page, that
+            # no exchange filled it. The reasons live in the docs; the fact does not.
+            return (head + f' &middot; <strong>fills are simulated</strong>, priced '
+                    f'against the market. Bitget refused the order, and no fill here '
+                    f'claims an exchange order id.{DEMO_LIMIT}</p>')
         return head + '.</p>'
 
     @property

@@ -241,7 +241,7 @@ market API (spot + USDT-futures), Nasdaq earnings calendar, Google News RSS, Qwe
 |---|---|
 | **Live demo** | https://ballast-v1.vercel.app |
 | **Reader vs calendar** | https://ballast-v1.vercel.app/reader - every night the model reached a different answer from the deterministic rule, with the derivation checked against the ledger |
-| **Documentation** | https://ballast-v1.vercel.app/docs - 20 sections incl. the defects found and the roadmap |
+| **Documentation** | https://ballast-v1.vercel.app/docs - 19 sections incl. the defects found and the roadmap |
 | **Source** | https://github.com/Ritapossible/Ballast |
 | **Paper trading log** | `state/ledger.jsonl` - hash-chained, signed, committed by the scheduled job |
 | **Bitget-schema log** | `state/bitget_orders.json` - the same fills in UTA order field names |

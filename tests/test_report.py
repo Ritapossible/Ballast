@@ -748,15 +748,19 @@ class TheVenueIsOnThePage(unittest.TestCase):
                          "venue_detail": "Bitget Agent Hub, paper-trading"},
                         {"venue": "simulated", "venue_fallback": self.REFUSAL})
         self.assertIn("Bitget Agent Hub, paper-trading", out)
-        self.assertIn("exchange environment is incorrect", out)
-        self.assertIn("No fill here claims an exchange order id", out)
+        # The page prints "1,074 hedged". Someone reading that number has to be
+        # able to see, without leaving the page, that no exchange filled it. The
+        # exchange's verbatim words live in the docs section; the fact stays here.
+        self.assertIn("fills are simulated", out)
+        self.assertIn("no fill here claims an exchange order id", out)
+        self.assertIn('href="docs.html#execution"', out)
 
     def test_a_real_order_id_is_reported_as_one(self):
         out = self.page({"venue": "bgc-paper",
                          "venue_detail": "Bitget Agent Hub, paper-trading"},
                         {"venue": "bgc-paper", "orderId": "1234567890"})
         self.assertIn("fills returned an exchange order id", out)
-        self.assertNotIn("No fill here claims", out)
+        self.assertNotIn("fills are simulated", out)
 
     def test_simulation_says_no_order_was_sent(self):
         out = self.page({"venue": "simulated", "venue_detail": "BITGET_API_KEY unset"},
@@ -796,6 +800,7 @@ class TheVenueIsOnThePage(unittest.TestCase):
                  mock.patch.object(docs_page, "OUT", Path(d) / "docs.html"):
                 out = docs_page.build().read_text()
         self.assertIn('id="execution"', out)
+        self.assertIn("exchange environment is incorrect", out)
         self.assertIn("None of the twelve stocks in this book trades there", out)
         self.assertIn("productType=SUSDT-FUTURES", out)
         self.assertIn("no fill on this ledger carries", out.lower())
