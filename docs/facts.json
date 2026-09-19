@@ -3,7 +3,18 @@
   "beta_min": 0.992,
   "beta_names": 12,
   "exit_cost_bp": 20.0,
+  "funding": {
+    "max_bp": 3.13,
+    "max_name": "NKE",
+    "mean_bp": 0.68,
+    "measured_on": "2026-09-19",
+    "min_bp": -0.19,
+    "min_name": "PLTR",
+    "names": 12,
+    "names_paying": 2
+  },
   "hedge_cost_bp": 11.3,
+  "hedge_cost_gross_bp": 12.0,
   "measured_on": "2026-09-19",
   "median_r2": 0.982,
   "median_tail_cut_pct": 88,
@@ -200,7 +211,7 @@
     "shortest": 100,
     "split": 0.7
   },
-  "rtokens_hedgeable": 212,
+  "rtokens_hedgeable": 218,
   "rtokens_total": 1653,
   "tail": [
     {
