@@ -225,7 +225,7 @@ equity feed and nothing synthetic. Nasdaq supplies event dates only, never a pri
 **Verify it:** `git clone` then `python3 verify.py` - one command, no key, no network. It runs
 the suite, requires the enforcer to refuse a naked directional order, re-derives the hash chain,
 mutates a ledger copy and requires verification to fail, checks every published figure comes
-from `docs/facts.json` rather than a literal, and builds all five pages. What needs the
+from `docs/facts.json` rather than a literal, and builds all six pages. What needs the
 exchange, it names rather than pretends to check.
 
 **Next:** measure whether the reader closes the tail-coverage gap; wire the Agentic Account;

@@ -101,6 +101,37 @@ decides size, price or direction, and the enforcer still makes a directional tra
 unreachable — so a model saying HEDGE can only ever cause a bounded hedge against a
 position that already exists.
 
+### Whether it is load-bearing is measured, not asserted
+
+An LLM bolted onto a system that would behave identically without it is decoration, and
+the claim above is only worth as much as the record behind it. So every decision on the
+chain carries the answer the deterministic calendar rule *alone* would have produced for
+the same night, and `ballast/counterfactual.py` publishes the two side by side at
+`/reader`.
+
+The comparison is computable because the calendar branch of `policy.decide` is a pure
+function of one bit — is a report scheduled inside tonight's window. The volatility gate
+is off (RESEARCH.md §5), so a night with nothing on the calendar is NO_HEDGE whatever the
+tape did. Three properties keep it from being a story told over the record:
+
+- **The rule is called, not reimplemented.** `night.calendar_call` runs the same
+  `policy.decide` the nightly run runs, with the model's judgment removed. If the
+  volatility gate is ever re-enabled the rule stops being a function of the calendar
+  alone, and the function returns `None` rather than a plausible-looking guess.
+- **The derivation is checked against the ledger.** On a night the reader abstained or
+  failed a gate the recorded decision *is* the calendar's, so every `decided_by == "rule"`
+  row is a test of the re-derivation. The match count and every mismatch are published in
+  the payload and on the page.
+- **The bias runs against the headline.** Nasdaq drops its release-time flag on past
+  dates and an unsupplied flag passes both window gates, so a late re-derivation can only
+  ever flag *more* nights for the calendar than the live run saw — which can only shrink
+  the count of overrides. Nights decided from now on carry the rule's own answer in the
+  ledger entry, so they need no re-derivation at all.
+
+Only an override is attributable. Where the reader agreed with the calendar the night's
+outcome says nothing about the model, because the rule would have produced the same
+decision with no model at all.
+
 ### Three gates stand between the model and an order
 
 | Gate | Rejects |

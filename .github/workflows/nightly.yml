@@ -166,6 +166,17 @@ jobs:
         continue-on-error: true
         run: python -m ballast.coverage
 
+      # The reader-vs-calendar index. Cheap - the earnings calendar it re-derives
+      # from is already warm in the cache the decide step filled - but it touches a
+      # public feed, so a failure must not cost the night. continue-on-error leaves
+      # the previously committed index in place, and the page renders that.
+      - name: Refresh the reader-vs-calendar comparison
+        if: inputs.task != 'check'
+        continue-on-error: true
+        env:
+          BALLAST_SECRET: ${{ secrets.BALLAST_SECRET }}
+        run: python -m ballast.counterfactual
+
       - name: Rebuild the public site
         if: inputs.task != 'check'
         env:

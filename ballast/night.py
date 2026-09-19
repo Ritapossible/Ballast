@@ -24,7 +24,7 @@ from .market import MarketDataUnavailable
 from .market import bars as market_bars
 from .news import NewsUnavailable, fetch, in_window
 from .overnight import overnight_returns
-from .policy import Action, EventType, Impact, NightRisk, decide
+from .policy import DEFAULT_POLICY, Action, EventType, Impact, NightRisk, PolicyConfig, decide
 from .reader import read
 from .sessions import UTC, close_utc, current_session, next_session, open_utc, window_hours
 
@@ -53,6 +53,30 @@ def calendar_risk(ticker: str, session: dt.date) -> tuple[NightRisk, bool]:
         verbatim_quote=f"{ticker} scheduled to report ({flag})",
         unknowns=("exact release time not supplied for historical dates",),
     ), True
+
+
+def calendar_call(ticker: str, session: dt.date,
+                  cfg: PolicyConfig | None = None) -> dict:
+    """What the deterministic rule alone would have done with this night.
+
+    Recorded beside every decision so the reader's call can be compared against the
+    rule's without re-deriving it from a public feed months later - Nasdaq drops the
+    release-time flag on past dates, so a late re-derivation is strictly coarser
+    than what the run actually saw. `ballast.counterfactual` prefers this block and
+    falls back to re-derivation only for nights written before it existed.
+
+    `action` is None when the volatility gate is on, because the rule is then no
+    longer a function of the calendar alone and no honest single-bit answer exists.
+    """
+    # Looked up here rather than bound as a default, so a test can turn the gate
+    # on and see the refusal rather than a plausible-looking guess.
+    cfg = cfg or DEFAULT_POLICY
+    flag = scheduled_in_window(ticker, session)
+    if cfg.vol_gate_enabled:
+        return {"flagged": flag is not None, "flag": flag, "action": None}
+    risk, _ = calendar_risk(ticker, session)
+    action = decide(ticker, "", [], risk, 0.0, cfg, model_judgment=None).action.value
+    return {"flagged": flag is not None, "flag": flag, "action": action}
 
 
 def assess(ticker: str, session: dt.date, use_reader: bool):
@@ -244,6 +268,10 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
             if provenance.get("source") == "unavailable":
                 news_down += 1
         record["session"] = session.isoformat()
+        # The rule's own answer, written at decision time. Without it the reader-vs-
+        # calendar comparison has to re-derive the rule from a feed that has already
+        # coarsened, and a comparison you cannot check is not evidence.
+        record["calendar"] = calendar_call(pos.ticker, session)
         record["perp_symbol"] = pos.perp_symbol        # settlement must not guess it
         record["spot_mark"] = spot_marks[pos.spot_symbol]
         record["notional_usdt"] = round(notionals.get(pos.spot_symbol, 0.0), 2)

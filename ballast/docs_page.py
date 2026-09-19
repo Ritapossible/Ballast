@@ -167,6 +167,12 @@ a position exists, the order opposes it, the size is within the ratio, the symbo
 in the universe, the mandate has not expired, the night's caps are intact.
 <strong>18 red-team tests</strong> drive hostile intents at it, each asserting the
 specific rule that refused it.</p>
+<p>Bounded authority is worth nothing if the model never uses it, so whether the
+reader is load-bearing is measured rather than asserted. Every decision carries the
+answer the deterministic calendar rule alone would have produced for the same night,
+and the <a href="reader.html">Reader</a> page puts the two side by side for every
+position-night on the chain - including the derivation check that makes the
+comparison auditable, and the nights the model's override lost money.</p>
 
 <h2 id="ledger">The ledger</h2>
 <p>Every decision, including every refusal, is appended to a hash-chained, signed

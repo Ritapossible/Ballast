@@ -25,9 +25,12 @@ def build_site(entries) -> dict[str, str]:
         lg = Ledger(ledger_path, b"t")
         for kind, body in entries:
             lg.append(kind, body)
+        # The comparison index is a separate artifact; a page test must not read
+        # whatever the real one happens to contain.
         with mock.patch.object(config, "LEDGER_PATH", ledger_path), \
              mock.patch.object(config, "secret", return_value=b"t"), \
              mock.patch.object(report, "OUT_DIR", Path(d)), \
+             mock.patch.object(config, "STATE", Path(d)), \
              mock.patch.object(docs_page, "OUT", Path(d) / "docs.html"):
             pages = {p.name: p.read_text() for p in report.build()}
             pages["docs.html"] = docs_page.build().read_text()
@@ -51,7 +54,7 @@ POPULATED = [
 class TestPages(unittest.TestCase):
     def test_builds_from_an_empty_ledger(self):
         pages = build_site([])
-        self.assertEqual(len(pages), 5)
+        self.assertEqual(len(pages), len(report.PAGES) + 1)
         for name, html in pages.items():
             self.assertIn("<!doctype html>", html, name)
         self.assertIn("No decisions recorded yet", pages["tonight.html"])

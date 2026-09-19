@@ -25,6 +25,13 @@ from pathlib import Path
 
 from .sessions import next_session
 
+# Sessions decided before `scheduled_in_window` checked the release time. The old
+# rule ORed the two calendar dates, so it could turn a NO_HEDGE into a HEDGE and
+# never the reverse - which is why only hedges on these sessions are marked.
+# Anything reading the record has to be able to say which nights that touched, so
+# the list lives beside the rule it corrects rather than in a page builder.
+SELECTOR_BUG_SESSIONS = frozenset({"2026-09-09"})
+
 CACHE = Path(__file__).resolve().parent.parent / ".cache" / "earnings"
 _UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
        "(KHTML, like Gecko) Chrome/124.0 Safari/537.36")

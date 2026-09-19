@@ -17,7 +17,8 @@ import html
 import re
 from pathlib import Path
 
-from . import config, facts
+from . import config, counterfactual, facts
+from .earnings import SELECTOR_BUG_SESSIONS
 from .facts import load as load_facts
 from .facts import worst_night
 from .ledger import Ledger, LedgerError
@@ -39,10 +40,6 @@ def _round_floats(text: str) -> str:
     unchanged and still verifies against exactly what was written.
     """
     return _LONG_FLOAT.sub(lambda m: f"{float(m.group()):.1f}", text)
-
-# Sessions decided before the calendar selector checked the release time. Their
-# hedges may have been placed a night early; the settled page says so beside them.
-SELECTOR_BUG_SESSIONS = frozenset({"2026-09-09"})
 
 # How long after a close the decide run may take before the site calls it missed.
 # The cron is one hour after the close, and GitHub has delayed one of ours by
@@ -153,6 +150,63 @@ def _settled(rows: list[dict]) -> str:
             f'<td class="{"dim" if faint else ""}" data-label="Verdict">{verdict}</td></tr>')
     return "".join(out) + "</tbody></table></div>"
 
+
+def _call_tag(action: str) -> str:
+    return f'<span class="tag {"on" if action == "HEDGE" else ""}">{_e(action)}</span>'
+
+
+def _overrides(rows: list[dict]) -> str:
+    """The nights the reader changed the rule's answer, with what it quoted."""
+    if not rows:
+        return _empty("The model has not yet changed the calendar's answer on any "
+                      "night. On this record it is reporting, not deciding.")
+    out = ['<div class="scroll stacked"><table><thead><tr><th>Position</th>'
+           '<th>Session</th><th>Calendar said</th><th>Ballast did</th>'
+           '<th class="num">Value added</th><th>What the model read</th>'
+           '</tr></thead><tbody>']
+    for r in sorted(rows, key=lambda x: x["session"], reverse=True):
+        va = r.get("value_added_bp")
+        cls = "dim" if va is None else "pos" if va > 0 else "neg" if va < 0 else "dim"
+        shown = "not settled" if va is None else f"{va:+,.0f} bp"
+        quote = r.get("quote") or r.get("reasoning") or ""
+        out.append(
+            f'<tr><td data-label=""><strong>{_e(r["ticker"])}</strong></td>'
+            f'<td class="dim" data-label="Session">{_e(r["session"])}</td>'
+            f'<td data-label="Calendar said">{_call_tag(r["calendar"])}</td>'
+            f'<td data-label="Ballast did">{_call_tag(r["action"])}</td>'
+            f'<td class="num {cls}" data-label="Value added">{_e(shown)}</td>'
+            f'<td class="dim wrap" data-label="What the model read">{_e(quote)}</td>'
+            f'</tr>')
+    return "".join(out) + "</tbody></table></div>"
+
+
+def _comparison(rows: list[dict]) -> str:
+    """Every decision on the chain, the rule's answer beside the one taken."""
+    if not rows:
+        return _empty("No decisions recorded yet. The loop runs after the US close.")
+    out = ['<div class="scroll stacked"><table><thead><tr><th>Position</th>'
+           '<th>Session</th><th>Calendar</th><th>Taken</th><th>Decided by</th>'
+           '<th>Verdict</th></tr></thead><tbody>']
+    for r in sorted(rows, key=lambda x: (x["session"], x["ticker"]), reverse=True):
+        by = r.get("decided_by", "rule")
+        if r.get("selector_affected"):
+            verdict, cls = "excluded - hedged a night early", "neg"
+        elif r["flip"]:
+            verdict, cls = "model overrode the rule", "pos"
+        elif by == "model":
+            verdict, cls = "model agreed with the rule", "dim"
+        else:
+            verdict, cls = "reader abstained - rule decided", "dim"
+        mark = "" if r.get("source") == "derived" else ' · recorded'
+        out.append(
+            f'<tr><td data-label=""><strong>{_e(r["ticker"])}</strong></td>'
+            f'<td class="dim" data-label="Session">{_e(r["session"])}{mark}</td>'
+            f'<td data-label="Calendar">{_call_tag(r["calendar"])}</td>'
+            f'<td data-label="Taken">{_call_tag(r["action"])}</td>'
+            f'<td data-label="Decided by"><span class="tag '
+            f'{"on" if by == "model" else ""}">{_e(by)}</span></td>'
+            f'<td class="{cls}" data-label="Verdict">{_e(verdict)}</td></tr>')
+    return "".join(out) + "</tbody></table></div>"
 
 # Chart colours. The site's cyan and rose sit at OKLCH L 0.81 and 0.72 - outside the
 # 0.48-0.67 band a dark surface needs - so these are the same hues stepped down until
@@ -383,6 +437,11 @@ class Site:
             self.behind = max(0, len(elapsed) - 1)
         except (ValueError, RuntimeError):
             self.behind = 0                    # no session yet, or a calendar fault
+        # The reader-vs-calendar index, built by ballast.counterfactual. Absent is
+        # a normal state - it is rebuilt nightly and the page says so rather than
+        # failing the whole site build over one display file.
+        self.cf = counterfactual.load()
+
         self.freshness = ("" if not self.behind else
                           f" · <strong>{self.behind} session{'s' if self.behind > 1 else ''} "
                           f"behind</strong> - the scheduled run has not reported")
@@ -780,6 +839,144 @@ add a hedge, never remove one, so refusals on the same night stand.</li>
 </div>
 </div></section>"""
 
+    @property
+    def cf_rows(self) -> list[dict]:
+        return self.cf.get("rows", [])
+
+    def reader_page(self) -> str:
+        cf, rows = self.cf, self.cf_rows
+        if not rows:
+            return """
+<section class="bd"><div class="wrap center">
+<p class="eyebrow">Reader against calendar</p>
+<h1>Does the model<br>ever change the answer?</h1>
+<p class="lede">The comparison index has not been built yet. Run
+<code>python3 -m ballast.counterfactual</code>.</p>
+</div></section>"""
+
+        c = cf.get("counts", {})
+        check = cf.get("check", {})
+        overrides = [r for r in rows if r["flip"] and not r.get("selector_affected")]
+        va = cf.get("flip_value_added_bp")
+        settled_flips = cf.get("flips_settled", 0)
+        pct = (100 * c.get("flips", 0) / c["model"]) if c.get("model") else 0
+
+        if not overrides:
+            lede = ("On this record the model has not once changed the rule's answer. "
+                    "That is the honest reading: so far it is reporting, not deciding.")
+        else:
+            lede = (f"On <span class=\"hl\">{c['flips']} of {c['model']}</span> nights "
+                    f"the reader reached a different answer from the calendar, and "
+                    f"Ballast did what the reader said. Those are the only nights on "
+                    f"which the model can be said to have decided anything.")
+
+        if va is None or not settled_flips:
+            money = ("None of those overrides has settled yet, so there is nothing to "
+                     "say about what they were worth.")
+        else:
+            word = "added" if va > 0 else "cost"
+            money = (f"{settled_flips} of them have settled. Against the calendar's "
+                     f"answer on the same nights, they {word} "
+                     f"<strong>{abs(va):,.0f} bp</strong> in total - "
+                     f"{'a gain' if va > 0 else 'a loss'}, published because it is what "
+                     f"the record says. Four nights is not a performance measurement; "
+                     f"it is a count of the times the model mattered and what happened "
+                     f"next.")
+
+        mism = check.get("mismatched", [])
+        if not mism:
+            checkline = (f"All <strong>{check.get('matched', 0)}</strong> of them "
+                         f"reproduce exactly.")
+        else:
+            names = ", ".join(f"{m['ticker']} on {m['session']}" for m in mism)
+            checkline = (f"<strong>{check.get('matched', 0)} of "
+                         f"{check.get('rule_rows', 0)}</strong> reproduce exactly. The "
+                         f"exception is {names}, decided before the calendar rule "
+                         f"checked the release time - the "
+                         f"<a href=\"docs.html#defects\">published defect</a>, not a "
+                         f"fault in this derivation.")
+
+        direction = ("Every one of them turned a NO_HEDGE into a HEDGE."
+                     if c.get("flips_to_hedge") and not c.get("flips_to_no_hedge")
+                     else f"{c.get('flips_to_hedge', 0)} turned a NO_HEDGE into a "
+                          f"HEDGE; {c.get('flips_to_no_hedge', 0)} went the other way.")
+
+        return f"""
+<section class="bd"><div class="wrap center">
+<p class="eyebrow">Reader against calendar</p>
+<h1>Does the model<br>ever change the answer?</h1>
+<p class="lede">A deterministic calendar rule can decide every night on its own. So
+the only question worth asking about the model is whether it ever reaches a
+different answer - and what happened when it did. {lede}</p>
+<div class="tiles">
+{_tile(c.get("compared", 0), "decisions compared")}
+{_tile(c.get("model", 0), "read by the model")}
+{_tile(c.get("flips", 0), "changed the rule's answer")}
+{_tile(f"{pct:.0f}%", "of the model's nights")}
+</div>
+<p class="note">{direction} Built from the signed ledger; rebuilt nightly.</p>
+</div></section>
+
+<section><div class="wrap">
+<div class="narrow">
+<h2 style="font-size:26px;margin-bottom:10px">The overrides</h2>
+<p class="note" style="margin-bottom:0">{money}</p>
+</div>
+{_overrides(overrides)}
+<div class="narrow" style="margin-top:44px">
+<div class="card"><h3>The derivation is checked, not asserted</h3>
+<p>The calendar's answer for a past night is re-derived by calling the same
+<code>policy.decide</code> the nightly run calls, with the model's judgment removed.
+On a night the reader abstained or failed a gate, the recorded decision <em>is</em>
+the calendar's - so every one of the
+<strong>{check.get('rule_rows', 0)}</strong> rule-decided rows is a test of that
+derivation. {checkline}</p></div>
+<div class="card"><h3>The count is a floor</h3>
+<p>Nasdaq publishes a release-time flag for upcoming dates and drops it to
+<em>not supplied</em> for past ones, and an unsupplied flag passes both window
+gates. A re-derivation can therefore only ever flag <em>more</em> nights for the
+calendar than the live run saw, never fewer - which can only shrink the count of
+"calendar said no, model said hedge". Nights decided from now on carry the rule's
+own answer in the ledger entry beside the decision, so they need no re-derivation
+at all - <strong>{c.get('recorded', 0)}</strong> of the
+{c.get('decisions', 0)} rows on the chain do so far.</p></div>
+</div>
+</div></section>
+
+<section><div class="wrap">
+<div class="narrow">
+<h2 style="font-size:26px;margin-bottom:10px">Every decision, both answers</h2>
+<p class="note" style="margin-bottom:0">One row per position-night on the chain.
+<em>Calendar</em> is what the rule alone would have done; <em>Taken</em> is what
+Ballast did.</p>
+</div>
+{_comparison(rows)}
+<div class="narrow" style="margin-top:44px">
+<h3>How to read this</h3>
+<ul class="bul">
+<li><strong>The model's authority stops at the judgment.</strong> An override can
+only ever add or remove a bounded hedge against a position already held. Size,
+direction and price stay with the policy and the enforcer, so a model that flips
+every night still cannot place a bet.</li>
+<li><strong>An override is the only attributable row.</strong> Where the reader
+agreed with the calendar, the night's outcome says nothing about the model - the
+rule would have produced the same decision with no model at all. Value added is
+shown only on the rows where the two disagreed.</li>
+<li><strong>Rows marked "hedged a night early"</strong> sit on a session decided
+before the release-time fix. The model was shown the buggy calendar flag, so
+comparing its call against the corrected calendar compares two different questions.
+They stay in the table and out of the counts.</li>
+<li><strong>Nothing here is a Sharpe claim.</strong> A handful of overrides over a
+handful of nights measures whether the model is load-bearing, not whether it is
+profitable. The claims this project stands on are on the
+<a href="evidence.html">Evidence</a> page, measured over years.</li>
+</ul>
+<p class="note">Reproduce with <code>python3 -m ballast.counterfactual</code>, which
+writes <code>state/counterfactual.json</code> - every row on this page, including
+the derivation check.</p>
+</div>
+</div></section>"""
+
     def evidence_page(self) -> str:
         claim_rows = "".join(
             f'<tr><td class="wrap" data-label="">{_e(c)}</td>'
@@ -855,6 +1052,9 @@ PAGES = [
      "One call per position, taken before the overnight window opens.", "tonight_page"),
     ("settled.html", "Settled", "Ballast - settled against the open",
      "Every decision graded against the exact counterfactual.", "settled_page"),
+    ("reader.html", "Reader", "Ballast - the reader against the calendar",
+     "Every night the model reached a different answer from the deterministic rule.",
+     "reader_page"),
     ("evidence.html", "Evidence", "Ballast - evidence and claim boundaries",
      "What is proven, what is observed, and what is deliberately not claimed.", "evidence_page"),
 ]

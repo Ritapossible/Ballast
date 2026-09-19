@@ -25,6 +25,7 @@ def build_pages() -> dict[str, str]:
         with mock.patch.object(config, "LEDGER_PATH", ledger_path), \
              mock.patch.object(config, "secret", return_value=b"t"), \
              mock.patch.object(report, "OUT_DIR", Path(d)), \
+             mock.patch.object(config, "STATE", Path(d)), \
              mock.patch.object(docs_page, "OUT", Path(d) / "docs.html"):
             pages = {pg.name: pg.read_text() for pg in report.build()}
             pages["docs.html"] = docs_page.build().read_text()
@@ -121,7 +122,7 @@ class TestLayout(unittest.TestCase):
 
     def test_every_page_links_to_every_other(self):
         """The nav is the only way around a multi-page site; it must be complete."""
-        expected = {"index.html", "tonight.html", "settled.html",
+        expected = {"index.html", "tonight.html", "settled.html", "reader.html",
                     "evidence.html", "docs.html"}
         for name, html in self.each():
             for target in expected - {name}:
@@ -135,8 +136,8 @@ class TestLayout(unittest.TestCase):
 
     def test_the_active_item_matches_the_page(self):
         expected = {"index.html": "Overview", "tonight.html": "Tonight",
-                    "settled.html": "Settled", "evidence.html": "Evidence",
-                    "docs.html": "Docs"}
+                    "settled.html": "Settled", "reader.html": "Reader",
+                    "evidence.html": "Evidence", "docs.html": "Docs"}
         for name, html in self.each():
             self.assertIn(f'class="on" href="{name}">{expected[name]}</a>', html, name)
 
