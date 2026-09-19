@@ -11,6 +11,7 @@ import re
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest import mock
 
 from ballast import config, docs_page, report
@@ -495,3 +496,74 @@ class ClaimTableCase(unittest.TestCase):
         claims = [c for c, _, _ in report.claims(facts.load())]
         self.assertTrue(any("out of sample" in c for c in claims),
                         "the strongest evidence on the site is not in the claim table")
+
+
+class SettledTape(unittest.TestCase):
+    """History beside the live state, never instead of it.
+
+    Most nights are refusals - Gate 1a is why - so a reader landing on twelve
+    NO_HEDGE cannot tell a selective agent from a broken one. The fix was NOT
+    to pin a flattering past night as the hero: it is to show the last settled
+    night whatever it was, and only name an earlier hedge when that night had
+    none.
+    """
+
+    @staticmethod
+    def tape(settlements):
+        return report.Site._settled_tape(SimpleNamespace(settlements=settlements))
+
+    def test_no_settlements_means_no_tape(self):
+        self.assertEqual(self.tape([]), "")
+
+    def test_it_reports_the_most_recent_settled_night(self):
+        out = self.tape([
+            {"session": "2026-09-01", "hedged": 3, "hedges_that_cut": 3},
+            {"session": "2026-09-02", "hedged": 1, "hedges_that_cut": 0},
+        ])
+        self.assertIn("settled 2026-09-02", out)
+        self.assertNotIn("2026-09-01", out)
+
+    def test_it_does_not_pick_the_flattering_night(self):
+        """The whole point. A later dull night wins over an earlier good one."""
+        out = self.tape([
+            {"session": "2026-09-01", "hedged": 5, "hedges_that_cut": 5},
+            {"session": "2026-09-02", "hedged": 2, "hedges_that_cut": 0},
+        ])
+        self.assertIn("2 hedged, 0 cut the move", out)
+        self.assertNotIn("5 cut the move", out)
+
+    def test_ledger_order_does_not_decide_which_night_is_last(self):
+        """Entries are appended, but the session date is what makes one latest."""
+        out = self.tape([
+            {"session": "2026-09-09", "hedged": 1, "hedges_that_cut": 1},
+            {"session": "2026-09-02", "hedged": 4, "hedges_that_cut": 4},
+        ])
+        self.assertIn("settled 2026-09-09", out)
+
+    def test_a_quiet_last_night_still_says_when_it_last_acted(self):
+        out = self.tape([
+            {"session": "2026-09-01", "hedged": 2, "hedges_that_cut": 1},
+            {"session": "2026-09-02", "hedged": 0, "hedges_that_cut": 0},
+        ])
+        self.assertIn("settled 2026-09-02", out)
+        self.assertIn("no hedge was called for", out)
+        self.assertIn("last hedge 2026-09-01", out)
+        self.assertIn("1 of 2 cut the move", out)
+
+    def test_a_night_that_hedged_does_not_also_quote_an_older_one(self):
+        out = self.tape([
+            {"session": "2026-09-01", "hedged": 9, "hedges_that_cut": 9},
+            {"session": "2026-09-02", "hedged": 1, "hedges_that_cut": 1},
+        ])
+        self.assertNotIn("last hedge", out)
+
+    def test_never_having_hedged_is_not_papered_over(self):
+        out = self.tape([{"session": "2026-09-02", "hedged": 0,
+                          "hedges_that_cut": 0}])
+        self.assertIn("no hedge was called for", out)
+        self.assertNotIn("last hedge", out)
+
+    def test_it_links_to_the_settled_page_not_an_assertion(self):
+        out = self.tape([{"session": "2026-09-02", "hedged": 1,
+                          "hedges_that_cut": 1}])
+        self.assertIn('href="settled.html"', out)

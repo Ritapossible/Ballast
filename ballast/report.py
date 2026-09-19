@@ -405,6 +405,47 @@ class Site:
 
     # -- pages ---------------------------------------------------------------
 
+    def _settled_tape(self) -> str:
+        """The most recent settled night, on the same tape as tonight's calls.
+
+        Tonight is usually all refusals - Gate 1a is why - and a reader landing
+        on twelve NO_HEDGE has no way to tell a selective agent from a broken
+        one. This answers "has it ever acted, and how did that go" without
+        replacing the live state with a flattering old one.
+
+        It shows the LAST settled night whatever it was, so it cannot be a
+        picked highlight. Only when that night hedged nothing does it also name
+        the most recent night that did - otherwise the honest answer to "does
+        this thing ever fire" is buried on another page.
+        """
+        if not self.settlements:
+            return ""
+        done = sorted(self.settlements, key=lambda s: s.get("session") or "")
+        last = done[-1]
+        rows = []
+
+        def line(label: str, body: str, href: str = "settled.html") -> str:
+            return (f'<div class="term-r"><span class="dim">{_e(label)} '
+                    f'{_e(body)}</span><a class="dim" href="{href}">'
+                    f'settled →</a></div>')
+
+        hedged = last.get("hedged") or 0
+        cut = last.get("hedges_that_cut") or 0
+        if hedged:
+            rows.append(line(f"settled {last.get('session')}",
+                             f"· {hedged} hedged, {cut} cut the move"))
+        else:
+            rows.append(line(f"settled {last.get('session')}",
+                             "· no hedge was called for"))
+            acted = [s for s in done if (s.get("hedged") or 0)]
+            if acted:
+                prev = acted[-1]
+                rows.append(line(f"last hedge {prev.get('session')}",
+                                 f"· {prev.get('hedges_that_cut') or 0} of "
+                                 f"{prev.get('hedged')} cut the move"))
+        return "".join(rows)
+
+
     def index(self) -> str:
         # Hedges first. The rows were in book order, and the policy declines about
         # ten nights in twelve, so the first five were all NO_HEDGE - the landing
@@ -425,6 +466,8 @@ class Site:
             term += (f'<div class="term-r"><span class="dim">'
                      f'{len(self.tonight)} positions · {hedged} hedged</span>'
                      f'<a class="dim" href="tonight.html">see all →</a></div>')
+        # What the agent has actually done, beside what it is doing.
+        term += self._settled_tape()
         # The book is the second filter and the one a reader is most likely to
         # misread: a small hedge count looks like a broken agent until you know
         # Ballast can only ever act on a position it did not open.
