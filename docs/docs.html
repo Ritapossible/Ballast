@@ -261,7 +261,7 @@ footer a{color:var(--mid)}
 authority starts and stops - and what is deliberately not claimed.</p>
 </div></section>
 <div class="wrap"><div class="docs">
-<aside class="toc"><div class="h">Start</div><a href="#what">What Ballast is</a><a href="#problem">The problem</a><a href="#who">Who it is for</a><div class="h">Mechanism</div><a href="#hedge">The hedge</a><a href="#selector">Choosing the night</a><a href="#policy">The decision policy</a><div class="h">System</div><a href="#architecture">Architecture</a><a href="#authority">Bounded authority</a><a href="#ledger">The ledger</a><a href="#settlement">Settlement</a><div class="h">Evidence</div><a href="#research">Research findings</a><a href="#defects">Defects found</a><a href="#verify">Verify it yourself</a><a href="#oos">Out of sample</a><a href="#roadmap">Roadmap</a><a href="#verify">Reproduce it</a><div class="h">Reference</div><a href="#cli">CLI</a><a href="#env">Environment</a><a href="#glossary">Glossary</a></aside>
+<aside class="toc"><div class="h">Start</div><a href="#what">What Ballast is</a><a href="#problem">The problem</a><a href="#who">Who it is for</a><div class="h">Mechanism</div><a href="#hedge">The hedge</a><a href="#selector">Choosing the night</a><a href="#policy">The decision policy</a><div class="h">System</div><a href="#architecture">Architecture</a><a href="#execution">Where orders go</a><a href="#authority">Bounded authority</a><a href="#ledger">The ledger</a><a href="#settlement">Settlement</a><div class="h">Evidence</div><a href="#research">Research findings</a><a href="#defects">Defects found</a><a href="#verify">Verify it yourself</a><a href="#oos">Out of sample</a><a href="#roadmap">Roadmap</a><a href="#verify">Reproduce it</a><div class="h">Reference</div><a href="#cli">CLI</a><a href="#env">Environment</a><a href="#glossary">Glossary</a></aside>
 <article class="prose">
 <h2 id="what">What Ballast is</h2>
 <p>Ballast is an autonomous overnight risk desk for <strong>tokenized US
@@ -361,6 +361,31 @@ SETTLEMENT graded at the primary open against the exact counterfactual</pre>
 <p>Sources are deliberately keyless where possible: Nasdaq for scheduled events,
 Google News RSS per ticker for unscheduled ones, filtered to the window being decided
 so a headline published after the open cannot inform a decision taken before it.</p>
+
+<h2 id="execution">Where orders go</h2>
+<p>An admitted hedge is routed to the <strong>Bitget Agent Hub</strong> in
+paper-trading mode - <code>bgc --paper-trading</code>, the organiser's execution
+surface. The flag is appended by <code>ballast/bgc.py</code> and there is no
+parameter to turn it off, so no code path in this project can reach a live order.</p>
+<p>Every scheduled session since 2026-09-14 has taken that route, and the ledger
+records which venue filled each order. <strong>None has filled.</strong> Bitget
+answers every one with:</p>
+<pre>HTTP 400: exchange environment is incorrect</pre>
+<p>Ballast then prices the fill against the observed market and writes the
+exchange's own sentence onto the row as <code>venue_fallback</code>. A simulated
+fill never wears the Agent Hub's name, and <strong>no fill on this ledger carries
+an exchange order id</strong>.</p>
+<div class="callout"><p><strong>It cannot be fixed from this side.</strong> Bitget's
+practice environment is a separate venue with its own instrument list, and that list
+is <strong>nine contracts</strong> - BTC, ETH and XRP - across every demo product
+type. None of the twelve stocks in this book trades there, so no hedge Ballast
+places could fill on it under any credentials. The only venue carrying these symbols
+is the live one.</p></div>
+<p>Check it in one command:</p>
+<pre>curl -s "https://api.bitget.com/api/v2/mix/market/contracts?productType=SUSDT-FUTURES"</pre>
+<p>Checked 2026-09-19. The live <code>USDT-FUTURES</code> list carries 797 contracts,
+including all twelve. So the choice was a labelled simulation or a real order with
+real money; it simulates, and says so on every row.</p>
 
 <h2 id="authority">Bounded authority</h2>
 <div class="callout"><p><strong>Ballast cannot place a bet.</strong> Every order it is
