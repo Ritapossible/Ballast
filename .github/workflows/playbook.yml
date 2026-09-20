@@ -313,9 +313,13 @@ jobs:
       # fourth time the shipped reference and the running service have
       # disagreed on this integration.
       #
-      # /my-playbooks lists enabled deployments, so it stays empty until Paper
-      # Trading is switched on in GetAgent Studio. That makes it the check for
-      # whether that step has happened.
+      # /my-playbooks lists enabled *deployments* - subscription / follow-trade
+      # instances, which is why its rows carry `channel` and `chat_id`. It is
+      # NOT a view of GetAgent Studio Paper Trading: with paper tracking
+      # switched on and running against 0.0.2, this endpoint still returned 0
+      # entries. An earlier comment here claimed it was the check for Paper
+      # Trading, which cost a wrong answer before anyone looked. Studio paper
+      # state is only visible in the Studio UI.
       - name: What the platform holds
         if: inputs.task == 'mine'
         env:
