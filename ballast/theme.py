@@ -37,16 +37,17 @@ a{{color:inherit}}
 .chrome{{position:sticky;top:0;z-index:30;background:rgba(7,7,8,.94);
   backdrop-filter:blur(14px)}}
 .top{{border-bottom:1px solid var(--line)}}
-.top-in{{max-width:1120px;margin:0 auto;padding:15px 22px;
-  display:flex;align-items:center;justify-content:space-between;gap:16px}}
+.top-in{{max-width:1120px;margin:0 auto;padding:11px 22px;
+  display:flex;align-items:center;gap:30px;flex-wrap:wrap}}
 .brand{{display:flex;align-items:center;gap:11px;font-weight:700;
-  letter-spacing:-.01em;font-size:20px;text-decoration:none}}
+  letter-spacing:-.01em;font-size:20px;text-decoration:none;flex:none}}
 .mark{{width:24px;height:24px;flex:none}}
-.nav{{border-bottom:1px solid var(--line);
+.top-cta{{margin-left:auto;flex:none}}
+.nav{{flex:1 1 auto;min-width:0;
   overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}}
 .nav::-webkit-scrollbar{{display:none}}
-.nav-in{{max-width:1120px;margin:0 auto;padding:0 22px;display:flex;gap:30px;white-space:nowrap}}
-.nav a{{color:var(--mid);text-decoration:none;font-size:15px;padding:14px 0;
+.nav-in{{display:flex;gap:30px;white-space:nowrap}}
+.nav a{{color:var(--mid);text-decoration:none;font-size:15px;padding:13px 0;
   border-bottom:2px solid transparent}}
 .nav a:hover{{color:var(--fg)}}
 .nav a.on{{color:var(--fg);border-bottom-color:var(--accent)}}
@@ -254,10 +255,21 @@ code{{font-family:var(--mono);font-size:.9em;background:var(--surface);
   .tiles .tile:last-child:nth-child(odd){{grid-column:1/-1}}
   .tile .n{{font-size:25px}}
 }}
+/* Below this, six sections and an action will not share a line with the
+   brand. The nav drops to its own full-width scrolling strip underneath -
+   the arrangement the phone had all along - and the action sits beside the
+   brand on the first row. */
+@media(max-width:900px){{
+  .top-in{{padding:11px 22px 0;gap:16px;row-gap:0}}
+  .top-cta{{order:2}}
+  .nav{{order:3;flex-basis:100%;border-top:1px solid var(--line);margin-top:11px}}
+  .nav-in{{gap:26px}}
+  .nav a{{padding:12px 0}}
+}}
 @media(max-width:640px){{
   section{{padding:56px 0}}
-  .top-in{{padding:12px 18px}}
-  .nav-in{{padding:0 18px;gap:22px}}
+  .top-in{{padding:10px 18px 0}}
+  .nav-in{{gap:22px}}
   .wrap{{padding:0 18px}}
   .brand{{font-size:18px}}
   .btn{{padding:11px 18px;font-size:14.5px}}
@@ -271,8 +283,20 @@ code{{font-family:var(--mono);font-size:.9em;background:var(--surface);
   .nav-in{{gap:18px}}
 }}
 
-footer{{padding:48px 0 76px;color:var(--dim);font-size:13.5px}}
+/* The footer was a left-aligned run-on under a centred page. It carries the
+   only source link on every page, so it is the one piece of chrome a reader
+   looks for deliberately - it gets the mark and the middle of the column. */
+footer{{padding:56px 0 72px;color:var(--dim);font-size:13.5px;
+  border-top:1px solid var(--line)}}
 footer a{{color:var(--mid)}}
+footer a:hover{{color:var(--accent)}}
+.foot{{text-align:center;display:flex;flex-direction:column;align-items:center;
+  gap:9px}}
+.foot-brand{{font-size:17px;color:var(--fg);opacity:.92}}
+.foot-brand .mark{{width:20px;height:20px}}
+.foot-line{{margin:0;color:var(--mid);max-width:46ch}}
+.foot-meta{{margin:0}}
+.foot-sep{{opacity:.5;padding:0 3px}}
 """
 
 MARK = (
@@ -297,10 +321,15 @@ def nav(active: str, prefix: str = "") -> str:
     links = "".join(
         f'<a class="{"on" if label == active else ""}" href="{href}">{label}</a>'
         for label, href in items)
+    # One row on a desktop - brand, sections, action - rather than two stacked
+    # bars eating 120px of a 700px laptop. The nav keeps its own element so a
+    # narrow screen can still drop it to a full-width scrolling strip below the
+    # brand, which is the only layout that fits six sections on a phone.
     return (f'<div class="chrome"><header class="top"><div class="top-in">'
             f'<a class="brand" href="{prefix}index.html">{MARK}BALLAST</a>'
-            f'<a class="btn btn-p" href="{prefix}tonight.html">See tonight</a>'
-            f'</div></header><nav class="nav"><div class="nav-in">{links}</div></nav></div>')
+            f'<nav class="nav" aria-label="Sections"><div class="nav-in">{links}</div></nav>'
+            f'<a class="btn btn-p top-cta" href="{prefix}tonight.html">See tonight</a>'
+            f'</div></header></div>')
 
 
 def page(title: str, description: str, active: str, body: str) -> str:
@@ -314,6 +343,9 @@ def page(title: str, description: str, active: str, body: str) -> str:
         '<link rel="manifest" href="site.webmanifest">'
         '<meta name="theme-color" content="#070708">'
         f'<style>{CSS}</style></head><body>{nav(active)}<main>{body}</main>'
-        f'<footer><div class="wrap">Ballast - overnight risk transfer for tokenized '
-        f'US stocks.<br><a href="{REPO}">source</a> · paper trading only, '
-        f'not financial advice.</div></footer></body></html>')
+        f'<footer><div class="wrap foot">'
+        f'<a class="brand foot-brand" href="index.html">{MARK}BALLAST</a>'
+        f'<p class="foot-line">Overnight risk transfer for tokenized US stocks.</p>'
+        f'<p class="foot-meta"><a href="{REPO}">source</a> '
+        f'<span class="foot-sep">·</span> paper trading only, not financial advice.'
+        f'</p></div></footer></body></html>')

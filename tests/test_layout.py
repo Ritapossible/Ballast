@@ -45,12 +45,37 @@ class TestLayout(unittest.TestCase):
             self.assertIn('name="viewport"', html, name)
 
     def test_header_and_nav_share_one_sticky_container(self):
-        """Two sticky bars with a hardcoded offset overlap when the header wraps."""
+        """Two sticky bars with a hardcoded offset overlap when the header wraps.
+
+        The markup moved - the nav now sits inside the brand row so a desktop
+        gets one bar instead of two - so this asserts the property rather than
+        the old shape: exactly one sticky container, and the nav inside it.
+        """
         for name, html in self.each():
             self.assertEqual(html.count('class="chrome"'), 1, name)
-            self.assertIsNotNone(
-                re.search(r'<div class="chrome">.*?</nav></div>', html, re.S), name)
+            chrome = re.search(r'<div class="chrome">(.*?)</header></div>',
+                               html, re.S)
+            self.assertIsNotNone(chrome, name)
+            self.assertIn('class="nav"', chrome.group(1), name)
+            self.assertIn('class="brand"', chrome.group(1), name)
             self.assertNotIn("top:57px", html, name)
+
+    def test_the_header_is_one_row_on_a_desktop_and_two_on_a_phone(self):
+        """Brand, six sections and an action do not share a line at 390px.
+
+        The phone arrangement - nav on its own full-width scrolling strip
+        below the brand - is the only one that fits six sections, so the
+        single-row desktop header has to hand it back below a breakpoint.
+        """
+        for name, html in self.each():
+            self.assertIn("@media(max-width:900px)", html, name)
+            rule = re.search(r"@media\(max-width:900px\)\{(.*?)\n\}", html, re.S)
+            self.assertIsNotNone(rule, name)
+            body = rule.group(1)
+            self.assertIn("flex-basis:100%", body,
+                          f"{name}: the nav does not take its own row")
+            self.assertIn(".nav{order:3", body,
+                          f"{name}: the nav does not drop below the brand")
 
     def test_bullets_do_not_use_flex(self):
         """Flex made every inline <strong> a column; the marker is absolute now."""
@@ -229,4 +254,40 @@ class VerticalRhythmFollowsTheViewportHeight(unittest.TestCase):
                         "the phone override no longer follows the base rule")
         tail = css[css.index("@media(max-width:640px)"):]
         self.assertIn("section{padding:56px 0}", tail)
+
+class TheFooterIsCentredAndCarriesTheMark(unittest.TestCase):
+    """It was a left-aligned run-on sentence under a centred page.
+
+    The footer holds the only source link on every page, so it is the one
+    piece of chrome a reader goes looking for. It gets the mark and the
+    middle of the column.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.pages = build_pages()
+
+    def test_every_page_centres_its_footer(self):
+        for name, html in self.pages.items():
+            self.assertIn(".foot{text-align:center", html, name)
+            self.assertIn('class="wrap foot"', html, name)
+
+    def test_the_mark_is_in_the_footer_on_every_page(self):
+        for name, html in self.pages.items():
+            foot = html[html.index("<footer"):]
+            self.assertIn("foot-brand", foot, name)
+            self.assertIn("<svg", foot, f"{name}: the footer brand has no mark")
+
+    def test_the_source_link_survived_the_rearrangement(self):
+        """The footer is the only place the repository is linked from."""
+        for name, html in self.pages.items():
+            foot = html[html.index("<footer"):]
+            self.assertIn("github.com", foot, name)
+            self.assertIn(">source<", foot, name)
+
+    def test_it_still_says_what_the_ledger_is_not(self):
+        for name, html in self.pages.items():
+            foot = html[html.index("<footer"):]
+            self.assertIn("paper trading only", foot, name)
+            self.assertIn("not financial advice", foot, name)
 
