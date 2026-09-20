@@ -12,10 +12,19 @@ on:
   workflow_dispatch:
     inputs:
       task:
-        description: "validate only, or validate then upload and backtest"
+        description: "what to do"
         type: choice
-        options: [validate, backtest]
+        options: [validate, backtest, inspect, confirm, publish]
         default: validate
+      id:
+        description: "run id for inspect; draft/temporary id for confirm and publish"
+        type: string
+        required: false
+      bump:
+        description: "semver bump for publish"
+        type: choice
+        options: [patch, minor, major]
+        default: patch
 
 permissions:
   contents: read
@@ -151,6 +160,115 @@ jobs:
               print()
               print('  no metrics_output on the record')
           "
+
+
+      # Read an existing run record back rather than re-running the sandbox.
+      # Publishing a backtest_support: full Playbook requires the run to carry a
+      # real equity curve, not only aggregate metrics, and the only way to know
+      # whether ours does is to look at the record the platform kept.
+      - name: Inspect a run record
+        if: inputs.task == 'inspect'
+        env:
+          PLAYBOOK_API_KEY: ${{ secrets.PLAYBOOK_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${{ inputs.id }}" ]; then
+            echo "::error::inspect needs a run id in the 'id' input"; exit 1
+          fi
+          printf 'ACCESS-KEY: %s\n' "$PLAYBOOK_API_KEY" > /tmp/h
+          trap 'rm -f /tmp/h' EXIT
+          curl -sS -H @/tmp/h \
+            "$API/api/v1/playbook/run?run_id=${{ inputs.id }}" -o /tmp/result.json
+          python - <<'PY'
+          import json
+          d = json.load(open("/tmp/result.json"))
+          b = d.get("data") if isinstance(d.get("data"), dict) else d
+
+          def walk(node, path=""):
+              """Every key in the record, so nothing is missed by guessing."""
+              if isinstance(node, dict):
+                  for k, v in node.items():
+                      yield from walk(v, f"{path}.{k}" if path else k)
+              elif isinstance(node, list):
+                  yield f"{path}[]", f"{len(node)} items"
+                  if node:
+                      yield from walk(node[0], f"{path}[0]")
+              else:
+                  text = str(node)
+                  yield path, text if len(text) <= 80 else text[:77] + "..."
+
+          print("=== every field on the run record ===")
+          for key, value in walk(b):
+              print(f"  {key} = {value}")
+
+          print()
+          print("=== the publish question: is there a real equity curve? ===")
+          hits = [k for k, _ in walk(b) if "equity" in k.lower() or "curve" in k.lower()]
+          print("  keys mentioning equity/curve:", hits or "NONE")
+          print()
+          print("=== the basis question: which denominator? ===")
+          m = b.get("metrics_output") or {}
+          for key in ("total_return_pct", "account_total_return_pct", "net_pnl",
+                      "starting_balance", "max_drawdown_pct",
+                      "account_max_drawdown_pct"):
+              print(f"  {key} = {m.get(key)}")
+          PY
+
+
+      # confirm and publish are separate, explicitly-chosen tasks. Neither can
+      # happen as a side effect of a backtest, and neither starts or stops
+      # anything - Paper Trading is enabled by the account owner in GetAgent
+      # Studio, and no API call here can or should do it for them.
+      - name: Confirm the temporary artifact as a draft
+        if: inputs.task == 'confirm'
+        env:
+          PLAYBOOK_API_KEY: ${{ secrets.PLAYBOOK_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${{ inputs.id }}" ]; then
+            echo "::error::confirm needs the temporary id in the 'id' input"; exit 1
+          fi
+          printf 'ACCESS-KEY: %s\n' "$PLAYBOOK_API_KEY" > /tmp/h
+          trap 'rm -f /tmp/h' EXIT
+          echo "POST $API/api/v1/playbook/confirm"
+          echo "ACCESS-KEY ${PLAYBOOK_API_KEY:0:4}...${PLAYBOOK_API_KEY: -4}"
+          curl -sS -X POST -H @/tmp/h -H "Content-Type: application/json" \
+            -d "{\"temporary_id\":\"${{ inputs.id }}\"}" \
+            "$API/api/v1/playbook/confirm" -o /tmp/confirm.json
+          cat /tmp/confirm.json
+
+      - name: Publish the draft
+        if: inputs.task == 'publish'
+        env:
+          PLAYBOOK_API_KEY: ${{ secrets.PLAYBOOK_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${{ inputs.id }}" ]; then
+            echo "::error::publish needs the draft id in the 'id' input"; exit 1
+          fi
+          printf 'ACCESS-KEY: %s\n' "$PLAYBOOK_API_KEY" > /tmp/h
+          trap 'rm -f /tmp/h' EXIT
+          echo "POST $API/api/v1/playbook/publish"
+          echo "ACCESS-KEY ${PLAYBOOK_API_KEY:0:4}...${PLAYBOOK_API_KEY: -4}"
+          echo "draft ${{ inputs.id }}  bump ${{ inputs.bump }}"
+          curl -sS -X POST -H @/tmp/h -H "Content-Type: application/json" \
+            -d "{\"draft_id\":\"${{ inputs.id }}\",\"bump_type\":\"${{ inputs.bump }}\"}" \
+            "$API/api/v1/playbook/publish" -o /tmp/publish.json
+          cat /tmp/publish.json
+          python - <<'PY'
+          import json, sys
+          d = json.load(open("/tmp/publish.json"))
+          b = d.get("data") if isinstance(d.get("data"), dict) else d
+          if b.get("status") != "published":
+              print("::error::publish did not return status=published")
+              sys.exit(1)
+          print()
+          print("published", b.get("version"), "as", b.get("version_id"))
+          print()
+          print("Next step is yours, not this workflow's: open My Playbooks in")
+          print("GetAgent Studio and enable Paper Trading. Nothing here may")
+          print("start, stop or enable a Playbook instance.")
+          PY
 
 
       - name: Publish the run output as an artifact
