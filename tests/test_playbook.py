@@ -167,3 +167,52 @@ class WhatTheServerRejectsButTheLocalValidatorAllows(unittest.TestCase):
         words = len(self.manifest()["long_description"].split())
         self.assertGreaterEqual(words, 300)
         self.assertLessEqual(words, 400, f"{words} words; the cap is 400")
+
+
+class EverySdkCallExistsInTheReference(unittest.TestCase):
+    """Two invented calls cost a sandbox run each to discover.
+
+    `runtime.is_backtest` and `backtest.write_report` both read like real API -
+    the first is how most engines spell it, the second is what the output
+    guidance implies. Neither exists. The platform only says so when it runs the
+    package, so each guess cost an upload, a dispatch and a poll to disprove.
+
+    The reference ships with the skill. When it is installed, every
+    `getagent.*` attribute this package touches is checked against it. Parsed
+    with AST rather than grepped, because the module docstring above names both
+    invented calls on purpose and a text search would happily approve them.
+    """
+
+    SKILL = Path.home() / ".claude" / "skills" / "getagent" / "references"
+    MODULES: ClassVar[set] = {"runtime", "backtest", "data", "trade", "llm"}
+
+    def sdk_calls(self, source: Path) -> set:
+        import ast
+        found = set()
+        for node in ast.walk(ast.parse(source.read_text())):
+            if not isinstance(node, ast.Attribute):
+                continue
+            parts = []
+            cur = node
+            while isinstance(cur, ast.Attribute):
+                parts.append(cur.attr)
+                cur = cur.value
+            if isinstance(cur, ast.Name) and cur.id in self.MODULES:
+                parts.append(cur.id)
+                found.add(".".join(reversed(parts)))
+        return found
+
+    def test_no_call_is_invented(self):
+        if not self.SKILL.is_dir():
+            self.skipTest("getagent skill not installed in this environment")
+        corpus = "\n".join(
+            p.read_text(errors="replace") for p in self.SKILL.rglob("*.md"))
+        demo = (self.SKILL.parent / "examples").rglob("*.py")
+        corpus += "\n".join(p.read_text(errors="replace") for p in demo)
+
+        missing = sorted(
+            call for call in self.sdk_calls(PACKAGE / "src" / "main.py")
+            if call not in corpus)
+        self.assertEqual(missing, [],
+                         f"not in the reference, so the platform will reject "
+                         f"them at run time: {missing}")
