@@ -37,7 +37,9 @@ jobs:
       - name: Install the GetAgent skill (brings its own validator)
         run: |
           npx --yes @bitget-ai/getagent-skill@latest install --client claude
-          python -m pip install --quiet pyyaml
+          # pandas so the malformed-bar guard actually runs; it is a CI tool
+          # here, not a Ballast runtime dependency.
+          python -m pip install --quiet pyyaml pandas
 
       # The package must never reach the control plane in a state its own
       # validator rejects. This is the same check run during authoring.

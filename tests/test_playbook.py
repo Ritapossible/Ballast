@@ -216,3 +216,54 @@ class EverySdkCallExistsInTheReference(unittest.TestCase):
         self.assertEqual(missing, [],
                          f"not in the reference, so the platform will reject "
                          f"them at run time: {missing}")
+
+
+class MalformedBarsAreRepairedNotHidden(unittest.TestCase):
+    """Nautilus refuses a bar whose high is below its open, and the whole replay
+    dies on the first one. Thin RWA perpetuals do produce such bars upstream."""
+
+    def setUp(self):
+        # pandas is a dev/CI tool here, like ruff and mypy. Ballast itself has no
+        # third-party runtime dependency and this must not quietly add one, so
+        # the guard skips where pandas is absent and runs in the Playbook
+        # workflow, which installs it alongside the platform validator.
+        try:
+            import pandas  # noqa: F401
+        except ImportError:
+            self.skipTest("pandas not installed; runs in the Playbook workflow")
+
+    def frame(self, rows):
+        import pandas as pd
+        return pd.DataFrame(rows, columns=["open", "high", "low", "close", "volume"])
+
+    def repair(self, rows):
+        # main.py imports getagent, which only exists in the sandbox, so the
+        # helper is read out and compiled rather than imported.
+        src = (PACKAGE / "src" / "main.py").read_text()
+        start = src.index("def _repair(")
+        end = src.index("\ndef ", start + 1)
+        namespace: dict = {}
+        exec(compile(src[start:end], "_repair", "exec"), namespace)  # noqa: S102
+        return namespace["_repair"](self.frame(rows))
+
+    def test_a_high_below_the_open_is_lifted_to_the_open(self):
+        frame, broken = self.repair([[10.0, 9.0, 8.0, 9.5, 1.0]])
+        self.assertEqual(broken, 1)
+        self.assertEqual(frame["high"].iloc[0], 10.0)
+
+    def test_a_low_above_the_close_is_dropped_to_the_close(self):
+        frame, broken = self.repair([[10.0, 11.0, 10.5, 9.0, 1.0]])
+        self.assertEqual(broken, 1)
+        self.assertEqual(frame["low"].iloc[0], 9.0)
+
+    def test_a_sound_bar_is_left_alone_and_not_counted(self):
+        frame, broken = self.repair([[10.0, 11.0, 9.0, 10.5, 1.0]])
+        self.assertEqual(broken, 0)
+        self.assertEqual((frame["high"].iloc[0], frame["low"].iloc[0]), (11.0, 9.0))
+
+    def test_nothing_is_invented_beyond_the_bars_own_prices(self):
+        """The repaired extremes come from the bar's own four prices, so a
+        repair can never widen a bar past what it actually traded."""
+        frame, _ = self.repair([[10.0, 9.0, 8.0, 9.5, 1.0]])
+        self.assertLessEqual(frame["high"].iloc[0], 10.0)
+        self.assertGreaterEqual(frame["low"].iloc[0], 8.0)

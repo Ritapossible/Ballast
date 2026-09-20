@@ -23,6 +23,33 @@ def _finite(value):
     return None if isinstance(value, float) and not math.isfinite(value) else value
 
 
+def _repair(frame):
+    """Make each bar internally consistent, and report how many needed it.
+
+    Nautilus refuses a bar whose high is below its open (`high was < open`) and
+    the whole replay dies on the first one. Thin RWA perpetuals do produce such
+    bars upstream, so the choice is to drop them, repair them, or fail.
+
+    Repairing is the least destructive: high becomes the highest of the four
+    prices it should already have been the highest of, and low the lowest.
+    Nothing is invented - the extremes are taken from the bar's own open and
+    close - and the count is published in the metrics so a reader can see how
+    much of the series needed touching rather than having to trust that it
+    didn't.
+    """
+    ohlc = ["open", "high", "low", "close"]
+    if not all(column in frame.columns for column in ohlc):
+        return frame, 0
+    high = frame[ohlc].max(axis=1)
+    low = frame[ohlc].min(axis=1)
+    broken = int(((frame["high"] < high) | (frame["low"] > low)).sum())
+    if broken:
+        frame = frame.copy()
+        frame["high"] = high
+        frame["low"] = low
+    return frame, broken
+
+
 def _run_historical():
     symbols = runtime.manifest.get("trading_symbols") or []
     if not symbols:
@@ -34,6 +61,7 @@ def _run_historical():
     frames = {}
     empty = []
     rows = 0
+    repaired = 0
     for symbol in symbols:
         # closed_only leaves the forming candle out, so the same replay returns
         # the same numbers twice. A half-formed bar at the open would also be
@@ -45,6 +73,8 @@ def _run_historical():
         if frame.empty:
             empty.append(symbol)
             continue
+        frame, broken = _repair(frame)
+        repaired += broken
         frames[f"{symbol}.{VENUE}"] = frame
         rows += len(frame)
 
@@ -67,6 +97,7 @@ def _run_historical():
         "rows": rows,
         "symbols_replayed": len(frames),
         "symbols_without_bars": len(empty),
+        "bars_repaired": repaired,
     }.items()}
 
     runtime.emit_signal(
