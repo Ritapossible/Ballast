@@ -1,7 +1,7 @@
 {
  "counts": {
   "covered": 226,
-  "fitted": 213,
+  "fitted": 218,
   "rtokens": 2125,
   "uncovered": 1899
  },
@@ -405,12 +405,14 @@
    "typical_bp": 264.1
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 1.056,
+   "fit": true,
+   "nights": 28,
    "perp": "CCLUSDT",
+   "r2": 0.941,
    "spot": "RCCLUSDT",
    "ticker": "CCL",
-   "why": "BitgetError"
+   "typical_bp": 127.0
   },
   {
    "beta": 0.892,
@@ -601,12 +603,14 @@
    "typical_bp": 316.9
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 1.029,
+   "fit": true,
+   "nights": 17,
    "perp": "DJTUSDT",
+   "r2": 0.932,
    "spot": "RDJTUSDT",
    "ticker": "DJT",
-   "why": "BitgetError"
+   "typical_bp": 107.7
   },
   {
    "beta": 0.944,
@@ -892,7 +896,7 @@
    "perp": "HUTUSDT",
    "spot": "RHUTUSDT",
    "ticker": "HUT",
-   "why": "BitgetError"
+   "why": "too few paired nights"
   },
   {
    "beta": 0.925,
@@ -913,14 +917,12 @@
    "why": "too few paired nights"
   },
   {
-   "beta": 1.02,
-   "fit": true,
-   "nights": 28,
+   "fit": null,
+   "nights": 0,
    "perp": "IBMUSDT",
-   "r2": 0.991,
    "spot": "RIBMUSDT",
    "ticker": "IBM",
-   "typical_bp": 115.8
+   "why": "BitgetError"
   },
   {
    "beta": 0.802,
@@ -1173,12 +1175,14 @@
    "typical_bp": 300.2
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 1.012,
+   "fit": true,
+   "nights": 28,
    "perp": "MCDUSDT",
+   "r2": 0.976,
    "spot": "RMCDUSDT",
    "ticker": "MCD",
-   "why": "BitgetError"
+   "typical_bp": 46.8
   },
   {
    "beta": 1.111,
@@ -1341,12 +1345,14 @@
    "typical_bp": 144.1
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 1.001,
+   "fit": true,
+   "nights": 28,
    "perp": "NFLXUSDT",
+   "r2": 0.991,
    "spot": "RNFLXUSDT",
    "ticker": "NFLX",
-   "why": "BitgetError"
+   "typical_bp": 107.5
   },
   {
    "beta": 0.93,
@@ -1489,12 +1495,14 @@
    "typical_bp": 239.8
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 1.022,
+   "fit": true,
+   "nights": 28,
    "perp": "OXYUSDT",
+   "r2": 0.985,
    "spot": "ROXYUSDT",
    "ticker": "OXY",
-   "why": "BitgetError"
+   "typical_bp": 102.0
   },
   {
    "beta": 1.032,
@@ -2033,12 +2041,14 @@
    "typical_bp": 138.3
   },
   {
-   "fit": null,
-   "nights": 0,
+   "beta": 0.98,
+   "fit": true,
+   "nights": 28,
    "perp": "TXNUSDT",
+   "r2": 0.955,
    "spot": "RTXNUSDT",
    "ticker": "TXN",
-   "why": "BitgetError"
+   "typical_bp": 80.2
   },
   {
    "beta": 1.054,
