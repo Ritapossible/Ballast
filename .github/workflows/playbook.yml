@@ -88,12 +88,67 @@ jobs:
             -d "{\"version_id\":\"$DRAFT\"}" \
             "$API/api/v1/playbook/run" -o /tmp/run.json
           cat /tmp/run.json
-          python -c "
+          RUN=$(python -c "
           import json
           d = json.load(open('/tmp/run.json'))
-          body = d.get('data') if isinstance(d.get('data'), dict) else d
-          print('run id:', body.get('run_id') or body.get('id') or '(none reported)')
-          print('status:', body.get('status') or d.get('msg') or d.get('code'))"
+          b = d.get('data') if isinstance(d.get('data'), dict) else d
+          print(b.get('run_id') or b.get('id') or '')")
+          if [ -z "$RUN" ]; then
+            echo "::error::run was not dispatched"; exit 1
+          fi
+          echo "dispatched run $RUN"
+
+      - name: Wait for the sandbox run and report what it measured
+        if: inputs.task == 'backtest'
+        env:
+          PLAYBOOK_API_KEY: ${{ secrets.PLAYBOOK_API_KEY }}
+        run: |
+          set -euo pipefail
+          printf 'ACCESS-KEY: %s\n' "$PLAYBOOK_API_KEY" > /tmp/h
+          trap 'rm -f /tmp/h' EXIT
+          RUN=$(python -c "
+          import json
+          d = json.load(open('/tmp/run.json'))
+          b = d.get('data') if isinstance(d.get('data'), dict) else d
+          print(b.get('run_id') or b.get('id') or '')")
+
+          # The sandbox run is asynchronous. Poll rather than assume, and stop
+          # on a terminal status rather than on a fixed sleep that would report
+          # "pending" as though it were the result.
+          for i in $(seq 1 60); do
+            curl -sS -H @/tmp/h "$API/api/v1/playbook/run?run_id=$RUN" -o /tmp/poll.json
+            STATE=$(python -c "
+          import json
+          d = json.load(open('/tmp/poll.json'))
+          b = d.get('data') if isinstance(d.get('data'), dict) else d
+          print(b.get('status') or '')")
+            echo "  attempt $i: ${STATE:-unknown}"
+            case "$STATE" in completed|failed|error|cancelled) break;; esac
+            sleep 15
+          done
+
+          cp /tmp/poll.json /tmp/result.json
+          python -c "
+          import json
+          d = json.load(open('/tmp/result.json'))
+          b = d.get('data') if isinstance(d.get('data'), dict) else d
+          m = b.get('metrics_output') or {}
+          print()
+          print('run      ', b.get('run_id'))
+          print('status   ', b.get('status'))
+          if b.get('failure_reason'):
+              print('failure  ', b['failure_reason'])
+          if m:
+              print()
+              print('  total return %  ', m.get('total_return_pct'))
+              print('  max drawdown %  ', m.get('max_drawdown_pct'))
+              print('  win rate        ', m.get('win_rate'))
+              print('  total trades    ', m.get('total_trades'))
+              print('  sharpe          ', m.get('sharpe_ratio'))
+          else:
+              print()
+              print('  no metrics_output on the record')
+          "
 
 
       - name: Publish the run output as an artifact
@@ -104,4 +159,5 @@ jobs:
           path: |
             /tmp/upload.json
             /tmp/run.json
+            /tmp/result.json
           if-no-files-found: warn
