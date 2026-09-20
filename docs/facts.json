@@ -4,9 +4,9 @@
   "beta_names": 12,
   "exit_cost_bp": 20.0,
   "funding": {
-    "max_bp": 3.13,
+    "max_bp": 3.0,
     "max_name": "NKE",
-    "mean_bp": 0.68,
+    "mean_bp": 0.66,
     "measured_on": "2026-09-20",
     "min_bp": -0.16,
     "min_name": "PLTR",
@@ -211,8 +211,8 @@
     "shortest": 100,
     "split": 0.7
   },
-  "rtokens_hedgeable": 218,
-  "rtokens_total": 1653,
+  "rtokens_hedgeable": 226,
+  "rtokens_total": 2125,
   "tail": [
     {
       "name": "TSLA",
