@@ -161,6 +161,32 @@ jobs:
               print('  no metrics_output on the record')
           "
 
+          # Also to the job summary. A long log is served tail-first and the
+          # metrics print sits behind the artifact step, so reading the numbers
+          # back meant guessing a line count; the summary is addressable.
+          python - >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json
+          d = json.load(open("/tmp/result.json"))
+          b = d.get("data") if isinstance(d.get("data"), dict) else d
+          m = b.get("metrics_output") or {}
+          print("## Playbook run\n")
+          print("| | |")
+          print("|---|---|")
+          for key in ("run_id", "playbook_id", "version_id", "strategy_id", "status",
+                      "failure_reason"):
+              if b.get(key):
+                  print(f"| {key} | `{b[key]}` |")
+          for key in ("total_return_pct", "max_drawdown_pct", "win_rate",
+                      "total_trades", "sharpe_ratio", "profit_factor", "net_pnl",
+                      "starting_balance", "margin_budget", "metrics_basis",
+                      "account_total_return_pct", "account_max_drawdown_pct",
+                      "equity_curve_point_count", "rows", "symbols_replayed",
+                      "symbols_without_bars", "bars_repaired",
+                      "actual_window_start", "actual_window_end"):
+              if m.get(key) is not None:
+                  print(f"| {key} | {m[key]} |")
+          PY
+
 
       # Read an existing run record back rather than re-running the sandbox.
       # Publishing a backtest_support: full Playbook requires the run to carry a
