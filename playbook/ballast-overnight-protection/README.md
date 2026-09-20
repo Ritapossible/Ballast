@@ -35,13 +35,24 @@ over 2026-06-21 → 2026-09-18, on a real 2,121-point equity curve
 | total trades | 20 |
 | Sharpe | −0.76 |
 
-**Read those percentages on the right denominator.** The platform reports them
+**Read those percentages on the right denominator.** The run record reports them
 on the strategy basis — `net_pnl / margin_budget`, so −1.48% is **−29.62 USDT
-against a 2,000 USDT budget**, not 1.48% of an account. On the account the
-backtest ran in, the same run moved the balance −0.03% and drew down 0.08%.
-Both numbers are in the run record; neither is more true than the other, but
-quoting the strategy-basis figure without its budget would flatter or frighten
-depending on what a reader assumed.
+against a 2,000 USDT budget**, not 1.48% of an account.
+
+The **public GetAgent card quotes the same run on the account basis**: −0.03%
+return, 0.08% max drawdown, against the 100,000 USDT the sandbox opened with.
+Win rate, trade count and Sharpe are identical on both because ratios do not
+depend on the denominator.
+
+| | strategy basis (run record) | account basis (public card) |
+|---|---|---|
+| denominator | 2,000 USDT margin budget | 100,000 USDT starting balance |
+| total return | −1.48% | −0.03% |
+| max drawdown | 3.76% | 0.08% |
+| net P&L | −29.62 USDT | −29.62 USDT |
+
+One run, one loss, two denominators. Quoting either without naming which would
+flatter or frighten depending on what a reader assumed, so both are here.
 
 **The negative return is the product, not a failure of it.** This Playbook buys
 protection on 10 scheduled-event nights and holds nothing on the other ~55. Over

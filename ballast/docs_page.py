@@ -210,8 +210,11 @@ unrelated client on a different network.</td></tr>
 perpetuals, 2026-06-21 to 2026-09-18: <strong>&minus;1.48% return, 3.76% max drawdown, 0.40 win
 rate, 20 trades, &minus;0.76 Sharpe</strong>, on a real 2,121-point equity curve the platform
 hashed. Those percentages are on the <em>strategy basis</em> &mdash; &minus;29.62 USDT against a
-2,000 USDT margin budget, not 1.48% of an account; the same run moved the backtest account
-&minus;0.03%. That is the <em>protection leg alone</em> &mdash; the
+2,000 USDT margin budget, not 1.48% of an account. <strong>The public GetAgent card quotes the
+same run on the account basis</strong>: &minus;0.03% return and 0.08% drawdown on the 100,000 USDT
+the sandbox opened with. One run, one &minus;29.62 USDT, two denominators &mdash; so the card and
+this page differ by construction, and neither is the flattering one to pick.
+That is the <em>protection leg alone</em> &mdash; the
 harness holds one instrument list and cannot carry the spot it hedges &mdash; so a negative return
 over a rising window is the premium, not a failed strategy.</td></tr>
 </tbody></table></div>

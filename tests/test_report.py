@@ -909,6 +909,24 @@ class TheToolchainIsStatedOnThePage(unittest.TestCase):
         self.assertIn("29.62 USDT", page)
         self.assertAlmostEqual(-29.62 / 2000 * 100, -1.48, places=2)
 
+    def test_both_denominators_are_named_because_the_card_shows_the_other(self):
+        """The public GetAgent listing quotes this run on the account basis -
+        -0.03% and 0.08% - while the run record quotes the strategy basis,
+        -1.48% and 3.76%. Same run, same -29.62 USDT, two denominators.
+
+        A judge who opens the card after reading this page would otherwise find
+        two different numbers for one backtest and have no way to tell which
+        was the honest one. Both appear here, each named.
+        """
+        page = " ".join(self.docs().split())
+        self.assertIn("account basis", page)
+        self.assertIn("0.03%", page)
+        self.assertIn("100,000 USDT", page)
+        # the two denominators must actually produce the two figures quoted
+        net = -29.619686
+        self.assertAlmostEqual(net / 2000 * 100, -1.48, places=2)
+        self.assertAlmostEqual(net / 100000 * 100, -0.03, places=2)
+
     def test_the_equity_curve_behind_the_publish_is_named(self):
         """Publishing a backtest_support: full Playbook is gated on a real
         equity curve rather than aggregate metrics alone. Saying the run has
