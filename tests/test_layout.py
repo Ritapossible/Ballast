@@ -186,3 +186,47 @@ class DeadSpaceCase(unittest.TestCase):
         for name, html in self.pages.items():
             self.assertIn(".bd + section{padding-top:30px}", html, name)
             self.assertIn(".wrap > .scroll:first-child{margin-top:0}", html, name)
+
+class VerticalRhythmFollowsTheViewportHeight(unittest.TestCase):
+    """The layout was responsive in width only.
+
+    `section{padding:88px 0}` is fine on a tall monitor and overridden on a
+    phone, but a 1366x700 laptop - the most common judging screen there is -
+    met a 1041px hero on the landing page and a documentation page whose whole
+    first screen was a heading. Nothing overflowed; there was simply nothing
+    to read without scrolling.
+    """
+
+    def css(self) -> str:
+        from ballast.theme import CSS
+        return CSS
+
+    def test_section_padding_scales_with_viewport_height(self):
+        rule = re.search(r"\bsection\{padding:([^;]+);", self.css())
+        self.assertIsNotNone(rule, "section padding rule not found")
+        value = rule.group(1)
+        self.assertIn("vh", value,
+                      f"section padding {value!r} ignores viewport height")
+        self.assertIn("clamp", value,
+                      "an unclamped vh collapses the rhythm on a short window")
+
+    def test_the_clamp_still_bottoms_out_somewhere_readable(self):
+        """A floor near zero would jam the sections together on a netbook."""
+        rule = re.search(r"\bsection\{padding:clamp\((\d+)px,([\d.]+)vh,(\d+)px\)",
+                         self.css())
+        self.assertIsNotNone(rule, "expected clamp(min,vh,max) on section padding")
+        low, _, high = (float(g) for g in rule.groups())
+        self.assertGreaterEqual(low, 40, "floor too tight to breathe")
+        self.assertLessEqual(low, high, "clamp floor above its ceiling")
+        self.assertLessEqual(high, 96, "ceiling taller than the old fixed value")
+
+    def test_the_phone_override_still_wins(self):
+        """The 640px rule comes later in the cascade and must stay, or this
+        change would quietly re-space every phone screen too."""
+        css = self.css()
+        self.assertLess(css.index("section{padding:clamp"),
+                        css.index("@media(max-width:640px)"),
+                        "the phone override no longer follows the base rule")
+        tail = css[css.index("@media(max-width:640px)"):]
+        self.assertIn("section{padding:56px 0}", tail)
+

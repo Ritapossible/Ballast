@@ -53,7 +53,12 @@ a{{color:inherit}}
 
 .wrap{{max-width:1120px;margin:0 auto;padding:0 22px}}
 .narrow{{max-width:780px;margin:0 auto}}
-section{{padding:88px 0;border-bottom:1px solid var(--line);position:relative}}
+/* Vertical rhythm follows the viewport's height, not just its width. At
+   88px fixed, a 1366x700 laptop met a 1041px hero - one and a half
+   screens of heading before any content - while the same page was fine
+   on a tall monitor and on a phone. Responsive meant width only. */
+section{{padding:clamp(46px,6.5vh,88px) 0;border-bottom:1px solid var(--line);
+  position:relative}}
 section:last-of-type{{border-bottom:0}}
 
 /* ---- atmospheric backdrops (pure CSS, no images) ---- */
