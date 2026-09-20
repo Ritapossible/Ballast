@@ -23,7 +23,9 @@ insurance payment is a cost in a year without a fire.
 
 ## Measured
 
-Sandbox run `pbrun-e920a23cc1c7`, 2026-09-20, over 2026-06-21 → 2026-09-18:
+Published as **v0.0.1** on 2026-09-20. Sandbox run `pbrun-e920a23cc1c7`,
+over 2026-06-21 → 2026-09-18, on a real 2,121-point equity curve
+(`curve_hash 096c4d1e…f433f`):
 
 | | |
 |---|---|
@@ -32,6 +34,14 @@ Sandbox run `pbrun-e920a23cc1c7`, 2026-09-20, over 2026-06-21 → 2026-09-18:
 | win rate | 0.40 |
 | total trades | 20 |
 | Sharpe | −0.76 |
+
+**Read those percentages on the right denominator.** The platform reports them
+on the strategy basis — `net_pnl / margin_budget`, so −1.48% is **−29.62 USDT
+against a 2,000 USDT budget**, not 1.48% of an account. On the account the
+backtest ran in, the same run moved the balance −0.03% and drew down 0.08%.
+Both numbers are in the run record; neither is more true than the other, but
+quoting the strategy-basis figure without its budget would flatter or frighten
+depending on what a reader assumed.
 
 **The negative return is the product, not a failure of it.** This Playbook buys
 protection on 10 scheduled-event nights and holds nothing on the other ~55. Over

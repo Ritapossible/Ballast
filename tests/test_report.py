@@ -893,6 +893,31 @@ class TheToolchainIsStatedOnThePage(unittest.TestCase):
     def test_the_negative_sharpe_is_not_hidden(self):
         self.assertIn("0.76 Sharpe", " ".join(self.docs().split()))
 
+    def test_the_return_percentage_carries_the_denominator_it_is_on(self):
+        """The run record calls it `metrics_basis: strategy` - the platform
+        divides net_pnl by margin_budget, not by the account.
+
+        So -1.48% is -29.62 USDT against 2,000, while the account the backtest
+        ran in moved -0.03%. A reader who assumes account basis reads a loss
+        fifty times the size of the one that happened. The page states which
+        denominator it is quoting, and the two figures must agree with each
+        other: -29.62 / 2000 is -1.481%.
+        """
+        page = " ".join(self.docs().split())
+        self.assertIn("strategy basis", page)
+        self.assertIn("2,000 USDT margin budget", page)
+        self.assertIn("29.62 USDT", page)
+        self.assertAlmostEqual(-29.62 / 2000 * 100, -1.48, places=2)
+
+    def test_the_equity_curve_behind_the_publish_is_named(self):
+        """Publishing a backtest_support: full Playbook is gated on a real
+        equity curve rather than aggregate metrics alone. Saying the run has
+        one, with its point count, is the difference between an auditable
+        claim and a number someone could have typed."""
+        page = " ".join(self.docs().split())
+        self.assertIn("2,121-point equity curve", page)
+        self.assertIn("published v0.0.1", page)
+
 
 class TheOverviewDoesNotCarryTheOneLegNumber(unittest.TestCase):
     """Track 2 scores 50% on quantitative results. The Playbook's -0.76 is a
