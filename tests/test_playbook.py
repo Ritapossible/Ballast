@@ -99,16 +99,109 @@ class WhenItGoesShort(unittest.TestCase):
         self.assertFalse(window.should_protect("ANY", at(2026, 9, 15, 17), {}))
 
 
+
+def _scalar(raw: str) -> object:
+    """The scalar forms this manifest uses, and no others."""
+    if raw.startswith(('"', "'")) and raw.endswith(raw[0]) and len(raw) > 1:
+        return raw[1:-1]
+    if raw in ("true", "false"):
+        return raw == "true"
+    if raw in ("null", "~", ""):
+        return None
+    try:
+        return int(raw)
+    except ValueError:
+        pass
+    try:
+        return float(raw)
+    except ValueError:
+        return raw
+
+
+def _strip_comment(line: str) -> str:
+    if line.lstrip().startswith("#"):
+        return ""
+    value = line.split(": ", 1)[-1].lstrip()
+    if value.startswith(('"', "'")):
+        return line
+    return line.split(" #", 1)[0]
+
+
+def load_yaml(path: Path) -> dict:
+    """A reader for the subset of YAML `manifest.yaml` is written in.
+
+    The tests used to shell out to PyYAML. That made `python3 verify.py` - the
+    command the site gives a judge, documented as needing nothing but the
+    standard library - fail with five errors on any clone without PyYAML
+    installed, and it had been failing in CI for the same reason.
+
+    Anything outside the subset raises rather than being guessed at -
+    `backtest.yaml`, which nests mappings inside sequences, is refused rather
+    than half-read - and `TheReaderAgreesWithTheRealParser` below holds it to
+    PyYAML's answer wherever PyYAML is available.
+    """
+    lines = [_strip_comment(raw.rstrip()) for raw in path.read_text().splitlines()]
+    for n, raw in enumerate(lines, 1):
+        if "\t" in raw:
+            raise ValueError(f"{path.name}:{n}: tab indentation")
+        if raw.strip() in ("---", "..."):
+            raise ValueError(f"{path.name}:{n}: multiple documents")
+        if raw.lstrip()[:1] in ("&", "*"):
+            raise ValueError(f"{path.name}:{n}: anchors are not supported")
+
+    def indent(i: int) -> int:
+        return len(lines[i]) - len(lines[i].lstrip())
+
+    def block(start: int, end: int, col: int) -> object:
+        i, seq, mapping = start, [], {}
+        while i < end:
+            if not lines[i].strip():
+                i += 1
+                continue
+            if indent(i) != col:
+                raise ValueError(f"{path.name}:{i + 1}: unexpected indentation")
+            line = lines[i].strip()
+            if line.startswith("- "):
+                seq.append(_scalar(line[2:].strip()))
+                i += 1
+                continue
+            if ":" not in line:
+                raise ValueError(f"{path.name}:{i + 1}: not a mapping entry")
+            key, _, rest = line.partition(":")
+            rest = rest.strip()
+            j = i + 1
+            while j < end and (not lines[j].strip() or indent(j) > col):
+                j += 1
+            if rest in ("|", "|-", "|+"):
+                body = lines[i + 1 : j]
+                pad = min((len(b) - len(b.lstrip()) for b in body if b.strip()),
+                          default=0)
+                text = "\n".join(b[pad:] for b in body).rstrip("\n")
+                mapping[key.strip()] = text + ("" if rest == "|-" else "\n")
+            elif rest.startswith(("{", "[", ">", "&", "*")):
+                raise ValueError(f"{path.name}:{i + 1}: {rest[0]!r} is not supported")
+            elif rest:
+                mapping[key.strip()] = _scalar(rest)
+            elif j > i + 1:
+                inner = next(k for k in range(i + 1, j) if lines[k].strip())
+                mapping[key.strip()] = block(i + 1, j, indent(inner))
+            else:
+                mapping[key.strip()] = None
+            i = j
+        if seq and mapping:
+            raise ValueError(f"{path.name}: a block is both a list and a mapping")
+        return seq if seq else mapping
+
+    first = next(i for i, raw in enumerate(lines) if raw.strip())
+    out = block(0, len(lines), indent(first))
+    if not isinstance(out, dict):
+        raise ValueError(f"{path.name}: top level is not a mapping")
+    return out
+
+
 class ThePackageMatchesTheProject(unittest.TestCase):
     def manifest(self) -> dict:
-        import json
-        import subprocess
-        out = subprocess.run(
-            [sys.executable, "-c",
-             "import yaml,json,sys;print(json.dumps(yaml.safe_load(open(sys.argv[1]))))",
-             str(PACKAGE / "manifest.yaml")],
-            capture_output=True, text=True, check=True)
-        return json.loads(out.stdout)
+        return load_yaml(PACKAGE / "manifest.yaml")
 
     def test_every_protected_night_names_a_symbol_the_package_trades(self):
         m = self.manifest()
@@ -141,14 +234,7 @@ class WhatTheServerRejectsButTheLocalValidatorAllows(unittest.TestCase):
     ALLOWED_TYPES: ClassVar[set] = {"array", "boolean", "integer", "number", "string"}
 
     def manifest(self) -> dict:
-        import json
-        import subprocess
-        out = subprocess.run(
-            [sys.executable, "-c",
-             "import yaml,json,sys;print(json.dumps(yaml.safe_load(open(sys.argv[1]))))",
-             str(PACKAGE / "manifest.yaml")],
-            capture_output=True, text=True, check=True)
-        return json.loads(out.stdout)
+        return load_yaml(PACKAGE / "manifest.yaml")
 
     def test_no_compiled_bytecode_ships_in_the_package(self):
         """`src/**` is uploaded verbatim; a .pyc is rejected as a local-only
@@ -173,6 +259,45 @@ class WhatTheServerRejectsButTheLocalValidatorAllows(unittest.TestCase):
         words = len(self.manifest()["long_description"].split())
         self.assertGreaterEqual(words, 300)
         self.assertLessEqual(words, 400, f"{words} words; the cap is 400")
+
+
+
+class TheReaderAgreesWithTheRealParser(unittest.TestCase):
+    """`load_yaml` exists so the suite needs no third-party parser. It is only
+    worth having if it returns what the real one returns, so wherever PyYAML is
+    installed - every developer machine, and CI, which installs it for exactly
+    this - the two are compared on the files the platform actually reads.
+    """
+
+    def test_it_parses_the_manifest_the_way_pyyaml_does(self):
+        path = PACKAGE / "manifest.yaml"
+        self.assertEqual(load_yaml(path), self._yaml().safe_load(path.read_text()))
+
+    def test_it_refuses_the_backtest_file_rather_than_half_reading_it(self):
+        """backtest.yaml nests mappings inside sequences, which this reader
+        does not do. Nothing parses it, and the failure must stay loud: a
+        reader that quietly dropped every instrument would still return a
+        dict."""
+        with self.assertRaises(ValueError):
+            load_yaml(PACKAGE / "backtest.yaml")
+
+    def test_it_refuses_what_it_cannot_parse_rather_than_guessing(self):
+        import tempfile
+        for bad in ("a: {b: 1}\n", "a: [1, 2]\n", "a: >\n  folded\n",
+                    "a: &x 1\n", "a: *x\n", "---\na: 1\n", "a:\n\tb: 1\n"):
+            with self.subTest(bad):
+                with tempfile.NamedTemporaryFile(
+                        "w", suffix=".yaml", delete=False) as fh:
+                    fh.write(bad)
+                with self.assertRaises(ValueError):
+                    load_yaml(Path(fh.name))
+
+    def _yaml(self):
+        try:
+            import yaml
+        except ImportError:  # pragma: no cover - CI installs it
+            self.skipTest("PyYAML absent; the reader stands alone here")
+        return yaml
 
 
 class EverySdkCallExistsInTheReference(unittest.TestCase):

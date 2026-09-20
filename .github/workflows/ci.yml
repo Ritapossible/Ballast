@@ -24,8 +24,14 @@ jobs:
       # rate-limited us.
       # Dev tooling only. It is installed here and never imported by the project,
       # so `python3 verify.py` on a fresh clone still needs nothing but Python.
+      #
+      # PyYAML is here for one reason: tests/test_playbook.py reads the Playbook
+      # manifest with its own small reader so the suite needs no parser, and the
+      # cross-check that holds that reader to PyYAML's answer can only run where
+      # PyYAML exists. The suite passed without it long enough to ship five
+      # errors into `verify.py`, so the comparison runs somewhere by default.
       - name: Install lint and type tooling
-        run: pip install --quiet ruff==0.15.8 mypy==1.19.1
+        run: pip install --quiet ruff==0.15.8 mypy==1.19.1 pyyaml==6.0.4
 
       - name: Lint
         run: ruff check .
