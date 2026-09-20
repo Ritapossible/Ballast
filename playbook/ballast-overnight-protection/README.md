@@ -21,6 +21,31 @@ insurance payment is a cost in a year without a fire.
   indiscriminate baseline the research rejects, kept reachable so the
   comparison can be run instead of claimed.
 
+## Measured
+
+Sandbox run `pbrun-e920a23cc1c7`, 2026-09-20, over 2026-06-21 → 2026-09-18:
+
+| | |
+|---|---|
+| total return | **−1.48%** |
+| max drawdown | **3.76%** |
+| win rate | 0.40 |
+| total trades | 20 |
+| Sharpe | −0.76 |
+
+**The negative return is the product, not a failure of it.** This Playbook buys
+protection on 10 scheduled-event nights and holds nothing on the other ~55. Over
+a window in which these names mostly rose, the shorts gave those gains back and
+the premium was a pure cost — which is what an insurance payment looks like in a
+year without a fire.
+
+Read the drawdown, not the Sharpe. A ratio computed across 10 protected nights
+is a description of those ten nights, not evidence of an edge, and the package
+says so in its own description rather than leaving a reader to work it out.
+
+What it does **not** show is whether the protection was worth buying. That needs
+the spot leg it is hedging, which this harness cannot hold — see the full project.
+
 Full project: https://github.com/Ritapossible/Ballast
 
 ## 策略说明
