@@ -575,7 +575,13 @@ class Site:
             acted = [s for s in done if (s.get("hedged") or 0)]
             if acted:
                 prev = acted[-1]
-                rows.append(line(f"last hedge {prev.get('session')}",
+                # "last hedge" read absolutely, beside a visible HEDGE on
+                # tonight's session above it. This walk is over *settled*
+                # sessions, so the figure it carries - n of m cut the move - is
+                # a graded outcome that tonight's hedge cannot have yet. The
+                # label says settled rather than the number being changed to a
+                # night nothing has graded.
+                rows.append(line(f"last settled hedge {prev.get('session')}",
                                  f"· {prev.get('hedges_that_cut') or 0} of "
                                  f"{prev.get('hedged')} cut the move"))
         return "".join(rows)

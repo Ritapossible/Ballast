@@ -550,8 +550,24 @@ class SettledTape(unittest.TestCase):
         ])
         self.assertIn("settled 2026-09-02", out)
         self.assertIn("no hedge was called for", out)
-        self.assertIn("last hedge 2026-09-01", out)
+        self.assertIn("last settled hedge 2026-09-01", out)
         self.assertIn("1 of 2 cut the move", out)
+
+    def test_the_older_hedge_is_labelled_settled_not_last(self):
+        """This walk is over settled sessions, and it sits under a tile showing
+        tonight's decisions - which can carry a HEDGE on a later date.
+
+        Read as a bare "last hedge", the two rows contradict each other on the
+        same screen. The figure beside it is a graded outcome, so the label has
+        to say settled; changing the date to tonight's would claim a grade for
+        a night nothing has settled.
+        """
+        out = self.tape([
+            {"session": "2026-09-16", "hedged": 1, "hedges_that_cut": 1},
+            {"session": "2026-09-17", "hedged": 0, "hedges_that_cut": 0},
+        ])
+        self.assertIn("last settled hedge", out)
+        self.assertNotRegex(out, r"(?<!settled )last hedge")
 
     def test_a_night_that_hedged_does_not_also_quote_an_older_one(self):
         out = self.tape([
@@ -926,6 +942,17 @@ class TheToolchainIsStatedOnThePage(unittest.TestCase):
         net = -29.619686
         self.assertAlmostEqual(net / 2000 * 100, -1.48, places=2)
         self.assertAlmostEqual(net / 100000 * 100, -0.03, places=2)
+
+    def test_the_studio_paper_state_is_stated_not_implied(self):
+        """A $10,000 Studio balance at 0.00% next to "paper trading" reads as a
+        flat run. It is an empty one: the account is Paper Degraded pending
+        validation and has recorded no decision. Saying so is the difference
+        between a judge scoring an empty surface as a result and reading the
+        ledger, which is the actual run log."""
+        page = " ".join(self.docs().split())
+        self.assertIn("Paper Degraded", page)
+        self.assertIn("no Studio decision has been recorded", page)
+        self.assertIn("not a Track 2 run log", page)
 
     def test_the_two_simulations_are_told_apart(self):
         """One is priced by this project, the other by Bitget's paper portfolio.
