@@ -261,7 +261,7 @@ footer a{color:var(--mid)}
 authority starts and stops - and what is deliberately not claimed.</p>
 </div></section>
 <div class="wrap"><div class="docs">
-<aside class="toc"><div class="h">Start</div><a href="#what">What Ballast is</a><a href="#problem">The problem</a><a href="#who">Who it is for</a><div class="h">Mechanism</div><a href="#hedge">The hedge</a><a href="#selector">Choosing the night</a><a href="#policy">The decision policy</a><div class="h">System</div><a href="#architecture">Architecture</a><a href="#execution">Where orders go</a><a href="#authority">Bounded authority</a><a href="#ledger">The ledger</a><a href="#settlement">Settlement</a><div class="h">Evidence</div><a href="#research">Research findings</a><a href="#defects">Defects found</a><a href="#verify">Verify it yourself</a><a href="#oos">Out of sample</a><a href="#roadmap">Roadmap</a><a href="#verify">Reproduce it</a><div class="h">Reference</div><a href="#cli">CLI</a><a href="#env">Environment</a><a href="#glossary">Glossary</a></aside>
+<aside class="toc"><div class="h">Start</div><a href="#what">What Ballast is</a><a href="#problem">The problem</a><a href="#who">Who it is for</a><div class="h">Mechanism</div><a href="#hedge">The hedge</a><a href="#selector">Choosing the night</a><a href="#policy">The decision policy</a><div class="h">System</div><a href="#architecture">Architecture</a><a href="#execution">Where orders go</a><a href="#toolchain">The Bitget toolchain</a><a href="#authority">Bounded authority</a><a href="#ledger">The ledger</a><a href="#settlement">Settlement</a><div class="h">Evidence</div><a href="#research">Research findings</a><a href="#defects">Defects found</a><a href="#verify">Verify it yourself</a><a href="#oos">Out of sample</a><a href="#roadmap">Roadmap</a><a href="#verify">Reproduce it</a><div class="h">Reference</div><a href="#cli">CLI</a><a href="#env">Environment</a><a href="#glossary">Glossary</a></aside>
 <article class="prose">
 <h2 id="what">What Ballast is</h2>
 <p>Ballast is an autonomous overnight risk desk for <strong>tokenized US
@@ -308,12 +308,12 @@ from 1,128 bp to 233 bp; AMD's from 1,262 bp to 90 bp.</li>
 <li><strong>Cost 12.0 bp</strong> taker round trip - the part that is
 certain. A short also collects funding, which brings the average night to
 11.3 bp, but that credit is a rate and not a promise: measured across the
-book it runs from -0.19 bp (PLTR) to +3.13 bp (NKE) a night, and is against the hedge on 2 of 12 names. Either way it is cheaper than the
+book it runs from -0.16 bp (PLTR) to +3.13 bp (NKE) a night, and is against the hedge on 2 of 12 names. Either way it is cheaper than the
 20 bp it costs to exit - and you keep the position.</li>
 <li><strong>Crypto is not a hedge.</strong> Median R² against BTC is 0.114. Crypto
 legs are excluded by measurement, not preference.</li>
 </ul>
-<p>Of 1653 live rTokens, <strong>218 have a perp leg</strong> (measured 2026-09-19). Ballast states plainly
+<p>Of 1653 live rTokens, <strong>218 have a perp leg</strong> (measured 2026-09-20). Ballast states plainly
 which positions it cannot protect rather than pretending otherwise.</p>
 
 <h2 id="selector">Choosing the night</h2>
@@ -386,6 +386,48 @@ is the live one.</p></div>
 <p>Checked 2026-09-19. The live <code>USDT-FUTURES</code> list carries 797 contracts,
 including all twelve. So the choice was a labelled simulation or a real order with
 real money; it simulates, and says so on every row.</p>
+
+<h2 id="toolchain">The Bitget toolchain</h2>
+<p>What is wired, and what each one is actually returning today. Two of the four
+are reachable but carrying no data, and that is stated here rather than left for
+someone to discover.</p>
+<div class="scroll stacked"><table><thead><tr><th>Component</th><th>State</th>
+<th>What it does here</th></tr></thead><tbody>
+<tr><td data-label=""><strong>Agent Hub CLI</strong> (<code>bgc</code>)</td>
+<td data-label="State"><span class="tag on">routing</span></td>
+<td class="wrap" data-label="What it does">Every admitted hedge since 2026-09-14 is sent through
+<code>bgc --paper-trading</code>. Bitget answers <code>HTTP 400: exchange environment is
+incorrect</code> on every one, because its practice venue lists nine contracts and none of
+this book&rsquo;s twelve stocks. The fill is then priced against the market and the row says so.</td></tr>
+<tr><td data-label=""><strong>Qwen</strong> <code>qwen3.8-max</code></td>
+<td data-label="State"><span class="tag on">deciding</span></td>
+<td class="wrap" data-label="What it does">The event reader. Owns the hedge judgment behind schema,
+identity and grounding gates; 12 of 96 answers were refused for quoting a headline that was not
+in the supplied sources.</td></tr>
+<tr><td data-label=""><strong>bitget-mcp-server</strong></td>
+<td data-label="State"><span class="tag">no data</span></td>
+<td class="wrap" data-label="What it does">A second opinion on the earnings calendar, asked for every
+decision on the chain. The catalog is reachable; the <code>equity_calendar_earnings</code> upstream
+answers <strong>503</strong>, so every row is recorded <code>unknown</code> rather than counted as
+agreement. A second source that fails open is worse than none.</td></tr>
+<tr><td data-label=""><strong>bitget-signal</strong></td>
+<td data-label="State"><span class="tag">no data</span></td>
+<td class="wrap" data-label="What it does">All 19 research tools reachable, no key needed. Every one
+returns an empty envelope &mdash; the news aggregator reports <strong>44 feeds, 0 articles</strong>.
+Confirmed to be the service and not this client by calling the same server through a second,
+unrelated client on a different network.</td></tr>
+<tr><td data-label=""><strong>Playbook</strong> / GetAgent</td>
+<td data-label="State"><span class="tag on">backtested</span></td>
+<td class="wrap" data-label="What it does">Sandbox run <code>pbrun-e920a23cc1c7</code> over ten RWA stock
+perpetuals, 2026-06-21 to 2026-09-18: <strong>&minus;1.48% return, 3.76% max drawdown, 0.40 win
+rate, 20 trades, &minus;0.76 Sharpe</strong>. That is the <em>protection leg alone</em> &mdash; the
+harness holds one instrument list and cannot carry the spot it hedges &mdash; so a negative return
+over a rising window is the premium, not a failed strategy.</td></tr>
+</tbody></table></div>
+<div class="callout"><p><strong>The Playbook number is not this product&rsquo;s metric.</strong>
+It prices one leg in isolation. What Ballast claims is measured on the live ledger, two-legged,
+on the <a href="settled.html">Settled</a> page &mdash; and the claim is drawdown removed, never
+return earned.</p></div>
 
 <h2 id="authority">Bounded authority</h2>
 <div class="callout"><p><strong>Ballast cannot place a bet.</strong> Every order it is

@@ -1,5 +1,5 @@
 {
- "built_on": "2026-09-19T23:36:58+00:00",
+ "built_on": "2026-09-20T00:55:47+00:00",
  "counts": {
   "agreed": 0,
   "checked": 0,
@@ -11,15 +11,15 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "HTTP 404 from https://agent.bitget.com/mcp",
-   "nasdaq": "no",
+   "detail": "upstream 503: None",
+   "nasdaq": "yes",
    "session": "2026-09-09",
    "ticker": "ADBE"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "HTTP 404 from https://agent.bitget.com/mcp",
+   "detail": "upstream 503: None",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "AMD"
@@ -76,7 +76,7 @@
    "agree": false,
    "bitget_mcp": "unknown",
    "detail": "stopped after 3 failures",
-   "nasdaq": "no",
+   "nasdaq": "yes",
    "session": "2026-09-09",
    "ticker": "ORCL"
   },

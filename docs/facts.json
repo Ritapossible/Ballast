@@ -7,15 +7,15 @@
     "max_bp": 3.13,
     "max_name": "NKE",
     "mean_bp": 0.68,
-    "measured_on": "2026-09-19",
-    "min_bp": -0.19,
+    "measured_on": "2026-09-20",
+    "min_bp": -0.16,
     "min_name": "PLTR",
     "names": 12,
     "names_paying": 2
   },
   "hedge_cost_bp": 11.3,
   "hedge_cost_gross_bp": 12.0,
-  "measured_on": "2026-09-19",
+  "measured_on": "2026-09-20",
   "median_r2": 0.982,
   "median_tail_cut_pct": 88,
   "oos": {
