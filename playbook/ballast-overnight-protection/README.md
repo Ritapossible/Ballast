@@ -21,6 +21,27 @@ insurance payment is a cost in a year without a fire.
   indiscriminate baseline the research rejects, kept reachable so the
   comparison can be run instead of claimed.
 
+## Live vs replay
+
+The replay reads `strategy_config.event_dates` - the ten nights inside the
+backtest window. Every one of them is now in the past, so a live run reading
+only those would hold nothing on every night for the rest of time.
+
+The live path therefore asks the platform's own earnings calendar
+(`equity.calendar.earnings`) which nights are scheduled in the next 45 days, and
+applies the same `window.should_protect` rule the replay applies. Dates only,
+never the content of a report: a scheduled release means tonight is dangerous,
+not that the print will be good.
+
+**If that calendar cannot be reached, it holds.** `should_protect` reads an
+empty mapping as "protect every night" - the indiscriminate baseline the
+research measured as value destroying - so failing open would land in the one
+policy this package exists to reject. The empty-calendar branch emits `hold` for
+every name and says which lookup failed.
+
+One opening order exists in this package and it is a short. There is no branch
+that opens a long.
+
 ## Measured
 
 Published as **v0.0.1** on 2026-09-20. Sandbox run `pbrun-e920a23cc1c7`,

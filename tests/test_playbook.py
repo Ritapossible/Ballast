@@ -11,6 +11,7 @@ these tests do not replace.
 """
 from __future__ import annotations
 
+import ast
 import datetime as dt
 import sys
 import unittest
@@ -398,3 +399,221 @@ class MalformedBarsAreRepairedNotHidden(unittest.TestCase):
         frame, _ = self.repair([[10.0, 9.0, 8.0, 9.5, 1.0]])
         self.assertLessEqual(frame["high"].iloc[0], 10.0)
         self.assertGreaterEqual(frame["low"].iloc[0], 8.0)
+
+
+class TheLivePathCanActuallyTrade(unittest.TestCase):
+    """`_run_live` used to emit `action="watch"` for every symbol on every
+    evaluation, unconditionally. It never consulted the selector, so Paper
+    Trading could log forever and never open a position - the return would sit
+    at 0.0% because nothing could ever happen, not because nothing was due.
+
+    The manifest's ten event_dates are all in the past, so wiring the selector
+    alone would not have been enough either. The live path reads the platform's
+    own earnings calendar for nights that have not happened yet.
+    """
+
+    def source(self) -> str:
+        return (PACKAGE / "src" / "main.py").read_text()
+
+    def tree(self) -> ast.AST:
+        return ast.parse(self.source())
+
+    def _live(self) -> ast.FunctionDef:
+        for node in ast.walk(self.tree()):
+            if isinstance(node, ast.FunctionDef) and node.name == "_run_live":
+                return node
+        self.fail("_run_live is gone")
+
+    def test_the_live_path_consults_the_selector(self):
+        called = {n.func.attr for n in ast.walk(self._live())
+                  if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute)}
+        self.assertIn("should_protect", called,
+                      "the live path decides without asking the selector")
+
+    def test_it_emits_a_real_action_rather_than_watching_forever(self):
+        actions = {n.value for n in ast.walk(self._live())
+                   if isinstance(n, ast.Constant) and isinstance(n.value, str)}
+        self.assertIn("short", actions, "the live path can never open anything")
+
+    def test_it_never_opens_a_long(self):
+        """Ballast's central claim is that it cannot place a directional bet.
+        One opening order exists in this package and it is a short."""
+        self.assertNotIn("open_long_market", self.source())
+        self.assertIn("open_short_market", self.source())
+
+    def test_an_unreachable_calendar_holds_rather_than_hedging_everything(self):
+        """`should_protect` treats an empty mapping as protect every night -
+        the indiscriminate baseline the research measured as value destroying.
+
+        A failed data call produces exactly that empty mapping, so without a
+        guard the live path would fail open into the one policy this package
+        exists to reject. The guard must sit before any should_protect call.
+        """
+        live = self._live()
+        guard = next((n for n in live.body if isinstance(n, ast.If)
+                      and isinstance(n.test, ast.UnaryOp)
+                      and isinstance(n.test.op, ast.Not)), None)
+        self.assertIsNotNone(guard, "no early guard on an empty calendar")
+        actions = {n.value for n in ast.walk(guard)
+                   if isinstance(n, ast.Constant) and isinstance(n.value, str)}
+        self.assertIn("hold", actions, "the empty-calendar branch does not hold")
+        self.assertNotIn("short", actions, "the empty-calendar branch can trade")
+        self.assertTrue(any(isinstance(n, ast.Return) for n in ast.walk(guard)),
+                        "the guard falls through into the deciding loop")
+
+    def test_the_calendar_call_passes_no_provider(self):
+        """The package validator refuses `provider=` in a backtestable Playbook,
+        and it cost a round trip to discover on the THS-only endpoint."""
+        for node in ast.walk(self.tree()):
+            if (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+                    and node.func.attr == "earnings"):
+                names = {kw.arg for kw in node.keywords}
+                self.assertNotIn("provider", names)
+                return
+        self.fail("no earnings-calendar call in the live path")
+
+
+class TheLivePathBehavesWhenRun(unittest.TestCase):
+    """The checks above read the source. These run it.
+
+    `getagent` exists only inside the sandbox, so it is stubbed here. The point
+    is not to test the SDK but to watch which signals this package emits for a
+    given calendar and a given clock.
+    """
+
+    SYMBOLS: ClassVar[list] = ["ORCLUSDT", "NVDAUSDT"]
+
+    def _module(self, records, raises=None):
+        import importlib.util
+        import types
+        from unittest import mock
+
+        emitted: list = []
+
+        def earnings(**_kwargs):
+            if raises is not None:
+                raise raises
+            return records
+
+        data = types.SimpleNamespace(
+            equity=types.SimpleNamespace(
+                calendar=types.SimpleNamespace(earnings=earnings)),
+            to_records=lambda rows: rows,
+            crypto=types.SimpleNamespace(
+                futures=types.SimpleNamespace(kline=lambda **k: [])),
+        )
+        runtime = types.SimpleNamespace(
+            manifest={"trading_symbols": list(self.SYMBOLS),
+                      "strategy_config": {"trade_size": "1", "leverage": "1"}},
+            emit_signal=lambda **kw: emitted.append(kw),
+            emit_signal_or_follow=lambda **kw: emitted.append(kw),
+            is_historical=lambda: False,
+            is_live=lambda: True,
+            backtest_spec={},
+        )
+        getagent = types.ModuleType("getagent")
+        getagent.data = data
+        getagent.runtime = runtime
+        getagent.backtest = types.SimpleNamespace(
+            prepare_frame=lambda *a, **k: None, run=lambda **k: None,
+            generate_chart=lambda r: "")
+
+        spec = importlib.util.spec_from_file_location(
+            "pb_main_under_test", PACKAGE / "src" / "main.py")
+        module = importlib.util.module_from_spec(spec)
+        with mock.patch.dict(sys.modules, {"getagent": getagent}):
+            spec.loader.exec_module(module)
+        return module, emitted
+
+    def _at(self, module, when):
+        from unittest import mock
+
+        class Frozen(dt.datetime):
+            @classmethod
+            def now(cls, tz=None):
+                return when
+
+        return mock.patch.object(module, "dt",
+                                 type("d", (), {"datetime": Frozen,
+                                                "timedelta": dt.timedelta,
+                                                "timezone": dt.timezone,
+                                                "time": dt.time}))
+
+    NIGHT: ClassVar = dt.datetime(2026, 10, 8, 21, 0, tzinfo=dt.timezone.utc)
+    MIDDAY: ClassVar = dt.datetime(2026, 10, 8, 15, 0, tzinfo=dt.timezone.utc)
+
+    def test_the_perp_symbol_is_translated_for_the_calendar(self):
+        """The perp is ORCLUSDT; the calendar takes ORCL. Passing the perp
+        returns nothing rather than erroring, so it would read as a quiet night
+        forever."""
+        module, _ = self._module([])
+        self.assertEqual(module._ticker("ORCLUSDT"), "ORCL")
+        self.assertEqual(module._ticker("MUUSDT"), "MU")
+        self.assertEqual(module._ticker("AAPL"), "AAPL")
+
+    def test_a_scheduled_night_inside_the_window_shorts_only_that_name(self):
+        module, emitted = self._module(
+            [{"symbol": "ORCL", "report_date": "2026-10-08"}])
+        with self._at(module, self.NIGHT):
+            module._run_live()
+        actions = {e["symbol"]: e["action"] for e in emitted}
+        self.assertEqual(actions.get("ORCLUSDT"), "short",
+                         "a flagged night inside the window did not protect")
+        self.assertEqual(actions.get("NVDAUSDT"), "hold",
+                         "an unflagged name was protected anyway")
+
+    def test_the_same_night_before_the_close_holds(self):
+        module, emitted = self._module(
+            [{"symbol": "ORCL", "report_date": "2026-10-08"}])
+        with self._at(module, self.MIDDAY):
+            module._run_live()
+        self.assertEqual({e["action"] for e in emitted}, {"hold"},
+                         "it traded while the reference market was open")
+
+    def test_an_unreachable_calendar_holds_every_name(self):
+        """The failure this guard exists for: `should_protect` reads an empty
+        mapping as protect every night, so a failed call would hedge the book."""
+        module, emitted = self._module(None, raises=RuntimeError("upstream 503"))
+        with self._at(module, self.NIGHT):
+            module._run_live()
+        self.assertEqual(len(emitted), len(self.SYMBOLS))
+        self.assertEqual({e["action"] for e in emitted}, {"hold"},
+                         "a failed calendar call hedged every position")
+        self.assertTrue(all(e["meta"].get("reason") for e in emitted),
+                        "it held without saying why")
+
+    def test_an_empty_calendar_holds_rather_than_hedging_everything(self):
+        module, emitted = self._module([])
+        with self._at(module, self.NIGHT):
+            module._run_live()
+        self.assertEqual({e["action"] for e in emitted}, {"hold"})
+
+    def test_a_stale_row_does_not_mask_the_upcoming_one(self):
+        """The calendar returns every row it has for a name, and the soonest is
+        taken with `min`. Without the past-date filter `min` picks the oldest
+        row in the response - so a name with history would be shielded from
+        protection on the night it actually reports.
+
+        The first version of this test used a past date alone and passed
+        whether the filter was there or not: a stale date simply never equals
+        tonight's protected night, so nothing distinguished the two cases.
+        """
+        module, emitted = self._module([
+            {"symbol": "ORCL", "report_date": "2020-01-02"},
+            {"symbol": "ORCL", "report_date": "2026-10-08"},
+        ])
+        with self._at(module, self.NIGHT):
+            module._run_live()
+        actions = {e["symbol"]: e["action"] for e in emitted}
+        self.assertEqual(actions.get("ORCLUSDT"), "short",
+                         "an old row hid the report scheduled for tonight")
+
+    def test_the_soonest_upcoming_date_wins_when_several_are_returned(self):
+        module, emitted = self._module([
+            {"symbol": "ORCL", "report_date": "2027-01-15"},
+            {"symbol": "ORCL", "report_date": "2026-10-08"},
+        ])
+        with self._at(module, self.NIGHT):
+            module._run_live()
+        actions = {e["symbol"]: e["action"] for e in emitted}
+        self.assertEqual(actions.get("ORCLUSDT"), "short")

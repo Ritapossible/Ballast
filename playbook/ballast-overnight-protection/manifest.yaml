@@ -71,6 +71,7 @@ follow_trade_supported: true
 strategy_config:
   trade_size: "1"
   margin_budget: "2000"
+  leverage: "1"
   event_dates:
     ORCLUSDT: "2026-09-10"
     ADBEUSDT: "2026-09-10"
@@ -89,6 +90,9 @@ user_config_schema:
   margin_budget:
     type: string
     description: "Capital cap this Playbook sizes against, and the denominator for return %"
+  leverage:
+    type: string
+    description: "Leverage on the protection leg. 1 matches the spot it hedges; above 1 is a bet"
 tags:
   - hedge
   - rwa
