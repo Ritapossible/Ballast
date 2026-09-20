@@ -14,7 +14,7 @@ on:
       task:
         description: "what to do"
         type: choice
-        options: [validate, backtest, inspect, confirm, publish]
+        options: [validate, backtest, inspect, confirm, publish, mine]
         default: validate
       id:
         description: "run id for inspect; draft/temporary id for confirm and publish"
@@ -277,6 +277,76 @@ jobs:
           print("Next step is yours, not this workflow's: open My Playbooks in")
           print("GetAgent Studio and enable Paper Trading. Nothing here may")
           print("start, stop or enable a Playbook instance.")
+          PY
+
+
+      # What the platform says it holds, rather than what we believe we sent.
+      # /list is documented as public, but answers every unauthenticated shape
+      # with {"code":"10000","msg":"入参不能为空"} - "input parameter cannot be
+      # empty" - so it is called with the key like everything else. That is the
+      # fourth time the shipped reference and the running service have
+      # disagreed on this integration.
+      #
+      # /my-playbooks lists enabled deployments, so it stays empty until Paper
+      # Trading is switched on in GetAgent Studio. That makes it the check for
+      # whether that step has happened.
+      - name: What the platform holds
+        if: inputs.task == 'mine'
+        env:
+          PLAYBOOK_API_KEY: ${{ secrets.PLAYBOOK_API_KEY }}
+        run: |
+          set -euo pipefail
+          printf 'ACCESS-KEY: %s\n' "$PLAYBOOK_API_KEY" > /tmp/h
+          trap 'rm -f /tmp/h' EXIT
+          for path in "list?status=published" "list?status=draft" "my-playbooks"; do
+            curl -sS -H @/tmp/h "$API/api/v1/playbook/$path" \
+              -o "/tmp/$(echo "$path" | tr '?=&/' '____').json" || true
+          done
+          python - <<'PY'
+          import json, pathlib
+
+          OURS = "b18f70be-4e9e-4402-827a-2a02ad044f2f"
+
+          def rows(body):
+              """The service wraps lists in `data`, sometimes twice."""
+              if isinstance(body, dict):
+                  body = body.get("data", body)
+              if isinstance(body, dict):
+                  for key in ("list", "items", "records", "rows"):
+                      if isinstance(body.get(key), list):
+                          return body[key]
+                  return []
+              return body if isinstance(body, list) else []
+
+          for file in sorted(pathlib.Path("/tmp").glob("list*.json")) + \
+                      sorted(pathlib.Path("/tmp").glob("my-playbooks*.json")):
+              raw = file.read_text()
+              print(f"=== {file.name} ===")
+              try:
+                  body = json.loads(raw)
+              except ValueError:
+                  print("  not JSON:", raw[:200]); continue
+              if isinstance(body, dict) and body.get("code") not in ("200", "00000", None):
+                  print(f"  code {body.get('code')} msg {body.get('msg')!r}")
+              found = rows(body)
+              print(f"  {len(found)} entries")
+              for entry in found:
+                  if not isinstance(entry, dict):
+                      continue
+                  mine = OURS in json.dumps(entry) or "ballast" in json.dumps(entry).lower()
+                  if not mine:
+                      continue
+                  print("  --- ours ---")
+                  for key in ("name", "display_name", "strategy_display_name",
+                              "version", "status", "strategy_id", "version_id",
+                              "instance_id", "output_kind", "backtest_support",
+                              "execution_mode", "official_evidence_kind",
+                              "trading_symbols", "official_metrics"):
+                      if entry.get(key) not in (None, "", [], {}):
+                          print(f"    {key} = {entry[key]}")
+              else:
+                  if not any(OURS in json.dumps(e) for e in found if isinstance(e, dict)):
+                      print("  ours: not present")
           PY
 
 
