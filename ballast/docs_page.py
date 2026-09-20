@@ -171,9 +171,18 @@ places could fill on it under any credentials. The only venue carrying these sym
 is the live one.</p></div>
 <p>Check it in one command:</p>
 <pre>curl -s "https://api.bitget.com/api/v2/mix/market/contracts?productType=SUSDT-FUTURES"</pre>
-<p>Checked 2026-09-19. The live <code>USDT-FUTURES</code> list carries 797 contracts,
-including all twelve. So the choice was a labelled simulation or a real order with
-real money; it simulates, and says so on every row.</p>
+<p>Re-checked 2026-09-20: still nine demo contracts, still none of the twelve. The live
+<code>USDT-FUTURES</code> list carries 797, including all twelve. So the choice was a
+labelled simulation or a real order with real money; it simulates, and says so on
+every row.</p>
+<p><strong>There are two simulations here and they are not the same thing.</strong>
+The fills above are priced by <em>this project</em> against observed market data, which
+makes them self-reported. The Playbook published to GetAgent runs its own Paper Trading
+on the platform's paper portfolio, so that one is simulated and priced by
+<em>Bitget</em> rather than by us. Neither has touched real money. As of this build the
+Playbook has opened nothing: the earliest scheduled night across its ten names is
+2026-09-30, and it holds on every night that carries no scheduled event, which is the
+whole policy rather than a gap in it.</p>
 
 <h2 id="toolchain">The Bitget toolchain</h2>
 <p>What is wired, and what each one is actually returning today. Two of the four

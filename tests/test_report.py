@@ -927,6 +927,20 @@ class TheToolchainIsStatedOnThePage(unittest.TestCase):
         self.assertAlmostEqual(net / 2000 * 100, -1.48, places=2)
         self.assertAlmostEqual(net / 100000 * 100, -0.03, places=2)
 
+    def test_the_two_simulations_are_told_apart(self):
+        """One is priced by this project, the other by Bitget's paper portfolio.
+
+        A judge reading "paper trading enabled" beside "fills are simulated"
+        would otherwise reasonably assume they are the same venue, and conclude
+        either that the platform blessed our arithmetic or that its paper
+        account is ours. Neither is true.
+        """
+        page = " ".join(self.docs().split())
+        self.assertIn("two simulations", page)
+        self.assertIn("self-reported", page,
+                      "the page does not say whose arithmetic prices the fills")
+        self.assertIn("Neither has touched real money", page)
+
     def test_the_reproducibility_claim_names_both_runs(self):
         """Two replays two days apart returned the same curve hash. That is the
         strongest single fact about this backtest and it is worth nothing if
