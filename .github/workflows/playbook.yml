@@ -1,0 +1,89 @@
+name: Playbook
+
+# Validate, upload and backtest the GetAgent Playbook.
+#
+# The Playbook API key lives only as a repository secret. It is never pasted
+# into a chat, written to disk, or placed on an argv the process table can read
+# - curl takes it from the environment through a header file on stdin.
+#
+# Manual dispatch only. This talks to a third-party control plane and costs a
+# sandbox run; it has no business firing on every push.
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "validate only, or validate then upload and backtest"
+        type: choice
+        options: [validate, backtest]
+        default: validate
+
+permissions:
+  contents: read
+
+env:
+  PACKAGE: playbook/ballast-overnight-protection
+  API: https://api.bitget.com
+
+jobs:
+  playbook:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install the GetAgent skill (brings its own validator)
+        run: |
+          npx --yes @bitget-ai/getagent-skill@latest install --client claude
+          python -m pip install --quiet pyyaml
+
+      # The package must never reach the control plane in a state its own
+      # validator rejects. This is the same check run during authoring.
+      - name: Validate the package
+        run: python "$HOME/.claude/skills/getagent/scripts/validate.py" "$PACKAGE/"
+
+      - name: The night selector must still be correct
+        run: python -m unittest tests.test_playbook -v
+
+      - name: Upload and backtest
+        if: inputs.task == 'backtest'
+        env:
+          PLAYBOOK_API_KEY: ${{ secrets.PLAYBOOK_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${PLAYBOOK_API_KEY}" ]; then
+            echo "::error::PLAYBOOK_API_KEY is not set on this repository"
+            exit 1
+          fi
+          # Header from a file, so the key is not visible in `ps`.
+          printf 'ACCESS-KEY: %s\n' "$PLAYBOOK_API_KEY" > /tmp/h
+          trap 'rm -f /tmp/h' EXIT
+
+          tar czf /tmp/package.tar.gz -C "$PACKAGE" .
+          echo "package $(stat -c%s /tmp/package.tar.gz) bytes"
+
+          curl -sS -X POST -H @/tmp/h -F "package=@/tmp/package.tar.gz" \
+            "$API/api/v1/playbook/upload" -o /tmp/upload.json
+          cat /tmp/upload.json
+          DRAFT=$(python -c "import json;print(json.load(open('/tmp/upload.json')).get('draft_id',''))")
+          if [ -z "$DRAFT" ]; then
+            echo "::error::upload returned no draft_id"
+            exit 1
+          fi
+
+          curl -sS -X POST -H @/tmp/h -H "Content-Type: application/json" \
+            -d "{\"version_id\":\"$DRAFT\"}" \
+            "$API/api/v1/playbook/run" -o /tmp/run.json
+          cat /tmp/run.json
+
+      - name: Publish the run output as an artifact
+        if: inputs.task == 'backtest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: playbook-run
+          path: |
+            /tmp/upload.json
+            /tmp/run.json
+          if-no-files-found: warn

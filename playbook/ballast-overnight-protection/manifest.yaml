@@ -1,0 +1,95 @@
+name: ballast-overnight-protection
+version: "1.0.0"
+display_name: "Ballast Overnight Protection"
+display_name_i18n:
+  en: "Ballast Overnight Protection"
+  zh: "Ballast 隔夜保护"
+  zh-tw: "Ballast 隔夜保護"
+  es: "Protección nocturna Ballast"
+  ja: "Ballast オーバーナイト保護"
+  vi: "Bảo vệ qua đêm Ballast"
+description: "Holds a short in tokenized US stock perpetuals only across scheduled-event overnight windows"
+description_i18n:
+  en: "Holds a short in tokenized US stock perpetuals only across scheduled-event overnight windows"
+  zh: "仅在有已排定事件的隔夜时段持有美股代币永续合约空头"
+  zh-tw: "僅在有已排定事件的隔夜時段持有美股代幣永續合約空頭"
+  es: "Mantiene un corto en perpetuos de acciones tokenizadas solo en ventanas nocturnas con eventos programados"
+  ja: "予定されたイベントの夜間のみ、トークン化米国株パーペチュアルのショートを保有"
+  vi: "Giữ vị thế bán khống hợp đồng vĩnh cửu cổ phiếu Mỹ token hóa chỉ trong các đêm có sự kiện"
+long_description: |
+  This Playbook aims to capture nothing at all on most nights. It is the
+  protection leg of an overnight hedge, published on its own so its cost can be
+  measured honestly. It is not an alpha strategy and makes no
+  directional claim. A tokenized US stock trades continuously, but the market that
+  prices the underlying is shut for most of the week, so a holder carries exposure
+  through earnings, through policy decisions and through weekends with no way to
+  act. The matched perpetual trades on the same clock as the token, so a short
+  against it removes almost all of that overnight variance for a stated price.
+
+  The strategy is deliberately idle almost all of the time. It enters a short position only
+  as the US cash session closes, and only on nights when a scheduled company event
+  falls inside the window between that close and the next opening bell. It exits by covering that short
+  at the reopen. On every other night it holds nothing at all, because the
+  research behind it found that trailing volatility cannot tell a risky night from
+  an ordinary one, and that hedging indiscriminately spends the premium on nights
+  that carry compensated return. The calendar, not the tape, decides when this
+  Playbook acts.
+
+  Subscribers may tune two things. The event dates list is what the Playbook
+  treats as a night worth protecting; supplying your own list lets the same
+  mechanism follow whatever calendar you trust, and leaving it empty makes the
+  Playbook protect every night, which is the indiscriminate baseline the research
+  rejects. Trade size sets the notional placed against each protected night and is
+  the denominator for the return figures.
+
+  Where it underperforms is not a defect but the product. On a protected night
+  where the stock rises, the short gives that gain back and the premium is a pure
+  cost, exactly as an insurance payment is a cost in a year without a fire. Read
+  the return figure as the price of removing those nights rather than as a
+  performance record, and read drawdown as the measure that matters. Because
+  scheduled events are sparse, this Playbook trades rarely, so any ratio computed
+  across a short window reflects the handful of nights it acted on rather than a
+  durable edge.
+market_type: contract
+trading_symbols:
+  - ORCLUSDT
+  - ADBEUSDT
+  - NVDAUSDT
+  - TSLAUSDT
+  - PLTRUSDT
+  - COINUSDT
+  - AMDUSDT
+  - MSFTUSDT
+  - MUUSDT
+  - NKEUSDT
+output_kind: trade_strategy
+decision_mode: deterministic
+backtest_support: full
+runtime_profile: deterministic
+execution_mode: follow_trade
+follow_trade_supported: true
+strategy_config:
+  trade_size: "1"
+  event_dates:
+    ORCLUSDT: "2026-09-10"
+    ADBEUSDT: "2026-09-10"
+    NVDAUSDT: "2026-08-26"
+    TSLAUSDT: "2026-07-22"
+    PLTRUSDT: "2026-08-03"
+    COINUSDT: "2026-07-30"
+    AMDUSDT: "2026-08-04"
+    MSFTUSDT: "2026-07-29"
+    MUUSDT: "2026-06-24"
+    NKEUSDT: "2026-06-30"
+user_config_schema:
+  trade_size:
+    type: string
+    description: "Notional size placed against each protected night"
+  event_dates:
+    type: object
+    description: "Per-symbol dates whose overnight window is worth protecting"
+tags:
+  - hedge
+  - rwa
+  - equities
+  - event-driven
