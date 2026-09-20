@@ -119,3 +119,51 @@ class ThePackageMatchesTheProject(unittest.TestCase):
         text = " ".join(m["long_description"].lower().split())
         self.assertIn("not an alpha strategy", text)
         self.assertIn("makes no directional claim", text)
+
+
+class WhatTheServerRejectsButTheLocalValidatorAllows(unittest.TestCase):
+    """The platform ships `scripts/validate.py`, and it is weaker than the
+    control plane behind it.
+
+    The first upload passed local validation and was rejected with four errors:
+    a stray `.pyc` inside `src/`, a `user_config_schema` type outside the
+    permitted set, a missing `margin_budget`, and a `long_description` over the
+    word cap. Each cost a round trip to a third-party API to discover. They are
+    checked here so the next one is caught before the call is made.
+    """
+
+    ALLOWED_TYPES: ClassVar[set] = {"array", "boolean", "integer", "number", "string"}
+
+    def manifest(self) -> dict:
+        import json
+        import subprocess
+        out = subprocess.run(
+            [sys.executable, "-c",
+             "import yaml,json,sys;print(json.dumps(yaml.safe_load(open(sys.argv[1]))))",
+             str(PACKAGE / "manifest.yaml")],
+            capture_output=True, text=True, check=True)
+        return json.loads(out.stdout)
+
+    def test_no_compiled_bytecode_ships_in_the_package(self):
+        """`src/**` is uploaded verbatim; a .pyc is rejected as a local-only
+        path and as non-UTF-8 text. Running these very tests creates one."""
+        stray = [str(p.relative_to(PACKAGE)) for p in PACKAGE.rglob("*")
+                 if p.suffix == ".pyc" or p.name == "__pycache__"]
+        self.assertEqual(stray, [], f"these would be uploaded: {stray}")
+
+    def test_every_declared_user_setting_has_a_permitted_type(self):
+        for field, spec in (self.manifest().get("user_config_schema") or {}).items():
+            self.assertIn(spec.get("type"), self.ALLOWED_TYPES,
+                          f"{field} declares a type the platform refuses")
+
+    def test_margin_budget_is_declared_and_positive(self):
+        """Return % is net_pnl / margin_budget, so the platform cannot compute
+        a return at all without it."""
+        budget = (self.manifest().get("strategy_config") or {}).get("margin_budget")
+        self.assertIsNotNone(budget, "margin_budget is required")
+        self.assertGreater(float(budget), 0)
+
+    def test_the_long_description_is_within_the_word_cap(self):
+        words = len(self.manifest()["long_description"].split())
+        self.assertGreaterEqual(words, 300)
+        self.assertLessEqual(words, 400, f"{words} words; the cap is 400")

@@ -35,12 +35,12 @@ long_description: |
   that carry compensated return. The calendar, not the tape, decides when this
   Playbook acts.
 
-  Subscribers may tune two things. The event dates list is what the Playbook
-  treats as a night worth protecting; supplying your own list lets the same
-  mechanism follow whatever calendar you trust, and leaving it empty makes the
-  Playbook protect every night, which is the indiscriminate baseline the research
-  rejects. Trade size sets the notional placed against each protected night and is
-  the denominator for the return figures.
+  Subscribers may tune two things. Trade size sets how much is placed against each
+  protected night; scaling it changes the premium paid without making the Playbook
+  any more selective. Margin budget is the capital cap orders are sized against and
+  the denominator for the return percentage. The nights are not a subscriber
+  setting: they come from the scheduled-event calendar, because letting the tape
+  choose them is what the research rules out.
 
   Where it underperforms is not a defect but the product. On a protected night
   where the stock rises, the short gives that gain back and the premium is a pure
@@ -70,6 +70,7 @@ execution_mode: follow_trade
 follow_trade_supported: true
 strategy_config:
   trade_size: "1"
+  margin_budget: "2000"
   event_dates:
     ORCLUSDT: "2026-09-10"
     ADBEUSDT: "2026-09-10"
@@ -84,10 +85,10 @@ strategy_config:
 user_config_schema:
   trade_size:
     type: string
-    description: "Notional size placed against each protected night"
-  event_dates:
-    type: object
-    description: "Per-symbol dates whose overnight window is worth protecting"
+    description: "Size placed against each protected night"
+  margin_budget:
+    type: string
+    description: "Capital cap this Playbook sizes against, and the denominator for return %"
 tags:
   - hedge
   - rwa

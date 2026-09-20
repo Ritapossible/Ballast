@@ -44,7 +44,12 @@ jobs:
       - name: Validate the package
         run: python "$HOME/.claude/skills/getagent/scripts/validate.py" "$PACKAGE/"
 
+      # PYTHONDONTWRITEBYTECODE, because this step imports the package's own
+      # window.py and would otherwise leave a .pyc inside src/ that the
+      # upload then rejects as a local-only path.
       - name: The night selector must still be correct
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
         run: python -m unittest tests.test_playbook -v
 
       - name: Upload and backtest
@@ -61,7 +66,8 @@ jobs:
           printf 'ACCESS-KEY: %s\n' "$PLAYBOOK_API_KEY" > /tmp/h
           trap 'rm -f /tmp/h' EXIT
 
-          tar czf /tmp/package.tar.gz -C "$PACKAGE" .
+          tar czf /tmp/package.tar.gz --exclude="__pycache__" \
+            --exclude="*.pyc" -C "$PACKAGE" .
           echo "package $(stat -c%s /tmp/package.tar.gz) bytes"
 
           curl -sS -X POST -H @/tmp/h -F "package=@/tmp/package.tar.gz" \
