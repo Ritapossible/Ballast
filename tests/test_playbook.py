@@ -243,7 +243,7 @@ class MalformedBarsAreRepairedNotHidden(unittest.TestCase):
         start = src.index("def _repair(")
         end = src.index("\ndef ", start + 1)
         namespace: dict = {}
-        exec(compile(src[start:end], "_repair", "exec"), namespace)  # noqa: S102
+        exec(compile(src[start:end], "_repair", "exec"), namespace)
         return namespace["_repair"](self.frame(rows))
 
     def test_a_high_below_the_open_is_lifted_to_the_open(self):
