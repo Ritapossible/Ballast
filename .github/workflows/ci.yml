@@ -84,7 +84,8 @@ jobs:
       # The README claimed 224 of 704 rTokens while facts.json said 241 of 1173.
       # Its figures are generated now, and this fails if they drift again.
       - name: README figures match docs/facts.json
-        run: python tools/readme_facts.py --check
+        run: |
+          python tools/readme_facts.py --check
           python tools/submission_counts.py --check
 
       - name: Ledger and mandate self-check

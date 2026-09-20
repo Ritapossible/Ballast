@@ -145,9 +145,32 @@ class ReadmeLeadsWithTheDemoCase(unittest.TestCase):
     def _readme(self) -> str:
         return (Path(__file__).resolve().parent.parent / "README.md").read_text()
 
+    def _submission(self) -> str:
+        return (
+            Path(__file__).resolve().parent.parent / "docs" / "SUBMISSION.md"
+        ).read_text()
+
     def test_the_live_site_is_linked_above_the_fold(self):
         head = self._readme().split("## ")[0]
-        self.assertIn("ballast-v1.vercel.app", head)
+        self.assertRegex(head, r"https://[\w.-]+/tonight")
+
+    def test_the_readme_and_the_submission_name_the_same_host(self):
+        """The site moved hosts and only one of the two documents followed.
+
+        For a day the README pointed at a deployment that had stopped
+        rebuilding, so it served a figure the repo had already corrected.
+        """
+        host = re.compile(r"https://([\w.-]+)/?")
+        readme_hosts = {
+            h
+            for h in host.findall(self._readme().split("## ")[0])
+            if "github.com" not in h and "shields.io" not in h
+        }
+        demo = [
+            line for line in self._submission().splitlines() if "**Demo**" in line
+        ]
+        self.assertEqual(len(demo), 1, "the submission has no single demo row")
+        self.assertEqual(readme_hosts, set(host.findall(demo[0])))
 
     def test_the_licence_is_where_people_look_for_it(self):
         sections = [s.split("\n", 1)[0] for s in self._readme().split("\n## ")[1:]]

@@ -9,7 +9,7 @@ each is reproducible from `research/` with no API key.
 | **Track** | Agentic Trading |
 | **Sub-theme** | Event-Driven Agent |
 | **Project** | Ballast |
-| **Demo** | https://ballast-v1.vercel.app · docs at `/docs` |
+| **Demo** | https://ballast-8694.onrender.com · docs at `/docs` |
 | **Code** | https://github.com/Ritapossible/Ballast |
 | **X post** | ⚠️ *fill in - must include `#BitgetHackathon` and `@Bitget_AI`* |
 
@@ -165,7 +165,7 @@ Gate 1 result behaving as measured, on live data, decided by a job nobody was wa
 executor → ledger), morning settlement against the exact counterfactual, the signed
 tamper-evident ledger, the enforcer and its red-team suite, the Qwen event reader with three
 verification gates, the research suite behind every number, a scheduled workflow that runs
-and commits unattended, and a public site with full documentation. **418 tests, network-free
+and commits unattended, and a public site with full documentation. **421 tests, network-free
 and key-free.**
 
 **Not built:** live execution (paper only, by choice); Bitget Agentic Account OAuth wiring -
@@ -239,14 +239,14 @@ market API (spot + USDT-futures), Nasdaq earnings calendar, Google News RSS, Qwe
 
 | | |
 |---|---|
-| **Live demo** | https://ballast-v1.vercel.app |
-| **Reader vs calendar** | https://ballast-v1.vercel.app/reader - every night the model reached a different answer from the deterministic rule, with the derivation checked against the ledger |
-| **Documentation** | https://ballast-v1.vercel.app/docs - 21 sections incl. the defects found and the roadmap |
+| **Live demo** | https://ballast-8694.onrender.com |
+| **Reader vs calendar** | https://ballast-8694.onrender.com/reader - every night the model reached a different answer from the deterministic rule, with the derivation checked against the ledger |
+| **Documentation** | https://ballast-8694.onrender.com/docs - 21 sections incl. the defects found and the roadmap |
 | **Source** | https://github.com/Ritapossible/Ballast |
 | **Paper trading log** | `state/ledger.jsonl` - hash-chained, signed, committed by the scheduled job |
 | **Bitget-schema log** | `state/bitget_orders.json` - the same fills in UTA order field names |
 | **Research suite** | `research/` - reproduces every figure, no API key needed |
-| **Tests** | `python3 -m unittest discover -s tests` - 418, network-free, incl. 31 end-to-end |
+| **Tests** | `python3 -m unittest discover -s tests` - 421, network-free, incl. 31 end-to-end |
 | **Workflows** | `.github/workflows/` - nightly loop and CI |
 
 **Why the log is evidence rather than assertion:** each decision is written before its
