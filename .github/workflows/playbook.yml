@@ -209,9 +209,18 @@ jobs:
           print("=== the basis question: which denominator? ===")
           m = b.get("metrics_output") or {}
           for key in ("total_return_pct", "account_total_return_pct", "net_pnl",
-                      "starting_balance", "max_drawdown_pct",
-                      "account_max_drawdown_pct"):
+                      "starting_balance", "margin_budget", "metrics_basis",
+                      "max_drawdown_pct", "account_max_drawdown_pct"):
               print(f"  {key} = {m.get(key)}")
+
+          # Last, because a long log gets read from the end: the ids the
+          # confirm and publish tasks need.
+          print()
+          print("=== ids ===")
+          for key in ("run_id", "playbook_id", "version_id", "strategy_id",
+                      "draft_id", "temporary_id", "status"):
+              if b.get(key):
+                  print(f"  {key} = {b[key]}")
           PY
 
 
