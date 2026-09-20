@@ -19,6 +19,12 @@ from typing import ClassVar
 
 PACKAGE = Path(__file__).resolve().parent.parent / "playbook" / \
     "ballast-overnight-protection"
+
+# Importing window.py writes a .pyc into the package, which the upload rejects
+# as a local-only path - and which the guard below would then correctly find,
+# failing verify.py for a file these very tests created. Stop it being written
+# rather than clean it up afterwards and hope the ordering holds.
+sys.dont_write_bytecode = True
 sys.path.insert(0, str(PACKAGE / "src"))
 
 import window  # noqa: E402

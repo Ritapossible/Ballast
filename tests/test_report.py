@@ -810,3 +810,97 @@ class TheVenueIsOnThePage(unittest.TestCase):
                          "venue_detail": "Bitget Agent Hub, paper-trading"},
                         {"venue": "bgc-paper", "orderId": "1234567890"})
         self.assertNotIn("Why it refuses", out)
+
+
+class TheCostSentenceAddsUp(unittest.TestCase):
+    """The landing page said the hedge cost 12 bp "less the funding a short
+    collects, which averages 11 bp a night".
+
+    11.3 is the cost NET of funding, not the funding. The real credit is the
+    difference, 0.7 bp - so the sentence overstated what funding gives back by
+    about sixteen times, in the flattering direction, on the first screen a
+    judge sees. Three figures that each came from facts.json, arranged into a
+    claim none of them supported.
+    """
+
+    def facts(self) -> dict:
+        from ballast import facts
+        return facts.load()
+
+    def test_the_credit_quoted_is_gross_minus_net(self):
+        import re
+        f = self.facts()
+        page = build_site([])["index.html"]
+        quoted = re.search(r"net of the ([\d.]+) bp", " ".join(page.split()))
+        self.assertIsNotNone(quoted, "the cost sentence lost its funding figure")
+        self.assertAlmostEqual(
+            float(quoted.group(1)),
+            f["hedge_cost_gross_bp"] - f["hedge_cost_bp"], places=1,
+            msg="the funding credit on the page is not gross minus net")
+
+    def test_the_credit_matches_what_was_measured(self):
+        """facts.json carries the measured per-name mean separately; the
+        arithmetic and the measurement must agree."""
+        f = self.facts()
+        measured = (f.get("funding") or {}).get("mean_bp")
+        if measured is None:
+            self.skipTest("no funding measurement in facts.json")
+        self.assertAlmostEqual(f["hedge_cost_gross_bp"] - f["hedge_cost_bp"],
+                               measured, places=1)
+
+
+class TheToolchainIsStatedOnThePage(unittest.TestCase):
+    """The submission claims five Bitget components. Two of them are reachable
+    but returning nothing, and for a while the site mentioned none of the five.
+
+    A form that lists an integration the demo never shows is overclaiming, and
+    the two that carry no data are exactly the ones a judge would assume work.
+    """
+
+    def docs(self) -> str:
+        import tempfile
+        from unittest import mock
+
+        from ballast import config, docs_page
+        from ballast.ledger import Ledger
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "ledger.jsonl"
+            Ledger(path, b"t").append("night_summary", {"session": "2026-09-18"})
+            with mock.patch.object(config, "LEDGER_PATH", path), \
+                 mock.patch.object(config, "secret", return_value=b"t"), \
+                 mock.patch.object(config, "STATE", Path(d)), \
+                 mock.patch.object(docs_page, "OUT", Path(d) / "docs.html"):
+                return docs_page.build().read_text()
+
+    def test_every_claimed_component_appears(self):
+        page = self.docs()
+        for component in ("bgc", "Qwen", "bitget-mcp-server", "bitget-signal",
+                          "Playbook"):
+            self.assertIn(component, page, f"{component} is claimed but not shown")
+
+    def test_the_two_that_return_nothing_say_so(self):
+        page = " ".join(self.docs().split())
+        self.assertIn("503", page)
+        self.assertIn("44 feeds, 0 articles", page)
+
+    def test_the_playbook_number_is_not_passed_off_as_the_product_metric(self):
+        """It prices one leg. Ballast's claim is two-legged drawdown."""
+        page = " ".join(self.docs().split())
+        self.assertIn("pbrun-e920a23cc1c7", page)
+        self.assertIn("protection leg alone", page)
+        self.assertIn("not this product", page)
+
+    def test_the_negative_sharpe_is_not_hidden(self):
+        self.assertIn("0.76 Sharpe", " ".join(self.docs().split()))
+
+
+class TheOverviewDoesNotCarryTheOneLegNumber(unittest.TestCase):
+    """Track 2 scores 50% on quantitative results. The Playbook's -0.76 is a
+    one-leg premium, not this product's metric, so it belongs in the docs beside
+    its caveat and nowhere a scorer would lift it from."""
+
+    def test_the_landing_page_quotes_no_playbook_figure(self):
+        index = " ".join(build_site([])["index.html"].split())
+        for figure in ("pbrun-", "-0.76", "\u22120.76", "-1.48", "\u22121.48"):
+            self.assertNotIn(figure, index,
+                             f"{figure} is a one-leg number on the landing page")

@@ -614,9 +614,9 @@ class Site:
 <p class="lede">Tokenized US stocks trade around the clock. The market that prices
 them is shut for <span class="hl">81% of the week</span> - through earnings, through
 the Fed, through weekends. Ballast keeps the position and switches the night off for
-about <span class="hl">{self.f['hedge_cost_gross_bp']:.0f} basis points</span> - less
-the funding a short collects, which averages {self.f['hedge_cost_bp']:.0f} bp a night but
-is a rate rather than a promise.</p>
+about <span class="hl">{self.f['hedge_cost_gross_bp']:.0f} basis points</span>, or
+{self.f['hedge_cost_bp']} net of the {self.f['hedge_cost_gross_bp'] - self.f['hedge_cost_bp']:.1f} bp
+a short collects in funding - a rate, not a promise.</p>
 <div class="row">
 <a class="btn btn-p" href="tonight.html">Tonight's decisions</a>
 <a class="btn btn-s" href="docs.html">Read the docs</a>

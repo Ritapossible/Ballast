@@ -21,6 +21,7 @@ SECTIONS = [
     ("Mechanism", [("hedge", "The hedge"), ("selector", "Choosing the night"),
                    ("policy", "The decision policy")]),
     ("System", [("architecture", "Architecture"), ("execution", "Where orders go"),
+                ("toolchain", "The Bitget toolchain"),
                 ("authority", "Bounded authority"),
                 ("ledger", "The ledger"), ("settlement", "Settlement")]),
     ("Evidence", [("research", "Research findings"), ("defects", "Defects found"),
@@ -173,6 +174,48 @@ is the live one.</p></div>
 <p>Checked 2026-09-19. The live <code>USDT-FUTURES</code> list carries 797 contracts,
 including all twelve. So the choice was a labelled simulation or a real order with
 real money; it simulates, and says so on every row.</p>
+
+<h2 id="toolchain">The Bitget toolchain</h2>
+<p>What is wired, and what each one is actually returning today. Two of the four
+are reachable but carrying no data, and that is stated here rather than left for
+someone to discover.</p>
+<div class="scroll stacked"><table><thead><tr><th>Component</th><th>State</th>
+<th>What it does here</th></tr></thead><tbody>
+<tr><td data-label=""><strong>Agent Hub CLI</strong> (<code>bgc</code>)</td>
+<td data-label="State"><span class="tag on">routing</span></td>
+<td class="wrap" data-label="What it does">Every admitted hedge since 2026-09-14 is sent through
+<code>bgc --paper-trading</code>. Bitget answers <code>HTTP 400: exchange environment is
+incorrect</code> on every one, because its practice venue lists nine contracts and none of
+this book&rsquo;s twelve stocks. The fill is then priced against the market and the row says so.</td></tr>
+<tr><td data-label=""><strong>Qwen</strong> <code>qwen3.8-max</code></td>
+<td data-label="State"><span class="tag on">deciding</span></td>
+<td class="wrap" data-label="What it does">The event reader. Owns the hedge judgment behind schema,
+identity and grounding gates; 12 of 96 answers were refused for quoting a headline that was not
+in the supplied sources.</td></tr>
+<tr><td data-label=""><strong>bitget-mcp-server</strong></td>
+<td data-label="State"><span class="tag">no data</span></td>
+<td class="wrap" data-label="What it does">A second opinion on the earnings calendar, asked for every
+decision on the chain. The catalog is reachable; the <code>equity_calendar_earnings</code> upstream
+answers <strong>503</strong>, so every row is recorded <code>unknown</code> rather than counted as
+agreement. A second source that fails open is worse than none.</td></tr>
+<tr><td data-label=""><strong>bitget-signal</strong></td>
+<td data-label="State"><span class="tag">no data</span></td>
+<td class="wrap" data-label="What it does">All 19 research tools reachable, no key needed. Every one
+returns an empty envelope &mdash; the news aggregator reports <strong>44 feeds, 0 articles</strong>.
+Confirmed to be the service and not this client by calling the same server through a second,
+unrelated client on a different network.</td></tr>
+<tr><td data-label=""><strong>Playbook</strong> / GetAgent</td>
+<td data-label="State"><span class="tag on">backtested</span></td>
+<td class="wrap" data-label="What it does">Sandbox run <code>pbrun-e920a23cc1c7</code> over ten RWA stock
+perpetuals, 2026-06-21 to 2026-09-18: <strong>&minus;1.48% return, 3.76% max drawdown, 0.40 win
+rate, 20 trades, &minus;0.76 Sharpe</strong>. That is the <em>protection leg alone</em> &mdash; the
+harness holds one instrument list and cannot carry the spot it hedges &mdash; so a negative return
+over a rising window is the premium, not a failed strategy.</td></tr>
+</tbody></table></div>
+<div class="callout"><p><strong>The Playbook number is not this product&rsquo;s metric.</strong>
+It prices one leg in isolation. What Ballast claims is measured on the live ledger, two-legged,
+on the <a href="settled.html">Settled</a> page &mdash; and the claim is drawdown removed, never
+return earned.</p></div>
 
 <h2 id="authority">Bounded authority</h2>
 <div class="callout"><p><strong>Ballast cannot place a bet.</strong> Every order it is
