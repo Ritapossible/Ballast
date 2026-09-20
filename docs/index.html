@@ -22,16 +22,17 @@ a{color:inherit}
 .chrome{position:sticky;top:0;z-index:30;background:rgba(7,7,8,.94);
   backdrop-filter:blur(14px)}
 .top{border-bottom:1px solid var(--line)}
-.top-in{max-width:1120px;margin:0 auto;padding:15px 22px;
-  display:flex;align-items:center;justify-content:space-between;gap:16px}
+.top-in{max-width:1120px;margin:0 auto;padding:11px 22px;
+  display:flex;align-items:center;gap:30px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:11px;font-weight:700;
-  letter-spacing:-.01em;font-size:20px;text-decoration:none}
+  letter-spacing:-.01em;font-size:20px;text-decoration:none;flex:none}
 .mark{width:24px;height:24px;flex:none}
-.nav{border-bottom:1px solid var(--line);
+.top-cta{margin-left:auto;flex:none}
+.nav{flex:1 1 auto;min-width:0;
   overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .nav::-webkit-scrollbar{display:none}
-.nav-in{max-width:1120px;margin:0 auto;padding:0 22px;display:flex;gap:30px;white-space:nowrap}
-.nav a{color:var(--mid);text-decoration:none;font-size:15px;padding:14px 0;
+.nav-in{display:flex;gap:30px;white-space:nowrap}
+.nav a{color:var(--mid);text-decoration:none;font-size:15px;padding:13px 0;
   border-bottom:2px solid transparent}
 .nav a:hover{color:var(--fg)}
 .nav a.on{color:var(--fg);border-bottom-color:var(--accent)}
@@ -239,10 +240,21 @@ code{font-family:var(--mono);font-size:.9em;background:var(--surface);
   .tiles .tile:last-child:nth-child(odd){grid-column:1/-1}
   .tile .n{font-size:25px}
 }
+/* Below this, six sections and an action will not share a line with the
+   brand. The nav drops to its own full-width scrolling strip underneath -
+   the arrangement the phone had all along - and the action sits beside the
+   brand on the first row. */
+@media(max-width:900px){
+  .top-in{padding:11px 22px 0;gap:16px;row-gap:0}
+  .top-cta{order:2}
+  .nav{order:3;flex-basis:100%;border-top:1px solid var(--line);margin-top:11px}
+  .nav-in{gap:26px}
+  .nav a{padding:12px 0}
+}
 @media(max-width:640px){
   section{padding:56px 0}
-  .top-in{padding:12px 18px}
-  .nav-in{padding:0 18px;gap:22px}
+  .top-in{padding:10px 18px 0}
+  .nav-in{gap:22px}
   .wrap{padding:0 18px}
   .brand{font-size:18px}
   .btn{padding:11px 18px;font-size:14.5px}
@@ -256,9 +268,21 @@ code{font-family:var(--mono);font-size:.9em;background:var(--surface);
   .nav-in{gap:18px}
 }
 
-footer{padding:48px 0 76px;color:var(--dim);font-size:13.5px}
+/* The footer was a left-aligned run-on under a centred page. It carries the
+   only source link on every page, so it is the one piece of chrome a reader
+   looks for deliberately - it gets the mark and the middle of the column. */
+footer{padding:56px 0 72px;color:var(--dim);font-size:13.5px;
+  border-top:1px solid var(--line)}
 footer a{color:var(--mid)}
-</style></head><body><div class="chrome"><header class="top"><div class="top-in"><a class="brand" href="index.html"><svg class="mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 8h14M5 16h14" stroke="#00d9ec" stroke-width="1.5" stroke-linecap="round" opacity=".38"/><path d="M12 2.5v19" stroke="#00d9ec" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="3.6" fill="#00d9ec"/></svg>BALLAST</a><a class="btn btn-p" href="tonight.html">See tonight</a></div></header><nav class="nav"><div class="nav-in"><a class="on" href="index.html">Overview</a><a class="" href="tonight.html">Tonight</a><a class="" href="settled.html">Settled</a><a class="" href="reader.html">Reader</a><a class="" href="evidence.html">Evidence</a><a class="" href="docs.html">Docs</a></div></nav></div><main>
+footer a:hover{color:var(--accent)}
+.foot{text-align:center;display:flex;flex-direction:column;align-items:center;
+  gap:9px}
+.foot-brand{font-size:17px;color:var(--fg);opacity:.92}
+.foot-brand .mark{width:20px;height:20px}
+.foot-line{margin:0;color:var(--mid);max-width:46ch}
+.foot-meta{margin:0}
+.foot-sep{opacity:.5;padding:0 3px}
+</style></head><body><div class="chrome"><header class="top"><div class="top-in"><a class="brand" href="index.html"><svg class="mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 8h14M5 16h14" stroke="#00d9ec" stroke-width="1.5" stroke-linecap="round" opacity=".38"/><path d="M12 2.5v19" stroke="#00d9ec" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="3.6" fill="#00d9ec"/></svg>BALLAST</a><nav class="nav" aria-label="Sections"><div class="nav-in"><a class="on" href="index.html">Overview</a><a class="" href="tonight.html">Tonight</a><a class="" href="settled.html">Settled</a><a class="" href="reader.html">Reader</a><a class="" href="evidence.html">Evidence</a><a class="" href="docs.html">Docs</a></div></nav><a class="btn btn-p top-cta" href="tonight.html">See tonight</a></div></header></div><main>
 <section class="bd"><div class="wrap center">
 <h1>Hold the position.<br>Not the night's risk.</h1>
 <p class="lede">Tokenized US stocks trade around the clock. The market that prices
@@ -315,4 +339,4 @@ what the position would have done unhedged is observed, not modelled.</p></div>
 <p>What is proven, what is merely observed, and what is deliberately not claimed -
 plus the commands to reproduce every figure yourself.</p></div>
 </div>
-</div></section></main><footer><div class="wrap">Ballast - overnight risk transfer for tokenized US stocks.<br><a href="https://github.com/Ritapossible/Ballast">source</a> · paper trading only, not financial advice.</div></footer></body></html>
+</div></section></main><footer><div class="wrap foot"><a class="brand foot-brand" href="index.html"><svg class="mark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 8h14M5 16h14" stroke="#00d9ec" stroke-width="1.5" stroke-linecap="round" opacity=".38"/><path d="M12 2.5v19" stroke="#00d9ec" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="12" r="3.6" fill="#00d9ec"/></svg>BALLAST</a><p class="foot-line">Overnight risk transfer for tokenized US stocks.</p><p class="foot-meta"><a href="https://github.com/Ritapossible/Ballast">source</a> <span class="foot-sep">·</span> paper trading only, not financial advice.</p></div></footer></body></html>
