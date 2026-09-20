@@ -44,7 +44,7 @@ that opens a long.
 
 ## Measured
 
-Published as **v0.0.1** on 2026-09-20. Sandbox run `pbrun-e920a23cc1c7`,
+Published as **v0.0.2** on 2026-09-20. Sandbox run `pbrun-60a1da0970b5`,
 over 2026-06-21 → 2026-09-18, on a real 2,121-point equity curve
 (`curve_hash 096c4d1e…f433f`):
 
@@ -74,6 +74,13 @@ depend on the denominator.
 
 One run, one loss, two denominators. Quoting either without naming which would
 flatter or frighten depending on what a reader assumed, so both are here.
+
+**Reproducible, not a snapshot.** The same package was replayed twice, two
+days apart — `pbrun-e920a23cc1c7` at 2026-09-20 00:33Z and `pbrun-60a1da0970b5`
+at 14:53Z. The platform returned the same five figures to four significant
+digits *and the same NAV curve hash*, `096c4d1e…f433f`. The replay window is
+pinned to closed bars, so a run taken a week from now should still land on that
+hash; if it does not, something changed upstream and the figure here is stale.
 
 **The negative return is the product, not a failure of it.** This Playbook buys
 protection on 10 scheduled-event nights and holds nothing on the other ~55. Over

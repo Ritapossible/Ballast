@@ -886,7 +886,7 @@ class TheToolchainIsStatedOnThePage(unittest.TestCase):
     def test_the_playbook_number_is_not_passed_off_as_the_product_metric(self):
         """It prices one leg. Ballast's claim is two-legged drawdown."""
         page = " ".join(self.docs().split())
-        self.assertIn("pbrun-e920a23cc1c7", page)
+        self.assertIn("pbrun-60a1da0970b5", page)
         self.assertIn("protection leg alone", page)
         self.assertIn("not this product", page)
 
@@ -927,6 +927,16 @@ class TheToolchainIsStatedOnThePage(unittest.TestCase):
         self.assertAlmostEqual(net / 2000 * 100, -1.48, places=2)
         self.assertAlmostEqual(net / 100000 * 100, -0.03, places=2)
 
+    def test_the_reproducibility_claim_names_both_runs(self):
+        """Two replays two days apart returned the same curve hash. That is the
+        strongest single fact about this backtest and it is worth nothing if
+        the page asserts it without naming what can be re-derived."""
+        page = " ".join(self.docs().split())
+        self.assertIn("096c4d1e", page, "the curve hash is claimed but not shown")
+        self.assertIn("two days apart", page)
+        self.assertIn("pbrun-60a1da0970b5", page,
+                      "the page cites a run the published version did not use")
+
     def test_the_equity_curve_behind_the_publish_is_named(self):
         """Publishing a backtest_support: full Playbook is gated on a real
         equity curve rather than aggregate metrics alone. Saying the run has
@@ -934,7 +944,7 @@ class TheToolchainIsStatedOnThePage(unittest.TestCase):
         claim and a number someone could have typed."""
         page = " ".join(self.docs().split())
         self.assertIn("2,121-point equity curve", page)
-        self.assertIn("published v0.0.1", page)
+        self.assertIn("published v0.0.2", page)
 
 
 class TheOverviewDoesNotCarryTheOneLegNumber(unittest.TestCase):
