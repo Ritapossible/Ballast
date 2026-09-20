@@ -73,7 +73,12 @@ jobs:
           curl -sS -X POST -H @/tmp/h -F "package=@/tmp/package.tar.gz" \
             "$API/api/v1/playbook/upload" -o /tmp/upload.json
           cat /tmp/upload.json
-          DRAFT=$(python -c "import json;print(json.load(open('/tmp/upload.json')).get('draft_id',''))")
+          # The API reference documents a flat success body; the live service
+          # nests it under "data". Read both rather than trusting either.
+          DRAFT=$(python -c "
+          import json
+          d = json.load(open('/tmp/upload.json'))
+          print(d.get('draft_id') or (d.get('data') or {}).get('draft_id') or '')")
           if [ -z "$DRAFT" ]; then
             echo "::error::upload returned no draft_id"
             exit 1
@@ -83,6 +88,13 @@ jobs:
             -d "{\"version_id\":\"$DRAFT\"}" \
             "$API/api/v1/playbook/run" -o /tmp/run.json
           cat /tmp/run.json
+          python -c "
+          import json
+          d = json.load(open('/tmp/run.json'))
+          body = d.get('data') if isinstance(d.get('data'), dict) else d
+          print('run id:', body.get('run_id') or body.get('id') or '(none reported)')
+          print('status:', body.get('status') or d.get('msg') or d.get('code'))"
+
 
       - name: Publish the run output as an artifact
         if: inputs.task == 'backtest'
