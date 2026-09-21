@@ -1027,6 +1027,38 @@ class TheToolchainIsStatedOnThePage(unittest.TestCase):
         self.assertIn("strategy basis", page)
         self.assertIn("2,000 USDT margin budget", page)
         self.assertIn("29.62 USDT", page)
+
+    def test_both_denominators_are_the_same_loss(self):
+        """The page quotes one run on two bases, so the two must reconcile.
+
+        -29.619686 USDT is -1.481% of a 2,000 margin budget and -0.0296% of the
+        100,000 the sandbox opened with. Both figures are on the page; if either
+        is edited alone, the run has silently become two different runs. The
+        account-basis pair was checked against `official_metrics` on the
+        published listing, which carries net_pnl and starting_balance directly.
+        """
+        page = " ".join(self.docs().split())
+        self.assertAlmostEqual(-29.619686 / 100_000 * 100, -0.0296, places=4)
+        self.assertIn("&minus;1.48% return", page,
+                      "the strategy-basis return is not on the page")
+        self.assertIn("&minus;0.03% return and 0.08% drawdown", page,
+                      "the account-basis pair is not on the page")
+        self.assertIn("<code>net_pnl</code> and <code>starting_balance</code> directly", page,
+                      "the page does not say where the account-basis pair comes from")
+
+    def test_the_studio_state_is_not_stated_two_ways_at_once(self):
+        """Paper Degraded cleared to Paper Running. A page that reports the
+        cleared state as current is the 503 mistake again - so the old state may
+        only appear as something that was, and the claim it protected (no Studio
+        decision) has to survive the update, because that one is still true."""
+        page = " ".join(self.docs().split())
+        self.assertIn("Paper Running", page, "the page has not caught up to Studio")
+        self.assertNotIn("Studio then showed <strong>Paper Degraded", page,
+                         "the page still reports Paper Degraded as the current state")
+        self.assertIn("no valid decision recorded", page,
+                      "the page dropped the caveat that no Studio decision exists")
+        self.assertIn("0.00% is an empty account", page,
+                      "the page no longer explains what the 0.00% is")
         self.assertAlmostEqual(-29.62 / 2000 * 100, -1.48, places=2)
 
     def test_both_denominators_are_named_because_the_card_shows_the_other(self):
@@ -1049,13 +1081,18 @@ class TheToolchainIsStatedOnThePage(unittest.TestCase):
 
     def test_the_studio_paper_state_is_stated_not_implied(self):
         """A $10,000 Studio balance at 0.00% next to "paper trading" reads as a
-        flat run. It is an empty one: the account is Paper Degraded pending
-        validation and has recorded no decision. Saying so is the difference
-        between a judge scoring an empty surface as a result and reading the
-        ledger, which is the actual run log."""
+        flat run. It is an empty one, and that is the claim this guards.
+
+        It used to assert the literal string "Paper Degraded", which is a
+        transient status - it cleared to Paper Running the next day and took
+        this test red with it, for a page that had got *more* accurate. The
+        durable property is that the 0.00% is explained, whatever Studio is
+        currently reporting.
+        """
         page = " ".join(self.docs().split())
-        self.assertIn("Paper Degraded", page)
-        self.assertIn("no Studio decision has been recorded", page)
+        self.assertIn("no valid decision recorded", page)
+        self.assertIn("0.00% is an empty account", page)
+        self.assertIn("not a Track 2 run log", page)
         self.assertIn("not a Track 2 run log", page)
 
     def test_the_two_simulations_are_told_apart(self):
