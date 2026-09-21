@@ -435,9 +435,9 @@ Playbook has opened nothing: the earliest scheduled night across its ten names i
 whole policy rather than a gap in it.</p>
 
 <h2 id="toolchain">The Bitget toolchain</h2>
-<p>What is wired, and what each one is actually returning today. Two of the four
-are reachable but carrying no data, and that is stated here rather than left for
-someone to discover.</p>
+<p>What is wired, and what each one is actually returning today. Two of them answer
+less than their name suggests, and one of those two answers more than this page used to
+claim &mdash; both are stated here rather than left for someone to discover.</p>
 <div class="scroll stacked"><table><thead><tr><th>Component</th><th>State</th>
 <th>What it does here</th></tr></thead><tbody>
 <tr><td data-label=""><strong>Agent Hub CLI</strong> (<code>bgc</code>)</td>
@@ -463,11 +463,29 @@ release time and covered a night early. An independent source, asked the same qu
 exactly the rows we had already marked wrong. It still does not decide anything; re-pointing the
 selector days before a submission would invalidate the record the change is meant to support.</td></tr>
 <tr><td data-label=""><strong>bitget-signal</strong></td>
-<td data-label="State"><span class="tag">no data</span></td>
-<td class="wrap" data-label="What it does">All 19 research tools reachable, no key needed. Every one
-returns an empty envelope &mdash; the news aggregator reports <strong>44 feeds, 0 articles</strong>.
-Confirmed to be the service and not this client by calling the same server through a second,
-unrelated client on a different network.</td></tr>
+<td data-label="State"><span class="tag on">answering in halves</span></td>
+<td class="wrap" data-label="What it does">19 research tools, no key needed. <strong>This row used to
+say every one of them returned an empty envelope, and that this had been &ldquo;confirmed to be the
+service and not this client&rdquo;. That was wrong, and how it was wrong is the part worth
+keeping.</strong> Every tool requires an <code>action</code>, and a call without one is
+<em>answered</em> rather than rejected: <code>technical_analysis</code> replies
+<code>{"error": "Unknown action: "}</code>, which is indistinguishable at a glance from the
+<code>{"error": ""}</code> a dead upstream returns. A sweep that called each tool bare therefore
+read a client error back from all nineteen and published it as a measurement of the service &mdash;
+including from the one tool that has real data behind it. Asked properly, the service splits:
+<strong>5 of 5 catalogue actions</strong> answer from real tables (the news aggregator lists
+<strong>44 feeds</strong>), and <strong>1 of 9 fetch-backed actions</strong> carries anything
+&mdash; the news is still <strong>0 articles across those 44 feeds</strong>. The one that does is
+<code>technical_analysis</code>, which holds its own bars: <strong>9 of the 12 names in this
+book</strong> price, <strong>ADBE, COST and NKE</strong> do not, and the invented ticker
+<code>ZZZZQQ</code> is refused rather than answered &mdash; so those indicators are computed, not
+decorative. One more worth printing: <code>rates_yields/yield_curve</code> reports
+<code>inverted: false</code> and a 10y&ndash;2y spread of <code>0.0</code> sitting on top of six
+maturities that each came back empty. A conclusion built from six failures, presented as a fact
+&mdash; which is the exact thing this project exists to argue against, found in a service we were
+one commit away from writing off as simply dead. Measured by
+<code>python3 -m ballast.signal_probe</code> into <code>state/signal_probe.json</code>; still not
+wired into the decision path.</td></tr>
 <tr><td data-label=""><strong>Playbook</strong> / GetAgent</td>
 <td data-label="State"><span class="tag on">published v0.0.2</span></td>
 <td class="wrap" data-label="What it does">Sandbox run <code>pbrun-60a1da0970b5</code> over ten RWA stock
