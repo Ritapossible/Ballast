@@ -1,0 +1,166 @@
+{
+ "built_on": "2026-09-21T15:35:03+00:00",
+ "counts": {
+  "catalog_probed": 5,
+  "catalog_with_data": 5,
+  "empty": 8,
+  "live_probed": 9,
+  "live_with_data": 1,
+  "probed": 14,
+  "unreachable": 0,
+  "with_data": 6
+ },
+ "coverage": {
+  "answered": [
+   "AMD",
+   "COIN",
+   "MSFT",
+   "MU",
+   "NVDA",
+   "ORCL",
+   "PLTR",
+   "SPY",
+   "TSLA"
+  ],
+  "asked": 12,
+  "control_refused": true,
+  "control_ticker": "ZZZZQQ",
+  "missing": [
+   "ADBE",
+   "COST",
+   "NKE"
+  ],
+  "unreachable": []
+ },
+ "no_action_reply": "{\"error\": \"Unknown action: \"}",
+ "rows": [
+  {
+   "action": "sources",
+   "count": 44,
+   "detail": "44 feeds",
+   "kind": "catalog",
+   "tool": "news_feed",
+   "unit": "feeds",
+   "verdict": "data"
+  },
+  {
+   "action": "series_list",
+   "count": 18,
+   "detail": "18 series",
+   "kind": "catalog",
+   "tool": "macro_indicators",
+   "unit": "series",
+   "verdict": "data"
+  },
+  {
+   "action": "series_list",
+   "count": 17,
+   "detail": "17 rates",
+   "kind": "catalog",
+   "tool": "rates_yields",
+   "unit": "rates",
+   "verdict": "data"
+  },
+  {
+   "action": "assets_list",
+   "count": 15,
+   "detail": "15 symbols",
+   "kind": "catalog",
+   "tool": "cross_asset",
+   "unit": "symbols",
+   "verdict": "data"
+  },
+  {
+   "action": "platforms",
+   "count": 19,
+   "detail": "19 platforms",
+   "kind": "catalog",
+   "tool": "social_trending",
+   "unit": "platforms",
+   "verdict": "data"
+  },
+  {
+   "action": "latest",
+   "count": 0,
+   "detail": "0 articles",
+   "kind": "live",
+   "tool": "news_feed",
+   "unit": "articles",
+   "verdict": "empty"
+  },
+  {
+   "action": "earnings",
+   "count": 0,
+   "detail": "0 entries",
+   "kind": "live",
+   "tool": "tradfi_news",
+   "unit": "entries",
+   "verdict": "empty"
+  },
+  {
+   "action": "news",
+   "count": 0,
+   "detail": "0 entries",
+   "kind": "live",
+   "tool": "tradfi_news",
+   "unit": "entries",
+   "verdict": "empty"
+  },
+  {
+   "action": "latest_release",
+   "count": 0,
+   "detail": "0 entries",
+   "kind": "live",
+   "tool": "macro_indicators",
+   "unit": "entries",
+   "verdict": "empty"
+  },
+  {
+   "action": "yield_curve",
+   "count": 0,
+   "detail": "0 maturities",
+   "kind": "live",
+   "tool": "rates_yields",
+   "unit": "maturities",
+   "verdict": "empty"
+  },
+  {
+   "action": "current",
+   "count": 0,
+   "detail": "0 entries",
+   "kind": "live",
+   "tool": "sentiment_index",
+   "unit": "entries",
+   "verdict": "empty"
+  },
+  {
+   "action": "price",
+   "count": 0,
+   "detail": "0 entries",
+   "kind": "live",
+   "tool": "global_assets",
+   "unit": "entries",
+   "verdict": "empty"
+  },
+  {
+   "action": "price",
+   "count": 0,
+   "detail": "0 entries",
+   "kind": "live",
+   "tool": "crypto_price",
+   "unit": "entries",
+   "verdict": "empty"
+  },
+  {
+   "action": "rsi",
+   "count": 1,
+   "detail": "1 indicators",
+   "kind": "live",
+   "tool": "technical_analysis",
+   "unit": "indicators",
+   "verdict": "data"
+  }
+ ],
+ "source": "https://datahub.noxiaohao.com/mcp",
+ "tools_listed": 19
+}

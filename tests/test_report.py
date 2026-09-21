@@ -895,13 +895,82 @@ class TheToolchainIsStatedOnThePage(unittest.TestCase):
             self.assertIn(component, page, f"{component} is claimed but not shown")
 
     def test_the_component_that_returns_nothing_says_so(self):
-        """bitget-signal is still empty. bitget-mcp-server no longer is - it
-        spent days at 503 and now answers, so the page may only cite that 503
-        in the past tense."""
+        """bitget-mcp-server spent days at 503 and now answers, so the page may
+        only cite that 503 in the past tense."""
         page = " ".join(self.docs().split())
-        self.assertIn("44 feeds, 0 articles", page)
+        self.assertIn("0 articles across those 44 feeds", page)
         self.assertNotIn("answers <strong>503</strong>", self.docs(),
                          "the page still reports the MCP upstream as down")
+
+    def test_the_signal_figures_come_from_the_probe_file(self):
+        """The bitget-signal row said all 19 tools returned an empty envelope,
+        and that this was "confirmed to be the service and not this client".
+        Both halves were false: every tool requires an `action`, a call without
+        one is answered rather than rejected, and the one tool that does carry
+        data - `technical_analysis` - replies to a bare call with
+        `{"error": "Unknown action: "}`, which reads as empty.
+
+        Every figure the row now quotes has to match state/signal_probe.json.
+        Bare numbers would be useless here - "5", "9" and "44" all appear
+        elsewhere on this page - so each one is asserted inside the sentence
+        that makes the claim.
+        """
+        import json
+        from pathlib import Path as P
+
+        probe = json.loads(
+            (P(__file__).resolve().parent.parent / "state" / "signal_probe.json")
+            .read_text())
+        counts, cov = probe["counts"], probe["coverage"]
+        page = " ".join(self.docs().split())
+
+        self.assertIn(
+            f"<strong>{counts['catalog_with_data']} of {counts['catalog_probed']} "
+            "catalogue actions</strong>", page,
+            "the page does not say how many catalogue actions answered")
+        self.assertIn(
+            f"<strong>{counts['live_with_data']} of {counts['live_probed']} "
+            "fetch-backed actions</strong>", page,
+            "the page does not say how many live actions carried data")
+
+        feeds = next(r["count"] for r in probe["rows"]
+                     if (r["tool"], r["action"]) == ("news_feed", "sources"))
+        articles = next(r["count"] for r in probe["rows"]
+                        if (r["tool"], r["action"]) == ("news_feed", "latest"))
+        self.assertIn(f"lists <strong>{feeds} feeds</strong>", page,
+                      f"the page does not say the aggregator lists {feeds} feeds")
+        self.assertIn(
+            f"<strong>{articles} articles across those {feeds} feeds</strong>", page,
+            f"the page does not say {articles} articles across {feeds} feeds")
+
+        self.assertIn(
+            f"<strong>{len(cov['answered'])} of the {cov['asked']} names in this book</strong>",
+            page, "the page does not state the measured book coverage")
+        self.assertIn(
+            "<strong>" + ", ".join(cov["missing"][:-1]) + f" and {cov['missing'][-1]}</strong>",
+            page, f"the page does not name the uncovered tickers {cov['missing']}")
+
+        # The control ticker is what makes the indicators evidence rather than
+        # decoration. If the service ever starts answering for it, the numbers
+        # stop meaning anything and this sentence has to come off the page.
+        self.assertTrue(cov["control_refused"],
+                        f"{cov['control_ticker']} was answered, so the RSIs prove nothing")
+        self.assertIn(f"<code>{cov['control_ticker']}</code> is refused", page,
+                      "the page does not name the control ticker it relies on")
+
+    def test_the_page_retracts_the_claim_it_got_wrong(self):
+        """A correction that quietly deletes the wrong sentence teaches nobody.
+
+        The old claim was specific - "confirmed to be the service and not this
+        client" - so the page has to carry the retraction, not just the fix.
+        """
+        page = " ".join(self.docs().split())
+        self.assertNotIn("Confirmed to be the service and not this client", page,
+                         "the page still asserts the claim that was disproved")
+        self.assertIn("This row used to", page,
+                      "the page corrects the figure without admitting the claim")
+        self.assertIn("Unknown action: ", page,
+                      "the page does not show the reply that caused the error")
 
     def test_the_crosscheck_numbers_come_from_the_crosscheck_file(self):
         """The page claimed the upstream answered 503 and that every row was

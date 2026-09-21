@@ -182,6 +182,19 @@ jobs:
           BALLAST_SECRET: ${{ secrets.BALLAST_SECRET }}
         run: python -m ballast.crosscheck
 
+      # What bitget-signal actually answers, asked with the `action` every one of
+      # its tools requires. A bare call is answered rather than rejected, and its
+      # reply looks identical to a dead upstream's - which is how this page came
+      # to publish a client error as a measurement of the service. Re-measured
+      # nightly so the claim cannot drift again. continue-on-error for the same
+      # reason as the crosscheck above: a display file must not cost a night.
+      - name: Re-measure what bitget-signal is returning
+        if: inputs.task != 'check'
+        continue-on-error: true
+        env:
+          BALLAST_SECRET: ${{ secrets.BALLAST_SECRET }}
+        run: python -m ballast.signal_probe
+
       - name: Refresh the reader-vs-calendar comparison
         if: inputs.task != 'check'
         continue-on-error: true

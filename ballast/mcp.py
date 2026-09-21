@@ -197,6 +197,14 @@ def signal(tool: str, **arguments) -> object:
     Same transport, different host. Its 19 tools cover macro, sentiment,
     technical analysis and a 44-feed news aggregator - the perception layer the
     handbook suggests for an event-driven agent.
+
+    PASS AN `action`. Every one of the 19 requires it, and a call without one is
+    answered rather than rejected: `technical_analysis` replies
+    `{"error": "Unknown action: "}`, which is indistinguishable at a glance from
+    the `{"error": ""}` a dead upstream returns. Sweeping the catalogue with bare
+    calls therefore reads as "the whole service is down" while the one tool that
+    holds data answers normally the moment you ask it properly. This project
+    published that mistake as a finding; see ballast/signal_probe.py.
     """
     return call(tool, arguments, endpoint=SIGNAL_ENDPOINT)
 
@@ -227,9 +235,12 @@ def signal_headlines(payload: object) -> list[dict]:
 def signal_live() -> tuple[bool, str]:
     """(carrying data, detail) - reachable is not the same as useful.
 
-    Verified against the live service on 2026-09-19, and separately through a
-    second client on a different network, so an empty answer is the service and
-    not this transport.
+    Scoped to the news aggregator, which is the only thing it asks about. It is
+    NOT a verdict on the service: `signal_probe` measures that properly, and
+    found `technical_analysis` answering while everything fetch-backed was empty.
+    An earlier version of this docstring claimed a second client on another
+    network had ruled out the client as the cause. That conclusion did not
+    survive being asked again with the required `action`.
     """
     try:
         payload = signal("news_feed", action="latest", limit=5)
