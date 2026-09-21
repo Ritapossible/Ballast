@@ -894,10 +894,45 @@ class TheToolchainIsStatedOnThePage(unittest.TestCase):
                           "Playbook"):
             self.assertIn(component, page, f"{component} is claimed but not shown")
 
-    def test_the_two_that_return_nothing_say_so(self):
+    def test_the_component_that_returns_nothing_says_so(self):
+        """bitget-signal is still empty. bitget-mcp-server no longer is - it
+        spent days at 503 and now answers, so the page may only cite that 503
+        in the past tense."""
         page = " ".join(self.docs().split())
-        self.assertIn("503", page)
         self.assertIn("44 feeds, 0 articles", page)
+        self.assertNotIn("answers <strong>503</strong>", self.docs(),
+                         "the page still reports the MCP upstream as down")
+
+    def test_the_crosscheck_numbers_come_from_the_crosscheck_file(self):
+        """The page claimed the upstream answered 503 and that every row was
+        recorded `unknown`, while state/calendar_crosscheck.json sitting beside
+        it said 96 checked, 0 unknown, 92 agreed, 4 disagreed. Prose and
+        measurement disagreed for days and nothing failed.
+
+        Every figure the page quotes about the second opinion now has to match
+        that file.
+        """
+        import json
+        from pathlib import Path as P
+
+        path = P(__file__).resolve().parent.parent / "state" / "calendar_crosscheck.json"
+        counts = json.loads(path.read_text())["counts"]
+        page = " ".join(self.docs().split())
+        # Bare numbers are useless here: "96" also appears in the Qwen row and
+        # "4" appears all over the page, so the first version of this test
+        # passed with every count wrong. The figures have to be asserted inside
+        # the sentence that makes the claim.
+        self.assertIn(f"all <strong>{counts['checked']}</strong> decisions are checked", page,
+                      f"the page does not say {counts['checked']} decisions were checked")
+        self.assertIn(f"<strong>{counts['agreed']} agree, {counts['disagreed']} do not</strong>",
+                      page,
+                      f"the page does not say {counts['agreed']} agree and "
+                      f"{counts['disagreed']} do not")
+        if counts["unknown"] == 0:
+            self.assertIn("nothing recorded unknown", page,
+                          "0 unknown rows, but the page does not say so")
+        self.assertEqual(counts["agreed"] + counts["disagreed"], counts["checked"],
+                         "the crosscheck file does not add up")
 
     def test_the_playbook_number_is_not_passed_off_as_the_product_metric(self):
         """It prices one leg. Ballast's claim is two-legged drawdown."""

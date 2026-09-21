@@ -211,11 +211,16 @@ this book&rsquo;s twelve stocks. The fill is then priced against the market and 
 identity and grounding gates; 12 of 96 answers were refused for quoting a headline that was not
 in the supplied sources.</td></tr>
 <tr><td data-label=""><strong>bitget-mcp-server</strong></td>
-<td data-label="State"><span class="tag">no data</span></td>
+<td data-label="State"><span class="tag on">answering</span></td>
 <td class="wrap" data-label="What it does">A second opinion on the earnings calendar, asked for every
-decision on the chain. The catalog is reachable; the <code>equity_calendar_earnings</code> upstream
-answers <strong>503</strong>, so every row is recorded <code>unknown</code> rather than counted as
-agreement. A second source that fails open is worse than none.</td></tr>
+decision on the chain. Its <code>equity_calendar_earnings</code> entry spent days answering
+<strong>503</strong>; it now answers, and all <strong>96</strong> decisions are checked against it
+with <strong>nothing recorded unknown</strong>. <strong>92 agree, 4 do not</strong> &mdash; and the
+four are ADBE and ORCL on 2026-09-09 and 09-10, which are <em>the same two hedges this project
+already publishes as its own defect</em>: the selector matched a session without checking the
+release time and covered a night early. An independent source, asked the same question, landed on
+exactly the rows we had already marked wrong. It still does not decide anything; re-pointing the
+selector days before a submission would invalidate the record the change is meant to support.</td></tr>
 <tr><td data-label=""><strong>bitget-signal</strong></td>
 <td data-label="State"><span class="tag">no data</span></td>
 <td class="wrap" data-label="What it does">All 19 research tools reachable, no key needed. Every one
