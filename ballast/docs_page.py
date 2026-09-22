@@ -221,8 +221,8 @@ in the supplied sources.</td></tr>
 <td data-label="State"><span class="tag on">answering</span></td>
 <td class="wrap" data-label="What it does">A second opinion on the earnings calendar, asked for every
 decision on the chain. Its <code>equity_calendar_earnings</code> entry spent days answering
-<strong>503</strong>; it now answers, and all <strong>96</strong> decisions are checked against it
-with <strong>nothing recorded unknown</strong>. <strong>92 agree, 4 do not</strong> &mdash; and the
+<strong>503</strong>; it now answers, and all <strong>108</strong> decisions are checked against it
+with <strong>nothing recorded unknown</strong>. <strong>104 agree, 4 do not</strong> &mdash; and the
 four are ADBE and ORCL on 2026-09-09 and 09-10, which are <em>the same two hedges this project
 already publishes as its own defect</em>: the selector matched a session without checking the
 release time and covered a night early. An independent source, asked the same question, landed on
