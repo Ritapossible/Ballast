@@ -337,12 +337,12 @@ from 1,128 bp to 233 bp; AMD's from 1,262 bp to 90 bp.</li>
 <li><strong>Cost 12.0 bp</strong> taker round trip - the part that is
 certain. A short also collects funding, which brings the average night to
 11.3 bp, but that credit is a rate and not a promise: measured across the
-book it runs from -0.16 bp (PLTR) to +3.55 bp (NKE) a night, and is against the hedge on 2 of 12 names. Either way it is cheaper than the
+book it runs from -0.16 bp (PLTR) to +3.86 bp (NKE) a night, and is against the hedge on 2 of 12 names. Either way it is cheaper than the
 20 bp it costs to exit - and you keep the position.</li>
 <li><strong>Crypto is not a hedge.</strong> Median R² against BTC is 0.114. Crypto
 legs are excluded by measurement, not preference.</li>
 </ul>
-<p>Of 2125 live rTokens, <strong>226 have a perp leg</strong> (measured 2026-09-22). Ballast states plainly
+<p>Of 2125 live rTokens, <strong>229 have a perp leg</strong> (measured 2026-09-22). Ballast states plainly
 which positions it cannot protect rather than pretending otherwise.</p>
 
 <h2 id="selector">Choosing the night</h2>
@@ -462,8 +462,8 @@ in the supplied sources.</td></tr>
 <td data-label="State"><span class="tag on">answering</span></td>
 <td class="wrap" data-label="What it does">A second opinion on the earnings calendar, asked for every
 decision on the chain. Its <code>equity_calendar_earnings</code> entry spent days answering
-<strong>503</strong>; it now answers, and all <strong>96</strong> decisions are checked against it
-with <strong>nothing recorded unknown</strong>. <strong>92 agree, 4 do not</strong> &mdash; and the
+<strong>503</strong>; it now answers, and all <strong>108</strong> decisions are checked against it
+with <strong>nothing recorded unknown</strong>. <strong>104 agree, 4 do not</strong> &mdash; and the
 four are ADBE and ORCL on 2026-09-09 and 09-10, which are <em>the same two hedges this project
 already publishes as its own defect</em>: the selector matched a session without checking the
 release time and covered a night early. An independent source, asked the same question, landed on
@@ -570,7 +570,7 @@ the whole session.</li>
 <p>All figures are produced by code in <code>research/</code> from public endpoints,
 labelled <em>observed</em>, <em>estimated</em> or <em>targeted</em>.</p>
 <div class="scroll stacked"><table><thead><tr><th>Finding</th><th>Value</th></tr></thead><tbody>
-<tr><td data-label="">rTokens live on spot / with a perp leg</td><td class="num" data-label="Value">2125 / 226</td></tr>
+<tr><td data-label="">rTokens live on spot / with a perp leg</td><td class="num" data-label="Value">2125 / 229</td></tr>
 <tr><td data-label="">Median overnight variance removed</td><td class="num" data-label="Value">98.2%</td></tr>
 <tr><td data-label="">R² on top-decile move nights</td><td class="num" data-label="Value">0.978-0.999</td></tr>
 <tr><td data-label="">Median p95 tail reduction</td><td class="num" data-label="Value">88%</td></tr>

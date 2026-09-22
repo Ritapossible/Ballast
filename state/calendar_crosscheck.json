@@ -1,5 +1,5 @@
 {
- "built_on": "2026-09-22T03:18:30+00:00",
+ "built_on": "2026-09-22T17:24:32+00:00",
  "counts": {
   "agreed": 104,
   "checked": 108,
@@ -11,7 +11,7 @@
   {
    "agree": false,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "yes",
    "session": "2026-09-09",
    "ticker": "ADBE"
@@ -19,7 +19,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "AMD"
@@ -27,7 +27,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "COIN"
@@ -35,7 +35,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "COST"
@@ -43,7 +43,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "MSFT"
@@ -51,7 +51,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "MU"
@@ -59,7 +59,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "NKE"
@@ -67,7 +67,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "NVDA"
@@ -75,7 +75,7 @@
   {
    "agree": false,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "yes",
    "session": "2026-09-09",
    "ticker": "ORCL"
@@ -83,7 +83,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "PLTR"
@@ -99,7 +99,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "TSLA"
@@ -107,7 +107,7 @@
   {
    "agree": false,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "yes",
    "session": "2026-09-10",
    "ticker": "ADBE"
@@ -115,7 +115,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-10",
    "ticker": "AMD"
@@ -123,7 +123,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-10",
    "ticker": "COIN"
@@ -131,7 +131,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-10",
    "ticker": "COST"
@@ -139,7 +139,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-10",
    "ticker": "MSFT"
@@ -147,7 +147,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-10",
    "ticker": "MU"
@@ -155,7 +155,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-10",
    "ticker": "NKE"
@@ -163,7 +163,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-10",
    "ticker": "NVDA"
@@ -171,7 +171,7 @@
   {
    "agree": false,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "yes",
    "session": "2026-09-10",
    "ticker": "ORCL"
@@ -179,23 +179,23 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
-   "nasdaq": "no",
-   "session": "2026-09-10",
-   "ticker": "PLTR"
-  },
-  {
-   "agree": true,
-   "bitget_mcp": "no",
    "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-10",
+   "ticker": "PLTR"
+  },
+  {
+   "agree": true,
+   "bitget_mcp": "no",
+   "detail": "0 dates returned, none in this window",
+   "nasdaq": "no",
+   "session": "2026-09-10",
    "ticker": "SPY"
   },
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-10",
    "ticker": "TSLA"
@@ -203,7 +203,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "ADBE"
@@ -211,7 +211,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "AMD"
@@ -219,7 +219,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "COIN"
@@ -227,7 +227,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "COST"
@@ -235,7 +235,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "MSFT"
@@ -243,7 +243,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "MU"
@@ -251,7 +251,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "NKE"
@@ -259,7 +259,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "NVDA"
@@ -267,7 +267,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "ORCL"
@@ -275,7 +275,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "PLTR"
@@ -291,7 +291,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "TSLA"
@@ -299,7 +299,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "ADBE"
@@ -307,7 +307,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "AMD"
@@ -315,7 +315,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "COIN"
@@ -323,7 +323,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "COST"
@@ -331,7 +331,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "MSFT"
@@ -339,7 +339,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "MU"
@@ -347,7 +347,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "NKE"
@@ -355,7 +355,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "NVDA"
@@ -363,7 +363,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "ORCL"
@@ -371,7 +371,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "PLTR"
@@ -387,7 +387,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "TSLA"
@@ -395,7 +395,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "ADBE"
@@ -403,7 +403,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "AMD"
@@ -411,7 +411,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "COIN"
@@ -419,7 +419,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "COST"
@@ -427,7 +427,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "MSFT"
@@ -435,7 +435,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "MU"
@@ -443,7 +443,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "NKE"
@@ -451,7 +451,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "NVDA"
@@ -459,7 +459,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "ORCL"
@@ -467,7 +467,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "PLTR"
@@ -483,7 +483,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "TSLA"
@@ -491,7 +491,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "ADBE"
@@ -499,7 +499,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "AMD"
@@ -507,7 +507,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "COIN"
@@ -515,7 +515,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "COST"
@@ -523,7 +523,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "MSFT"
@@ -531,7 +531,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "MU"
@@ -539,7 +539,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "NKE"
@@ -547,7 +547,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "NVDA"
@@ -555,7 +555,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "ORCL"
@@ -563,7 +563,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "PLTR"
@@ -579,7 +579,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "TSLA"
@@ -587,7 +587,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "ADBE"
@@ -595,7 +595,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "AMD"
@@ -603,7 +603,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "COIN"
@@ -611,7 +611,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "COST"
@@ -619,7 +619,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "MSFT"
@@ -627,7 +627,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "MU"
@@ -635,7 +635,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "NKE"
@@ -643,7 +643,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "NVDA"
@@ -651,7 +651,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "ORCL"
@@ -659,7 +659,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "PLTR"
@@ -675,7 +675,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "TSLA"
@@ -683,7 +683,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "ADBE"
@@ -691,7 +691,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "AMD"
@@ -699,7 +699,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "COIN"
@@ -707,7 +707,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "COST"
@@ -715,7 +715,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "MSFT"
@@ -723,7 +723,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "MU"
@@ -731,7 +731,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "NKE"
@@ -739,7 +739,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "NVDA"
@@ -747,7 +747,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "ORCL"
@@ -755,7 +755,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "PLTR"
@@ -771,7 +771,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "TSLA"
@@ -779,7 +779,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "ADBE"
@@ -787,7 +787,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "AMD"
@@ -795,7 +795,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "COIN"
@@ -803,7 +803,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "COST"
@@ -811,7 +811,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "MSFT"
@@ -819,7 +819,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "MU"
@@ -827,7 +827,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "2 dates returned, none in this window",
+   "detail": "1 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "NKE"
@@ -835,7 +835,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "NVDA"
@@ -843,7 +843,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "ORCL"
@@ -851,7 +851,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "PLTR"
@@ -867,7 +867,7 @@
   {
    "agree": true,
    "bitget_mcp": "no",
-   "detail": "1 dates returned, none in this window",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "TSLA"
