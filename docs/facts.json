@@ -4,7 +4,7 @@
   "beta_names": 12,
   "exit_cost_bp": 20.0,
   "funding": {
-    "max_bp": 4.07,
+    "max_bp": 4.15,
     "max_name": "NKE",
     "mean_bp": 0.79,
     "measured_on": "2026-09-23",
@@ -211,8 +211,8 @@
     "shortest": 100,
     "split": 0.7
   },
-  "rtokens_hedgeable": 229,
-  "rtokens_total": 2125,
+  "rtokens_hedgeable": 235,
+  "rtokens_total": 2587,
   "tail": [
     {
       "name": "TSLA",

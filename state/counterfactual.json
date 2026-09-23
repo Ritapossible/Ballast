@@ -1,5 +1,5 @@
 {
- "built_on": "2026-09-23T07:51:50+00:00",
+ "built_on": "2026-09-23T18:35:33+00:00",
  "check": {
   "matched": 40,
   "mismatched": [
@@ -1768,10 +1768,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-09-22",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "ADBE",
-   "value_added_bp": null
+   "value_added_bp": 40.1
   },
   {
    "action": "NO_HEDGE",
@@ -1784,10 +1784,10 @@
    "reasoning": "The supplied headlines are commentary and price recap items, not specific overnight events for AMD. The exchange calendar also shows no earnings in the window.",
    "selector_affected": false,
    "session": "2026-09-22",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "AMD",
-   "value_added_bp": null
+   "value_added_bp": -82.0
   },
   {
    "action": "NO_HEDGE",
@@ -1800,10 +1800,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-09-22",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "COIN",
-   "value_added_bp": null
+   "value_added_bp": 114.4
   },
   {
    "action": "NO_HEDGE",
@@ -1816,10 +1816,10 @@
    "reasoning": "No scheduled earnings occur in the overnight window, and the supplied headlines contain no Costco-specific event or catalyst. Therefore there is no identifiable event likely to move COST specifically tonight.",
    "selector_affected": false,
    "session": "2026-09-22",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "COST",
-   "value_added_bp": null
+   "value_added_bp": -46.9
   },
   {
    "action": "NO_HEDGE",
@@ -1832,10 +1832,10 @@
    "reasoning": "The supplied headlines are general commentary on shareholder returns and AI momentum, not a specific overnight catalyst for MSFT. With no scheduled earnings in the window, there is no identifiable event requiring a hedge.",
    "selector_affected": false,
    "session": "2026-09-22",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "MSFT",
-   "value_added_bp": null
+   "value_added_bp": 140.2
   },
   {
    "action": "NO_HEDGE",
@@ -1848,10 +1848,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-09-22",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "MU",
-   "value_added_bp": null
+   "value_added_bp": -2.1
   },
   {
    "action": "NO_HEDGE",
@@ -1864,10 +1864,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-09-22",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "NKE",
-   "value_added_bp": null
+   "value_added_bp": -18.4
   },
   {
    "action": "NO_HEDGE",
@@ -1880,10 +1880,10 @@
    "reasoning": "No scheduled earnings or identifiable overnight catalyst appears in the headlines, only valuation commentary and an insider sale. The reported director sale looks routine and not a clear high-impact event requiring an overnight hedge.",
    "selector_affected": false,
    "session": "2026-09-22",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "NVDA",
-   "value_added_bp": null
+   "value_added_bp": -1.4
   },
   {
    "action": "NO_HEDGE",
@@ -1896,10 +1896,10 @@
    "reasoning": "There is no scheduled earnings event in the overnight window and the supplied headlines are mostly analyst commentary, predictions, or general news rather than a specific overnight catalyst. Nothing identifies a concrete event likely to move ORCL before the next open.",
    "selector_affected": false,
    "session": "2026-09-22",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "ORCL",
-   "value_added_bp": null
+   "value_added_bp": -111.4
   },
   {
    "action": "NO_HEDGE",
@@ -1912,10 +1912,10 @@
    "reasoning": "There is no scheduled earnings event in the overnight window, and the supplied headlines are commentary or analysis rather than a specific catalyst. Nothing identifies a concrete overnight event likely to move PLTR before the next open.",
    "selector_affected": false,
    "session": "2026-09-22",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "PLTR",
-   "value_added_bp": null
+   "value_added_bp": 306.0
   },
   {
    "action": "NO_HEDGE",
@@ -1928,10 +1928,10 @@
    "reasoning": "The supplied headlines show market commentary and stock lists rather than a specific overnight event for SPY. The exchange calendar also shows no scheduled earnings in the window.",
    "selector_affected": false,
    "session": "2026-09-22",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "SPY",
-   "value_added_bp": null
+   "value_added_bp": -20.2
   },
   {
    "action": "NO_HEDGE",
@@ -1944,10 +1944,10 @@
    "reasoning": "The headlines mention a possible Roadster reveal and Semi event, but they do not confirm that either occurs during the 2026-09-22 close-to-open window. Without a confirmed overnight catalyst, the sources are insufficient to justify a hedge.",
    "selector_affected": false,
    "session": "2026-09-22",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "TSLA",
-   "value_added_bp": null
+   "value_added_bp": 189.3
   }
  ],
  "vol_gate_enabled": false
