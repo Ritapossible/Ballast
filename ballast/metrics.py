@@ -59,12 +59,33 @@ def _sharpe(returns: list[float]) -> float:
     return (st.mean(returns) / sd) * math.sqrt(TRADING_NIGHTS_PER_YEAR)
 
 
-def paper_metrics(rows: list[dict]) -> dict:
-    """Every metric the track names, for the hedged book and its counterfactual."""
+def paper_metrics(rows: list[dict], graded: list[dict] | None = None) -> dict:
+    """Every metric the track names, for the hedged book and its counterfactual.
+
+    TWO POPULATIONS, AND THE DIFFERENCE IS NOT COSMETIC.
+
+    `rows` is everything that happened: the book's return, drawdown and Sharpe
+    are the record of what this system actually did, defective nights included.
+    Removing a bad night from a P&L curve because it was our fault is how a
+    track record gets laundered, so nothing is removed here.
+
+    `graded` is the subset a hedge may be *scored* on. Two hedges (2026-09-09
+    ORCL and ADBE) covered a night early - defect 3f, disclosed on the page -
+    and a hedge aimed at the wrong window cannot evidence how well hedging
+    works, whichever way its arithmetic happened to land. They stay in the
+    return; they do not count as wins.
+
+    This split is here because the page previously computed the two from
+    different sets by accident: the header tile read the graded set and said
+    7/7, while this function read every row and said "100%, 9 of 9". Same page,
+    same quantity, two answers, and the flattering one was in the bigger type.
+    """
     series = book_series(rows)
     hedged = [h for _, h, _ in series]
     unhedged = [u for _, _, u in series]
-    hedges = [r for r in rows if r.get("action") == "HEDGE"]
+    scored = rows if graded is None else graded
+    hedges = [r for r in scored if r.get("action") == "HEDGE"]
+    all_hedges = [r for r in rows if r.get("action") == "HEDGE"]
     cut = sum(1 for r in hedges
               if abs(r.get("realised_bp", 0)) < abs(r.get("unhedged_bp", 0)))
 
@@ -81,6 +102,9 @@ def paper_metrics(rows: list[dict]) -> dict:
         "hedges": len(hedges),
         "hedges_that_cut": cut,
         "win_rate_pct": round(100 * cut / len(hedges)) if hedges else None,
-        "orders": len(hedges),
+        # Every hedge that was actually sent, graded or not. Orders placed is a
+        # count of what this system did, not of what it is willing to be judged on.
+        "hedges_ungraded": len(all_hedges) - len(hedges),
+        "orders": len(all_hedges),
         "fees_bp_per_hedge": 11.3,
     }

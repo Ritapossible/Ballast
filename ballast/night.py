@@ -224,6 +224,15 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
     executor = BgcExecutor() if bgc_ok else paper
     venue = "bgc-paper" if bgc_ok else "simulated"
     hedged = declined = 0
+    # What the ORDERS actually did, as opposed to what the CLI was configured to
+    # try. The summary used to carry `bgc-paper` whenever the Hub was merely
+    # installed - including on nights that sent no order at all, and on every
+    # night since the Hub was wired, where each order in fact fell back to a
+    # simulated fill after `HTTP 400: exchange environment is incorrect`. The
+    # per-fill rows were honest; the night summary above them was not, and the
+    # summary is what the page reads.
+    routed = fell_back = 0
+    fallback_reason = ""
 
     errors = news_down = 0
     for pos in book:
@@ -310,6 +319,10 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
                 # than letting a simulated fill inherit the Agent Hub's label.
                 fill = paper.execute(verdict.admission, mark, now)
                 fill_venue, fallback = "simulated", exc.reason
+                fell_back += 1
+                fallback_reason = exc.reason
+            else:
+                routed += 1 if fill_venue == "bgc-paper" else 0
             record["fill"] = fill.to_record() | {"venue": fill_venue}
             record["fill"] |= getattr(executor, "last_order", {}) or {}
             if fallback:
@@ -329,11 +342,48 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
         "forced": bool(force),
         "usage": enforcer.usage, "dry_run": dry_run,
         "reader": "on" if use_reader and llm_available() else "off (no QWEN_API_KEY)",
-        "venue": venue,
-        "venue_detail": "Bitget Agent Hub, paper-trading" if bgc_ok else bgc_why,
+        **_venue_outcome(bgc_ok, bgc_why, hedged, routed, fell_back, fallback_reason),
     }
     ledger.append("night_summary", summary, now)
     return summary
+
+
+
+def _venue_outcome(bgc_ok: bool, bgc_why: str, hedged: int, routed: int,
+                   fell_back: int, fallback_reason: str) -> dict:
+    """What the night's orders actually did, for the summary row.
+
+    Three states a reader must be able to tell apart, and the old label collapsed
+    all of them into "Bitget Agent Hub, paper-trading":
+
+    * no order was sent at all - the common case, since most nights carry no
+      scheduled event. Claiming a venue for a night with nothing to route is the
+      plainest version of the mistake.
+    * orders were attempted through the Hub and every one fell back to a
+      simulated fill. Simulated paper is allowed by the track; describing the
+      fallback as Agent Hub paper-trading is not.
+    * orders were genuinely routed.
+    """
+    if not hedged:
+        return {"venue": "none", "orders_sent": 0,
+                "venue_detail": ("no order was sent tonight, so no venue was used"
+                                 + (f"; the Agent Hub was available ({bgc_why})"
+                                    if bgc_ok else f"; {bgc_why}"))}
+    if fell_back and not routed:
+        return {"venue": "simulated", "orders_sent": hedged,
+                "venue_detail": (f"attempted through the Bitget Agent Hub; all "
+                                 f"{fell_back} fell back to a simulated fill - "
+                                 f"{fallback_reason}")}
+    if fell_back:
+        return {"venue": "mixed", "orders_sent": hedged,
+                "venue_detail": (f"{routed} routed through the Bitget Agent Hub, "
+                                 f"{fell_back} fell back to simulated - "
+                                 f"{fallback_reason}")}
+    if bgc_ok and routed:
+        return {"venue": "bgc-paper", "orders_sent": hedged,
+                "venue_detail": "Bitget Agent Hub, paper-trading"}
+    return {"venue": "simulated", "orders_sent": hedged,
+            "venue_detail": bgc_why or "simulated fill, priced against the mark"}
 
 
 if __name__ == "__main__":

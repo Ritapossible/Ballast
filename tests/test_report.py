@@ -843,6 +843,23 @@ class TheCostSentenceAddsUp(unittest.TestCase):
         from ballast import facts
         return facts.load()
 
+    def docs_page(self) -> str:
+        """The documentation page, where the cost breakdown lives."""
+        import tempfile
+        from pathlib import Path as P
+        from unittest import mock
+
+        from ballast import config, docs_page
+        from ballast.ledger import Ledger
+        with tempfile.TemporaryDirectory() as d:
+            path = P(d) / "ledger.jsonl"
+            Ledger(path, b"t").append("night_summary", {"session": "2026-09-18"})
+            with mock.patch.object(config, "LEDGER_PATH", path), \
+                 mock.patch.object(config, "secret", return_value=b"t"), \
+                 mock.patch.object(config, "STATE", P(d)), \
+                 mock.patch.object(docs_page, "OUT", P(d) / "docs.html"):
+                return docs_page.build().read_text()
+
     def test_the_credit_quoted_is_gross_minus_net(self):
         import re
         f = self.facts()
@@ -854,15 +871,28 @@ class TheCostSentenceAddsUp(unittest.TestCase):
             f["hedge_cost_gross_bp"] - f["hedge_cost_bp"], places=1,
             msg="the funding credit on the page is not gross minus net")
 
-    def test_the_credit_matches_what_was_measured(self):
-        """facts.json carries the measured per-name mean separately; the
-        arithmetic and the measurement must agree."""
+    def test_the_frozen_credit_and_the_measured_one_are_both_shown(self):
+        """These two are allowed to differ, and must both be visible.
+
+        The net cost is frozen on purpose: the settled table charges it on every
+        night, and re-pricing a hedge part-way through a competition record
+        would make that table incomparable with itself. Funding is re-measured
+        nightly, so it drifts away from the frozen credit.
+
+        This test used to assert they were equal, which was true on the day the
+        record opened and quietly false afterwards - it went red because the
+        market moved, not because the page was wrong. What matters is that the
+        page does not present the frozen credit as today's measurement.
+        """
         f = self.facts()
         measured = (f.get("funding") or {}).get("mean_bp")
         if measured is None:
             self.skipTest("no funding measurement in facts.json")
-        self.assertAlmostEqual(f["hedge_cost_gross_bp"] - f["hedge_cost_bp"],
-                               measured, places=1)
+        page = " ".join(self.docs_page().split())
+        self.assertIn("frozen when the record", page,
+                      "the page does not say the credit is frozen")
+        self.assertIn(f"averaging {measured:.2f} bp", page,
+                      "the page does not show the re-measured funding average")
 
 
 class TheToolchainIsStatedOnThePage(unittest.TestCase):
@@ -1139,3 +1169,155 @@ class TheOverviewDoesNotCarryTheOneLegNumber(unittest.TestCase):
         for figure in ("pbrun-", "-0.76", "\u22120.76", "-1.48", "\u22121.48"):
             self.assertNotIn(figure, index,
                              f"{figure} is a one-leg number on the landing page")
+
+
+class TheWinRateIsOneNumber(unittest.TestCase):
+    """The page said 7/7 in the header tile and "100%, 9 of 9" in the table.
+
+    Same page, same quantity, two answers, and the flattering one was in the
+    bigger type. It happened because the header read the graded set and the
+    metrics table was handed every row, with nothing tying them together. A
+    judge scoring the quantitative half screenshots the tile.
+
+    So the two now come from one computation, and this asserts they agree
+    whatever the ledger does next.
+    """
+
+    def settled(self):
+        from ballast import report
+        return report.Site()
+
+    def test_the_header_tile_and_the_metrics_table_agree(self):
+        from ballast.metrics import paper_metrics
+        rep = self.settled()
+        m = paper_metrics(rep.rows, graded=rep.clean)
+        self.assertEqual(m["hedges"], len(rep.hedges),
+                         "the table grades a different number of hedges than the tile")
+        self.assertEqual(m["hedges_that_cut"], rep.shrank,
+                         "the table and the tile disagree on how many cut the move")
+
+    def test_hedges_excluded_from_the_grade_are_still_counted_as_orders(self):
+        """They were really sent and really moved the book. Dropping them from
+        the order count would be hiding activity, not declining to grade it."""
+        from ballast.metrics import paper_metrics
+        rep = self.settled()
+        m = paper_metrics(rep.rows, graded=rep.clean)
+        every = [r for r in rep.rows if r.get("action") == "HEDGE"]
+        self.assertEqual(m["orders"], len(every))
+        self.assertEqual(m["hedges_ungraded"], len(every) - m["hedges"])
+
+    def test_the_return_is_not_quietly_improved_by_the_exclusion(self):
+        """Return and drawdown must stay on every row. Removing a bad night
+        from a P&L curve because it was our fault is how a record gets
+        laundered."""
+        from ballast.metrics import paper_metrics
+        rep = self.settled()
+        graded = paper_metrics(rep.rows, graded=rep.clean)
+        whole = paper_metrics(rep.rows)
+        for key in ("hedged_total_bp", "unhedged_total_bp",
+                    "hedged_max_dd_bp", "unhedged_max_dd_bp", "nights"):
+            with self.subTest(key=key):
+                self.assertEqual(graded[key], whole[key],
+                                 f"{key} changed when hedges were excluded from the grade")
+
+    def test_the_page_says_the_excluded_hedges_exist(self):
+        """Quietly grading 7 and printing 7 would be a different dishonesty."""
+        from ballast.metrics import paper_metrics
+        rep = self.settled()
+        m = paper_metrics(rep.rows, graded=rep.clean)
+        if not m["hedges_ungraded"]:
+            self.skipTest("nothing is currently excluded")
+        page = " ".join(rep.paper_metrics_block.split())
+        self.assertIn("graded hedges cut the move", page)
+        self.assertIn(f"{m['hedges_ungraded']} more were sent", page)
+        self.assertIn("defect 3f", page)
+
+
+class TheSharpeSentenceMatchesTheSharpe(unittest.TestCase):
+    """The prose read "both are negative here" while the table beside it showed
+    +3.94 and +3.71. A reader who checks one sentence against one number finds
+    the page contradicting itself on the metric the track names."""
+
+    def block(self):
+        from ballast import report
+        return " ".join(report.Site().paper_metrics_block.split())
+
+    def test_the_page_does_not_assert_a_sign_it_does_not_check(self):
+        self.assertNotIn("both are negative", self.block())
+
+    def test_the_return_shortfall_is_stated_rather_than_left_in_the_table(self):
+        """The hedged book returned less than the untouched one. That is what
+        paying for protection looks like, and burying it in a table cell while
+        the prose talks about drawdown is the kind of omission a judge reads as
+        a claim."""
+        from ballast import report
+        from ballast.metrics import paper_metrics
+        rep = report.Site()
+        m = paper_metrics(rep.rows, graded=rep.clean)
+        if m["hedged_total_bp"] >= m["unhedged_total_bp"]:
+            self.skipTest("the hedged book is not behind on this record")
+        self.assertIn("returned less than the book left alone", self.block())
+
+
+class TheVenueLabelReportsWhatHappened(unittest.TestCase):
+    """The night summary said "Bitget Agent Hub, paper-trading" on every night
+    since the Hub was wired - including nights that sent no order at all, and
+    every night where each order in fact fell back to a simulated fill after
+    `HTTP 400: exchange environment is incorrect`.
+
+    Simulated paper is allowed by the track. Calling a 400 and a local fill
+    "Agent Hub, paper-trading" is not, and the per-fill rows were already
+    honest while the summary above them was not.
+    """
+
+    def outcome(self, **kw):
+        from ballast.night import _venue_outcome
+        base = {"bgc_ok": True, "bgc_why": "bgc 1.x, demo key configured",
+                "hedged": 0, "routed": 0, "fell_back": 0, "fallback_reason": ""}
+        return _venue_outcome(**{**base, **kw})
+
+    def test_a_night_with_no_orders_claims_no_venue(self):
+        out = self.outcome(hedged=0)
+        self.assertEqual(out["venue"], "none")
+        self.assertEqual(out["orders_sent"], 0)
+        self.assertIn("no order was sent", out["venue_detail"])
+        self.assertNotIn("Agent Hub, paper-trading", out["venue_detail"])
+
+    def test_orders_that_all_fell_back_are_not_called_agent_hub(self):
+        out = self.outcome(hedged=2, fell_back=2,
+                           fallback_reason="HTTP 400 from Bitget: exchange "
+                                           "environment is incorrect")
+        self.assertEqual(out["venue"], "simulated")
+        self.assertIn("fell back to a simulated fill", out["venue_detail"])
+        self.assertIn("HTTP 400", out["venue_detail"])
+
+    def test_a_genuinely_routed_night_still_says_so(self):
+        """The fix must not make the honest case unsayable."""
+        out = self.outcome(hedged=2, routed=2)
+        self.assertEqual(out["venue"], "bgc-paper")
+        self.assertEqual(out["venue_detail"], "Bitget Agent Hub, paper-trading")
+
+    def test_a_mixed_night_names_both_counts(self):
+        out = self.outcome(hedged=3, routed=1, fell_back=2,
+                           fallback_reason="HTTP 400")
+        self.assertEqual(out["venue"], "mixed")
+        self.assertIn("1 routed", out["venue_detail"])
+        self.assertIn("2 fell back", out["venue_detail"])
+
+    def test_the_page_does_not_repeat_a_venue_the_night_did_not_use(self):
+        """Seven committed summaries claim `bgc-paper` on nights where nothing
+        was routed. The ledger is append-only and hash-chained, so those rows
+        stay exactly as written - correcting a signed record by editing it is
+        the one thing this project must never do.
+
+        What can be fixed is the page. It reads the summary, and it must not
+        repeat a venue claim for a night with no fill on it.
+        """
+        from ballast import report
+        site = report.Site()
+        note = " ".join(site.venue_line.split()) if isinstance(
+            site.venue_line, str) else ""
+        if not [r for r in site.tonight if r.get("fill")]:
+            self.assertIn("no order was sent", note,
+                          "the page claims a venue for a night that sent nothing")
+            self.assertNotIn("Agent Hub, paper-trading", note)

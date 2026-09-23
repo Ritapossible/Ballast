@@ -95,9 +95,15 @@ is venue microstructure noise. The hedge is loosest only when little is at stake
 from {worst_night(F, 'MSFT')}; AMD's from {worst_night(F, 'AMD')}.</li>
 <li><strong>Cost {F['hedge_cost_gross_bp']} bp</strong> taker round trip - the part that is
 certain. A short also collects funding, which brings the average night to
-{F['hedge_cost_bp']} bp, but that credit is a rate and not a promise: measured across the
-book it runs {_funding_range(F)}. Either way it is cheaper than the
-{F['exit_cost_bp']:.0f} bp it costs to exit - and you keep the position.</li>
+{F['hedge_cost_bp']} bp, using a credit of
+{F['hedge_cost_gross_bp'] - F['hedge_cost_bp']:.2f} bp <em>frozen when the record
+opened</em> - the settled table charges it on every night and re-pricing a hedge
+part-way through a competition record would make that table incomparable with itself.
+That credit is a rate and not a promise: re-measured across the book today it runs
+{_funding_range(F)}, averaging {F['funding']['mean_bp']:.2f} bp, and the gap between
+that and the frozen figure is why the certain number is the gross one. Either way it is
+cheaper than the {F['exit_cost_bp']:.0f} bp it costs to exit - and you keep the
+position.</li>
 <li><strong>Crypto is not a hedge.</strong> Median R² against BTC is 0.114. Crypto
 legs are excluded by measurement, not preference.</li>
 </ul>
@@ -221,8 +227,8 @@ in the supplied sources.</td></tr>
 <td data-label="State"><span class="tag on">answering</span></td>
 <td class="wrap" data-label="What it does">A second opinion on the earnings calendar, asked for every
 decision on the chain. Its <code>equity_calendar_earnings</code> entry spent days answering
-<strong>503</strong>; it now answers, and all <strong>108</strong> decisions are checked against it
-with <strong>nothing recorded unknown</strong>. <strong>104 agree, 4 do not</strong> &mdash; and the
+<strong>503</strong>; it now answers, and all <strong>120</strong> decisions are checked against it
+with <strong>nothing recorded unknown</strong>. <strong>116 agree, 4 do not</strong> &mdash; and the
 four are ADBE and ORCL on 2026-09-09 and 09-10, which are <em>the same two hedges this project
 already publishes as its own defect</em>: the selector matched a session without checking the
 release time and covered a night early. An independent source, asked the same question, landed on

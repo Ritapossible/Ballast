@@ -415,15 +415,26 @@ class TestExecutionVenue(LivePathCase):
             self.assertEqual(fill["price"], 212.4)
 
     def test_a_mid_session_failure_is_labelled_simulated_and_explained(self):
-        """The substitution this guard exists to prevent."""
+        """The substitution this guard exists to prevent.
+
+        This test used to assert the summary still said `bgc-paper`, on the
+        reasoning that "the run intended bgc; the individual fill says it did
+        not get there". That reasoning is wrong, and it shipped: the summary is
+        the row the page reads, so every night since the Hub was wired was
+        published as "Bitget Agent Hub, paper-trading" while every fill under it
+        had fallen back to a simulated price after an HTTP 400. Intent is not a
+        venue. The summary now reports what the orders did.
+        """
         done = subprocess.CompletedProcess(["bgc"], 1, stdout="", stderr="rate limited")
         with mock.patch.dict("os.environ",
                              {bgc.VENUE_ENV: "bgc", bgc.KEY_ENV: "demo-key"}), \
              mock.patch.object(bgc.shutil, "which", lambda _: "/usr/bin/bgc"), \
              mock.patch.object(bgc.subprocess, "run", return_value=done):
             summary = self.run_night()
-        # The run still intended bgc; the individual fill says it did not get there.
-        self.assertEqual(summary["venue"], "bgc-paper")
+        self.assertEqual(summary["venue"], "simulated",
+                         "a night whose every order fell back is not Agent Hub paper")
+        self.assertIn("fell back", summary["venue_detail"])
+        self.assertIn("rate limited", summary["venue_detail"])
         fills = [r["body"]["fill"] for r in self.ledger().records("decision")
                  if r["body"].get("fill")]
         self.assertTrue(fills)

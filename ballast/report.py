@@ -692,6 +692,16 @@ plus the commands to reproduce every figure yourself.</p></div>
         fell_back = [f for f in fills if f.get("venue_fallback")]
         live = [f for f in fills if f.get("orderId")]
 
+        # No fill on the page means no order was sent, whatever the summary's
+        # venue field says. Older rows wrote that field from "is the CLI
+        # configured" rather than from what the orders did, so a night with
+        # twelve refusals and nothing routed still carried `bgc-paper`. A venue
+        # claimed for a night that sent nothing is the plainest version of the
+        # mistake, and it is the reader's first impression of the execution leg.
+        if not fills:
+            return ('<p class="note"><strong>Execution</strong> &middot; no order was sent '
+                    'tonight, so no venue was used. Every position was a refusal.</p>')
+
         if venue == "simulated":
             return (f'<p class="note">Execution <strong>simulated</strong> against observed '
                     f'Bitget prices{" - " + _e(detail) if detail else ""}. No order was sent '
@@ -890,7 +900,10 @@ state.</p>"""
         reported none of the three. Both columns, so the comparison is the one the
         product is actually about.
         """
-        m = paper_metrics(self.rows)
+        # Return and drawdown on everything that happened; the win rate only
+        # on hedges this project is willing to be graded on. The header tile
+        # reads the same graded set, which it previously did not.
+        m = paper_metrics(self.rows, graded=self.clean)
         if not m["nights"]:
             return ""
 
@@ -907,7 +920,9 @@ state.</p>"""
              f"{m['unhedged_sharpe']:+.2f}" if m["unhedged_sharpe"] is not None else "-",
              f"noise at {m['nights']} nights - shown because the track asks for it"),
             ("Win rate", f"{m['win_rate_pct']}%" if m["win_rate_pct"] is not None else "-",
-             "-", f"{m['hedges_that_cut']} of {m['hedges']} hedges cut the move"),
+             "-", f"{m['hedges_that_cut']} of {m['hedges']} graded hedges cut the move"
+                  + (f"; {m['hedges_ungraded']} more were sent and are excluded from the "
+                     f"grade as defect 3f, a night early" if m["hedges_ungraded"] else "")),
             ("Orders placed", f"{m['orders']}", "0",
              f"{m['positions']} position-nights, so {m['orders']} orders in total"),
         ]
@@ -925,11 +940,15 @@ state.</p>"""
 position-nights, against the same book with every hedge removed - observed, not modelled.</p>
 <div class="scroll stacked"><table><thead><tr><th>Metric</th><th class="num">Ballast</th>
 <th class="num">Untouched</th><th>Note</th></tr></thead><tbody>{body}</tbody></table></div>
-<p class="note"><strong>Read the drawdown, not the Sharpe.</strong> This is insurance: it
-should show up as a smaller worst-case, and it does. Sharpe over {m['nights']} nights is
-noise in either column and both are negative here - it is on the page because the track
-names it, not because it means anything yet. The figures that carry weight are on the
-Evidence page, measured over 100 to 264 nights per name.</p>"""
+<p class="note"><strong>Read the drawdown, not the Sharpe, and not the return.</strong>
+This is insurance. It should show up as a smaller worst case, and it does:
+{bp(m['hedged_max_dd_bp'])} against {bp(m['unhedged_max_dd_bp'])}.
+<strong>The book carrying Ballast returned less than the book left alone</strong>
+({bp(m['hedged_total_bp'])} against {bp(m['unhedged_total_bp'])}), which is what paying
+for protection over a rising window looks like and is not a result to argue away.
+Sharpe over {m['nights']} nights is noise in either column - it is on the page because
+the track names it, not because {m['nights']} nights can support it. The figures that
+carry weight are on the Evidence page, measured over 100 to 264 nights per name.</p>"""
 
     @property
     def tile_scope(self) -> str:
