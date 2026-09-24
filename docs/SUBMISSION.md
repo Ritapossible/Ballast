@@ -165,7 +165,7 @@ Gate 1 result behaving as measured, on live data, decided by a job nobody was wa
 executor → ledger), morning settlement against the exact counterfactual, the signed
 tamper-evident ledger, the enforcer and its red-team suite, the Qwen event reader with three
 verification gates, the research suite behind every number, a scheduled workflow that runs
-and commits unattended, and a public site with full documentation. **482 tests, network-free
+and commits unattended, and a public site with full documentation. **493 tests, network-free
 and key-free.**
 
 **Not built:** live execution (paper only, by choice); Bitget Agentic Account OAuth wiring -
@@ -246,7 +246,7 @@ market API (spot + USDT-futures), Nasdaq earnings calendar, Google News RSS, Qwe
 | **Paper trading log** | `state/ledger.jsonl` - hash-chained, signed, committed by the scheduled job |
 | **Bitget-schema log** | `state/bitget_orders.json` - the same fills in UTA order field names |
 | **Research suite** | `research/` - reproduces every figure, no API key needed |
-| **Tests** | `python3 -m unittest discover -s tests` - 482, network-free, incl. 31 end-to-end |
+| **Tests** | `python3 -m unittest discover -s tests` - 493, network-free, incl. 31 end-to-end |
 | **Workflows** | `.github/workflows/` - nightly loop and CI |
 
 **Why the log is evidence rather than assertion:** each decision is written before its

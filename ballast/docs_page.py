@@ -6,6 +6,8 @@ and stops, and what is deliberately not claimed.
 """
 from __future__ import annotations
 
+import html
+import json
 from pathlib import Path
 
 from . import config, facts, suite
@@ -48,6 +50,84 @@ def _funding_range(f: dict) -> str:
             if paying else "")
     return (f"from {fund['min_bp']:+.2f} bp ({fund['min_name']}) to "
             f"{fund['max_bp']:+.2f} bp ({fund['max_name']}) a night{tail}")
+
+
+
+def _crosscheck() -> dict:
+    """The counts the second opinion actually produced on its last run."""
+    try:
+        return json.loads((config.STATE / "calendar_crosscheck.json").read_text())
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def _crosscheck_tag() -> str:
+    d = _crosscheck().get("counts") or {}
+    if not d:
+        return "not run"
+    return "answering" if d.get("checked") else "not answering"
+
+
+def _crosscheck_sentence() -> str:
+    """Rendered from the file, because typing it by hand kept going stale.
+
+    This sentence has been wrong three times. It said the upstream answered 503
+    while the file beside it recorded 96 checked; then it said 96 when the file
+    said 108; then 108 when the file said 120. Each time a human had to notice.
+    Worse, the fourth drift was not a count at all - the upstream renamed the
+    catalog entry, every row came back `unknown`, and a hand-typed "116 agree"
+    would have claimed a second opinion the project no longer had.
+
+    So the numbers come from the file, and the three states a reader must be
+    able to tell apart are each written out: it answered and agreed, it answered
+    and disagreed, or it could not be asked.
+    """
+    d = _crosscheck()
+    c = d.get("counts") or {}
+    if not c:
+        return ("The crosscheck has not been run against this chain yet, so no "
+                "second opinion is claimed here.")
+    checked, unknown = c.get("checked", 0), c.get("unknown", 0)
+    agreed, disagreed = c.get("agreed", 0), c.get("disagreed", 0)
+    decisions = c.get("decisions", 0)
+
+    if not checked:
+        detail = ""
+        for row in d.get("rows") or []:
+            if row.get("detail"):
+                detail = f" The upstream said: <code>{html.escape(str(row['detail'])[:80])}</code>."
+                break
+        return (f"On its last run <strong>none of the {decisions} decisions could be "
+                f"checked</strong> - all {unknown} are recorded <strong>unknown</strong>, "
+                f"never as agreement.{detail} A second source that fails open is worse "
+                f"than none, so the row says so rather than carrying the last good number.")
+
+    head = (f"All <strong>{checked}</strong> decisions are checked against it with "
+            f"<strong>{'nothing recorded unknown' if not unknown else f'{unknown} recorded unknown'}</strong>. "
+            f"<strong>{agreed} agree, {disagreed} do not</strong>")
+    if disagreed:
+        # Named from the file, not from memory. The run that produced this
+        # sentence first disagreed on four rows across two sessions; the next
+        # disagreed on two, in one session. A hand-typed list of names and
+        # dates is a claim about which rows an independent source flagged, and
+        # that is exactly the claim that must not drift.
+        rows = [r for r in (d.get("rows") or [])
+                if r.get("bitget_mcp") != "unknown" and not r.get("agree")]
+        names = sorted({str(r.get("ticker")) for r in rows})
+        days = sorted({str(r.get("session")) for r in rows})
+        who = " and ".join(names) if len(names) < 3 else ", ".join(names)
+        when = days[0] if len(days) == 1 else " and ".join(days)
+        known = {"ADBE", "ORCL"}
+        if set(names) <= known:
+            return (head + f" &mdash; and they are {html.escape(who)} on {html.escape(when)}, which are "
+                    "<em>hedges this project already publishes as its own defect</em>: "
+                    "the selector matched a session without checking the release time and "
+                    "covered a night early. An independent source, asked the same question, "
+                    "landed on rows we had already marked wrong.")
+        return (head + f" &mdash; on {html.escape(who)} at {html.escape(when)}. These are not rows this "
+                "project had already flagged, so they are an open question rather than "
+                "corroboration of a known defect.")
+    return head + " &mdash; the two sources agree on every decision on the chain."
 
 
 BODY = f"""
@@ -184,14 +264,24 @@ every row.</p>
 <p><strong>Where the Playbook's paper account stands.</strong> It is in
 <em>My Playbooks</em> in GetAgent Studio, switched to 0.0.2 on 2026-09-20 with positions
 and cumulative returns preserved. Studio showed <strong>Paper Degraded &middot;
-pending_validation</strong> for a day; as of 2026-09-21 it reads <strong>Paper Running</strong>
-and <strong>On Studio leaderboard</strong>, with the next evaluation due 17:00 that day. The
+pending_validation</strong> for a day; since 2026-09-21 it reads <strong>Paper
+Running</strong> and <strong>On Studio leaderboard</strong>, and by 2026-09-23 it carries
+<strong>three days of paper history</strong> and a curve. The
 public catalogue agrees, and that half is checkable without the Studio UI:
 <code>/api/v1/playbook/list?status=published</code> returns <strong>0.0.2 alongside
 0.0.1</strong>, both <code>published</code>, under strategy <code>b18f70be</code>.
-<strong>What has not changed is the part that matters.</strong> Studio still reports
-<em>health not assessed</em> and <strong>no valid decision recorded</strong> - so its 0.00% is
-an empty account, not a night this system declined. Two things follow, and both are stated
+<strong>Its 0.00% is the policy, not an empty account, and the difference is
+checkable.</strong> This Playbook opens a hedge only on a night carrying a scheduled
+earnings event, and it holds on every other night - that is the whole strategy rather than a
+gap in it. Asked of the live calendar on 2026-09-23, the next scheduled report across its ten
+names is <strong>MU on 2026-09-30</strong>, then NKE on 10-01 and TSLA on 10-28.
+<strong>The earliest night it could act on falls three days after the submission
+deadline.</strong> So a flat paper curve over this window is the correct output, and anyone
+can reproduce that list from the same public calendar the selector reads.
+<strong>What that also means: the paper account cannot demonstrate the hedge before the
+deadline</strong> - it can only show the policy declining, which is what it is doing. Studio
+still reports <em>health not assessed</em> and <strong>no valid decision recorded</strong>,
+which is consistent with an account that has had nothing to decide. Two things follow, and both are stated
 here rather than left to be discovered: the $10,000 paper balance is not a Track 2 run log,
 and <strong>the signed hash-chained ledger is</strong>. The <code>/my-playbooks</code> API
 still does not see Studio paper tracking at all - re-checked the same day, <strong>0
@@ -224,15 +314,9 @@ this book&rsquo;s twelve stocks. The fill is then priced against the market and 
 identity and grounding gates; 12 of 96 answers were refused for quoting a headline that was not
 in the supplied sources.</td></tr>
 <tr><td data-label=""><strong>bitget-mcp-server</strong></td>
-<td data-label="State"><span class="tag on">answering</span></td>
+<td data-label="State"><span class="tag on">{_crosscheck_tag()}</span></td>
 <td class="wrap" data-label="What it does">A second opinion on the earnings calendar, asked for every
-decision on the chain. Its <code>equity_calendar_earnings</code> entry spent days answering
-<strong>503</strong>; it now answers, and all <strong>120</strong> decisions are checked against it
-with <strong>nothing recorded unknown</strong>. <strong>116 agree, 4 do not</strong> &mdash; and the
-four are ADBE and ORCL on 2026-09-09 and 09-10, which are <em>the same two hedges this project
-already publishes as its own defect</em>: the selector matched a session without checking the
-release time and covered a night early. An independent source, asked the same question, landed on
-exactly the rows we had already marked wrong. It still does not decide anything; re-pointing the
+decision on the chain. {_crosscheck_sentence()} It still does not decide anything; re-pointing the
 selector days before a submission would invalidate the record the change is meant to support.</td></tr>
 <tr><td data-label=""><strong>bitget-signal</strong></td>
 <td data-label="State"><span class="tag on">answering in halves</span></td>

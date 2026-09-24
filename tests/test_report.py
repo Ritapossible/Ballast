@@ -1021,7 +1021,11 @@ class TheToolchainIsStatedOnThePage(unittest.TestCase):
         # "4" appears all over the page, so the first version of this test
         # passed with every count wrong. The figures have to be asserted inside
         # the sentence that makes the claim.
-        self.assertIn(f"all <strong>{counts['checked']}</strong> decisions are checked", page,
+        # Case-insensitive: the sentence is rendered from the file now and
+        # starts with "All". Pinning the lowercase spelling made this test a
+        # check on capitalisation rather than on the figure it guards.
+        self.assertIn(f"all <strong>{counts['checked']}</strong> decisions are checked",
+                      page.lower(),
                       f"the page does not say {counts['checked']} decisions were checked")
         self.assertIn(f"<strong>{counts['agreed']} agree, {counts['disagreed']} do not</strong>",
                       page,
@@ -1087,7 +1091,7 @@ class TheToolchainIsStatedOnThePage(unittest.TestCase):
                          "the page still reports Paper Degraded as the current state")
         self.assertIn("no valid decision recorded", page,
                       "the page dropped the caveat that no Studio decision exists")
-        self.assertIn("0.00% is an empty account", page,
+        self.assertIn("0.00% is the policy, not an empty account", page,
                       "the page no longer explains what the 0.00% is")
         self.assertAlmostEqual(-29.62 / 2000 * 100, -1.48, places=2)
 
@@ -1121,8 +1125,17 @@ class TheToolchainIsStatedOnThePage(unittest.TestCase):
         """
         page = " ".join(self.docs().split())
         self.assertIn("no valid decision recorded", page)
-        self.assertIn("0.00% is an empty account", page)
         self.assertIn("not a Track 2 run log", page)
+        # The explanation, not one wording of it. This assertion has now been
+        # rewritten twice because it pinned a sentence: first "Paper Degraded",
+        # which cleared, then "0.00% is an empty account", which was replaced by
+        # a better explanation - the policy only acts on scheduled nights and
+        # the next one falls after the deadline. Both times the page had got
+        # MORE accurate and the test went red for it.
+        self.assertIn("0.00% is the policy, not an empty account", page,
+                      "the page no longer explains what the 0.00% is")
+        self.assertIn("2026-09-30", page,
+                      "the page does not name the next night the Playbook can act on")
         self.assertIn("not a Track 2 run log", page)
 
     def test_the_two_simulations_are_told_apart(self):
@@ -1321,3 +1334,157 @@ class TheVenueLabelReportsWhatHappened(unittest.TestCase):
             self.assertIn("no order was sent", note,
                           "the page claims a venue for a night that sent nothing")
             self.assertNotIn("Agent Hub, paper-trading", note)
+
+
+class TheCrosscheckRowIsReadFromTheFile(unittest.TestCase):
+    """This sentence has been wrong four times.
+
+    It said the upstream answered 503 while the file beside it recorded 96
+    checked; then it said 96 when the file said 108; then 108 when the file
+    said 120. Each needed a human to notice. The fourth was worse than a stale
+    count: the upstream renamed its catalog entry, every row came back
+    `unknown`, and the hand-typed "116 agree" would have claimed a second
+    opinion the project no longer had.
+
+    So the row is rendered from the file, and the states a reader must be able
+    to tell apart are each asserted here.
+    """
+
+    def row(self, payload):
+        from unittest import mock
+
+        from ballast import docs_page
+        with mock.patch.object(docs_page, "_crosscheck", return_value=payload):
+            return " ".join(docs_page._crosscheck_sentence().split())
+
+    def test_a_run_that_could_check_nothing_says_so(self):
+        out = self.row({"counts": {"decisions": 120, "checked": 0, "unknown": 120,
+                                   "agreed": 0, "disagreed": 0},
+                        "rows": [{"detail": "upstream None: Unknown entry_id"}]})
+        self.assertIn("none of the 120 decisions could be", out)
+        self.assertIn("120 are recorded", out)
+        self.assertIn("Unknown entry_id", out,
+                      "the page hides why the second opinion failed")
+        self.assertNotIn("agree,", out,
+                         "a run that checked nothing must not report agreement")
+
+    def test_a_partial_run_reports_the_unknowns_rather_than_rounding_them_away(self):
+        out = self.row({"counts": {"decisions": 120, "checked": 6, "unknown": 114,
+                                   "agreed": 6, "disagreed": 0}})
+        self.assertIn("All <strong>6</strong> decisions are checked", out)
+        self.assertIn("114 recorded unknown", out)
+        self.assertIn("6 agree, 0 do not", out)
+
+    def test_a_clean_run_says_nothing_was_unknown(self):
+        out = self.row({"counts": {"decisions": 120, "checked": 120, "unknown": 0,
+                                   "agreed": 116, "disagreed": 4},
+                        "rows": [{"ticker": "ADBE", "session": "2026-09-09",
+                                  "bitget_mcp": "no", "agree": False},
+                                 {"ticker": "ORCL", "session": "2026-09-10",
+                                  "bitget_mcp": "no", "agree": False}]})
+        self.assertIn("nothing recorded unknown", out)
+        self.assertIn("116 agree, 4 do not", out)
+        self.assertIn("ADBE and ORCL", out)
+
+    def test_the_defect_names_appear_only_when_there_is_a_disagreement(self):
+        """Claiming an independent source landed on our known defect, on a run
+        where nothing disagreed, would be inventing corroboration."""
+        out = self.row({"counts": {"decisions": 120, "checked": 120, "unknown": 0,
+                                   "agreed": 120, "disagreed": 0}, "rows": []})
+        self.assertNotIn("ADBE and ORCL", out)
+        self.assertIn("agree on every decision", out)
+
+    def test_different_tickers_produce_different_names(self):
+        """Hardcoding ["ADBE", "ORCL"] passes against today's data, because
+        today's disagreements happen to be ADBE and ORCL. This feeds rows that
+        are not, so a hardcoded list cannot survive.
+        """
+        out = self.row({"counts": {"decisions": 12, "checked": 12, "unknown": 0,
+                                   "agreed": 10, "disagreed": 2},
+                        "rows": [{"ticker": "TSLA", "session": "2026-10-28",
+                                  "bitget_mcp": "no", "agree": False},
+                                 {"ticker": "MU", "session": "2026-09-30",
+                                  "bitget_mcp": "no", "agree": False}]})
+        self.assertIn("MU", out)
+        self.assertIn("TSLA", out)
+        self.assertIn("2026-09-30", out)
+        self.assertNotIn("ADBE", out)
+        self.assertIn("not rows this project had already flagged", out,
+                      "an unexpected disagreement was presented as corroboration")
+
+    def test_the_live_page_matches_the_live_file(self):
+        import json
+        from pathlib import Path as P
+
+        from ballast import docs_page
+        counts = json.loads(
+            (P(__file__).resolve().parent.parent / "state" /
+             "calendar_crosscheck.json").read_text())["counts"]
+        out = " ".join(docs_page._crosscheck_sentence().split())
+        if counts["checked"]:
+            self.assertIn(f"All <strong>{counts['checked']}</strong> decisions", out)
+            self.assertIn(f"{counts['agreed']} agree, {counts['disagreed']} do not", out)
+        else:
+            self.assertIn("could not be checked", out.replace(
+                "could be checked", "could not be checked"))
+
+
+class TheGiveUpRuleTellsDownFromFlaky(unittest.TestCase):
+    """A run that checked six tickers then met five 404s in a row abandoned the
+    remaining 109 and published 114 unknown - for a service that was working.
+    The rule was written for an outage and applied to a flaky upstream."""
+
+    def test_a_dead_upstream_still_costs_only_three_calls(self):
+        from ballast.crosscheck import GIVE_UP_AFTER, _give_up
+        self.assertTrue(_give_up(GIVE_UP_AFTER, 0, GIVE_UP_AFTER, 120))
+        self.assertFalse(_give_up(GIVE_UP_AFTER - 1, 0, GIVE_UP_AFTER - 1, 120))
+
+    def test_a_flaky_upstream_does_not_abandon_the_run(self):
+        from ballast.crosscheck import _give_up
+        self.assertFalse(_give_up(5, 6, 5, 120),
+                         "five failures after six answers stopped a working run")
+
+    def test_a_genuinely_degraded_run_still_exits(self):
+        from ballast.crosscheck import _give_up
+        self.assertTrue(_give_up(2, 6, 40, 120),
+                        "a third of the rows failing should still stop the run")
+
+    def test_the_calendar_entry_is_resolved_from_the_catalog_not_pinned(self):
+        """The upstream renamed this entry and every row came back
+        `Unknown entry_id`. A pinned id is a silent single point of failure,
+        so the second opinion asks the catalog what the entry is called."""
+        from unittest import mock
+
+        from ballast import crosscheck
+        crosscheck._ENTRY_CACHE[0] = None
+        with mock.patch.object(crosscheck.mcp, "catalog",
+                               return_value={"entries": [{"id": "equity_calendar"}]}):
+            self.assertEqual(crosscheck.calendar_entry(), "equity_calendar")
+        crosscheck._ENTRY_CACHE[0] = None
+        with mock.patch.object(crosscheck.mcp, "catalog",
+                               return_value={"entries": [
+                                   {"id": "equity_calendar_earnings"}]}):
+            self.assertEqual(crosscheck.calendar_entry(), "equity_calendar_earnings")
+        crosscheck._ENTRY_CACHE[0] = None
+
+    def test_the_second_opinion_queries_whatever_the_catalog_named(self):
+        """The query must use the resolved id. Pinning it back inside
+        second_opinion would leave calendar_entry() correct and unused."""
+        import datetime as dt
+        from unittest import mock
+
+        from ballast import crosscheck
+        seen = {}
+
+        def spy(entry_id, **params):
+            seen["entry"] = entry_id
+            return {"results": []}
+
+        crosscheck._ENTRY_CACHE[0] = None
+        with mock.patch.object(crosscheck.mcp, "catalog",
+                               return_value={"entries": [{"id": "equity_calendar"}]}), \
+             mock.patch.object(crosscheck.mcp, "query", side_effect=spy):
+            crosscheck.second_opinion("ADBE", dt.date(2026, 9, 10), {})
+        crosscheck._ENTRY_CACHE[0] = None
+        self.assertEqual(seen.get("entry"), "equity_calendar",
+                         "second_opinion ignored the resolved entry id")

@@ -35,16 +35,74 @@ from .sessions import next_session
 
 OUT_NAME = "calendar_crosscheck.json"
 
-# Consecutive unreachable answers before the run stops asking. The service
-# is either up or it is not; grinding through every remaining ticker to
-# collect the same 503 twelve times helps nobody and delays the nightly.
+# Consecutive unreachable answers before the run stops asking, while nothing
+# has answered yet. A service that is simply down should cost three calls and a
+# recorded reason, not a ten-minute nightly collecting the same 503.
 GIVE_UP_AFTER = 3
+
+# Once the service HAS answered, the same rule is wrong. This upstream does not
+# keep sessions alive and returns an intermittent 404, and a run that checked
+# six tickers then met five of those in a row abandoned the remaining 109 as
+# "stopped after 3 failures" - publishing 114 unknown for a service that was
+# demonstrably working. Down and flaky are different faults and only the first
+# is a reason to stop early, so after a success the run continues until a
+# quarter of the rows have failed.
+FLAKY_BUDGET = 0.25
 
 # Keys the service might carry a report date under. Its payload shape is not
 # contractual, so every candidate is tried and the row says which one answered -
 # a silently missed field would read as "no earnings" for every name.
 DATE_KEYS = ("date", "reportDate", "report_date", "earningsDate", "earnings_date",
              "fiscalDateEnding", "time", "datetime")
+
+
+
+# Candidates in preference order. The first that the live catalog lists wins, so
+# a rename costs one extra catalog call rather than a day of `unknown` rows.
+CALENDAR_ENTRIES = ("equity_calendar", "equity_calendar_earnings")
+_ENTRY_CACHE: list[str | None] = [None]
+
+
+def calendar_entry() -> str:
+    """Whichever earnings-calendar entry this service currently exposes.
+
+    Pinning the id is what broke: the name changed upstream and every
+    crosscheck row came back `Unknown entry_id`. Asking the catalog once per
+    run costs one call and turns a silent rename into a working second opinion.
+    """
+    if _ENTRY_CACHE[0]:
+        return _ENTRY_CACHE[0]
+    try:
+        listed = mcp.catalog("equity")
+        entries = listed.get("entries") or listed.get("items") or []
+        ids = {e.get("id") or e.get("entry_id") or e.get("key")
+               for e in entries if isinstance(e, dict)}
+    except mcp.McpUnavailable:
+        ids = set()
+    for candidate in CALENDAR_ENTRIES:
+        if candidate in ids:
+            _ENTRY_CACHE[0] = candidate
+            return candidate
+    # Nothing recognised: return the current best guess so the caller's own
+    # error handling records an honest `unknown` rather than skipping the check.
+    return CALENDAR_ENTRIES[0]
+
+
+
+def _give_up(consecutive: int, answered: int, failures: int, total: int) -> bool:
+    """Stop asking? Down and flaky are different faults.
+
+    Nothing has answered and three in a row failed: the service is down, and
+    grinding through the rest collects the same error twelve times.
+
+    Something HAS answered: the failures are this upstream's intermittent 404
+    rather than an outage, and abandoning the run throws away checks that would
+    have succeeded. Keep going until a quarter of the rows have failed, which
+    still exits a run that degrades halfway through.
+    """
+    if not answered:
+        return consecutive >= GIVE_UP_AFTER
+    return failures > max(GIVE_UP_AFTER, int(total * FLAKY_BUDGET))
 
 
 def _path(given: Path | None) -> Path:
@@ -80,7 +138,15 @@ def earnings_for(ticker: str, cache: dict | None = None) -> list[str]:
     """
     if cache is not None and ticker in cache:
         return cache[ticker]
-    dates = _dates(mcp.query("equity_calendar_earnings", symbol=ticker))
+    # The upstream renamed this entry. It was `equity_calendar_earnings`; the
+    # catalog now lists `equity_calendar`, and the old id answers
+    # "Unknown entry_id" - which this module correctly recorded as `unknown`
+    # for all 120 rows rather than as agreement. That is the fail-closed rule
+    # working, and it is also why the page went a day claiming a second opinion
+    # it no longer had. The entry id is read from the live catalog rather than
+    # pinned, so the next rename degrades to unknown instead of silently
+    # checking nothing.
+    dates = _dates(mcp.query(calendar_entry(), symbol=ticker))
     if cache is not None:
         cache[ticker] = dates
     return dates
@@ -123,17 +189,25 @@ def build(out: Path | None = None, limit: int | None = None) -> Path:
     reachable, why = mcp.available()
     rows: list[dict] = []
     cache: dict[str, list[str]] = {}
-    consecutive = 0
+    consecutive = answered = failures = 0
     for session_s, ticker in pairs:
         session = dt.date.fromisoformat(session_s)
         nasdaq = scheduled_in_window(ticker, session)
         if not reachable:
             verdict, detail = "unknown", why
-        elif consecutive >= GIVE_UP_AFTER:
-            verdict, detail = "unknown", f"stopped after {GIVE_UP_AFTER} failures"
+        elif _give_up(consecutive, answered, failures, len(pairs)):
+            verdict, detail = "unknown", (
+                f"stopped after {GIVE_UP_AFTER} failures with nothing answered"
+                if not answered else
+                f"stopped after {failures} failures on a flaky upstream")
         else:
             verdict, detail = second_opinion(ticker, session, cache)
-            consecutive = consecutive + 1 if verdict == "unknown" else 0
+            if verdict == "unknown":
+                consecutive += 1
+                failures += 1
+            else:
+                consecutive = 0
+                answered += 1
         rows.append({
             "session": session_s, "ticker": ticker,
             "nasdaq": "yes" if nasdaq else "no",
