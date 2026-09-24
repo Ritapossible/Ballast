@@ -189,6 +189,44 @@ def _decisions(rows: list[dict]) -> str:
     return "".join(out) + "</tbody></table></div>"
 
 
+
+def _fill_note(row: dict) -> str:
+    """What actually happened to this hedge's order, in six words.
+
+    Read per row rather than per night, because the two disagree: the night
+    summary was written from "is the CLI configured" and said Agent Hub
+    paper-trading, while every fill underneath recorded `venue: simulated` with
+    Bitget's own `HTTP 400: exchange environment is incorrect` and no order id.
+    The fills were the honest half and they were the half not on the page.
+
+    Silent when there is no fill: a refusal has no execution to report, and
+    inventing one would be the same fault in the other direction.
+    """
+    fill = row.get("fill") or {}
+    if not fill:
+        return ""
+    bits = []
+    venue = fill.get("venue")
+    if venue and venue != "bgc-paper":
+        bits.append(_e(str(venue)))
+    elif not venue and fill.get("paper"):
+        # The four hedges from 09-09 and 09-10 predate the `venue` field. They
+        # carry `paper: true` and were simulated exactly like the rest, so
+        # leaving them blank would read as though those two nights were filled
+        # somewhere the later ones were not.
+        bits.append("simulated")
+    fallback = fill.get("venue_fallback") or ""
+    if "400" in fallback:
+        bits.append("Hub HTTP 400")
+    elif fallback:
+        bits.append(_e(str(fallback).split(":")[0][:28]))
+    if not fill.get("orderId") and not fill.get("order_id"):
+        bits.append("no order id")
+    if not bits:
+        return ""
+    return f'<span class="dim"> &middot; {" &middot; ".join(bits)}</span>'
+
+
 def _settled(rows: list[dict]) -> str:
     if not rows:
         return _empty("Nothing settled yet. Every decision is graded at the next "
@@ -220,6 +258,14 @@ def _settled(rows: list[dict]) -> str:
         if on:
             cut = abs(r.get("realised_bp", 0)) < abs(r.get("unhedged_bp", 0))
             verdict, faint = ("cut the move", False) if cut else ("did not cut", True)
+            # How the hedge was actually filled, on the row that says it cut the
+            # move. The ledger has always carried this - the venue, the
+            # exchange's own refusal, and the absence of an order id - and this
+            # page carried none of it, so a reader saw "cut the move" with no
+            # way to learn from here that no exchange ever filled the order. A
+            # verdict printed without its execution is the page flattering
+            # itself.
+            verdict += _fill_note(r)
         else:
             verdict, faint = "carried", True
         out.append(
@@ -465,7 +511,16 @@ class Site:
         # with near-identical numbers and no way to tell them apart - which reads as
         # a duplicate-row bug, not as two nights. dict() copies; the ledger body is
         # never mutated.
-        self.rows = [dict(r, session=s.get("session", ""))
+        # The settlement row grades the hedge; the decision row records how it
+        # was filled. They are joined here so the settled table can print both,
+        # because the execution reality lived only in the ledger: every fill
+        # said `venue: simulated` with Bitget's own HTTP 400 and no order id,
+        # while the page said "cut the move" and nothing else.
+        fills = {(d.get("session"), d.get("ticker")): d["fill"]
+                 for d in decisions if d.get("fill")}
+        self.rows = [dict(r, session=s.get("session", ""),
+                          **({"fill": fills[(s.get("session"), r.get("ticker"))]}
+                             if (s.get("session"), r.get("ticker")) in fills else {}))
                      for s in self.settlements for r in s.get("rows", [])]
         # Headline tiles measure only sessions decided with the corrected calendar.
         # A session whose hedges were placed a night early cannot support a claim

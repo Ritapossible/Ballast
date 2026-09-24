@@ -1488,3 +1488,70 @@ class TheGiveUpRuleTellsDownFromFlaky(unittest.TestCase):
         crosscheck._ENTRY_CACHE[0] = None
         self.assertEqual(seen.get("entry"), "equity_calendar",
                          "second_opinion ignored the resolved entry id")
+
+
+class EveryGradedHedgeShowsHowItWasFilled(unittest.TestCase):
+    """The settled page said "cut the move" and nothing else.
+
+    The ledger had always carried the truth - every fill `venue: simulated`,
+    Bitget's own `HTTP 400: exchange environment is incorrect`, and no order id
+    anywhere - and the page carried none of those words. A judge who read only
+    the page saw nine hedges that cut the move and had no way to learn from
+    there that no exchange ever filled one. A verdict printed without its
+    execution is the page flattering itself.
+    """
+
+    def rows(self):
+        from ballast import report
+        return report.Site().rows
+
+    def test_no_hedge_claims_a_verdict_without_its_execution(self):
+        from ballast import report
+        hedges = [r for r in self.rows() if r.get("action") == "HEDGE"]
+        self.assertTrue(hedges, "no hedges on the chain to check")
+        for r in hedges:
+            with self.subTest(session=r.get("session"), ticker=r.get("ticker")):
+                note = report._fill_note(r)
+                self.assertTrue(note, "a graded hedge carries no execution note")
+                self.assertIn("no order id", note,
+                              "the page does not say the fill carried no order id")
+                self.assertIn("simulated", note,
+                              "the page does not say the fill was simulated")
+
+    def test_the_settled_page_contains_the_words_the_ledger_does(self):
+        from ballast import report
+        page = report._settled(self.rows())
+        for word in ("simulated", "no order id"):
+            self.assertIn(word, page,
+                          f"the settled page never says {word!r}")
+
+    def test_the_exchange_refusal_is_named_where_it_happened(self):
+        """Only the nights routed through the Hub met the 400. Printing it on
+        the earlier ones would be as wrong as hiding it on these."""
+        from ballast import report
+        hedged = [r for r in self.rows() if r.get("action") == "HEDGE"]
+        routed = [r for r in hedged
+                  if "400" in str((r.get("fill") or {}).get("venue_fallback", ""))]
+        if not routed:
+            self.skipTest("no Hub-era fills on this chain")
+        for r in routed:
+            self.assertIn("Hub HTTP 400", report._fill_note(r))
+        for r in hedged:
+            if r not in routed:
+                self.assertNotIn("400", report._fill_note(r),
+                                 "a pre-Hub fill claims an exchange refusal")
+
+    def test_a_refusal_row_invents_no_execution(self):
+        """A NO_HEDGE night sent nothing. Printing a venue for it would be the
+        same fault in the other direction."""
+        from ballast import report
+        self.assertEqual(report._fill_note({"action": "NO_HEDGE"}), "")
+        self.assertEqual(report._fill_note({"action": "NO_HEDGE", "fill": {}}), "")
+
+    def test_a_genuinely_routed_fill_is_not_labelled_simulated(self):
+        """The fix must leave the honest case sayable: a real Hub fill with an
+        order id should carry neither 'simulated' nor 'no order id'."""
+        from ballast import report
+        note = report._fill_note({"action": "HEDGE",
+                                  "fill": {"venue": "bgc-paper", "orderId": "123"}})
+        self.assertEqual(note, "")
