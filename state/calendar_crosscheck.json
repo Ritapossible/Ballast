@@ -1,18 +1,18 @@
 {
- "built_on": "2026-09-24T22:08:23+00:00",
+ "built_on": "2026-09-24T22:13:30+00:00",
  "counts": {
-  "agreed": 127,
-  "checked": 129,
+  "agreed": 128,
+  "checked": 132,
   "decisions": 132,
-  "disagreed": 2,
-  "unknown": 3
+  "disagreed": 4,
+  "unknown": 0
  },
  "rows": [
   {
    "agree": false,
-   "bitget_mcp": "unknown",
-   "detail": "HTTP 404 from https://agent.bitget.com/mcp",
-   "nasdaq": "no",
+   "bitget_mcp": "no",
+   "detail": "0 dates returned, none in this window",
+   "nasdaq": "yes",
    "session": "2026-09-09",
    "ticker": "ADBE"
   },
@@ -41,9 +41,9 @@
    "ticker": "COST"
   },
   {
-   "agree": false,
-   "bitget_mcp": "unknown",
-   "detail": "HTTP 404 from https://agent.bitget.com/mcp",
+   "agree": true,
+   "bitget_mcp": "no",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "MSFT"
@@ -73,10 +73,10 @@
    "ticker": "NVDA"
   },
   {
-   "agree": true,
+   "agree": false,
    "bitget_mcp": "no",
    "detail": "0 dates returned, none in this window",
-   "nasdaq": "no",
+   "nasdaq": "yes",
    "session": "2026-09-09",
    "ticker": "ORCL"
   },
@@ -89,9 +89,9 @@
    "ticker": "PLTR"
   },
   {
-   "agree": false,
-   "bitget_mcp": "unknown",
-   "detail": "HTTP 404 from https://agent.bitget.com/mcp",
+   "agree": true,
+   "bitget_mcp": "no",
+   "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "SPY"
