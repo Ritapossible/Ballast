@@ -1,7 +1,7 @@
 # X article — Ballast
 
 Long-form post for X. Every figure is from `docs/facts.json`, the signed ledger,
-or `state/calendar_crosscheck.json`, measured 2026-09-24. **Re-check before
+or `state/calendar_crosscheck.json`, measured 2026-09-25. **Re-check before
 posting** — the nightly moves the live-record numbers.
 
 Must contain `#BitgetHackathon` and `@Bitget_AI`.
@@ -78,10 +78,10 @@ gates stand between it and an order: the answer must parse into the contracted
 shape, it must be about the right ticker, and **the quote it cites must appear in
 the headlines it was given**.
 
-Over 132 decisions on the live chain: **86 decided by the model, 46 by the rule**.
+Over 144 decisions on the live chain: **97 decided by the model, 47 by the rule**.
 The gates refused **20 answers for quoting a headline that wasn't in the sources**
 and 2 for schema violations, and the rule took over on 17 nights where the model
-was unreachable. On the remaining 7 the model answered cleanly and said it did not
+was unreachable. On the remaining 8 the model answered cleanly and said it did not
 know — abstention hands the night back to the rule. A fabricated source cannot
 reach the book.
 
@@ -117,10 +117,13 @@ on the settled page says so: `simulated · Hub HTTP 400 · no order id`.
 
 Every decision is written to a **hash-chained, signed ledger before the outcome
 is known**. An independent second opinion — Bitget's MCP stock service — is asked
-the same calendar question for every decision: **132 of 132 checked, 128 agree,
-4 disagree.** The four disagreements are the same ADBE and ORCL rows I'd already
-published as my own defect. An independent source landed on exactly the rows I'd
-marked wrong.
+the same calendar question for every decision: **144 of 144 checked, 139 agree,
+5 disagree.** Four of the five are the ADBE and ORCL rows I had already published
+as my own defect — an independent source landing on exactly the rows I'd marked
+wrong. The fifth arrived last night on COST and points the other way: Nasdaq's
+calendar had the earnings, Bitget's service returned no dates at all. Which of the
+two is wrong is open, and the page says that rather than claiming corroboration it
+hasn't earned.
 
 ### What I'm not claiming
 
@@ -135,7 +138,7 @@ assumption.
 ### Verify it
 
 `git clone`, then `python3 verify.py`. One command, no key, no network. It runs
-503 tests, requires the enforcer to refuse a naked directional order, re-derives
+504 tests, requires the enforcer to refuse a naked directional order, re-derives
 the hash chain, mutates a copy and requires verification to fail, and checks that
 every published figure comes from measurement rather than a literal.
 

@@ -61,6 +61,31 @@ def _crosscheck() -> dict:
         return {}
 
 
+def _reader_gate_sentence() -> str:
+    """The refusal count, from the chain rather than from memory.
+
+    This said "12 of 96" for as long as it took the chain to reach 144 decisions
+    and 20 refusals - a literal sitting one table row above a sentence that had
+    already been made data-driven for exactly this reason. The denominator is
+    answers the model actually returned: a night it was unreachable is not an
+    answer the gates got to judge, so counting it as one would understate them.
+    """
+    try:
+        from .ledger import Ledger
+        entries = Ledger(config.LEDGER_PATH, config.DEV_SECRET).records("decision")
+    except Exception:  # noqa: BLE001 - the page must still build offline
+        return ""
+    readers = [(e.get("body") or {}).get("reader") or {} for e in entries]
+    answered = [r for r in readers
+                if r.get("rejected_because") != "model_unavailable"]
+    refused = sum(1 for r in answered
+                  if r.get("rejected_because") == "quote_not_in_sources")
+    if not answered:
+        return ""
+    return (f"; {refused} of {len(answered)} answers were refused for quoting a "
+            f"headline that was not in the supplied sources")
+
+
 def _crosscheck_tag() -> str:
     d = _crosscheck().get("counts") or {}
     if not d:
@@ -311,8 +336,7 @@ this book&rsquo;s twelve stocks. The fill is then priced against the market and 
 <tr><td data-label=""><strong>Qwen</strong> <code>qwen3.8-max</code></td>
 <td data-label="State"><span class="tag on">deciding</span></td>
 <td class="wrap" data-label="What it does">The event reader. Owns the hedge judgment behind schema,
-identity and grounding gates; 12 of 96 answers were refused for quoting a headline that was not
-in the supplied sources.</td></tr>
+identity and grounding gates{_reader_gate_sentence()}.</td></tr>
 <tr><td data-label=""><strong>bitget-mcp-server</strong></td>
 <td data-label="State"><span class="tag on">{_crosscheck_tag()}</span></td>
 <td class="wrap" data-label="What it does">A second opinion on the earnings calendar, asked for every

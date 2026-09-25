@@ -1037,6 +1037,37 @@ class TheToolchainIsStatedOnThePage(unittest.TestCase):
         self.assertEqual(counts["agreed"] + counts["disagreed"], counts["checked"],
                          "the crosscheck file does not add up")
 
+    def test_the_reader_gate_numbers_come_from_the_chain(self):
+        """The row above the crosscheck row was still a literal.
+
+        It read "12 of 96 answers were refused" while the ledger beside it held
+        144 decisions and 20 refusals - the same drift the crosscheck sentence
+        was made data-driven to stop, one table row higher. The denominator is
+        answers the model returned, because a night it was unreachable is not an
+        answer a gate got to judge.
+        """
+        import json
+        from pathlib import Path as P
+
+        path = P(__file__).resolve().parent.parent / "state" / "ledger.jsonl"
+        readers = [(json.loads(line).get("body") or {}).get("reader") or {}
+                   for line in path.read_text().splitlines()
+                   if line.strip() and json.loads(line).get("kind") == "decision"]
+        answered = [r for r in readers
+                    if r.get("rejected_because") != "model_unavailable"]
+        refused = sum(1 for r in answered
+                      if r.get("rejected_because") == "quote_not_in_sources")
+        page = " ".join(self.docs().split())
+        self.assertIn(
+            f"{refused} of {len(answered)} answers were refused for quoting a "
+            f"headline that was not in the supplied sources",
+            page,
+            f"the chain says {refused} of {len(answered)} were refused for a "
+            f"quote the sources did not contain",
+        )
+        self.assertLess(len(answered), len(readers) + 1,
+                        "answers cannot outnumber decisions")
+
     def test_the_playbook_number_is_not_passed_off_as_the_product_metric(self):
         """It prices one leg. Ballast's claim is two-legged drawdown."""
         page = " ".join(self.docs().split())
