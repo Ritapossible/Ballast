@@ -341,7 +341,7 @@ certain. A short also collects funding, which brings the average night to
 opened</em> - the settled table charges it on every night and re-pricing a hedge
 part-way through a competition record would make that table incomparable with itself.
 That credit is a rate and not a promise: re-measured across the book today it runs
-from -0.16 bp (PLTR) to +4.11 bp (NKE) a night, and is against the hedge on 2 of 12 names, averaging 0.83 bp, and the gap between
+from -0.16 bp (PLTR) to +4.11 bp (NKE) a night, and is against the hedge on 2 of 12 names, averaging 0.88 bp, and the gap between
 that and the frozen figure is why the certain number is the gross one. Either way it is
 cheaper than the 20 bp it costs to exit - and you keep the
 position.</li>
@@ -472,12 +472,11 @@ this book&rsquo;s twelve stocks. The fill is then priced against the market and 
 <tr><td data-label=""><strong>Qwen</strong> <code>qwen3.8-max</code></td>
 <td data-label="State"><span class="tag on">deciding</span></td>
 <td class="wrap" data-label="What it does">The event reader. Owns the hedge judgment behind schema,
-identity and grounding gates; 12 of 96 answers were refused for quoting a headline that was not
-in the supplied sources.</td></tr>
+identity and grounding gates; 20 of 127 answers were refused for quoting a headline that was not in the supplied sources.</td></tr>
 <tr><td data-label=""><strong>bitget-mcp-server</strong></td>
-<td data-label="State"><span class="tag on">answering</span></td>
+<td data-label="State"><span class="tag on">not answering</span></td>
 <td class="wrap" data-label="What it does">A second opinion on the earnings calendar, asked for every
-decision on the chain. All <strong>144</strong> decisions are checked against it with <strong>nothing recorded unknown</strong>. <strong>139 agree, 5 do not</strong> &mdash; on ADBE, COST, ORCL at 2026-09-09 and 2026-09-10 and 2026-09-24. These are not rows this project had already flagged, so they are an open question rather than corroboration of a known defect. It still does not decide anything; re-pointing the
+decision on the chain. On its last run <strong>none of the 144 decisions could be checked</strong> - all 144 are recorded <strong>unknown</strong>, never as agreement. The upstream said: <code>upstream 503: None</code>. A second source that fails open is worse than none, so the row says so rather than carrying the last good number. It still does not decide anything; re-pointing the
 selector days before a submission would invalidate the record the change is meant to support.</td></tr>
 <tr><td data-label=""><strong>bitget-signal</strong></td>
 <td data-label="State"><span class="tag on">answering in halves</span></td>
