@@ -78,10 +78,12 @@ gates stand between it and an order: the answer must parse into the contracted
 shape, it must be about the right ticker, and **the quote it cites must appear in
 the headlines it was given**.
 
-Over 132 decisions on the live chain: **93 decided by the model, 39 by the rule**.
-The gates refused **20 answers for quoting a headline that wasn't in the sources**,
-2 for schema violations, and fell back to the rule on 17 where the model was
-unreachable. A fabricated source cannot reach the book.
+Over 132 decisions on the live chain: **86 decided by the model, 46 by the rule**.
+The gates refused **20 answers for quoting a headline that wasn't in the sources**
+and 2 for schema violations, and the rule took over on 17 nights where the model
+was unreachable. On the remaining 7 the model answered cleanly and said it did not
+know — abstention hands the night back to the rule. A fabricated source cannot
+reach the book.
 
 Separately, an enforcer holds the only write-scoped credential. It never sees the
 model's reasoning — it checks arithmetic against a signed, expiring mandate: a
@@ -133,7 +135,7 @@ assumption.
 ### Verify it
 
 `git clone`, then `python3 verify.py`. One command, no key, no network. It runs
-498 tests, requires the enforcer to refuse a naked directional order, re-derives
+503 tests, requires the enforcer to refuse a naked directional order, re-derives
 the hash chain, mutates a copy and requires verification to fail, and checks that
 every published figure comes from measurement rather than a literal.
 
