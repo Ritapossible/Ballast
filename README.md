@@ -25,7 +25,7 @@ stated price.**
 ## What is measured
 
 <!-- facts:start -->
-All figures measured **2026-09-25** from public Bitget endpoints and
+All figures measured **2026-09-26** from public Bitget endpoints and
 regenerated from [`docs/facts.json`](docs/facts.json) - none is a literal in this
 file. Reproduce with `research/`; full detail and disclosed defects in
 [`docs/RESEARCH.md`](docs/RESEARCH.md).
