@@ -6,6 +6,7 @@ and stops, and what is deliberately not claimed.
 """
 from __future__ import annotations
 
+import datetime as dt
 import html
 import json
 from pathlib import Path
@@ -59,6 +60,29 @@ def _crosscheck() -> dict:
         return json.loads((config.STATE / "calendar_crosscheck.json").read_text())
     except (OSError, json.JSONDecodeError):
         return {}
+
+
+# The organisers' submission deadline, and the first night the published Playbook
+# has anything to act on. Both are external dates and both have moved. The page
+# used to state their relationship as prose - "falls three days after the
+# submission deadline" - written when the deadline was 2026-09-27. It moved to
+# 2026-10-08 and that sentence became false in the project's favour, which is the
+# worst direction for a wrong claim to point: it understated what the record can
+# show. The relationship is derived from the two dates now.
+SUBMISSION_DEADLINE = dt.date(2026, 10, 8)
+PLAYBOOK_NEXT_EVENT = dt.date(2026, 9, 30)
+
+
+def _playbook_window() -> str:
+    """Whether the Playbook's first actionable night lands inside the window."""
+    days = (SUBMISSION_DEADLINE - PLAYBOOK_NEXT_EVENT).days
+    if days < 0:
+        return (f"<strong>The earliest night it could act on falls {-days} days "
+                f"after the submission deadline of {SUBMISSION_DEADLINE}.</strong> "
+                f"So a flat paper curve over this window is the correct output")
+    return (f"<strong>With the deadline now {SUBMISSION_DEADLINE}, that night falls "
+            f"{days} days inside the window rather than after it</strong> - so "
+            f"the flat paper curve is the correct output for the window so far")
 
 
 def _reader_gate_sentence() -> str:
@@ -299,12 +323,13 @@ public catalogue agrees, and that half is checkable without the Studio UI:
 checkable.</strong> This Playbook opens a hedge only on a night carrying a scheduled
 earnings event, and it holds on every other night - that is the whole strategy rather than a
 gap in it. Asked of the live calendar on 2026-09-23, the next scheduled report across its ten
-names is <strong>MU on 2026-09-30</strong>, then NKE on 10-01 and TSLA on 10-28.
-<strong>The earliest night it could act on falls three days after the submission
-deadline.</strong> So a flat paper curve over this window is the correct output, and anyone
+names is <strong>MU on 2026-09-30</strong>, then NKE on 10-01 and TSLA on 10-28,
+re-checked against the live calendar on 2026-09-27.
+{_playbook_window()}, and anyone
 can reproduce that list from the same public calendar the selector reads.
-<strong>What that also means: the paper account cannot demonstrate the hedge before the
-deadline</strong> - it can only show the policy declining, which is what it is doing. Studio
+<strong>What that also means: until 2026-09-30 the paper account can only show the policy
+declining</strong>, which is what it is doing, and whether it opens on MU that night is
+checkable here afterwards rather than promised now. Studio
 still reports <em>health not assessed</em> and <strong>no valid decision recorded</strong>,
 which is consistent with an account that has had nothing to decide. Two things follow, and both are stated
 here rather than left to be discovered: the $10,000 paper balance is not a Track 2 run log,

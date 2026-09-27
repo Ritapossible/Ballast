@@ -78,10 +78,10 @@ gates stand between it and an order: the answer must parse into the contracted
 shape, it must be about the right ticker, and **the quote it cites must appear in
 the headlines it was given**.
 
-Over 144 decisions on the live chain: **97 decided by the model, 47 by the rule**.
-The gates refused **20 answers for quoting a headline that wasn't in the sources**
-and 2 for schema violations, and the rule took over on 17 nights where the model
-was unreachable. On the remaining 8 the model answered cleanly and said it did not
+Over 156 decisions on the live chain: **104 decided by the model, 52 by the rule**.
+The gates refused **22 answers for quoting a headline that wasn't in the sources**
+and 3 for schema violations, and the rule took over on 18 nights where the model
+was unreachable. On the remaining 9 the model answered cleanly and said it did not
 know — abstention hands the night back to the rule. A fabricated source cannot
 reach the book.
 
@@ -117,13 +117,17 @@ on the settled page says so: `simulated · Hub HTTP 400 · no order id`.
 
 Every decision is written to a **hash-chained, signed ledger before the outcome
 is known**. An independent second opinion — Bitget's MCP stock service — is asked
-the same calendar question for every decision: **144 of 144 checked, 139 agree,
-5 disagree.** Four of the five are the ADBE and ORCL rows I had already published
-as my own defect — an independent source landing on exactly the rows I'd marked
-wrong. The fifth arrived last night on COST and points the other way: Nasdaq's
-calendar had the earnings, Bitget's service returned no dates at all. Which of the
-two is wrong is open, and the page says that rather than claiming corroboration it
-hasn't earned.
+the same calendar question for every decision. When it last answered it checked
+all 144 and disagreed on 5: four were the ADBE and ORCL rows I had already
+published as my own defect — an independent source landing on exactly the rows
+I'd marked wrong — and the fifth, on COST, pointed the other way, Nasdaq's
+calendar carrying the earnings and Bitget's returning none.
+
+As I write this it is answering `503`, and **all 156 decisions are recorded
+`unknown`, never as agreement.** That is the designed behaviour and the half that
+matters more: a second source that fails open is worse than no second source. The
+page reports the outage instead of carrying the last good number forward, so the
+figure there may not match the one above — check the page, not this paragraph.
 
 ### What I'm not claiming
 
@@ -138,7 +142,7 @@ assumption.
 ### Verify it
 
 `git clone`, then `python3 verify.py`. One command, no key, no network. It runs
-504 tests, requires the enforcer to refuse a naked directional order, re-derives
+506 tests, requires the enforcer to refuse a naked directional order, re-derives
 the hash chain, mutates a copy and requires verification to fail, and checks that
 every published figure comes from measurement rather than a literal.
 

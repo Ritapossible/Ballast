@@ -1024,6 +1024,23 @@ class TheToolchainIsStatedOnThePage(unittest.TestCase):
         # Case-insensitive: the sentence is rendered from the file now and
         # starts with "All". Pinning the lowercase spelling made this test a
         # check on capitalisation rather than on the figure it guards.
+        if not counts["checked"]:
+            # The upstream 503'd and the run gave up with nothing answered. This
+            # branch went untested until it happened in production: the test
+            # asserted the "N checked" wording unconditionally and went red for a
+            # page that was correctly reporting an outage. Fail-closed is the
+            # claim that matters here - unknown, never carried-over agreement.
+            self.assertIn(f"none of the {counts['decisions']} decisions could be "
+                          f"checked", page,
+                          "nothing was checked, but the page does not say so")
+            self.assertIn(f"all {counts['unknown']} are recorded "
+                          f"<strong>unknown</strong>, never as agreement", page,
+                          "an unanswered second opinion must not read as agreement")
+            self.assertEqual(counts["unknown"], counts["decisions"],
+                             "every unchecked decision must be recorded unknown")
+            self.assertEqual(counts["agreed"] + counts["disagreed"], 0,
+                             "nothing was checked, so nothing can have agreed")
+            return
         self.assertIn(f"all <strong>{counts['checked']}</strong> decisions are checked",
                       page.lower(),
                       f"the page does not say {counts['checked']} decisions were checked")

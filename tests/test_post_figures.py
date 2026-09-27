@@ -122,5 +122,50 @@ class ArticleDecisionSplit(unittest.TestCase):
                          "the stated reasons must exhaust the rule-decided nights")
 
 
+class ArticleCrosscheckState(unittest.TestCase):
+    """The article must not claim a second opinion the file says was not obtained.
+
+    The paragraph read "144 of 144 checked, 139 agree, 5 disagree" while the
+    upstream was returning 503 and every row on the chain was recorded unknown.
+    Fail-closed is the claim this project makes about that service; an article
+    quoting the last good number is the exact failure it is supposed to prevent,
+    printed somewhere it cannot be corrected.
+    """
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.text = (DOCS / "X_ARTICLE.md").read_text()
+
+    def counts(self) -> dict:
+        path = DOCS.parent / "state" / "calendar_crosscheck.json"
+        if not path.exists():
+            self.skipTest("no crosscheck file in this checkout")
+        return json.loads(path.read_text())["counts"]
+
+    def test_an_outage_is_not_reported_as_agreement(self) -> None:
+        c = self.counts()
+        if c["checked"]:
+            return
+        self.assertRegex(
+            self.text, r"all \d+ decisions are recorded\s+`unknown`",
+            "nothing could be checked, so the article must say the decisions are "
+            "recorded unknown rather than quote an agreement count",
+        )
+        self.assertNotRegex(
+            self.text, rf"\*\*{c['decisions']} of {c['decisions']} checked",
+            "the article claims every decision was checked while the file "
+            "records none of them as checked",
+        )
+
+    def test_the_unknown_count_is_the_files_own(self) -> None:
+        c = self.counts()
+        if c["checked"]:
+            return
+        found = re.search(r"all (\d+) decisions are recorded\s+`unknown`", self.text)
+        self.assertIsNotNone(found, "the article no longer states the unknown count")
+        self.assertEqual(int(found.group(1)), c["unknown"],
+                         f"the file records {c['unknown']} unknown")
+
+
 if __name__ == "__main__":
     unittest.main()
