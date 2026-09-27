@@ -292,9 +292,34 @@ class TileScopeCase(unittest.TestCase):
     def test_the_scope_note_names_the_excluded_rows(self):
         flat = " ".join(self._site({"2026-09-09": -900.0,
                                     "2026-09-10": 300.0}).tile_scope.split())
-        self.assertIn("1 hedges are excluded", flat.replace("1 hedges", "1 hedges"))
+        # This used to assert "1 hedges are excluded" - and to launder it through
+        # a .replace() that swapped the string for itself, so the assertion read
+        # as though it handled the singular while pinning the ungrammatical
+        # output it was supposed to catch.
+        self.assertIn("1 hedge is excluded", flat,
+                      "one excluded row must not read as plural")
+        self.assertNotIn("1 hedges", flat)
         self.assertIn("2026-09-09", flat)
-        self.assertIn("refusals that night stand", flat)
+        # The claim, not one phrasing of it: a refusal on the affected night was
+        # a refusal under the corrected rule too, so it still counts.
+        self.assertIn("still counted", flat,
+                      "the note must say the refusals that night still count")
+        self.assertIn("never remove one", flat,
+                      "the note must say why only hedges are affected")
+
+    def test_the_scope_note_reads_as_a_list_when_several_are_excluded(self):
+        """Two names joined by commas scanned as three items beside the date.
+
+        "ADBE, ORCL on 2026-09-09" reads as a list of three; "ADBE and ORCL on
+        2026-09-09" reads as two names and a date, which is what it is.
+        """
+        site = self._site({"2026-09-09": -900.0, "2026-09-10": 300.0})
+        site.excluded = [{"ticker": "ADBE", "session": "2026-09-09"},
+                         {"ticker": "ORCL", "session": "2026-09-09"}]
+        flat = " ".join(site.tile_scope.split())
+        self.assertIn("2 hedges are excluded: ADBE and ORCL on 2026-09-09", flat)
+        self.assertIn("They stay in the table", flat,
+                      "more than one excluded row cannot be 'that row'")
 
     def test_no_scope_note_without_an_exclusion(self):
         flat = " ".join(self._site({"2026-09-10": 300.0}).tile_scope.split())

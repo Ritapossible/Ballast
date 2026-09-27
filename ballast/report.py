@@ -227,6 +227,19 @@ def _fill_note(row: dict) -> str:
     return f'<span class="dim"> &middot; {" &middot; ".join(bits)}</span>'
 
 
+def _join(items) -> str:
+    """"A", "A and B", "A, B and C" - a list as a person reads it aloud.
+
+    The scope note joined tickers with commas, so two excluded rows read
+    "ADBE, ORCL on 2026-09-09" - which scans as three items, not two names and
+    a date.
+    """
+    items = list(items)
+    if len(items) <= 1:
+        return items[0] if items else ""
+    return f"{', '.join(items[:-1])} and {items[-1]}"
+
+
 def _settled(rows: list[dict]) -> str:
     if not rows:
         return _empty("Nothing settled yet. Every decision is graded at the next "
@@ -1005,6 +1018,31 @@ Sharpe over {m['nights']} nights is noise in either column - it is on the page b
 the track names it, not because {m['nights']} nights can support it. The figures that
 carry weight are on the Evidence page, measured over 100 to 264 nights per name.</p>"""
 
+    def _exclusion_note(self) -> str:
+        """Why some hedges are not graded, in sentences that survive a phone.
+
+        This ran as one 46-word sentence carrying a colon and three clauses -
+        "Only those rows: the fault could add a hedge, never remove one, so the
+        refusals that night stand and are counted" - which is a lot to hold on a
+        390px screen, and it sits directly under the tiles a judge reads first.
+        Same three claims, four short sentences.
+
+        It also rendered "1 hedges are excluded" whenever exactly one was, and
+        the test covering it asserted that spelling rather than catching it.
+        """
+        count = len(self.excluded)
+        names = _join(sorted(r["ticker"] for r in self.excluded))
+        sessions = sorted({r["session"] for r in self.excluded})
+        whose = "that night's" if len(sessions) == 1 else "those nights'"
+        head = (f"{count} hedge is excluded" if count == 1
+                else f"{count} hedges are excluded")
+        tail = "That row stays" if count == 1 else "They stay"
+        return (f"{head}: {names} on {_join(sessions)}, placed a night early. "
+                f"A hedge on the wrong night cannot show what a hedge is worth. "
+                f"Nothing else is excluded - the fault could add a hedge but never "
+                f"remove one, so {whose} refusals are untouched and still counted. "
+                f"{tail} in the table, marked. ")
+
     @property
     def tile_scope(self) -> str:
         """State what the tiles cover, and how few nights that is."""
@@ -1015,13 +1053,7 @@ carry weight are on the Evidence page, measured over 100 to 264 nights per name.
         note = (f'<p class="note">Across <strong>{n} {nights}</strong> '
                 f'({", ".join(self.clean_sessions)}). ')
         if self.excluded:
-            names = ", ".join(sorted(r["ticker"] for r in self.excluded))
-            note += (f'{len(self.excluded)} hedges are excluded - {names} on '
-                     f'{", ".join(sorted({r["session"] for r in self.excluded}))}, placed a '
-                     f'night early, so they cannot say how well a hedge works. Only those '
-                     f'rows: the fault could add a hedge, never remove one, so the refusals '
-                     f'that night stand and are counted. They are still in the table, '
-                     f'marked. ')
+            note += self._exclusion_note()
         if n < 5:
             note += (f'At {n} {nights} the mean is still mostly market direction rather than '
                      f'a performance record. The claims this project stands on are on the '
