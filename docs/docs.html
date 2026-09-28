@@ -341,14 +341,14 @@ certain. A short also collects funding, which brings the average night to
 opened</em> - the settled table charges it on every night and re-pricing a hedge
 part-way through a competition record would make that table incomparable with itself.
 That credit is a rate and not a promise: re-measured across the book today it runs
-from -0.16 bp (PLTR) to +4.24 bp (NKE) a night, and is against the hedge on 2 of 12 names, averaging 0.94 bp, and the gap between
+from -0.13 bp (PLTR) to +4.15 bp (NKE) a night, and is against the hedge on 1 of 12 names, averaging 0.93 bp, and the gap between
 that and the frozen figure is why the certain number is the gross one. Either way it is
 cheaper than the 20 bp it costs to exit - and you keep the
 position.</li>
 <li><strong>Crypto is not a hedge.</strong> Median R² against BTC is 0.114. Crypto
 legs are excluded by measurement, not preference.</li>
 </ul>
-<p>Of 2587 live rTokens, <strong>235 have a perp leg</strong> (measured 2026-09-26). Ballast states plainly
+<p>Of 2811 live rTokens, <strong>236 have a perp leg</strong> (measured 2026-09-28). Ballast states plainly
 which positions it cannot protect rather than pretending otherwise.</p>
 
 <h2 id="selector">Choosing the night</h2>
@@ -435,12 +435,13 @@ public catalogue agrees, and that half is checkable without the Studio UI:
 checkable.</strong> This Playbook opens a hedge only on a night carrying a scheduled
 earnings event, and it holds on every other night - that is the whole strategy rather than a
 gap in it. Asked of the live calendar on 2026-09-23, the next scheduled report across its ten
-names is <strong>MU on 2026-09-30</strong>, then NKE on 10-01 and TSLA on 10-28.
-<strong>The earliest night it could act on falls three days after the submission
-deadline.</strong> So a flat paper curve over this window is the correct output, and anyone
+names is <strong>MU on 2026-09-30</strong>, then NKE on 10-01 and TSLA on 10-28,
+re-checked against the live calendar on 2026-09-27.
+<strong>With the deadline now 2026-10-08, that night falls 8 days inside the window rather than after it</strong> - so the flat paper curve is the correct output for the window so far, and anyone
 can reproduce that list from the same public calendar the selector reads.
-<strong>What that also means: the paper account cannot demonstrate the hedge before the
-deadline</strong> - it can only show the policy declining, which is what it is doing. Studio
+<strong>What that also means: until 2026-09-30 the paper account can only show the policy
+declining</strong>, which is what it is doing, and whether it opens on MU that night is
+checkable here afterwards rather than promised now. Studio
 still reports <em>health not assessed</em> and <strong>no valid decision recorded</strong>,
 which is consistent with an account that has had nothing to decide. Two things follow, and both are stated
 here rather than left to be discovered: the $10,000 paper balance is not a Track 2 run log,
@@ -476,7 +477,7 @@ identity and grounding gates; 22 of 138 answers were refused for quoting a headl
 <tr><td data-label=""><strong>bitget-mcp-server</strong></td>
 <td data-label="State"><span class="tag on">not answering</span></td>
 <td class="wrap" data-label="What it does">A second opinion on the earnings calendar, asked for every
-decision on the chain. On its last run <strong>none of the 156 decisions could be checked</strong> - all 156 are recorded <strong>unknown</strong>, never as agreement. The upstream said: <code>upstream 503: None</code>. A second source that fails open is worse than none, so the row says so rather than carrying the last good number. It still does not decide anything; re-pointing the
+decision on the chain. On its last run <strong>none of the 156 decisions could be checked</strong> - all 156 are recorded <strong>unknown</strong>, never as agreement. The upstream said: <code>HTTP 503 from https://agent.bitget.com/mcp</code>. A second source that fails open is worse than none, so the row says so rather than carrying the last good number. It still does not decide anything; re-pointing the
 selector days before a submission would invalidate the record the change is meant to support.</td></tr>
 <tr><td data-label=""><strong>bitget-signal</strong></td>
 <td data-label="State"><span class="tag on">answering in halves</span></td>
@@ -579,7 +580,7 @@ the whole session.</li>
 <p>All figures are produced by code in <code>research/</code> from public endpoints,
 labelled <em>observed</em>, <em>estimated</em> or <em>targeted</em>.</p>
 <div class="scroll stacked"><table><thead><tr><th>Finding</th><th>Value</th></tr></thead><tbody>
-<tr><td data-label="">rTokens live on spot / with a perp leg</td><td class="num" data-label="Value">2587 / 235</td></tr>
+<tr><td data-label="">rTokens live on spot / with a perp leg</td><td class="num" data-label="Value">2811 / 236</td></tr>
 <tr><td data-label="">Median overnight variance removed</td><td class="num" data-label="Value">98.2%</td></tr>
 <tr><td data-label="">R² on top-decile move nights</td><td class="num" data-label="Value">0.978-0.999</td></tr>
 <tr><td data-label="">Median p95 tail reduction</td><td class="num" data-label="Value">88%</td></tr>
