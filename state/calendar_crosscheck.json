@@ -1,11 +1,11 @@
 {
- "built_on": "2026-09-28T22:26:18+00:00",
+ "built_on": "2026-09-29T01:03:38+00:00",
  "counts": {
   "agreed": 0,
   "checked": 0,
-  "decisions": 156,
+  "decisions": 168,
   "disagreed": 0,
-  "unknown": 156
+  "unknown": 168
  },
  "rows": [
   {
@@ -1254,6 +1254,102 @@
    "detail": "HTTP 503 from https://agent.bitget.com/mcp",
    "nasdaq": "no",
    "session": "2026-09-25",
+   "ticker": "TSLA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "HTTP 503 from https://agent.bitget.com/mcp",
+   "nasdaq": "no",
+   "session": "2026-09-28",
+   "ticker": "ADBE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "HTTP 503 from https://agent.bitget.com/mcp",
+   "nasdaq": "no",
+   "session": "2026-09-28",
+   "ticker": "AMD"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "HTTP 503 from https://agent.bitget.com/mcp",
+   "nasdaq": "no",
+   "session": "2026-09-28",
+   "ticker": "COIN"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "HTTP 503 from https://agent.bitget.com/mcp",
+   "nasdaq": "no",
+   "session": "2026-09-28",
+   "ticker": "COST"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "HTTP 503 from https://agent.bitget.com/mcp",
+   "nasdaq": "no",
+   "session": "2026-09-28",
+   "ticker": "MSFT"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "HTTP 503 from https://agent.bitget.com/mcp",
+   "nasdaq": "no",
+   "session": "2026-09-28",
+   "ticker": "MU"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "HTTP 503 from https://agent.bitget.com/mcp",
+   "nasdaq": "no",
+   "session": "2026-09-28",
+   "ticker": "NKE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "HTTP 503 from https://agent.bitget.com/mcp",
+   "nasdaq": "no",
+   "session": "2026-09-28",
+   "ticker": "NVDA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "HTTP 503 from https://agent.bitget.com/mcp",
+   "nasdaq": "no",
+   "session": "2026-09-28",
+   "ticker": "ORCL"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "HTTP 503 from https://agent.bitget.com/mcp",
+   "nasdaq": "no",
+   "session": "2026-09-28",
+   "ticker": "PLTR"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "HTTP 503 from https://agent.bitget.com/mcp",
+   "nasdaq": "no",
+   "session": "2026-09-28",
+   "ticker": "SPY"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "HTTP 503 from https://agent.bitget.com/mcp",
+   "nasdaq": "no",
+   "session": "2026-09-28",
    "ticker": "TSLA"
   }
  ],
