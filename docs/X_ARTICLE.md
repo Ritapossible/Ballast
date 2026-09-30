@@ -14,7 +14,7 @@ Must contain `#BitgetHackathon` and `@Bitget_AI`.
 
 ## Body
 
-Bitget lists 2,587 tokenized US stocks. They trade 24/7.
+Bitget lists 2,811 tokenized US stocks. They trade 24/7.
 
 The market that prices the share underneath them is open 32.5 hours a week.
 
@@ -28,7 +28,7 @@ stated price.
 
 ### The mechanism
 
-Of those 2,587 rTokens, **235 have a matched stock perpetual** trading the same
+Of those 2,811 rTokens, **236 have a matched stock perpetual** trading the same
 24/7 clock. Short the perp against the token and you remove a **median 98.2% of
 overnight variance**, with hedge ratios between **0.992 and 1.027** across 12
 names and 100–264 nights each.
@@ -78,10 +78,10 @@ gates stand between it and an order: the answer must parse into the contracted
 shape, it must be about the right ticker, and **the quote it cites must appear in
 the headlines it was given**.
 
-Over 156 decisions on the live chain: **104 decided by the model, 52 by the rule**.
-The gates refused **22 answers for quoting a headline that wasn't in the sources**
-and 3 for schema violations, and the rule took over on 18 nights where the model
-was unreachable. On the remaining 9 the model answered cleanly and said it did not
+Over 180 decisions on the live chain: **118 decided by the model, 62 by the rule**.
+The gates refused **27 answers for quoting a headline that wasn't in the sources**
+and 3 for schema violations, and the rule took over on 20 nights where the model
+was unreachable. On the remaining 12 the model answered cleanly and said it did not
 know — abstention hands the night back to the rule. A fabricated source cannot
 reach the book.
 
@@ -96,18 +96,20 @@ path to a directional trade.
 
 ### The live record, including the parts that don't flatter it
 
-11 nights, 132 position-nights, decided by a scheduled job nobody watched:
+14 nights, 168 position-nights, decided by a scheduled job nobody watched:
 
-- **7 of 7 graded hedges cut the move.** Two more were sent and are excluded from
+- **9 of 9 graded hedges cut the move.** Two more were sent and are excluded from
   the grade — they're a defect I published: the selector matched a session
   without checking the release time and covered a night early.
-- **Max drawdown −197 bp, against −227 bp untouched.** That's the claim: 30 bp of
+- **Max drawdown −203 bp, against −227 bp untouched.** That's the claim: 24 bp of
   protection.
-- **Total return +146 bp, against +152 bp untouched.** The book carrying Ballast
+- **Total return +80 bp, against +107 bp untouched.** The book carrying Ballast
   made *less* than the book left alone. That's what paying for insurance over a
   rising window looks like, and I'm not going to argue it away.
-- Sharpe is +1.89 vs +1.83. Eleven nights is noise. It's on the page because the
-  track asks for it, not because it means anything.
+- Sharpe is +0.89 vs +1.11 — lower than the book left alone, for the same reason
+  the return is: the premium is paid every hedged night and the window has mostly
+  risen. Fourteen nights is noise either way. It's on the page because the track
+  asks for it, not because it means anything.
 
 **Every fill is simulated.** Orders route to the Bitget Agent Hub in
 paper-trading mode and come back `HTTP 400: exchange environment is incorrect` —
@@ -117,21 +119,20 @@ on the settled page says so: `simulated · Hub HTTP 400 · no order id`.
 
 Every decision is written to a **hash-chained, signed ledger before the outcome
 is known**. An independent second opinion — Bitget's MCP stock service — is asked
-the same calendar question for every decision. When it last answered it checked
-all 144 and disagreed on 5: four were the ADBE and ORCL rows I had already
-published as my own defect — an independent source landing on exactly the rows
-I'd marked wrong — and the fifth, on COST, pointed the other way, Nasdaq's
-calendar carrying the earnings and Bitget's returning none.
+the same calendar question for every decision. **Across 180 decisions it agrees on
+174 and disagrees on 6.** Four are the ADBE and ORCL rows I had already published
+as my own defect — an independent source landing on exactly the rows I'd marked
+wrong. The other two are COST on consecutive nights, and they point the other way:
+Nasdaq's calendar carried the earnings, Bitget's returned none.
 
-As I write this it is answering `503`, and **all 156 decisions are recorded
-`unknown`, never as agreement.** That is the designed behaviour and the half that
-matters more: a second source that fails open is worse than no second source. The
-page reports the outage instead of carrying the last good number forward, so the
-figure there may not match the one above — check the page, not this paragraph.
+When that service went down for a day and answered `503`, every decision was
+recorded `unknown`, never as agreement. That is the half that matters more: a
+second source that fails open is worse than none. The site renders this from the
+file on every build, so if the page and this paragraph differ, the page is right.
 
 ### What I'm not claiming
 
-No return claim. No Sharpe claim. 9 hedges over 11 nights cannot support one, and
+No return claim. No Sharpe claim. 11 hedges over 14 nights cannot support one, and
 the research says direction isn't predictable anyway.
 
 Tail coverage is the open problem: the calendar reaches 2 of the worst 6
@@ -142,7 +143,7 @@ assumption.
 ### Verify it
 
 `git clone`, then `python3 verify.py`. One command, no key, no network. It runs
-507 tests, requires the enforcer to refuse a naked directional order, re-derives
+506 tests, requires the enforcer to refuse a naked directional order, re-derives
 the hash chain, mutates a copy and requires verification to fail, and checks that
 every published figure comes from measurement rather than a literal.
 

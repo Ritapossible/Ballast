@@ -97,7 +97,7 @@ def _reader_gate_sentence() -> str:
     try:
         from .ledger import Ledger
         entries = Ledger(config.LEDGER_PATH, config.DEV_SECRET).records("decision")
-    except Exception:  # noqa: BLE001 - the page must still build offline
+    except Exception:  # the page must still build offline
         return ""
     readers = [(e.get("body") or {}).get("reader") or {} for e in entries]
     answered = [r for r in readers

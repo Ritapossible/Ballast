@@ -1,170 +1,81 @@
-"""The two drafts that leave the repo and cannot be corrected afterwards.
+"""The X drafts are checked by tools/check_post.py, not by this suite.
 
-docs/SUBMISSION.md has been checked against facts.json since the universe drifted
-under it. The X drafts were not, and drifted the same way: X_POST.md still offered
-"226 of 2,125 rTokens" to paste into a tweet while facts.json said 235 of 2,587 and
-the article next to it said 2,587. A post cannot be edited after it is sent, so the
-draft is the one file where a stale figure is permanent.
+This file used to pin the drafts' figures to the chain, the paper metrics and
+facts.json. Those move every night, so every nightly ledger commit turned CI red
+for drafts nobody had touched - the suite went red on a schedule, which teaches
+everyone to ignore it. The value checks now live in a command run in the minute
+before posting.
 
-X_ARTICLE.md also quoted "93 decided by the model, 39 by the rule". 93 is the number
-of model answers that passed the gates - but 7 of those were abstentions, which hand
-the night back to the rule. The ledger's own `decided_by` says 86 and 46, which is
-what the site renders. Counting acceptances and calling them decisions is a mistake
-no proofread catches, so it is checked here against the chain.
+What stays here is what rots silently: the checker reads the drafts by regex,
+so a reworded sentence turns it into a script that reports success having
+compared nothing. The values are deliberately not pinned; the parsing is.
 """
 from __future__ import annotations
 
-import json
-import re
+import importlib.util
 import sys
 import unittest
-from collections import Counter
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from ballast import facts
-
-DOCS = Path(__file__).resolve().parent.parent / "docs"
-LEDGER = Path(__file__).resolve().parent.parent / "state" / "ledger.jsonl"
-DRAFTS = ("X_POST.md", "X_ARTICLE.md")
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 
 
-def _decisions() -> list[dict]:
-    if not LEDGER.exists():
-        return []
-    return [json.loads(line)["body"] for line in LEDGER.read_text().splitlines()
-            if line.strip() and json.loads(line).get("kind") == "decision"]
+def _checker():
+    spec = importlib.util.spec_from_file_location(
+        "check_post", ROOT / "tools" / "check_post.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
-class DraftUniverse(unittest.TestCase):
-    """Both drafts quote the hedgeable universe; both must quote the live one."""
-
+class ThePrePostCheckerStillReadsTheDrafts(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.f = facts.load()
-        cls.text = {name: (DOCS / name).read_text() for name in DRAFTS}
+        cls.checker = _checker()
+        cls.texts = {name: (ROOT / "docs" / name).read_text()
+                     for name in ("X_ARTICLE.md", "X_POST.md")}
 
-    def test_both_figures_are_stated_and_current(self) -> None:
-        """Phrasing differs between the drafts, so check the numbers, not a sentence."""
-        total, hedgeable = self.f["rtokens_total"], self.f["rtokens_hedgeable"]
-        for name, text in self.text.items():
-            self.assertIn(f"{total:,}", text,
-                          f"{name} no longer states the size of the universe")
-            self.assertIn(str(hedgeable), text,
-                          f"{name} no longer states how much of it is hedgeable")
+    def test_every_figure_is_still_found(self) -> None:
+        rows = self.checker.expectations()
+        self.assertGreaterEqual(len(rows), 25,
+                                "the checker stopped deriving most of its figures")
+        for file, what, patterns, expected in rows:
+            if expected == "<none>":
+                continue
+            with self.subTest(figure=what):
+                self.assertTrue(
+                    self.checker.matches(self.texts[file], patterns),
+                    f"no pattern for {what!r} matches {file} any more, so it is "
+                    f"no longer being checked")
 
-    def test_no_other_universe_sized_number_is_quoted(self) -> None:
-        """Any other thousands-scale count in these drafts is a universe gone stale."""
-        total = self.f["rtokens_total"]
-        for name, text in self.text.items():
-            quoted = set(re.findall(r"\b\d{1,3},\d{3}\b", text))
-            self.assertEqual(
-                quoted, {f"{total:,}"},
-                f"{name} quotes {sorted(quoted - {f'{total:,}'})}; the live "
-                f"universe is {total:,}",
-            )
+    def test_a_wrapped_figure_is_still_seen(self) -> None:
+        """Markdown wraps at the margin; a figure split across lines still counts."""
+        found = self.checker.matches("Over 12\ndecisions on the live chain",
+                                     [r"Over (\d+) decisions on the live chain"])
+        self.assertEqual(found, ["12"])
 
-    def test_no_superseded_count_survives_anywhere(self) -> None:
-        live = {self.f["rtokens_total"], self.f["rtokens_hedgeable"]}
-        stale = {facts.DEFAULTS["rtokens_total"],
-                 facts.DEFAULTS["rtokens_hedgeable"]} - live
-        for name, text in self.text.items():
-            for n in stale:
-                self.assertNotIn(f"{n:,}", text,
-                                 f"{n:,} is a superseded count still in {name}")
+    def test_an_outage_forbids_an_agreement_count(self) -> None:
+        """Fail-closed: when the second opinion is down, the last good number
+        must not be quoted as though it still held."""
+        from unittest import mock
+        real = self.checker.json.loads
 
+        def down(text, *a, **k):
+            data = real(text, *a, **k)
+            if isinstance(data, dict) and "counts" in data and "rows" in data:
+                data = dict(data, counts={"decisions": 5, "checked": 0, "agreed": 0,
+                                          "disagreed": 0, "unknown": 5})
+            return data
 
-class ArticleDecisionSplit(unittest.TestCase):
-    """The split must come from `decided_by`, not from who answered."""
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.text = (DOCS / "X_ARTICLE.md").read_text()
-        cls.dec = _decisions()
-
-    def setUp(self) -> None:
-        if not self.dec:
-            self.skipTest("no ledger in this checkout")
-
-    def test_split_matches_the_chain(self) -> None:
-        by = Counter(d["inputs"].get("decided_by") for d in self.dec)
-        self.assertIn(
-            f"Over {len(self.dec)} decisions on the live chain: "
-            f"**{by['model']} decided by the model, {by['rule']} by the rule**.",
-            self.text,
-            f"the chain says {by['model']} model / {by['rule']} rule "
-            f"over {len(self.dec)} decisions",
-        )
-
-    def test_the_stated_reasons_account_for_every_rule_night(self) -> None:
-        """Each number in the breakdown is a real count, and they leave nothing over."""
-        by = Counter(d["inputs"].get("decided_by") for d in self.dec)
-        why = Counter(d.get("reader", {}).get("rejected_because")
-                      for d in self.dec
-                      if d["inputs"].get("decided_by") == "rule")
-        abstained = why.pop(None, 0)
-        stated = {
-            "quote_not_in_sources": r"\*\*(\d+) answers for quoting a headline",
-            "schema_violation": r"and (\d+) for schema violations",
-            "model_unavailable": r"took over on (\d+) nights",
-        }
-        for reason, pattern in stated.items():
-            found = re.search(pattern, self.text)
-            self.assertIsNotNone(found, f"the article no longer states {reason}")
-            self.assertEqual(int(found.group(1)), why[reason],
-                             f"{reason} happened {why[reason]} times")
-        found = re.search(r"remaining (\d+) the model answered cleanly", self.text)
-        self.assertIsNotNone(found, "the article must account for the abstentions")
-        self.assertEqual(int(found.group(1)), abstained,
-                         f"the model abstained on {abstained} nights")
-        self.assertEqual(sum(why.values()) + abstained, by["rule"],
-                         "the stated reasons must exhaust the rule-decided nights")
-
-
-class ArticleCrosscheckState(unittest.TestCase):
-    """The article must not claim a second opinion the file says was not obtained.
-
-    The paragraph read "144 of 144 checked, 139 agree, 5 disagree" while the
-    upstream was returning 503 and every row on the chain was recorded unknown.
-    Fail-closed is the claim this project makes about that service; an article
-    quoting the last good number is the exact failure it is supposed to prevent,
-    printed somewhere it cannot be corrected.
-    """
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.text = (DOCS / "X_ARTICLE.md").read_text()
-
-    def counts(self) -> dict:
-        path = DOCS.parent / "state" / "calendar_crosscheck.json"
-        if not path.exists():
-            self.skipTest("no crosscheck file in this checkout")
-        return json.loads(path.read_text())["counts"]
-
-    def test_an_outage_is_not_reported_as_agreement(self) -> None:
-        c = self.counts()
-        if c["checked"]:
-            return
-        self.assertRegex(
-            self.text, r"all \d+ decisions are recorded\s+`unknown`",
-            "nothing could be checked, so the article must say the decisions are "
-            "recorded unknown rather than quote an agreement count",
-        )
-        self.assertNotRegex(
-            self.text, rf"\*\*{c['decisions']} of {c['decisions']} checked",
-            "the article claims every decision was checked while the file "
-            "records none of them as checked",
-        )
-
-    def test_the_unknown_count_is_the_files_own(self) -> None:
-        c = self.counts()
-        if c["checked"]:
-            return
-        found = re.search(r"all (\d+) decisions are recorded\s+`unknown`", self.text)
-        self.assertIsNotNone(found, "the article no longer states the unknown count")
-        self.assertEqual(int(found.group(1)), c["unknown"],
-                         f"the file records {c['unknown']} unknown")
+        with mock.patch.object(self.checker.json, "loads", side_effect=down):
+            rows = self.checker.expectations()
+        forbidden = [r for r in rows if r[3] == "<none>"]
+        self.assertEqual(len(forbidden), 1)
+        self.assertTrue(self.checker.matches(self.texts[forbidden[0][0]],
+                                             forbidden[0][2]),
+                        "the article quotes an agreement count, and the checker "
+                        "must flag it while the service is down")
 
 
 if __name__ == "__main__":

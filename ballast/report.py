@@ -17,7 +17,7 @@ import html
 import re
 from pathlib import Path
 
-from . import config, counterfactual, facts, suite
+from . import config, counterfactual, facts, sessions, suite
 from .earnings import SELECTOR_BUG_SESSIONS
 from .facts import load as load_facts
 from .facts import worst_night
@@ -238,6 +238,33 @@ def _join(items) -> str:
     if len(items) <= 1:
         return items[0] if items else ""
     return f"{', '.join(items[:-1])} and {items[-1]}"
+
+
+def _session_span(days: list[str]) -> str:
+    """The settled nights as a range, naming only the ones that are missing.
+
+    This listed every date - "(2026-09-09, 2026-09-10, 2026-09-11, ..." - which
+    was readable at five nights and a wall of digits at fourteen, directly under
+    the tiles a judge reads first, and it grows by one every trading day. The
+    information a reader needs is the span and whether it has holes, so that is
+    what it says: the range, checked against the exchange's own trading calendar,
+    with any session that has no settled record named rather than implied.
+    """
+    if not days:
+        return ""
+    ordered = sorted(days)
+    if len(ordered) == 1:
+        return f", {ordered[0]}"
+    first, last = ordered[0], ordered[-1]
+    expected = [d.isoformat() for d in sessions.sessions_between(
+        dt.date.fromisoformat(first), dt.date.fromisoformat(last))]
+    missing = [d for d in expected if d not in set(ordered)]
+    if not missing:
+        return f": every trading session from {first} to {last}"
+    gap = _join(missing)
+    verb = "has" if len(missing) == 1 else "have"
+    return (f" between {first} and {last}; {gap} {verb} no settled record and "
+            f"{'is' if len(missing) == 1 else 'are'} not counted")
 
 
 def _settled(rows: list[dict]) -> str:
@@ -1050,8 +1077,7 @@ carry weight are on the Evidence page, measured over 100 to 264 nights per name.
         if not n:
             return ""
         nights = "night" if n == 1 else "nights"
-        note = (f'<p class="note">Across <strong>{n} {nights}</strong> '
-                f'({", ".join(self.clean_sessions)}). ')
+        note = f'<p class="note">Across <strong>{n} {nights}</strong>{_session_span(self.clean_sessions)}. '
         if self.excluded:
             note += self._exclusion_note()
         if n < 5:

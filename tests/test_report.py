@@ -321,6 +321,29 @@ class TileScopeCase(unittest.TestCase):
         self.assertIn("They stay in the table", flat,
                       "more than one excluded row cannot be 'that row'")
 
+    def test_the_nights_are_a_range_not_a_list(self):
+        """Fourteen dates in a row under the tiles was a wall of digits, and it
+        grew by one every trading day. The span is what a reader needs."""
+        from ballast.report import _session_span
+        days = ["2026-09-09", "2026-09-10", "2026-09-11", "2026-09-14"]
+        out = _session_span(days)
+        self.assertIn("every trading session from 2026-09-09 to 2026-09-14", out)
+        self.assertNotIn("2026-09-10", out, "the dates are enumerated again")
+
+    def test_a_missing_session_is_named_not_implied(self):
+        """A range reads as complete. If it is not, the hole has to be said."""
+        from ballast.report import _session_span
+        out = _session_span(["2026-09-09", "2026-09-10", "2026-09-14"])
+        self.assertIn("2026-09-11", out, "a trading day with no record went unnamed")
+        self.assertNotIn("every trading session", out,
+                         "a range with a hole in it is described as complete")
+
+    def test_a_weekend_is_not_a_gap(self):
+        """Friday to Monday is contiguous; only exchange sessions count."""
+        from ballast.report import _session_span
+        out = _session_span(["2026-09-11", "2026-09-14"])
+        self.assertIn("every trading session", out)
+
     def test_no_scope_note_without_an_exclusion(self):
         flat = " ".join(self._site({"2026-09-10": 300.0}).tile_scope.split())
         self.assertNotIn("excluded", flat)
