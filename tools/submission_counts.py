@@ -23,6 +23,7 @@ clear it. Now the same command that clears the count drift clears this.
 """
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -33,7 +34,34 @@ from ballast import facts, suite
 
 ROOT = Path(__file__).resolve().parent.parent
 SUBMISSION = ROOT / "docs" / "SUBMISSION.md"
+HACKATHON = ROOT / "docs" / "HACKATHON.md"
 DOCS_HTML = ROOT / "docs" / "docs.html"
+LEDGER = ROOT / "state" / "ledger.jsonl"
+
+
+def hub_hedges() -> int:
+    """Hedges actually routed to the Agent Hub, counted from the chain.
+
+    HACKATHON.md stated this as prose and it has now drifted twice - five, then
+    seven, while the ledger held seven and then nine. It is the row a judge reads
+    to learn what the Hub integration really does, and the direction of the drift
+    always undercounts the evidence. A hedge carries `venue_fallback` only once an
+    order has been sent and the exchange has answered, so that field is the
+    definition rather than a proxy for it.
+    """
+    if not LEDGER.exists():
+        return 0
+    n = 0
+    for line in LEDGER.read_text().splitlines():
+        if not line.strip():
+            continue
+        entry = json.loads(line)
+        if entry.get("kind") != "decision":
+            continue
+        body = entry.get("body") or {}
+        if body.get("action") == "HEDGE" and (body.get("fill") or {}).get("venue_fallback"):
+            n += 1
+    return n
 
 
 def sections() -> int:
@@ -69,10 +97,31 @@ def rewrite(text: str) -> str:
     return text
 
 
+def rewrite_hackathon(text: str) -> str:
+    """The one generated count in the handbook map."""
+    n = hub_hedges()
+    word = {7: "seven", 8: "eight", 9: "nine", 10: "ten", 11: "eleven",
+            12: "twelve", 13: "thirteen"}.get(n, str(n))
+    pattern = r"each of the \w+ hedges since 2026-09-14 was routed"
+    text, hits = re.subn(pattern, f"each of the {word} hedges since 2026-09-14 "
+                                  f"was routed", text)
+    if not hits:
+        raise SystemExit(f"no sentence in HACKATHON.md matches {pattern!r}; the "
+                         f"prose changed shape and this tool must be updated "
+                         f"rather than silently doing nothing")
+    return text
+
+
 def main() -> int:
     current = SUBMISSION.read_text()
     wanted = rewrite(current)
+    hack_now = HACKATHON.read_text()
+    hack_want = rewrite_hackathon(hack_now)
     if "--check" in sys.argv:
+        if hack_now != hack_want:
+            print("docs/HACKATHON.md quotes a stale Agent Hub hedge count; run "
+                  "python3 tools/submission_counts.py", file=sys.stderr)
+            return 1
         if current != wanted:
             print("docs/SUBMISSION.md quotes stale counts; run "
                   "python3 tools/submission_counts.py", file=sys.stderr)
@@ -80,9 +129,13 @@ def main() -> int:
         print(f"SUBMISSION.md counts current: {suite.total()} tests, "
               f"{suite.red_team()} red-team, {suite.end_to_end()} end-to-end, "
               f"{sections()} doc sections, "
-              f"{facts.load()['rtokens_hedgeable']:,} hedgeable rTokens")
+              f"{facts.load()['rtokens_hedgeable']:,} hedgeable rTokens, "
+              f"{hub_hedges()} Agent Hub hedges")
         return 0
     SUBMISSION.write_text(wanted)
+    if hack_now != hack_want:
+        HACKATHON.write_text(hack_want)
+        print(f"rewrote docs/HACKATHON.md - {hub_hedges()} Agent Hub hedges")
     print(f"rewrote docs/SUBMISSION.md - {suite.total()} tests, "
           f"{suite.red_team()} red-team, {suite.end_to_end()} end-to-end, "
           f"{sections()} doc sections, "
