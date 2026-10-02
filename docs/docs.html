@@ -737,6 +737,26 @@ per-night correct/wrong on refusals - and a refusal's value added is positive ex
 when the position rose, which is a directional verdict this system does not make. A
 refusal now carries its arithmetic and no verdict; a hedge is graded on whether it cut
 the move, which is symmetric. Both fixed.</li>
+<li><strong>Every hedge was graded over a window it was not on for</strong> - settlement
+priced each hedge close-to-open, as though the perp short had been on from the closing
+bell. None of them were. GitHub delays the 21:00Z cron and the 00:00Z backup fires
+instead, so the thirteen hedges on record went on between 1.7 and 16.8 hours after the
+close, a median 21% of the night already gone - and on an earnings night the move lands
+in the first hour. Grading the whole window subtracts the perp leg from a fall the hedge
+missed: NKE on 2026-10-01 was recorded as <strong>+17 bp</strong> on a night that in fact
+cost <strong>526 bp</strong>. The lag was not even unmeasured -
+<code>window_elapsed_at_decision</code> sat in every night summary and nothing read it.
+Each hedge is now graded from its own signed fill timestamp, with the night cut in two at
+that moment and the hedge credited only with the part that followed. The correction does
+not flatter the record and is not meant to: it is the reason the drawdown comparison on
+the Settled page now runs the wrong way, and the reason this project's own headline claim
+does not survive its own execution latency. The seventeen signed settlements are not
+edited - the chain is append-only, so each correction sits beside the record it supersedes
+and the table prints both figures. Found alongside it: the sentence introducing that
+comparison read "it should show up as a smaller worst case, and it does", with "and it
+does" typed beside the two numbers that decide it, so the page would have asserted
+protection while printing a worse drawdown one clause later. That verdict is read off the
+figures now.</li>
 </ul>
 
 <h2 id="verify">Verify it yourself</h2>
