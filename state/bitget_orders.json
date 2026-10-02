@@ -1,7 +1,7 @@
 {
   "code": "00000",
   "msg": "success",
-  "requestTime": "1790890487630",
+  "requestTime": "1790901950317",
   "data": [
     {
       "orderId": "BAL1F91F3BE9E288DB2AE0C3836",
@@ -324,6 +324,33 @@
       "ballastReason": "event reader judged HEDGE - earnings (high impact, confidence 95%)",
       "ballastDecidedBy": "model",
       "ballastSpotSymbol": "RMUUSDT",
+      "ballastSlippageBp": 2.0,
+      "paper": true
+    },
+    {
+      "orderId": "BAL5575203C67CCF0C18B5DC419",
+      "clientOid": "BAL5575203C67CCF0C18B5DC419",
+      "symbol": "NKEUSDT",
+      "productType": "USDT-FUTURES",
+      "marginCoin": "USDT",
+      "side": "sell",
+      "tradeSide": "open",
+      "orderType": "market",
+      "force": "gtc",
+      "price": "32.474504",
+      "priceAvg": "32.474504",
+      "size": "25.956363",
+      "baseVolume": "25.956363",
+      "quoteVolume": "842.9200",
+      "fee": "-0.505800",
+      "feeCoin": "USDT",
+      "status": "filled",
+      "cTime": "1790900989541",
+      "uTime": "1790900989541",
+      "ballastSession": "2026-10-01",
+      "ballastReason": "event reader judged HEDGE - earnings (high impact, confidence 98%)",
+      "ballastDecidedBy": "model",
+      "ballastSpotSymbol": "RNKEUSDT",
       "ballastSlippageBp": 2.0,
       "paper": true
     }
