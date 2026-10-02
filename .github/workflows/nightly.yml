@@ -40,7 +40,7 @@ on:
       task:
         description: "which half to run (publish rebuilds the site only)"
         type: choice
-        options: [check, night, morning, both, publish]
+        options: [check, night, morning, both, publish, regrade]
         default: both
 
 concurrency:
@@ -124,6 +124,24 @@ jobs:
         env:
           BALLAST_SECRET: ${{ secrets.BALLAST_SECRET }}
         run: python -m ballast.morning
+
+      # Settlement grades the whole close-to-open window; the hedge was never on
+      # for all of it, because the 21:00Z cron is routinely delayed and the 00:00Z
+      # backup fires hours after the close. This appends the corrected grade next
+      # to each signed settlement - the chain is append-only, so nothing is
+      # rewritten - and the pages read the correction. Idempotent: a session that
+      # already carries its correction is skipped, so this runs beside every
+      # settle. See ballast/regrade.py.
+      - name: Re-grade settled hedges from their fill timestamp
+        if: >-
+          inputs.task != 'check'
+          && (contains(fromJSON('["30 14 * * 1-5","0 17 * * 1-5"]'),
+                       github.event.schedule)
+              || inputs.task == 'morning' || inputs.task == 'both'
+              || inputs.task == 'regrade')
+        env:
+          BALLAST_SECRET: ${{ secrets.BALLAST_SECRET }}
+        run: python -m ballast.regrade
 
       # The job used to report success for having started. A run that fired but
       # produced nothing looked identical to one that worked, and the hole only

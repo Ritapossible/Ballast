@@ -23,7 +23,7 @@ from . import config
 from .costs import HEDGE_COST_BP
 from .ledger import Ledger
 from .market import bars as market_bars
-from .overnight import overnight_returns
+from .overnight import overnight_returns, split_returns
 from .sessions import UTC
 from .universe import hedgeable_pairs
 
@@ -48,7 +48,8 @@ def _perp_for(spot_symbol: str) -> str:
 
 
 def _settle_one(record: dict, spot_ret: float, perp_ret: float,
-                cost_bp: float = HEDGE_COST_BP) -> dict:
+                cost_bp: float = HEDGE_COST_BP,
+                split: tuple[float, float, float, float] | None = None) -> dict:
     """Grade one decision against the outcome of the choice NOT taken.
 
     Both branches are scored the same way, which is the only way a refusal can be
@@ -75,7 +76,21 @@ def _settle_one(record: dict, spot_ret: float, perp_ret: float,
     symmetric and one night settles it.
     """
     unhedged_bp = spot_ret * 1e4
-    protected_bp = (spot_ret - perp_ret) * 1e4 - cost_bp
+    if split is not None:
+        # A hedge only protects the part of the night that follows it. This
+        # project's hedges are routinely late - GitHub delays the 21:00Z cron and
+        # the 00:00Z backup fires four hours past the close - so the holder eats
+        # the pre-hedge move unhedged and carries (spot - perp) only afterwards.
+        #
+        # Grading the whole window as if the hedge had been on throughout
+        # subtracts the perp from a move the hedge was not there for. On NKE
+        # 2026-10-01 the position fell 560 bp BEFORE the hedge and rose 314 bp
+        # after; the old arithmetic cancelled the fall against the perp and
+        # recorded +17 bp on a night that actually cost 506 bp.
+        pre_spot, post_spot, _pre_perp, post_perp = split
+        protected_bp = (pre_spot + post_spot - post_perp) * 1e4 - cost_bp
+    else:
+        protected_bp = (spot_ret - perp_ret) * 1e4 - cost_bp
     hedged = record["action"] == "HEDGE"
 
     realised_bp = protected_bp if hedged else unhedged_bp
@@ -91,9 +106,34 @@ def _settle_one(record: dict, spot_ret: float, perp_ret: float,
         "value_added_bp": round(value_added_bp, 1),
         "cut_the_move": abs(protected_bp) < abs(unhedged_bp) if hedged else None,
         "cost_bp": round(cost_bp, 1),
+        "pre_hedge_bp": round(split[0] * 1e4, 1) if split else None,
+        "post_hedge_bp": round(split[1] * 1e4, 1) if split else None,
         "rationale": record.get("rationale", ""),
         "event": record.get("event", {}).get("type"),
     }
+
+
+def _hedge_at(record: dict) -> dt.datetime | None:
+    """When the hedge actually existed, from the signed fill - not when the cron
+    was supposed to fire.
+
+    Every HEDGE record carries fill.at, written when the order came back, and it
+    is the same timestamp the ledger entry is signed with. Reading it from the
+    body rather than from the entry keeps the grader working on a plain list of
+    decisions, and means a replayed ledger grades identically.
+    """
+    at = (record.get("fill") or {}).get("at")
+    if not at:
+        return None
+    return dt.datetime.fromisoformat(at)
+
+
+def _split(symbol: str, kind: str, day: dt.date,
+           at: dt.datetime | None) -> tuple[float, float] | None:
+    if at is None:
+        return None
+    return split_returns(market_bars(symbol, kind, max_bars=SETTLE_BARS,
+                                     use_cache=False), day, at)
 
 
 def run(session: str | None = None) -> dict:
@@ -138,7 +178,14 @@ def run(session: str | None = None) -> dict:
             if spot_ret is None or perp_ret is None:
                 ungraded.append(r["ticker"])           # window not closed, or a data gap
                 continue
-            graded.append(_settle_one(r, spot_ret, perp_ret, cost_bp))
+            split = None
+            if r["action"] == "HEDGE":
+                at = _hedge_at(r)
+                spot_split = _split(r["spot_symbol"], "spot", day, at)
+                perp_split = _split(perp, "mix", day, at)
+                if spot_split and perp_split:
+                    split = (*spot_split, *perp_split)
+            graded.append(_settle_one(r, spot_ret, perp_ret, cost_bp, split))
 
         if not graded:
             continue

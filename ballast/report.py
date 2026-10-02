@@ -295,6 +295,15 @@ def _settled(rows: list[dict]) -> str:
         # The number stays in the row; only the label is withheld.
         mark = ('<span class="neg"> · hedged a night early</span>'
                 if _selector_affected(r) else "")
+        # The superseded grade prints on its own row, not only in the note above
+        # the table. The correction moved one night by 542 bp, and a reader who
+        # scrolled straight to the tape would otherwise see the corrected figure
+        # with nothing to say it had ever been anything else.
+        if "superseded" in r:
+            was = r["superseded"].get("realised_bp")
+            if was is not None:
+                mark += (f'<span class="neg"> · re-graded from the fill; '
+                         f'settled as {was:+,.0f} bp</span>')
         if on:
             cut = abs(r.get("realised_bp", 0)) < abs(r.get("unhedged_bp", 0))
             verdict, faint = ("cut the move", False) if cut else ("did not cut", True)
@@ -562,6 +571,27 @@ class Site:
                           **({"fill": fills[(s.get("session"), r.get("ticker"))]}
                              if (s.get("session"), r.get("ticker")) in fills else {}))
                      for s in self.settlements for r in s.get("rows", [])]
+
+        # The late-hedge correction sits BESIDE the settlements it supersedes,
+        # never over them: the chain is hash-linked, so all seventeen signed
+        # settlement records keep the full-window grade they were written with.
+        # Each row the re-grade could price on both legs is overlaid here, and the
+        # figure it replaces is kept on the row under `superseded`, so the table
+        # prints both and no number on this page is quoted without its provenance.
+        # See ballast/regrade.py for why the full-window grade was wrong.
+        self.regrades = [e["body"] for e in ledger.records("regrade")]
+        corrected = {(r.get("session"), r.get("ticker")): r
+                     for b in self.regrades for r in b.get("rows", [])}
+        SUPERSEDED = ("realised_bp", "value_added_bp", "counterfactual_bp",
+                      "cut_the_move")
+        rows = []
+        for row in self.rows:
+            fix = corrected.get((row.get("session"), row.get("ticker")))
+            if fix:
+                row = dict(row, superseded={k: row.get(k) for k in SUPERSEDED}, **fix)
+            rows.append(row)
+        self.rows = rows
+        self.regraded = [r for r in self.rows if "superseded" in r]
         # Headline tiles measure only sessions decided with the corrected calendar.
         # A session whose hedges were placed a night early cannot support a claim
         # about how well hedges work, so those rows stay in the table - where the
@@ -1028,6 +1058,18 @@ state.</p>"""
             f'<td class="dim wrap" data-label="Note">{_e(note)}</td></tr>'
             for name, ours, theirs, note in rows)
 
+        # "and it does" used to be typed here, beside the two numbers that decide
+        # it. Re-grading the hedges from their fill timestamps moved the hedged
+        # drawdown past the untouched one, and the sentence went on asserting the
+        # opposite of the figures printed immediately after it - the exact failure
+        # this project keeps finding: a claim written once, next to a number that
+        # moves. Both verdicts are now read off the numbers.
+        dd_verdict = ("On this record it does" if abs(m['hedged_max_dd_bp'])
+                      < abs(m['unhedged_max_dd_bp'])
+                      else "On this record it does not, and that is the result")
+        ret_verdict = ("The book carrying Ballast returned less than the book left alone"
+                       if m['hedged_total_bp'] < m['unhedged_total_bp']
+                       else "The book carrying Ballast returned more than the book left alone")
         return f"""
 <h3 style="margin-top:52px">Paper trading metrics</h3>
 <p class="note">Over <strong>{m['nights']} settled
@@ -1036,9 +1078,9 @@ position-nights, against the same book with every hedge removed - observed, not 
 <div class="scroll stacked"><table><thead><tr><th>Metric</th><th class="num">Ballast</th>
 <th class="num">Untouched</th><th>Note</th></tr></thead><tbody>{body}</tbody></table></div>
 <p class="note"><strong>Read the drawdown, not the Sharpe, and not the return.</strong>
-This is insurance. It should show up as a smaller worst case, and it does:
+This is insurance, so it should show up as a smaller worst case. {dd_verdict}:
 {bp(m['hedged_max_dd_bp'])} against {bp(m['unhedged_max_dd_bp'])}.
-<strong>The book carrying Ballast returned less than the book left alone</strong>
+<strong>{ret_verdict}</strong>
 ({bp(m['hedged_total_bp'])} against {bp(m['unhedged_total_bp'])}), which is what paying
 for protection over a rising window looks like and is not a result to argue away.
 Sharpe over {m['nights']} nights is noise in either column - it is on the page because
@@ -1070,6 +1112,51 @@ carry weight are on the Evidence page, measured over 100 to 264 nights per name.
                 f"remove one, so {whose} refusals are untouched and still counted. "
                 f"{tail} in the table, marked. ")
 
+    def _correction_note(self) -> str:
+        """Why the graded figures moved, and which figure each one replaced.
+
+        Settlement priced every hedge close-to-open, as though the perp short had
+        been on from the closing bell. It never was: the 21:00Z cron is routinely
+        delayed and the 00:00Z backup fires instead. Grading the full window
+        subtracts the perp leg from a fall the hedge was not there for, and on one
+        night that recorded a gain on a night that lost five hundred basis points.
+
+        Every figure here is computed from the rows, including which night moved
+        most and by how much. A note that named its own worst case in prose would
+        go stale the first time a later night beat it, and this one has to hold the
+        sharpest admission on the site.
+        """
+        count = len(self.regraded)
+        swings = [(abs(r.get("realised_bp", 0) - (r["superseded"].get("realised_bp") or 0)), r)
+                  for r in self.regraded]
+        worst_swing, worst_row = max(swings, key=lambda pair: pair[0])
+        late = []
+        for r in self.regraded:
+            if r.get("hedge_at") and r.get("session"):
+                hours = (dt.datetime.fromisoformat(r["hedge_at"])
+                         - close_utc(dt.date.fromisoformat(r["session"]))).total_seconds() / 3600
+                late.append(hours)
+        head = (f"{count} hedge is re-graded" if count == 1
+                else f"{count} hedges are re-graded")
+        when = (f"between {min(late):.1f} and {max(late):.1f} hours after the close"
+                if len(late) > 1 else f"{late[0]:.1f} hours after the close") if late else ""
+        flipped = sum(1 for r in self.regraded
+                      if bool(r.get("cut_the_move")) != bool(r["superseded"].get("cut_the_move")))
+        verdicts = ("" if not flipped else
+                    ("One verdict flipped. " if flipped == 1
+                     else f"{flipped} verdicts flipped. "))
+        return (f"{head} from the moment the hedge existed, not from the closing bell. "
+                f"The hedges went on {when}, because the 21:00Z run is routinely late and "
+                f"the 00:00Z backup fires instead - so the holder carried the first part "
+                f"of each night unhedged. Settlement had graded the whole window, which "
+                f"credits a hedge with a move it was not on for. "
+                f"The largest correction is {worst_row.get('ticker')} on "
+                f"{worst_row.get('session')}: {worst_row['superseded'].get('realised_bp'):+,.0f} bp "
+                f"as settled, {worst_row.get('realised_bp'):+,.0f} bp as re-graded, a "
+                f"{worst_swing:,.0f} bp swing. {verdicts}"
+                f"The signed settlements are not edited - the chain is append-only, so each "
+                f"correction sits beside the record it supersedes and the table prints both. ")
+
     @property
     def tile_scope(self) -> str:
         """State what the tiles cover, and how few nights that is."""
@@ -1080,6 +1167,8 @@ carry weight are on the Evidence page, measured over 100 to 264 nights per name.
         note = f'<p class="note">Across <strong>{n} {nights}</strong>{_session_span(self.clean_sessions)}. '
         if self.excluded:
             note += self._exclusion_note()
+        if self.regraded:
+            note += self._correction_note()
         if n < 5:
             note += (f'At {n} {nights} the mean is still mostly market direction rather than '
                      f'a performance record. The claims this project stands on are on the '
