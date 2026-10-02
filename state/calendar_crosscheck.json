@@ -1,10 +1,10 @@
 {
- "built_on": "2026-10-02T04:03:07+00:00",
+ "built_on": "2026-10-02T19:28:07+00:00",
  "counts": {
-  "agreed": 195,
+  "agreed": 194,
   "checked": 204,
   "decisions": 204,
-  "disagreed": 9,
+  "disagreed": 10,
   "unknown": 0
  },
  "rows": [
@@ -1497,10 +1497,10 @@
    "ticker": "MU"
   },
   {
-   "agree": true,
+   "agree": false,
    "bitget_mcp": "no",
    "detail": "0 dates returned, none in this window",
-   "nasdaq": "no",
+   "nasdaq": "yes",
    "session": "2026-09-30",
    "ticker": "NKE"
   },

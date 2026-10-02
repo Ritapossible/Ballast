@@ -4,9 +4,9 @@
   "beta_names": 12,
   "exit_cost_bp": 20.0,
   "funding": {
-    "max_bp": 4.41,
+    "max_bp": 4.13,
     "max_name": "NKE",
-    "mean_bp": 1.19,
+    "mean_bp": 1.17,
     "measured_on": "2026-10-02",
     "min_bp": -0.1,
     "min_name": "PLTR",
