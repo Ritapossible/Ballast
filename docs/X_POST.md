@@ -12,7 +12,7 @@ Every figure below comes from `docs/facts.json`, which the nightly regenerates �
 | 98.2% of overnight variance removed | `median_r2` = 0.982 |
 | ~11 bp hedge cost | `hedge_cost_bp` = 11.3 |
 | 20 bp to exit instead | `exit_cost_bp` = 20.0 |
-| 236 of 2,811 rTokens hedgeable | `rtokens_hedgeable` / `rtokens_total` |
+| 241 of 2,810 rTokens hedgeable | `rtokens_hedgeable` / `rtokens_total` |
 | 1.41× volatility vs 3.2× earnings | Gate 1b, `docs/RESEARCH.md` |
 
 ---
@@ -41,7 +41,7 @@ claims sitting next to it.
 ```
 Hold a tokenized stock through earnings without being flat into it.
 
-Short the matched perp: 98.2% of overnight variance removed, ~11 bp. 236 of 2,811 rTokens can do this - Ballast names the ones that can't.
+Short the matched perp: 98.2% of overnight variance removed, ~11 bp. 241 of 2,810 rTokens can do this - Ballast names the ones that can't.
 
 No directional trade is reachable in the code.
 

@@ -14,7 +14,7 @@ Must contain `#BitgetHackathon` and `@Bitget_AI`.
 
 ## Body
 
-Bitget lists 2,811 tokenized US stocks. They trade 24/7.
+Bitget lists 2,810 tokenized US stocks. They trade 24/7.
 
 The market that prices the share underneath them is open 32.5 hours a week.
 
@@ -28,7 +28,7 @@ stated price.
 
 ### The mechanism
 
-Of those 2,811 rTokens, **236 have a matched stock perpetual** trading the same
+Of those 2,810 rTokens, **241 have a matched stock perpetual** trading the same
 24/7 clock. Short the perp against the token and you remove a **median 98.2% of
 overnight variance**, with hedge ratios between **0.992 and 1.027** across 12
 names and 100–264 nights each.
@@ -78,10 +78,10 @@ gates stand between it and an order: the answer must parse into the contracted
 shape, it must be about the right ticker, and **the quote it cites must appear in
 the headlines it was given**.
 
-Over 180 decisions on the live chain: **118 decided by the model, 62 by the rule**.
-The gates refused **27 answers for quoting a headline that wasn't in the sources**
-and 3 for schema violations, and the rule took over on 20 nights where the model
-was unreachable. On the remaining 12 the model answered cleanly and said it did not
+Over 204 decisions on the live chain: **134 decided by the model, 70 by the rule**.
+The gates refused **30 answers for quoting a headline that wasn't in the sources**
+and 3 for schema violations, and the rule took over on 24 nights where the model
+was unreachable. On the remaining 13 the model answered cleanly and said it did not
 know — abstention hands the night back to the rule. A fabricated source cannot
 reach the book.
 
@@ -96,20 +96,26 @@ path to a directional trade.
 
 ### The live record, including the parts that don't flatter it
 
-14 nights, 168 position-nights, decided by a scheduled job nobody watched:
+16 nights, 192 position-nights, decided by a scheduled job nobody watched:
 
-- **9 of 9 graded hedges cut the move.** Two more were sent and are excluded from
+- **10 of 10 graded hedges cut the move.** Two more were sent and are excluded from
   the grade — they're a defect I published: the selector matched a session
   without checking the release time and covered a night early.
 - **Max drawdown −203 bp, against −227 bp untouched.** That's the claim: 24 bp of
   protection.
-- **Total return +80 bp, against +107 bp untouched.** The book carrying Ballast
+- **The clearest single night is MU on 2026-09-30.** The reader found a scheduled
+  earnings release, the hedge went on, and the position fell **−296 bp** overnight.
+  Carrying the hedge it came out at **−26 bp**. At the moment the decision was
+  signed the position was within ~15 bp of its closing level, so essentially the
+  whole move arrived after the hedge was on — which is the only version of that
+  sentence worth printing.
+- **Total return +146 bp, against +151 bp untouched.** The book carrying Ballast
   made *less* than the book left alone. That's what paying for insurance over a
   rising window looks like, and I'm not going to argue it away.
-- Sharpe is +0.89 vs +1.11 — lower than the book left alone, for the same reason
-  the return is: the premium is paid every hedged night and the window has mostly
-  risen. Fourteen nights is noise either way. It's on the page because the track
-  asks for it, not because it means anything.
+- Sharpe is +1.51 vs +1.46. Two days ago the same two numbers were +0.89 and
+  +1.11 — Ballast *below* the untouched book. One night moved it. That is the
+  argument against reading sixteen nights as a performance record, and it is why
+  the number is on the page without a claim attached to it.
 
 **Every fill is simulated.** Orders route to the Bitget Agent Hub in
 paper-trading mode and come back `HTTP 400: exchange environment is incorrect` —
@@ -119,11 +125,13 @@ on the settled page says so: `simulated · Hub HTTP 400 · no order id`.
 
 Every decision is written to a **hash-chained, signed ledger before the outcome
 is known**. An independent second opinion — Bitget's MCP stock service — is asked
-the same calendar question for every decision. **Across 180 decisions it agrees on
-174 and disagrees on 6.** Four are the ADBE and ORCL rows I had already published
+the same calendar question for every decision. **Across 204 decisions it agrees on
+195 and disagrees on 9.** Four are the ADBE and ORCL rows I had already published
 as my own defect — an independent source landing on exactly the rows I'd marked
-wrong. The other two are COST on consecutive nights, and they point the other way:
-Nasdaq's calendar carried the earnings, Bitget's returned none.
+wrong. The other five are COST, MU and NKE, and every one of the nine points the
+same way: Nasdaq's calendar carried an earnings date and Bitget's service returned
+none. MU settles that one on the record — it reported, and the position moved 296
+bp on the night Bitget's calendar said nothing was scheduled.
 
 When that service went down for a day and answered `503`, every decision was
 recorded `unknown`, never as agreement. That is the half that matters more: a
@@ -132,7 +140,7 @@ file on every build, so if the page and this paragraph differ, the page is right
 
 ### What I'm not claiming
 
-No return claim. No Sharpe claim. 11 hedges over 14 nights cannot support one, and
+No return claim. No Sharpe claim. 12 hedges over 16 nights cannot support one, and
 the research says direction isn't predictable anyway.
 
 Tail coverage is the open problem: the calendar reaches 2 of the worst 6
