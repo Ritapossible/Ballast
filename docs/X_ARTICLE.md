@@ -96,26 +96,57 @@ path to a directional trade.
 
 ### The live record, including the parts that don't flatter it
 
-16 nights, 192 position-nights, decided by a scheduled job nobody watched:
+17 nights, 204 position-nights, decided by a scheduled job nobody watched — and
+graded from the moment each hedge actually existed, not from the closing bell.
+That distinction turned out to be the whole story.
 
-- **10 of 10 graded hedges cut the move.** Two more were sent and are excluded from
-  the grade — they're a defect I published: the selector matched a session
-  without checking the release time and covered a night early.
-- **Max drawdown −203 bp, against −227 bp untouched.** That's the claim: 24 bp of
-  protection.
-- **The clearest single night is MU on 2026-09-30.** The reader found a scheduled
-  earnings release, the hedge went on, and the position fell **−296 bp** overnight.
-  Carrying the hedge it came out at **−26 bp**. At the moment the decision was
-  signed the position was within ~15 bp of its closing level, so essentially the
-  whole move arrived after the hedge was on — which is the only version of that
-  sentence worth printing.
-- **Total return +146 bp, against +151 bp untouched.** The book carrying Ballast
+- **10 of 11 graded hedges cut the move.** Two more were sent and are excluded
+  from the grade — a defect I published: the selector matched a session without
+  checking the release time and covered a night early.
+- **Max drawdown −235 bp, against −227 bp untouched.** That is 8 bp worse, not
+  better. Read it again, because it is the opposite of the claim this whole
+  project is built on, and it is the most useful number here.
+- **Total return +209 bp, against +279 bp untouched.** The book carrying Ballast
   made *less* than the book left alone. That's what paying for insurance over a
   rising window looks like, and I'm not going to argue it away.
-- Sharpe is +1.51 vs +1.46. Two days ago the same two numbers were +0.89 and
-  +1.11 — Ballast *below* the untouched book. One night moved it. That is the
-  argument against reading sixteen nights as a performance record, and it is why
-  the number is on the page without a claim attached to it.
+- Sharpe is +2.00 vs +2.53.
+
+**Here is what went wrong, because it is more interesting than the number.**
+
+I had been grading every hedge over the whole close-to-open window, as though the
+perp short had been on from the closing bell. It never was. GitHub delays the
+21:00Z cron and the 00:00Z backup fires instead, so **all thirteen hedges went on
+between 1.7 and 16.8 hours after the close** — a median 21% of the night already
+gone. On an earnings night, the move lands in the first hour.
+
+Grading the full window subtracts the perp leg from a fall the hedge was not there
+for. **NKE on 2026-10-01 was recorded as +17 bp on a night that cost 526 bp.** The
+position had already fallen 560 bp by the time the order went in; it rebounded 314
+bp afterwards, and the hedge was short into the rebound. MU on 2026-09-30 was
+recorded at −26 bp and actually cost −91 bp: 74 of its 296 bp fall happened before
+the hedge existed.
+
+The worst part is that the lag was never unmeasured. `window_elapsed_at_decision`
+was written into every single night summary from early on. **Nothing read it.** I
+had instrumented the exact failure and then graded as if it could not happen.
+
+Each hedge is now graded from its own signed fill timestamp, with the night cut in
+two at that moment and the hedge credited only with the part that followed. The
+seventeen signed settlements are not edited — the chain is append-only, so each
+correction sits beside the record it supersedes and the table prints both figures.
+
+**What this does and does not break.** The mechanism is untouched: variance
+removed, beta, tail reduction and the held-out test are measured on paired candles
+and never involved a decision timestamp. The replay is untouched too — but its
+assumption is now visible. A backtest places the hedge *at the close*, because
+that is when the decision is made, and grades the full window accordingly. That is
+internally consistent, and it is an **upper bound**. The gap between the replay's
+drawdown and the live record's is **execution latency, and it is now measured
+rather than assumed.**
+
+A mechanism that removes 98.2% of overnight variance is worth very little if the
+order arrives four hours after the news. That is what this record is actually good
+for, and it is not a finding a cleaner log would have produced.
 
 **Every fill is simulated.** Orders route to the Bitget Agent Hub in
 paper-trading mode and come back `HTTP 400: exchange environment is incorrect` —
@@ -126,12 +157,13 @@ on the settled page says so: `simulated · Hub HTTP 400 · no order id`.
 Every decision is written to a **hash-chained, signed ledger before the outcome
 is known**. An independent second opinion — Bitget's MCP stock service — is asked
 the same calendar question for every decision. **Across 204 decisions it agrees on
-195 and disagrees on 9.** Four are the ADBE and ORCL rows I had already published
-as my own defect — an independent source landing on exactly the rows I'd marked
-wrong. The other five are COST, MU and NKE, and every one of the nine points the
+194 and disagrees on 10.** The ten are five names — ADBE, ORCL, COST, MU and NKE —
+each disagreeing on *both* nights of its event window, and every one points the
 same way: Nasdaq's calendar carried an earnings date and Bitget's service returned
-none. MU settles that one on the record — it reported, and the position moved 296
-bp on the night Bitget's calendar said nothing was scheduled.
+none. Two of them are the 2026-09-09 ADBE and ORCL rows I had already published as
+my own defect, which is an independent source landing on rows I'd marked wrong. MU
+settles another on the record — it reported, and the position moved 296 bp on the
+night Bitget's calendar said nothing was scheduled.
 
 When that service went down for a day and answered `503`, every decision was
 recorded `unknown`, never as agreement. That is the half that matters more: a
@@ -140,7 +172,7 @@ file on every build, so if the page and this paragraph differ, the page is right
 
 ### What I'm not claiming
 
-No return claim. No Sharpe claim. 12 hedges over 16 nights cannot support one, and
+No return claim. No Sharpe claim. 13 hedges over 17 nights cannot support one, and
 the research says direction isn't predictable anyway.
 
 Tail coverage is the open problem: the calendar reaches 2 of the worst 6
@@ -157,7 +189,11 @@ every published figure comes from measurement rather than a literal.
 
 Give a model judgment. Never give it the keys.
 
+Live demo — every night, every call, every correction:
 ballast-v1.vercel.app
+
+Code, ledger and research:
+github.com/Ritapossible/Ballast
 
 #BitgetHackathon @Bitget_AI
 

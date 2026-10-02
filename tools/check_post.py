@@ -96,7 +96,6 @@ def expectations() -> list[tuple[str, str, list[str], str]]:
          [rf"Max drawdown {MINUS}(\d+) bp, against"], str(abs(dd_h))),
         (art, "drawdown untouched",
          [rf"against {MINUS}(\d+) bp untouched"], str(abs(dd_u))),
-        (art, "protection", [r"That's the claim: (\d+) bp of"], str(abs(dd_u) - abs(dd_h))),
         (art, "return with Ballast", [r"Total return \+?(-?\d+) bp, against"],
          f"{round(m['hedged_total_bp'])}"),
         (art, "return untouched", [r"against \+?(-?\d+) bp untouched\.\*\* The book"],
@@ -111,6 +110,17 @@ def expectations() -> list[tuple[str, str, list[str], str]]:
 
         (art, "suite size", [r"(\d+) tests, requires the enforcer"], str(suite.total())),
     ]
+    # The drawdown gap WITH its direction. This used to read "That's the claim:
+    # 24 bp of protection" - a sentence that can only be written when the hedged
+    # book's worst case is the SMALLER one. Re-grading the hedges from their fill
+    # timestamps made it the larger one, and the old expectation would have gone
+    # on checking a subtraction that had quietly turned negative while the prose
+    # still said "of protection". The required word is derived from the two
+    # numbers, so the sentence cannot survive the sign flipping back either way.
+    gap = abs(dd_h) - abs(dd_u)
+    word = "worse" if gap > 0 else "better"
+    out.append((art, f"drawdown gap - the hedged book's worst case is {word}",
+                [rf"That is (\d+) bp {word}"], str(abs(gap))))
     if cc.get("checked"):
         out += [
             (art, "second opinion: decisions", [r"Across (\d+) decisions it agrees"],

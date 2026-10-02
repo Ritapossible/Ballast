@@ -80,6 +80,14 @@ It cannot place a directional bet. Not "won't" - cannot.
 - **Any Sharpe, edge or return.** Ballast is priced protection; the replay's
   total return is negative and that is what insurance costs. 16 hedges over 55
   sessions cannot support a return claim and the site says so.
+- **That the live record shows protection.** It does not. Graded from each hedge's
+  own fill timestamp, the live book's max drawdown is *larger* than the untouched
+  book's. The hedges went on 1.7 to 16.8 hours after the close because the cron is
+  delayed, and on an earnings night the move is already gone by then. The earlier
+  "24 bp of protection" figure came from grading the full close-to-open window as
+  though the hedge had been on throughout; it is corrected on the Settled page and
+  written up as defect 6. The *replay* drawdown (9.24% vs 10.15%) still holds, but
+  it assumes the hedge is on at the close — say "replay" if you quote it.
 - **That it trades live.** Fills are simulated and every row says so.
 - **That tail coverage is solved.** The calendar reaches 2 of the worst 6
   position-nights. That gap is the published open problem.

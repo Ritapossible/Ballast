@@ -209,6 +209,36 @@ order field names; US exchange holidays in the session calendar.
 5. **A policy that lost money** - the first replay hedged 45% of nights and cost ~13% a year.
    Diagnosed to the selector, not the mechanism, and published as a negative result. **No
    parameters were tuned to make that table look better.**
+6. **Every live hedge was graded over a window it was not on for - and this one reverses a
+   headline.** Settlement priced each hedge close-to-open, as though the perp short had been
+   on from the closing bell. None of them were. GitHub delays the 21:00Z cron and the 00:00Z
+   backup fires instead, so the thirteen hedges on record went on **between 1.7 and 16.8
+   hours after the close** - a median 21% of the night already gone, and on an earnings
+   night the move lands in the first hour. Grading the whole window subtracts the perp leg
+   from a fall the hedge missed: **NKE on 2026-10-01 was recorded as +17 bp on a night that
+   cost 526 bp.** The lag was not even unmeasured - `window_elapsed_at_decision` was in
+   every night summary and nothing read it. Each hedge is now graded from its own signed
+   fill timestamp, the night cut in two at that moment and the hedge credited only with the
+   part that followed. **Re-graded, the live drawdown comparison runs the wrong way** - the
+   hedged book's worst case is larger than the untouched book's, where before the correction
+   it was smaller. That is the honest number and it stays on the Settled page. The seventeen
+   signed settlements are not edited; the chain is append-only, so each correction sits
+   beside the record it supersedes and the page prints both. Found alongside it: the sentence
+   introducing that comparison read *"it should show up as a smaller worst case, and it
+   does"* - with "and it does" typed beside the two numbers that decide it, so the page would
+   have asserted protection while printing a worse drawdown one clause later. Both that
+   verdict and the return sentence are read off the figures now.
+
+**What this does and does not touch.** The mechanism is unaffected: variance removed, beta,
+tail reduction and the held-out test are measured on paired candles and never involved a
+decision timestamp. The policy replay above is also unaffected, but its assumption is now
+visible - a backtest places the hedge **at the close**, because that is when the decision is
+made, and it grades the full window accordingly. That is internally consistent and it is an
+*upper bound*. **The gap between the replay's drawdown and the live record's is execution
+latency, and it is now measured rather than assumed.** A mechanism that removes 98.2% of
+overnight variance is worth very little if the order arrives four hours after the news. That
+is the finding this record is actually good for, and it is not one a cleaner log would have
+produced.
 
 **Held out:** the hedge ratio is fitted on the first 70% of each name's nights and applied
 unchanged to the last 30%. Median variance removed 0.980 to 0.996, median p95 tail cut 86% to
