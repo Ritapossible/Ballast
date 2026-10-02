@@ -561,7 +561,27 @@ class SettledTape(unittest.TestCase):
 
     @staticmethod
     def tape(settlements):
-        return report.Site._settled_tape(SimpleNamespace(settlements=settlements))
+        """A stub carrying rows, because the tape no longer trusts the summary.
+
+        `_settled_tape` used to print the summary's own `hedges_that_cut`. That
+        count is written when the night is graded over the full close-to-open
+        window and the re-grade does not touch it, so the tape was quoting a
+        verdict the settled page had already corrected. It reads the rows now -
+        which means this stub has to carry rows agreeing with the counts each
+        case declares, or these tests would pass against a tape reading nothing.
+        """
+        rows = []
+        for s in settlements:
+            cut = s.get("hedges_that_cut", 0)
+            for i in range(s.get("hedged", 0)):
+                # |realised| < |unhedged| is what makes a hedge "cut the move",
+                # so the first `cut` of them do and the rest do not.
+                rows.append({"session": s["session"], "action": "HEDGE",
+                             "ticker": f"T{i}", "unhedged_bp": -100.0,
+                             "realised_bp": -10.0 if i < cut else -200.0})
+        stub = SimpleNamespace(settlements=settlements, rows=rows)
+        stub._graded = lambda session: report.Site._graded(stub, session)
+        return report.Site._settled_tape(stub)
 
     def test_no_settlements_means_no_tape(self):
         self.assertEqual(self.tape([]), "")

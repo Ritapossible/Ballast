@@ -665,6 +665,23 @@ class Site:
 
     # -- pages ---------------------------------------------------------------
 
+    def _graded(self, session: str) -> tuple[int, int]:
+        """Hedged and cut for one settled session, read off the CORRECTED rows.
+
+        The settlement summary carries its own `hedges_that_cut`, written when the
+        night was graded over the whole close-to-open window. The re-grade does not
+        touch that signed body - it sits beside it - so reading the summary here
+        printed "1 hedged, 1 cut the move" on the landing page for a night the
+        settled page had already corrected to "did not cut". The tape is the first
+        thing on the site, and it was the last thing still quoting the superseded
+        verdict. Same derivation as the settled table, so the two cannot disagree.
+        """
+        rows = [r for r in self.rows if r.get("session") == session
+                and r.get("action") == "HEDGE"]
+        cut = sum(1 for r in rows
+                  if abs(r.get("realised_bp", 0)) < abs(r.get("unhedged_bp", 0)))
+        return len(rows), cut
+
     def _settled_tape(self) -> str:
         """The most recent settled night, on the same tape as tonight's calls.
 
@@ -689,8 +706,7 @@ class Site:
                     f'{_e(body)}</span><a class="dim" href="{href}">'
                     f'settled →</a></div>')
 
-        hedged = last.get("hedged") or 0
-        cut = last.get("hedges_that_cut") or 0
+        hedged, cut = self._graded(last.get("session") or "")
         if hedged:
             rows.append(line(f"settled {last.get('session')}",
                              f"· {hedged} hedged, {cut} cut the move"))
@@ -706,9 +722,9 @@ class Site:
                 # a graded outcome that tonight's hedge cannot have yet. The
                 # label says settled rather than the number being changed to a
                 # night nothing has graded.
+                prev_hedged, prev_cut = self._graded(prev.get("session") or "")
                 rows.append(line(f"last settled hedge {prev.get('session')}",
-                                 f"· {prev.get('hedges_that_cut') or 0} of "
-                                 f"{prev.get('hedged')} cut the move"))
+                                 f"· {prev_cut} of {prev_hedged} cut the move"))
         return "".join(rows)
 
 

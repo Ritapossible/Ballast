@@ -164,15 +164,26 @@ class Case(unittest.TestCase):
 
     def seed(self):
         lg = Ledger(self.ledger_path, b"t")
-        d = self.decision()
-        lg.append("decision", d)
+        lg.append("decision", self.decision())
+        # A refusal beside the hedge, because a real session is mostly refusals -
+        # and because a count that walks every row instead of only the hedges has
+        # to come out wrong somewhere for a test to catch it.
+        lg.append("decision", {"ticker": "AAPL", "session": SESSION.isoformat(),
+                               "action": "NO_HEDGE", "spot_symbol": "RAAPLUSDT",
+                               "perp_symbol": "AAPLUSDT", "sigma_bp": 40.0,
+                               "rationale": "nothing scheduled",
+                               "inputs": {"decided_by": "model"}})
         # The settlement as it was actually written: full-window, hedge looks free.
         lg.append("settlement", {
-            "session": SESSION.isoformat(), "decisions": 1, "hedged": 1,
+            "session": SESSION.isoformat(), "decisions": 2, "hedged": 1,
             "hedges_that_cut": 1,
             "rows": [{"ticker": "NKE", "action": "HEDGE", "unhedged_bp": -1053.6,
                       "realised_bp": -11.3, "counterfactual_bp": -1053.6,
                       "value_added_bp": 1042.3, "cut_the_move": True,
+                      "cost_bp": 11.3},
+                     {"ticker": "AAPL", "action": "NO_HEDGE", "unhedged_bp": 120.0,
+                      "realised_bp": 120.0, "counterfactual_bp": 108.7,
+                      "value_added_bp": 11.3, "cut_the_move": None,
                       "cost_bp": 11.3}]})
         return lg
 
@@ -324,3 +335,36 @@ class TheInsuranceClaim(unittest.TestCase):
     def test_the_return_sentence_follows_the_returns(self):
         self.assertIn("returned less than", self.block(-235.2, -227.0, 208.7, 279.3))
         self.assertIn("returned more than", self.block(-235.2, -227.0, 300.0, 279.3))
+
+
+class TheTape(Case):
+    """The tape on the landing page must not quote the verdict the page retracted.
+
+    The settlement summary carries its own `hedges_that_cut`, written when the
+    night was graded over the whole close-to-open window, and the re-grade does
+    not touch that signed body. Reading it there printed "1 hedged, 1 cut the
+    move" on the first element of the site for the one night the settled page had
+    already corrected to "did not cut".
+    """
+
+    def setUp(self):
+        super().setUp()
+        self.seed()
+        regrade.run()
+        self.site = report.Site()
+
+    def test_the_tape_reports_the_corrected_verdict(self):
+        tape = self.site._settled_tape()
+        self.assertIn("1 hedged, 0 cut the move", tape)
+        self.assertNotIn("1 cut the move", tape)
+
+    def test_the_tape_agrees_with_the_settled_table(self):
+        # Same derivation, so the two surfaces cannot disagree about one night.
+        hedged, cut = self.site._graded(SESSION.isoformat())
+        self.assertEqual((hedged, cut), (1, 0))
+        self.assertIn('data-label="Verdict">did not cut', self.site.settled_page())
+
+    def test_the_summary_still_carries_its_original_count(self):
+        # The point of a correction beside the record: the old count is not erased.
+        summary = Ledger(self.ledger_path, b"t").records("settlement")[0]["body"]
+        self.assertEqual(summary["hedges_that_cut"], 1)
