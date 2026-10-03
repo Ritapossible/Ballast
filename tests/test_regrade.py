@@ -19,6 +19,7 @@ import re
 import tempfile
 import unittest
 from pathlib import Path
+from typing import ClassVar
 from unittest import mock
 
 from ballast import config, regrade, report
@@ -160,8 +161,14 @@ class Case(unittest.TestCase):
                 "spot_symbol": "RNKEUSDT", "perp_symbol": "NKEUSDT",
                 "sigma_bp": 74.7, "rationale": "earnings",
                 "inputs": {"decided_by": "model"},
+                # A full fill, as the executor writes it: the exporter renders
+                # these into UTA order fields, so a partial one would make the
+                # export tests pass against a log the real one could not produce.
                 "fill": {"at": self.at.isoformat(), "venue": "simulated",
-                         "side": "sell", "paper": True}}
+                         "side": "sell", "paper": True,
+                         "perp_symbol": "NKEUSDT", "price": 32.4745,
+                         "notional_usdt": 842.92, "fee_usdt": 0.5058,
+                         "slippage_bp": 2.0}}
 
     def seed(self):
         lg = Ledger(self.ledger_path, b"t")
@@ -458,3 +465,61 @@ class TheFold(unittest.TestCase):
         # value with no name once the table collapses below 720px.
         cells = re.findall(r"<td(?![^>]*data-label)", self.folded)
         self.assertEqual(cells, [], "a folded cell would stack unlabelled")
+
+
+class TheExportedLog(Case):
+    """The submission form names the fields a paper-trading log must carry.
+
+    "timestamp, instrument, direction, price, quantity, and account balance
+    change" - and the export carried the first five. A log missing a named field
+    is an incomplete submission however good the rest of it is.
+    """
+
+    REQUIRED: ClassVar[dict] = {
+                "cTime": "timestamp", "symbol": "instrument", "side": "direction",
+                "price": "price", "size": "quantity",
+                "ballastBalanceChangeUsdt": "account balance change"}
+
+    def setUp(self):
+        super().setUp()
+        self.seed()
+        regrade.run()
+        from ballast import export
+        self.rows = export.rows(Ledger(self.ledger_path, b"t"))
+
+    def test_every_field_the_form_names_is_present(self):
+        self.assertTrue(self.rows)
+        for row in self.rows:
+            for field, asked_for in self.REQUIRED.items():
+                self.assertIn(field, row, f"the form asks for {asked_for}")
+                self.assertIsNotNone(row[field], f"{asked_for} is null")
+
+    def test_the_balance_change_uses_the_regraded_grade(self):
+        # Settled said +1042.3 bp; re-graded says the hedge cost the book. The
+        # exported log must not quote the figure the settled page retracted.
+        row = next(r for r in self.rows if r["symbol"] == "NKEUSDT")
+        self.assertLess(float(row["ballastBalanceChangeUsdt"]), 0)
+
+    def test_the_running_total_accumulates(self):
+        after = [float(r["ballastBalanceAfterUsdt"]) for r in self.rows]
+        changes = [float(r["ballastBalanceChangeUsdt"]) for r in self.rows]
+        self.assertAlmostEqual(after[-1], sum(changes), places=4)
+
+    def test_an_ungraded_hedge_carries_null_rather_than_zero(self):
+        """Zero is a number; "not graded yet" is not."""
+        from ballast import export
+        rows = export.rows(Ledger(self.ledger_path, b"t"))
+        with mock.patch.object(export, "_settled_pnl", return_value={}):
+            ungraded = export.rows(Ledger(self.ledger_path, b"t"))
+        self.assertIsNotNone(rows[0]["ballastBalanceChangeUsdt"])
+        self.assertIsNone(ungraded[0]["ballastBalanceChangeUsdt"])
+
+    def test_the_note_refuses_to_call_it_an_account_balance(self):
+        import json as _json
+
+        from ballast import export
+        out = self.root / "orders.json"
+        export.build(out)
+        note = _json.loads(out.read_text())["ballastNote"]
+        self.assertIn("NOT a funded account balance", note)
+        self.assertIn("no fill carries an exchange", note)

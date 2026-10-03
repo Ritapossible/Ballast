@@ -1,7 +1,7 @@
 {
   "code": "00000",
   "msg": "success",
-  "requestTime": "1790999219516",
+  "requestTime": "1791014023538",
   "data": [
     {
       "orderId": "BAL1F91F3BE9E288DB2AE0C3836",
@@ -28,6 +28,8 @@
       "ballastDecidedBy": "rule",
       "ballastSpotSymbol": "RORCLUSDT",
       "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": "+16.3859",
+      "ballastBalanceAfterUsdt": "+16.3859",
       "paper": true
     },
     {
@@ -55,6 +57,8 @@
       "ballastDecidedBy": "model",
       "ballastSpotSymbol": "RADBEUSDT",
       "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": "-7.3207",
+      "ballastBalanceAfterUsdt": "+9.0652",
       "paper": true
     },
     {
@@ -82,6 +86,8 @@
       "ballastDecidedBy": "rule",
       "ballastSpotSymbol": "RORCLUSDT",
       "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": "+24.1931",
+      "ballastBalanceAfterUsdt": "+33.2583",
       "paper": true
     },
     {
@@ -109,6 +115,8 @@
       "ballastDecidedBy": "model",
       "ballastSpotSymbol": "RADBEUSDT",
       "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": "-28.1358",
+      "ballastBalanceAfterUsdt": "+5.1225",
       "paper": true
     },
     {
@@ -136,6 +144,8 @@
       "ballastDecidedBy": "model",
       "ballastSpotSymbol": "RNVDAUSDT",
       "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": "-6.8097",
+      "ballastBalanceAfterUsdt": "-1.6872",
       "paper": true
     },
     {
@@ -163,6 +173,8 @@
       "ballastDecidedBy": "model",
       "ballastSpotSymbol": "RMUUSDT",
       "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": "-5.9700",
+      "ballastBalanceAfterUsdt": "-7.6571",
       "paper": true
     },
     {
@@ -190,6 +202,8 @@
       "ballastDecidedBy": "model",
       "ballastSpotSymbol": "RCOINUSDT",
       "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": "+3.6507",
+      "ballastBalanceAfterUsdt": "-4.0065",
       "paper": true
     },
     {
@@ -217,6 +231,8 @@
       "ballastDecidedBy": "model",
       "ballastSpotSymbol": "RCOSTUSDT",
       "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": "+3.3240",
+      "ballastBalanceAfterUsdt": "-0.6825",
       "paper": true
     },
     {
@@ -244,6 +260,8 @@
       "ballastDecidedBy": "model",
       "ballastSpotSymbol": "RCOINUSDT",
       "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": "-58.5798",
+      "ballastBalanceAfterUsdt": "-59.2623",
       "paper": true
     },
     {
@@ -271,6 +289,8 @@
       "ballastDecidedBy": "model",
       "ballastSpotSymbol": "RORCLUSDT",
       "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": "-2.4235",
+      "ballastBalanceAfterUsdt": "-61.6858",
       "paper": true
     },
     {
@@ -298,6 +318,8 @@
       "ballastDecidedBy": "model",
       "ballastSpotSymbol": "RCOSTUSDT",
       "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": "-16.9853",
+      "ballastBalanceAfterUsdt": "-78.6711",
       "paper": true
     },
     {
@@ -325,6 +347,8 @@
       "ballastDecidedBy": "model",
       "ballastSpotSymbol": "RMUUSDT",
       "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": "+21.7438",
+      "ballastBalanceAfterUsdt": "-56.9273",
       "paper": true
     },
     {
@@ -352,8 +376,10 @@
       "ballastDecidedBy": "model",
       "ballastSpotSymbol": "RNKEUSDT",
       "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": "-23.5765",
+      "ballastBalanceAfterUsdt": "-80.5038",
       "paper": true
     }
   ],
-  "ballastNote": "Paper fills simulated against observed Bitget market prices with the real fee schedule; taker on both legs, no maker fill assumed. Encoded in UTA order field names for comparison with a live log. No order was sent to an exchange."
+  "ballastNote": "Paper fills simulated against observed Bitget market prices with the real fee schedule; taker on both legs, no maker fill assumed. Encoded in UTA order field names for comparison with a live log. No order was sent to an exchange. ballastBalanceChangeUsdt is this hedge's settled effect on the book net of fee and slippage, graded from the fill timestamp rather than the closing bell; ballastBalanceAfterUsdt is the running total. They are cumulative paper P&L, NOT a funded account balance - there is no funded account, and no fill carries an exchange orderId."
 }
