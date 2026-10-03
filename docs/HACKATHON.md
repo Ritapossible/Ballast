@@ -113,7 +113,15 @@ Incomplete productization or validation answers do **not** invalidate an entry b
 
 ## Open questions to confirm in Telegram
 - Full URL for the Qwen credits form (the announcement link is truncated)
-- The exact retweet target the X post requirement refers to
+- The exact retweet target the X post requirement refers to. A candidate reached
+  this project on 2026-10-03 through an outside review:
+  `https://x.com/Bitget_AI/status/2100519318824055159`, with the claim that the
+  handbook treats a missing **quote** of that post - not merely an `@Bitget_AI`
+  mention - as an incomplete submission. **Neither the URL nor the rule has been
+  verified against the handbook from here**, and the published handbook text in
+  this repo says only "including `#BitgetHackathon` and `@Bitget_AI`". Confirm
+  before posting: quoting costs nothing if the rule is softer than stated, and an
+  invalid entry costs everything if it is not.
 - Whether paper-mode perp shorting is available on the Agentic Account
 
 ## Compliance check against the build (reviewed 2026-09-13)

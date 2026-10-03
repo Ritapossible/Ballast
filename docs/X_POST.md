@@ -19,36 +19,49 @@ Every figure below comes from `docs/facts.json`, which the nightly regenerates �
 
 ## Option D — explains Ballast, and leads with the honest part ← post this
 
-~230 words. Long enough to explain the product to someone who has never heard of
-it, short enough to read in one go. The other options below are single-tweet
-alternatives; `X_ARTICLE.md` is the long-form version if a thread is wanted.
+**1,460 characters**, so it needs a long-post account or a thread. If threaded,
+the quote, both links and both tags go on the FIRST post.
+
+**Quote the organiser's post rather than only mentioning the handle** - a bare
+`@Bitget_AI` mention may not satisfy the requirement. Confirm the target post and
+the rule against the handbook before sending; neither is verifiable from here.
+
+Every figure below is checked against `docs/facts.json` and the ledger by
+`tools/check_post.py`. Re-run it before posting.
 
 ```
-Tokenized US stocks trade 24/7. The market that prices them is open 32.5 hours a week.
+Tokenized US stocks trade 24/7. The market that prices them is shut for 81% of the week.
 
-So for most of the week you hold earnings risk you can't act on. Sell before the close and you lose a position you believe in. Hold, and you take whatever lands at 3am.
+Sell before the close and you lose a position you believe in. Hold, and you take whatever lands at 3am. Ballast is the third option: keep the position, short the matched perpetual for the night. About 12 bp taker round trip, 11.3 net of funding.
 
-Ballast gives you a third option: keep the position, short the matched perpetual for the night, pay about 11 bp.
+241 of 2,810 rTokens have a matched perp. Shorting it removes a median 98.2% of overnight variance, and R² runs 0.978–0.999 on top-decile move nights. Exiting instead costs 20 bp, and you lose the position.
 
-241 of 2,810 rTokens have a matched perp. Shorting it removes a median 98.2% of overnight variance — and it holds up best exactly when it matters, R² 0.978–0.999 on the biggest move nights. Exiting instead costs 20 bp and you lose the position.
+An LLM reads the night's news and decides whether that night is worth hedging. It cannot size, price, or place anything. A separate enforcer holds the only write key and checks the order against a signed mandate. There is no path to a directional trade.
 
-An LLM reads the night's news and decides whether a night is worth hedging. It cannot size, price or place anything. A separate enforcer holds the only write key and checks arithmetic against a signed mandate — there is no code path to a directional trade.
+The part I would rather not write: 17 nights live, and the hedges arrive too late. Median 21% into the night. Re-graded from the moment each hedge actually existed, the protected book's drawdown is worse than doing nothing: 235 bp against 227 bp. NKE on 1 Oct was scored +17 bp. From the fill it is −526 bp — the move had already happened.
 
-Now the part I'd rather not write. 17 nights live, and the log says the hedges arrive too late: a median 21% into the night, after the earnings move has already landed. Re-graded from the moment each hedge actually existed, the protected book's drawdown is WORSE than doing nothing — 235 bp against 227 bp.
+Yesterday the same page said 11 of 11 hedges cut the move. Its own record caught that. I published the correction beside the signed ledger instead of editing it.
 
-Last week the same page said 11 of 11 hedges cut the move. Its own instrumentation caught that. I published the correction beside the signed record instead of editing it.
-
-Every decision is signed into a hash-chained ledger before the outcome is known. Clone it and check.
+Every decision is signed before the outcome is known. Clone it and check.
 
 ballast-v1.vercel.app
 github.com/Ritapossible/Ballast
-
 #BitgetHackathon @Bitget_AI
 ```
 
+Checked against the live site, because a judge will open the URL:
+
+| In the post | What the site prints |
+|---|---|
+| about 12 bp taker round trip, 11.3 net of funding | `hedge_cost_gross_bp` 12.0, `hedge_cost_bp` 11.3 |
+| R² 0.978–0.999 on top-decile move nights | Evidence page, verbatim: "R² 0.978-0.999 on top-decile nights" |
+| median 21% into the night | the settled page's own correction note |
+| NKE +17 bp scored, −526 bp from the fill | both print on the same row |
+| 235 bp against 227 bp | the drawdown row of the paper-metrics table |
+
 Why this one: it explains the product in four lines and then spends the rest on
-the thing nobody else's post will have — a measured result that makes the author
-look worse, with the ledger to prove it wasn't quietly fixed.
+the thing nobody else's post will have - a measured result that makes the author
+look worse, with the ledger to prove it was not quietly fixed.
 
 ## Option B — the negative result (288 chars)
 
