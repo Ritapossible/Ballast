@@ -1,9 +1,9 @@
 {
- "built_on": "2026-10-02T21:12:16+00:00",
+ "built_on": "2026-10-03T00:24:25+00:00",
  "counts": {
-  "agreed": 194,
-  "checked": 204,
-  "decisions": 204,
+  "agreed": 206,
+  "checked": 216,
+  "decisions": 216,
   "disagreed": 10,
   "unknown": 0
  },
@@ -1638,6 +1638,102 @@
    "detail": "0 dates returned, none in this window",
    "nasdaq": "no",
    "session": "2026-10-01",
+   "ticker": "TSLA"
+  },
+  {
+   "agree": true,
+   "bitget_mcp": "no",
+   "detail": "0 dates returned, none in this window",
+   "nasdaq": "no",
+   "session": "2026-10-02",
+   "ticker": "ADBE"
+  },
+  {
+   "agree": true,
+   "bitget_mcp": "no",
+   "detail": "0 dates returned, none in this window",
+   "nasdaq": "no",
+   "session": "2026-10-02",
+   "ticker": "AMD"
+  },
+  {
+   "agree": true,
+   "bitget_mcp": "no",
+   "detail": "0 dates returned, none in this window",
+   "nasdaq": "no",
+   "session": "2026-10-02",
+   "ticker": "COIN"
+  },
+  {
+   "agree": true,
+   "bitget_mcp": "no",
+   "detail": "0 dates returned, none in this window",
+   "nasdaq": "no",
+   "session": "2026-10-02",
+   "ticker": "COST"
+  },
+  {
+   "agree": true,
+   "bitget_mcp": "no",
+   "detail": "0 dates returned, none in this window",
+   "nasdaq": "no",
+   "session": "2026-10-02",
+   "ticker": "MSFT"
+  },
+  {
+   "agree": true,
+   "bitget_mcp": "no",
+   "detail": "0 dates returned, none in this window",
+   "nasdaq": "no",
+   "session": "2026-10-02",
+   "ticker": "MU"
+  },
+  {
+   "agree": true,
+   "bitget_mcp": "no",
+   "detail": "0 dates returned, none in this window",
+   "nasdaq": "no",
+   "session": "2026-10-02",
+   "ticker": "NKE"
+  },
+  {
+   "agree": true,
+   "bitget_mcp": "no",
+   "detail": "0 dates returned, none in this window",
+   "nasdaq": "no",
+   "session": "2026-10-02",
+   "ticker": "NVDA"
+  },
+  {
+   "agree": true,
+   "bitget_mcp": "no",
+   "detail": "0 dates returned, none in this window",
+   "nasdaq": "no",
+   "session": "2026-10-02",
+   "ticker": "ORCL"
+  },
+  {
+   "agree": true,
+   "bitget_mcp": "no",
+   "detail": "0 dates returned, none in this window",
+   "nasdaq": "no",
+   "session": "2026-10-02",
+   "ticker": "PLTR"
+  },
+  {
+   "agree": true,
+   "bitget_mcp": "no",
+   "detail": "0 dates returned, none in this window",
+   "nasdaq": "no",
+   "session": "2026-10-02",
+   "ticker": "SPY"
+  },
+  {
+   "agree": true,
+   "bitget_mcp": "no",
+   "detail": "0 dates returned, none in this window",
+   "nasdaq": "no",
+   "session": "2026-10-02",
    "ticker": "TSLA"
   }
  ],
