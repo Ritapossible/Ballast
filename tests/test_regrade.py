@@ -271,18 +271,28 @@ class TheDisclosure(Case):
         regrade.run()
         self.site = report.Site()
 
-    def test_the_note_says_the_grade_moved_and_why(self):
+    def test_the_note_says_the_grade_moved_and_how_late(self):
         note = self.site.tile_scope
         self.assertIn("re-graded", note)
-        self.assertIn("00:00Z backup", note)
         self.assertIn("4.0 hours after the close", note)
+
+    def test_the_mechanism_is_linked_rather_than_retold(self):
+        """Three sentences under the tiles; the why lives under defects.
+
+        The first version explained the delayed cron and the backup firing late
+        directly beneath the four headline numbers, which buried them.
+        """
+        note = self.site.tile_scope
+        self.assertIn('href="docs.html#defects"', note)
+        self.assertNotIn("00:00Z", note)
+        self.assertNotIn("21:00Z", note)
 
     def test_the_note_names_the_largest_correction_from_the_rows(self):
         note = self.site.tile_scope
         # Settled -11 bp, re-graded -1,065 bp: a 1,054 bp swing, all computed.
         self.assertIn("NKE on 2026-10-01", note)
         self.assertIn("-11 bp as settled", note)
-        self.assertIn("-1,065 bp as re-graded", note)
+        self.assertIn("-1,065 bp re-graded", note)
         self.assertIn("1,054 bp swing", note)
 
     def test_a_flipped_verdict_is_counted_in_the_note(self):
@@ -290,8 +300,19 @@ class TheDisclosure(Case):
 
     def test_the_row_carries_the_grade_it_replaced(self):
         page = self.site.settled_page()
-        self.assertIn("re-graded from the fill", page)
+        self.assertIn("re-graded", page)
         self.assertIn("settled as -11 bp", page)
+
+    def test_the_row_marker_is_not_coloured_like_a_negative_number(self):
+        """Red is this page's colour for a negative figure, not for provenance.
+
+        The marker shipped as class="neg", so on a phone the correction wrapped
+        to three red lines beside the session date and shouted over the value
+        added it was annotating.
+        """
+        page = self.site.settled_page()
+        self.assertIn('<span class="dim"> \u00b7 re-graded', page)
+        self.assertNotIn('<span class="neg"> \u00b7 re-graded', page)
 
     def test_the_corrected_verdict_reaches_the_table(self):
         page = self.site.settled_page()

@@ -302,7 +302,12 @@ def _settled(rows: list[dict]) -> str:
         if "superseded" in r:
             was = r["superseded"].get("realised_bp")
             if was is not None:
-                mark += (f'<span class="neg"> · re-graded from the fill; '
+                # dim, not neg. The red is this page's colour for a negative
+                # NUMBER, and the row already uses it on value added. Putting a
+                # whole sentence in it made the correction shout over the figures
+                # it was annotating, which on a phone wraps to three red lines
+                # beside the session date. It is provenance, not a verdict.
+                mark += (f'<span class="dim"> · re-graded; '
                          f'settled as {was:+,.0f} bp</span>')
         if on:
             cut = abs(r.get("realised_bp", 0)) < abs(r.get("unhedged_bp", 0))
@@ -1129,18 +1134,20 @@ carry weight are on the Evidence page, measured over 100 to 264 nights per name.
                 f"{tail} in the table, marked. ")
 
     def _correction_note(self) -> str:
-        """Why the graded figures moved, and which figure each one replaced.
+        """That the graded figures moved, which figure each replaced, and where why is.
 
-        Settlement priced every hedge close-to-open, as though the perp short had
-        been on from the closing bell. It never was: the 21:00Z cron is routinely
-        delayed and the 00:00Z backup fires instead. Grading the full window
-        subtracts the perp leg from a fall the hedge was not there for, and on one
-        night that recorded a gain on a night that lost five hundred basis points.
+        Three sentences. The first draft ran to ten and explained the whole
+        mechanism - the delayed cron, the backup firing four hours late, what
+        full-window grading does to a fall the hedge missed - directly under the
+        tiles. All of that is true and none of it belongs here: it is already
+        written out under defects, and a reader who has just seen four numbers
+        wants to know whether to trust them, not how the cron is scheduled. The
+        note states what changed, names the worst case, and links to the reasoning.
 
-        Every figure here is computed from the rows, including which night moved
-        most and by how much. A note that named its own worst case in prose would
-        go stale the first time a later night beat it, and this one has to hold the
-        sharpest admission on the site.
+        Every figure is still computed from the rows, including which night moved
+        most. A note that named its own worst case in prose would go stale the
+        first time a later night beat it, and this one carries the sharpest
+        admission on the site.
         """
         count = len(self.regraded)
         swings = [(abs(r.get("realised_bp", 0) - (r["superseded"].get("realised_bp") or 0)), r)
@@ -1161,17 +1168,14 @@ carry weight are on the Evidence page, measured over 100 to 264 nights per name.
         verdicts = ("" if not flipped else
                     ("One verdict flipped. " if flipped == 1
                      else f"{flipped} verdicts flipped. "))
-        return (f"{head} from the moment the hedge existed, not from the closing bell. "
-                f"The hedges went on {when}, because the 21:00Z run is routinely late and "
-                f"the 00:00Z backup fires instead - so the holder carried the first part "
-                f"of each night unhedged. Settlement had graded the whole window, which "
-                f"credits a hedge with a move it was not on for. "
+        return (f"{head} from the fill, not the closing bell: they went on {when}. "
                 f"The largest correction is {worst_row.get('ticker')} on "
-                f"{worst_row.get('session')}: {worst_row['superseded'].get('realised_bp'):+,.0f} bp "
-                f"as settled, {worst_row.get('realised_bp'):+,.0f} bp as re-graded, a "
-                f"{worst_swing:,.0f} bp swing. {verdicts}"
-                f"The signed settlements are not edited - the chain is append-only, so each "
-                f"correction sits beside the record it supersedes and the table prints both. ")
+                f"{worst_row.get('session')}, "
+                f"{worst_row['superseded'].get('realised_bp'):+,.0f} bp as settled against "
+                f"{worst_row.get('realised_bp'):+,.0f} bp re-graded - a {worst_swing:,.0f} bp "
+                f"swing. {verdicts}"
+                f"Signed settlements are never edited; the table prints both "
+                f'(<a href="docs.html#defects">why this happened</a>). ')
 
     @property
     def tile_scope(self) -> str:
