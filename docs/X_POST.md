@@ -17,7 +17,40 @@ Every figure below comes from `docs/facts.json`, which the nightly regenerates �
 
 ---
 
-## Option B — the negative result (288 chars) ← recommended
+## Option D — explains Ballast, and leads with the honest part ← post this
+
+~230 words. Long enough to explain the product to someone who has never heard of
+it, short enough to read in one go. The other options below are single-tweet
+alternatives; `X_ARTICLE.md` is the long-form version if a thread is wanted.
+
+```
+Tokenized US stocks trade 24/7. The market that prices them is open 32.5 hours a week.
+
+So for most of the week you hold earnings risk you can't act on. Sell before the close and you lose a position you believe in. Hold, and you take whatever lands at 3am.
+
+Ballast gives you a third option: keep the position, short the matched perpetual for the night, pay about 11 bp.
+
+241 of 2,810 rTokens have a matched perp. Shorting it removes a median 98.2% of overnight variance — and it holds up best exactly when it matters, R² 0.978–0.999 on the biggest move nights. Exiting instead costs 20 bp and you lose the position.
+
+An LLM reads the night's news and decides whether a night is worth hedging. It cannot size, price or place anything. A separate enforcer holds the only write key and checks arithmetic against a signed mandate — there is no code path to a directional trade.
+
+Now the part I'd rather not write. 17 nights live, and the log says the hedges arrive too late: a median 21% into the night, after the earnings move has already landed. Re-graded from the moment each hedge actually existed, the protected book's drawdown is WORSE than doing nothing — 235 bp against 227 bp.
+
+Last week the same page said 11 of 11 hedges cut the move. Its own instrumentation caught that. I published the correction beside the signed record instead of editing it.
+
+Every decision is signed into a hash-chained ledger before the outcome is known. Clone it and check.
+
+ballast-v1.vercel.app
+github.com/Ritapossible/Ballast
+
+#BitgetHackathon @Bitget_AI
+```
+
+Why this one: it explains the product in four lines and then spends the rest on
+the thing nobody else's post will have — a measured result that makes the author
+look worse, with the ledger to prove it wasn't quietly fixed.
+
+## Option B — the negative result (288 chars)
 
 ```
 We tested two ways to pick which nights to hedge.
@@ -31,7 +64,7 @@ Publishing the one that failed too.
 #BitgetHackathon @Bitget_AI
 ```
 
-Why this one: everyone's post claims their thing works. A measured negative
+Why this one (as a single tweet): everyone's post claims their thing works. A measured negative
 result, shipped disabled with the measurement in the code comment, is the least
 imitable thing this project has — and it is the reason to believe the positive
 claims sitting next to it.
