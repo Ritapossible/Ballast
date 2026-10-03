@@ -10,7 +10,7 @@ Must contain `#BitgetHackathon` and `@Bitget_AI`.
 
 ## Title
 
-**I built an agent that mostly refuses to trade. Here's the measurement that made me.**
+**I built an agent to hedge overnight risk. Its own log says it's arriving too late to work. Here's the number.**
 
 ## Body
 
@@ -18,13 +18,16 @@ Bitget lists 2,810 tokenized US stocks. They trade 24/7.
 
 The market that prices the share underneath them is open 32.5 hours a week.
 
-So for about 81% of every week you're holding an asset whose reference market is
-shut — through earnings, through the Fed, through the weekend. Your options today
-are to sell before the close and give up a position you believe in, or hold and
-take whatever arrives at 3am.
+So for about 81% of every week you hold an asset whose reference market is shut —
+through earnings, through the Fed, through the weekend. Your options today are to
+sell before the close and give up a position you believe in, or hold and take
+whatever arrives at 3am.
 
 Ballast adds a third: keep the position, switch off that night's risk, pay a
 stated price.
+
+The mechanism works. The execution doesn't yet, and I only know that because the
+log caught me. That's the post.
 
 ### The mechanism
 
@@ -34,20 +37,22 @@ overnight variance**, with hedge ratios between **0.992 and 1.027** across 12
 names and 100–264 nights each.
 
 It costs **12.0 bp** taker round trip — the certain part. A short also collects
-funding, which brings the average night to about **11.3 bp**. Exiting the
-position instead costs **20 bp** and you lose the position.
+funding, bringing the average night to about **11.3 bp**. Exiting the position
+instead costs **20 bp** and you lose the position.
 
 The hedge gets *better* under stress: R² runs **0.978–0.999** on top-decile move
-nights and 0.77–0.96 on calm ones. On a big-news night the common factor
-dominates and both legs track it almost exactly. It's imprecise only when little
-is at stake.
+nights and 0.77–0.96 on calm ones. On a big-news night the common factor dominates
+and both legs track it almost exactly. It's imprecise only when little is at stake.
 
 Held out properly: fitted on the first 70% of each name's nights, applied
 unchanged to the last 30%. Median variance removed **0.980 → 0.996**, median tail
 cut **86% → 94%**, median absolute beta drift **0.009**, twelve of twelve names
 holding.
 
-### The part I didn't expect
+None of that moved tonight. It's measured on paired candles and never involved a
+decision timestamp.
+
+### The part I didn't expect, round one
 
 A delta hedge is symmetric. It removes upside with downside. So it only creates
 value on nights that carry variance *without* compensation.
@@ -62,9 +67,8 @@ remove return.
 −61 bp, t=−1.59, 0 of 15 names significant. About 392 bp of overnight movement
 against an 11.3 bp cost.
 
-So the volatility gate **ships disabled**, with that measurement written into the
-code comment next to it. It's the most useful thing I found and it's a negative
-result.
+So the volatility gate **ships disabled**, with that measurement in the code
+comment next to it. A negative result, shipped off.
 
 ### What the model actually does
 
@@ -98,87 +102,100 @@ path to a directional trade.
 
 17 nights, 204 position-nights, decided by a scheduled job nobody watched — and
 graded from the moment each hedge actually existed, not from the closing bell.
-That distinction turned out to be the whole story.
 
-- **10 of 11 graded hedges cut the move.** Two more were sent and are excluded
-  from the grade — a defect I published: the selector matched a session without
-  checking the release time and covered a night early.
+- **10 of 11 graded hedges cut the move.** Two more were sent and are excluded —
+  a defect I published: the selector matched a session without checking the
+  release time and covered a night early.
 - **Max drawdown −235 bp, against −227 bp untouched.** That is 8 bp worse, not
-  better. Read it again, because it is the opposite of the claim this whole
-  project is built on, and it is the most useful number here.
+  better.
 - **Total return +209 bp, against +279 bp untouched.** The book carrying Ballast
-  made *less* than the book left alone. That's what paying for insurance over a
-  rising window looks like, and I'm not going to argue it away.
+  made *less* than the book left alone.
 - Sharpe is +2.00 vs +2.53.
 
-**Here is what went wrong, because it is more interesting than the number.**
+Read the first two lines again. This is an insurance product, and insurance is
+supposed to show up as a **smaller worst case**. On this record it doesn't. The
+protected book is worse on drawdown, worse on return, worse on Sharpe.
 
-I had been grading every hedge over the whole close-to-open window, as though the
-perp short had been on from the closing bell. It never was. GitHub delays the
-21:00Z cron and the 00:00Z backup fires instead, so **all thirteen hedges went on
-between 1.7 and 16.8 hours after the close** — a median 21% of the night already
-gone. On an earnings night, the move lands in the first hour.
+Until last night the same page said −203 against −227 and called it 24 bp of
+protection.
+
+### What I had wrong
+
+I was grading every hedge over the whole close-to-open window, as though the perp
+short had been on from the closing bell. It never was.
+
+GitHub delays the 21:00Z cron and the 00:00Z backup fires instead, so **all
+thirteen hedges went on between 1.7 and 16.8 hours after the close** — a median
+21% of the night already gone. On an earnings night, the move lands in the first
+hour.
 
 Grading the full window subtracts the perp leg from a fall the hedge was not there
-for. **NKE on 2026-10-01 was recorded as +17 bp on a night that cost 526 bp.** The
+for. **NKE on 1 October was recorded as +17 bp. It actually cost 526 bp.** The
 position had already fallen 560 bp by the time the order went in; it rebounded 314
-bp afterwards, and the hedge was short into the rebound. MU on 2026-09-30 was
-recorded at −26 bp and actually cost −91 bp: 74 of its 296 bp fall happened before
-the hedge existed.
+bp afterwards, and the hedge was short into the rebound. A 542 bp swing on one
+row, and the verdict flipped from "cut the move" to "did not cut".
 
-The worst part is that the lag was never unmeasured. `window_elapsed_at_decision`
-was written into every single night summary from early on. **Nothing read it.** I
-had instrumented the exact failure and then graded as if it could not happen.
+The worst part: the lag was never unmeasured. `window_elapsed_at_decision` was
+written into every night summary from early on. **Nothing read it.** I had
+instrumented the exact failure and then graded as if it couldn't happen.
 
-Each hedge is now graded from its own signed fill timestamp, with the night cut in
-two at that moment and the hedge credited only with the part that followed. The
-seventeen signed settlements are not edited — the chain is append-only, so each
-correction sits beside the record it supersedes and the table prints both figures.
+Every hedge is now graded from its own signed fill timestamp, the night cut in two
+at that moment, the hedge credited only with the part that followed. The seventeen
+signed settlements are **not edited** — the chain is append-only, so each
+correction sits beside the record it supersedes and the table prints both numbers.
+You can see +17 and −526 on the same row.
 
-**What this does and does not break.** The mechanism is untouched: variance
-removed, beta, tail reduction and the held-out test are measured on paired candles
-and never involved a decision timestamp. The replay is untouched too — but its
-assumption is now visible. A backtest places the hedge *at the close*, because
-that is when the decision is made, and grades the full window accordingly. That is
-internally consistent, and it is an **upper bound**. The gap between the replay's
-drawdown and the live record's is **execution latency, and it is now measured
-rather than assumed.**
+While fixing it I found the sentence introducing that comparison read *"it should
+show up as a smaller worst case, and it does"* — with "and it does" typed beside
+the two numbers that decide it. It would have asserted protection while printing a
+worse drawdown one clause later. Both verdicts are read off the figures now.
 
-A mechanism that removes 98.2% of overnight variance is worth very little if the
-order arrives four hours after the news. That is what this record is actually good
-for, and it is not a finding a cleaner log would have produced.
+### And then the operations bug underneath it
 
-**Every fill is simulated.** Orders route to the Bitget Agent Hub in
-paper-trading mode and come back `HTTP 400: exchange environment is incorrect` —
-because Bitget's demo venue lists nine contracts and none of them is a tokenized
-stock perp. So no fill on the chain carries an exchange order id, and every row
-on the settled page says so: `simulated · Hub HTTP 400 · no order id`.
+Last night, 2 October, GitHub dropped the decide cron *and* its backup. The only
+job that fired was a settle run arriving four hours late — and because a delayed
+schedule is delivered under its original cron string, it matched the settle branch
+and skipped deciding entirely. **The job went green having decided nothing.**
 
-Every decision is written to a **hash-chained, signed ledger before the outcome
-is known**. An independent second opinion — Bitget's MCP stock service — is asked
-the same calendar question for every decision. **Across 216 decisions it agrees on
-206 and disagrees on 10.** The ten are five names — ADBE, ORCL, COST, MU and NKE —
-each disagreeing on *both* nights of its event window, and every one points the
-same way: Nasdaq's calendar carried an earnings date and Bitget's service returned
-none. Two of them are the 2026-09-09 ADBE and ORCL rows I had already published as
-my own defect, which is an independent source landing on rows I'd marked wrong. MU
-settles another on the record — it reported, and the position moved 296 bp on the
-night Bitget's calendar said nothing was scheduled.
+The Friday-to-Monday window is 65.5 hours, the longest exposure this book ever
+carries, and it had no decision on the chain. I ran it by hand 4.1 hours after the
+close: twelve positions, all refused.
 
-When that service went down for a day and answered `503`, every decision was
-recorded `unknown`, never as agreement. That is the half that matters more: a
-second source that fails open is worse than none. The site renders this from the
-file on every build, so if the page and this paragraph differ, the page is right.
+So there's an operations bug sitting directly under the grading bug, and they're
+the same bug wearing two hats: **the desk decides too late to own the night it's
+grading.**
 
 ### What I'm not claiming
 
 No return claim. No Sharpe claim. 13 hedges over 17 nights cannot support one, and
 the research says direction isn't predictable anyway.
 
-Tail coverage is the open problem: the calendar reaches 2 of the worst 6
+The 17-night log does **not** confirm the mechanism. It isn't allowed to any more.
+The long-sample evidence — 98.2% of variance removed, the held-out test, the tail
+chart across 100–264 nights per name — is the measurement with a real sample. The
+live log's job is to say whether the desk can actually deliver that, and right now
+the honest answer is not yet.
+
+Tail coverage is the other open problem: the calendar reaches 2 of the worst 6
 position-nights. Macro shocks, guidance and legal rulings appear on no calendar.
-That gap is what the model is for, and it's a measured requirement rather than an
-assumption.
+
+### Why I'm posting the version that looks worse
+
+I could have left the old grading in. It was already published, nobody had
+questioned it, and it said 11 of 11 and 24 bp of protection.
+
+But the entire argument for this project is that its claims are checkable. A
+checkable claim you quietly decline to check is just a claim. The re-grade is
+reproducible from the signed decisions and the public candle endpoint — anyone
+with the ledger derives the same thirteen rows.
+
+An independent second opinion, Bitget's own MCP stock service, is asked the same
+calendar question for every decision. **Across 216 decisions it agrees on
+206 and disagrees on 10.** The ten are five names, each disagreeing on both nights
+of its event window, every one the same way: Nasdaq carried an earnings date,
+Bitget's service returned none. When that service went down and answered `503`,
+every decision was recorded `unknown`, never as agreement. A second source that
+fails open is worse than none.
 
 ### Verify it
 
@@ -187,7 +204,11 @@ assumption.
 the hash chain, mutates a copy and requires verification to fail, and checks that
 every published figure comes from measurement rather than a literal.
 
-Give a model judgment. Never give it the keys.
+The next thing I build is not a model change. It's a decide job that fires near
+the close, so the next NKE is actually hedged for the move it was hedged against.
+
+Give a model judgment. Never give it the keys. And let the log tell you when
+you're wrong.
 
 Live demo — every night, every call, every correction:
 ballast-v1.vercel.app
