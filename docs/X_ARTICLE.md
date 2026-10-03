@@ -183,7 +183,7 @@ assumption.
 ### Verify it
 
 `git clone`, then `python3 verify.py`. One command, no key, no network. It runs
-534 tests, requires the enforcer to refuse a naked directional order, re-derives
+541 tests, requires the enforcer to refuse a naked directional order, re-derives
 the hash chain, mutates a copy and requires verification to fail, and checks that
 every published figure comes from measurement rather than a literal.
 

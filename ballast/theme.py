@@ -156,6 +156,25 @@ p{{margin:0 0 16px}}
 .bul li::before{{content:"";position:absolute;left:2px;top:19px;
   width:6px;height:6px;border-radius:50%;background:var(--accent)}}
 
+/* ---- folded rows ---- */
+/* The settled tape runs to 200+ position-nights and every one of them stacks
+   into a seven-line card on a phone. The bulk folds behind this; see
+   report._settled for what folds and why it is never chosen by outcome.
+   No script: the CSP is script-src 'self' with no 'unsafe-inline'. */
+details.more{{margin-top:30px}}
+details.more > summary{{cursor:pointer;list-style:none;display:block;
+  padding:15px 18px;border:1px solid var(--line);border-radius:14px;
+  color:var(--mid);font-size:14.5px;background:var(--raised);
+  transition:color .15s ease,border-color .15s ease}}
+details.more > summary::-webkit-details-marker{{display:none}}
+details.more > summary::after{{content:" \0025BE";color:var(--dim)}}
+details.more[open] > summary::after{{content:" \0025B4"}}
+details.more > summary:hover{{color:var(--fg);border-color:var(--dim)}}
+details.more > summary:focus-visible{{outline:2px solid var(--accent);
+  outline-offset:2px}}
+details.more > .note{{margin-top:18px}}
+details.more > .scroll{{margin-top:18px}}
+
 /* ---- tables ---- */
 .scroll{{overflow-x:auto;-webkit-overflow-scrolling:touch;
   border:1px solid var(--line);border-radius:14px;margin-top:30px;text-align:left}}

@@ -15,6 +15,7 @@ while hiding which number it replaced.
 from __future__ import annotations
 
 import datetime as dt
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -389,3 +390,71 @@ class TheTape(Case):
         # The point of a correction beside the record: the old count is not erased.
         summary = Ledger(self.ledger_path, b"t").records("settlement")[0]["body"]
         self.assertEqual(summary["hedges_that_cut"], 1)
+
+
+class TheFold(unittest.TestCase):
+    """What the settled tape folds decides whether folding it is honest.
+
+    204 position-nights is twelve screens of refusals on a phone, with the notes
+    that explain the scoring sitting underneath all of them. The rows fold by
+    recency and by call - never by outcome. Every hedge stays open whatever it
+    did, because a tape that tucked its losers behind a disclosure would be the
+    one thing this page cannot be.
+    """
+
+    @staticmethod
+    def rows():
+        out = []
+        for day in range(1, 6):
+            session = f"2026-09-{day:02d}"
+            for i in range(4):
+                hedge = (day, i) in {(1, 0), (3, 2), (5, 1)}
+                out.append({
+                    "session": session, "ticker": f"T{day}{i}",
+                    "action": "HEDGE" if hedge else "NO_HEDGE",
+                    # The two hedges on older nights LOSE, so a fold that chose by
+                    # outcome would be caught here rather than flattered by it.
+                    "unhedged_bp": -100.0, "realised_bp": -900.0 if hedge else 10.0,
+                    "counterfactual_bp": -100.0, "value_added_bp": -800.0 if hedge else 5.0,
+                    "cost_bp": 11.3})
+        return out
+
+    def setUp(self):
+        self.html = report._settled(self.rows())
+        self.open, _, self.folded = self.html.partition("<details")
+
+    def test_every_hedge_stays_open_including_the_losing_ones(self):
+        self.assertEqual(self.open.count('tag on">HEDGE'), 3)
+        self.assertEqual(self.folded.count('tag on">HEDGE'), 0)
+        self.assertIn("-900 bp", self.open)
+
+    def test_the_latest_night_stays_open_whole(self):
+        for i in range(4):
+            self.assertIn(f"T5{i}", self.open)
+
+    def test_only_older_refusals_fold(self):
+        self.assertIn("T10", self.open)          # a hedge on the oldest night
+        self.assertIn("T11", self.folded)        # a refusal on the same night
+        self.assertNotIn("T11", self.open)
+
+    def test_the_summary_counts_and_dates_what_is_hidden(self):
+        # 20 rows; the latest night holds 4 (one of them a hedge) and 2 more
+        # hedges sit on older nights, so 6 stay open and 14 fold.
+        self.assertIn("Show the other 14 refused position-nights", self.html)
+        self.assertIn("2026-09-01 to 2026-09-04", self.html)
+
+    def test_nothing_folds_when_there_is_nothing_to_fold(self):
+        one = [r for r in self.rows() if r["session"] == "2026-09-05"]
+        self.assertNotIn("<details", report._settled(one))
+
+    def test_the_fold_needs_no_javascript(self):
+        """script-src 'self' with no 'unsafe-inline' - a JS toggle is refused."""
+        self.assertIn("<details", self.html)
+        self.assertNotIn("<script", self.html)
+        self.assertNotIn("onclick", self.html)
+
+    def test_every_folded_cell_still_carries_its_phone_label(self):
+        # The stacked layout reads data-label; a cell without one shows as a
+        # value with no name once the table collapses below 720px.
+        cells = re.findall(r"<td(?![^>]*data-label)", self.folded)
+        self.assertEqual(cells, [], "a folded cell would stack unlabelled")

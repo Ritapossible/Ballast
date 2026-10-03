@@ -267,18 +267,25 @@ def _session_span(days: list[str]) -> str:
             f"{'is' if len(missing) == 1 else 'are'} not counted")
 
 
-def _settled(rows: list[dict]) -> str:
-    if not rows:
-        return _empty("Nothing settled yet. Every decision is graded at the next "
-                      "primary open, against the exact counterfactual.")
-    out = ['<div class="scroll stacked"><table><thead><tr><th>Position</th>'
-           '<th>Session</th><th>Call</th>'
-           '<th class="num">Realised</th><th class="num">If reversed</th>'
-           '<th class="num">Value added</th><th>Verdict</th></tr></thead><tbody>']
-    # Newest night first, then by size within it. Sorting by size across sessions
-    # interleaved them, so consecutive rows came from different nights.
-    for r in sorted(rows, key=lambda x: (x.get("session", ""),
-                                         abs(x.get("unhedged_bp", 0))), reverse=True):
+SETTLED_HEAD = ('<table><thead><tr><th>Position</th>'
+                '<th>Session</th><th>Call</th>'
+                '<th class="num">Realised</th><th class="num">If reversed</th>'
+                '<th class="num">Value added</th><th>Verdict</th></tr></thead><tbody>')
+
+
+def _settled_order(rows: list[dict]) -> list[dict]:
+    """Newest night first, then by size within it.
+
+    Sorting by size across sessions interleaved them, so consecutive rows came
+    from different nights.
+    """
+    return sorted(rows, key=lambda x: (x.get("session", ""),
+                                       abs(x.get("unhedged_bp", 0))), reverse=True)
+
+
+def _settled_rows(rows: list[dict]) -> str:
+    out = []
+    for r in _settled_order(rows):
         va = r.get("value_added_bp", 0)
         on = r.get("action") == "HEDGE"
         # Colour is a verdict, and this page spends a paragraph explaining that a
@@ -337,7 +344,58 @@ def _settled(rows: list[dict]) -> str:
             f'{r.get("counterfactual_bp", 0):+,.0f} bp</td>'
             f'<td class="num {cls}" data-label="Value added">{va:+,.0f} bp</td>'
             f'<td class="{"dim" if faint else ""}" data-label="Verdict">{verdict}</td></tr>')
-    return "".join(out) + "</tbody></table></div>"
+    return "".join(out)
+
+
+def _settled(rows: list[dict]) -> str:
+    """The graded tape, with the bulk of it folded away until asked for.
+
+    204 position-nights is 204 rows, and below 720px every row stacks into a
+    seven-line labelled card - so the page opened on roughly twelve screens of
+    refusals, and the notes explaining how any of it is scored sat underneath all
+    of them. Folding is the fix, but WHAT folds decides whether the page is still
+    honest.
+
+    It folds by recency and by call, never by outcome: every HEDGE stays open,
+    whatever it did. The two excluded rows and the night that cost 526 bp are
+    visible without touching the control, because a tape that hid its losers
+    behind a disclosure would be the one thing this page cannot be. What folds is
+    older refusals - the rows this page already says it does not grade one at a
+    time, because a refusal's value added is positive exactly when the position
+    rose.
+
+    <details> and not a script: the published CSP is script-src 'self' with no
+    'unsafe-inline', so a toggle written in JavaScript would be refused by the
+    browser and the rows would be unreachable. This needs no JavaScript at all,
+    opens on Ctrl-F in most browsers, and degrades to "already open" where
+    <details> is unsupported.
+    """
+    if not rows:
+        return _empty("Nothing settled yet. Every decision is graded at the next "
+                      "primary open, against the exact counterfactual.")
+    ordered = _settled_order(rows)
+    latest = ordered[0].get("session", "") if ordered else ""
+    open_rows = [r for r in ordered
+                 if r.get("session") == latest or r.get("action") == "HEDGE"]
+    folded = [r for r in ordered if r not in open_rows]
+
+    head = (f'<div class="scroll stacked">{SETTLED_HEAD}'
+            f'{_settled_rows(open_rows)}</tbody></table></div>')
+    if not folded:
+        return head
+
+    sessions = sorted({r.get("session", "") for r in folded})
+    span = (f"{sessions[0]} to {sessions[-1]}" if len(sessions) > 1
+            else sessions[0])
+    label = (f"Show the other {len(folded):,} refused position-night"
+             f"{'' if len(folded) == 1 else 's'} ({span})")
+    return (f'{head}<details class="more"><summary>{_e(label)}</summary>'
+            f'<p class="note">Every hedge is above, including the ones that did '
+            f'not work. These are refusals, which this page grades across the run '
+            f'rather than one night at a time - the mean under the tiles counts '
+            f'every one of them.</p>'
+            f'<div class="scroll stacked">{SETTLED_HEAD}'
+            f'{_settled_rows(folded)}</tbody></table></div></details>')
 
 
 def _call_tag(action: str) -> str:
