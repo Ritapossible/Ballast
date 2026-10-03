@@ -18,14 +18,30 @@ name: Ballast nightly
 # whatever is outstanding - but a night that is never decided cannot be recovered,
 # and the paper log is the one required material that cannot be backfilled.
 #
-# So the decide half has three independent chances instead of one. Deciding twice
+# So the decide half has four independent chances instead of one. Deciding twice
 # is already a no-op, so a later trigger firing after an earlier one succeeded
 # costs nothing; the only thing it can do is rescue a night that would otherwise
-# be lost. All three land inside the window with room to spare - midnight UTC is
+# be lost. All four land inside the window with room to spare - midnight UTC is
 # four hours past a 20:00Z close, well inside the half-window limit at which a
 # decision is refused as too late to mean anything.
+#
+# The 20:05Z trigger is the one that matters, and it is new. Being ON the chain is
+# not the same as being on in time: the first thirteen hedges went on between 1.7
+# and 16.8 hours after the close, because 21:00Z was the earliest trigger and
+# GitHub routinely delays it. On an earnings night the move lands in the first
+# hour, so those hedges were short into the rebound rather than covering the fall,
+# and re-grading them from their fill timestamps turned the book's drawdown from
+# better than the unhedged book to worse. See ballast/regrade.py.
+#
+# 20:05Z and not earlier: the overnight window opens at the 20:00Z close, and
+# current_session() resolves a 19:55Z run to the PREVIOUS session - firing before
+# the bell would decide the wrong night. Five past is the earliest safe minute,
+# and it is still ahead of most after-hours earnings releases (16:00-16:30 ET),
+# which is the point. A hedge placed after the release has already eaten the move
+# it was meant to insure.
 on:
   schedule:
+    - cron: "5 20 * * 1-5"     # 16:05 ET - five minutes after the close
     - cron: "0 21 * * 1-5"     # 17:00 ET - one hour after the close
     - cron: "30 22 * * 1-5"    # backup, if the first was delayed or dropped
     - cron: "0 0 * * 2-6"      # last chance, 4h after the close it belongs to
@@ -107,7 +123,7 @@ jobs:
 
       - name: Decide (after the close)
         if: >-
-          contains(fromJSON('["0 21 * * 1-5","30 22 * * 1-5","0 0 * * 2-6"]'),
+          contains(fromJSON('["5 20 * * 1-5","0 21 * * 1-5","30 22 * * 1-5","0 0 * * 2-6"]'),
                    github.event.schedule)
           || inputs.task == 'night' || inputs.task == 'both'
         env:
