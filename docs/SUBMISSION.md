@@ -11,7 +11,7 @@ each is reproducible from `research/` with no API key.
 | **Project** | Ballast |
 | **Demo** | https://ballast-v1.vercel.app · docs at `/docs` |
 | **Code** | https://github.com/Ritapossible/Ballast |
-| **X post** | ⚠️ *fill in - must include `#BitgetHackathon` and `@Bitget_AI`* |
+| **X post** | https://x.com/RitaCryptoTips/status/2106281887572365419 |
 
 ---
 
@@ -154,10 +154,50 @@ is.
 
 ### Live forward record (`observed`)
 
-The scheduled job runs unattended. Session **2026-09-09**: 12 positions, **ORCL and ADBE
-hedged** on scheduled earnings (1,978 USDT notional), 10 declined - including **COIN at a
-423 bp 1σ, refused because volatility alone is not a reason to spend 11 bp.** That is the
-Gate 1 result behaving as measured, on live data, decided by a job nobody was watching.
+The scheduled job runs unattended, decided before the outcome is known and committed to a
+hash-chained ledger that GitHub timestamps independently. **17 settled nights, 204
+position-nights, 2026-09-09 to 2026-10-01.** Every hedge is graded from its own signed fill
+timestamp - see defect 6 below, which is the single most important row in this submission.
+
+| Metric (`observed`) | Ballast | Untouched |
+|---|---|---|
+| Max drawdown | **−235 bp** | −227 bp |
+| Total return | +209 bp | +279 bp |
+| Sharpe, annualised | +2.00 | +2.53 |
+| Win rate (graded hedges that cut the move) | **10 of 11, 91%** | — |
+| Turnover | **6.4%** of position-nights (13 orders / 204) | — |
+| Realised cost per hedge | **11.3 bp** net of funding (12.0 bp gross taker) | — |
+| Slippage modelled | 2 bp | — |
+
+**Read the drawdown row, and read it as a failure.** This is insurance: it is supposed to
+show up as a *smaller* worst case. On this record it does not - the protected book's worst
+case is 8 bp **larger** than leaving the book alone. The mechanism is not what failed. The
+desk is arriving too late to own the night it is grading, a median 21% into the window,
+after the move it was sent to insure has already landed. That is defect 6, it is published
+on the Settled page beside the signed rows it corrects, and the fix - a decide trigger
+firing 5 minutes after the close rather than an hour - shipped 2026-10-03 and has not yet
+produced a graded night.
+
+**17 nights do not confirm the mechanism and are not offered as confirmation.** The
+long-sample evidence (98.2% median variance removed, 12 names, 100-264 nights each, plus
+the held-out test) is the measurement with a real sample. The live log's job is to say
+whether the desk can deliver it, and today the honest answer is: not yet.
+
+### How effective use would be proven (`targeted`)
+
+No external users yet, so these are targets with the instrument that would measure each
+one, not projections:
+
+| Signal | Target | How it is measured |
+|---|---|---|
+| Activation | a holder completes one hedged night end to end | a ledger decision carrying an exchange `orderId`, which no row has yet |
+| Risk reduction | p95 overnight move cut ≥80% per hedged name | already `observed` at 88% median on the research sample; the live equivalent needs the latency fix to hold |
+| Retention | the same position hedged across ≥3 separate events | distinct event sessions per `spot_symbol` on the chain |
+| Incremental fee | perp taker fees on hedge notional | `fee_usdt` already recorded per fill |
+| Trading volume / AUM | hedged notional per night | `notional_usdt` already recorded per fill |
+
+Every one of these reads a field the ledger already writes, which is the point: the
+measurement exists before the user does.
 
 ## 4 · Progress
 
