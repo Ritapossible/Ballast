@@ -78,10 +78,10 @@ gates stand between it and an order: the answer must parse into the contracted
 shape, it must be about the right ticker, and **the quote it cites must appear in
 the headlines it was given**.
 
-Over 204 decisions on the live chain: **134 decided by the model, 70 by the rule**.
+Over 216 decisions on the live chain: **143 decided by the model, 73 by the rule**.
 The gates refused **30 answers for quoting a headline that wasn't in the sources**
-and 3 for schema violations, and the rule took over on 24 nights where the model
-was unreachable. On the remaining 13 the model answered cleanly and said it did not
+and 3 for schema violations, and the rule took over on 26 nights where the model
+was unreachable. On the remaining 14 the model answered cleanly and said it did not
 know — abstention hands the night back to the rule. A fabricated source cannot
 reach the book.
 
@@ -156,8 +156,8 @@ on the settled page says so: `simulated · Hub HTTP 400 · no order id`.
 
 Every decision is written to a **hash-chained, signed ledger before the outcome
 is known**. An independent second opinion — Bitget's MCP stock service — is asked
-the same calendar question for every decision. **Across 204 decisions it agrees on
-194 and disagrees on 10.** The ten are five names — ADBE, ORCL, COST, MU and NKE —
+the same calendar question for every decision. **Across 216 decisions it agrees on
+206 and disagrees on 10.** The ten are five names — ADBE, ORCL, COST, MU and NKE —
 each disagreeing on *both* nights of its event window, and every one points the
 same way: Nasdaq's calendar carried an earnings date and Bitget's service returned
 none. Two of them are the 2026-09-09 ADBE and ORCL rows I had already published as
