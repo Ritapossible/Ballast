@@ -360,14 +360,14 @@ certain. A short also collects funding, which brings the average night to
 opened</em> - the settled table charges it on every night and re-pricing a hedge
 part-way through a competition record would make that table incomparable with itself.
 That credit is a rate and not a promise: re-measured across the book today it runs
-from -0.10 bp (PLTR) to +4.13 bp (NKE) a night, and is against the hedge on 1 of 12 names, averaging 1.20 bp, and the gap between
+from -0.01 bp (PLTR) to +4.11 bp (NKE) a night, and is against the hedge on 1 of 12 names, averaging 1.20 bp, and the gap between
 that and the frozen figure is why the certain number is the gross one. Either way it is
 cheaper than the 20 bp it costs to exit - and you keep the
 position.</li>
 <li><strong>Crypto is not a hedge.</strong> Median R² against BTC is 0.114. Crypto
 legs are excluded by measurement, not preference.</li>
 </ul>
-<p>Of 2810 live rTokens, <strong>241 have a perp leg</strong> (measured 2026-10-03). Ballast states plainly
+<p>Of 2809 live rTokens, <strong>241 have a perp leg</strong> (measured 2026-10-05). Ballast states plainly
 which positions it cannot protect rather than pretending otherwise.</p>
 
 <h2 id="selector">Choosing the night</h2>
@@ -494,9 +494,9 @@ this book&rsquo;s twelve stocks. The fill is then priced against the market and 
 <td class="wrap" data-label="What it does">The event reader. Owns the hedge judgment behind schema,
 identity and grounding gates; 30 of 190 answers were refused for quoting a headline that was not in the supplied sources.</td></tr>
 <tr><td data-label=""><strong>bitget-mcp-server</strong></td>
-<td data-label="State"><span class="tag on">answering</span></td>
+<td data-label="State"><span class="tag on">not answering</span></td>
 <td class="wrap" data-label="What it does">A second opinion on the earnings calendar, asked for every
-decision on the chain. All <strong>216</strong> decisions are checked against it with <strong>nothing recorded unknown</strong>. <strong>206 agree, 10 do not</strong> &mdash; on ADBE, COST, MU, NKE, ORCL at 2026-09-09 and 2026-09-10 and 2026-09-23 and 2026-09-24 and 2026-09-29 and 2026-09-30 and 2026-10-01. These are not rows this project had already flagged, so they are an open question rather than corroboration of a known defect. It still does not decide anything; re-pointing the
+decision on the chain. On its last run <strong>none of the 216 decisions could be checked</strong> - all 216 are recorded <strong>unknown</strong>, never as agreement. The upstream said: <code>upstream 503: None</code>. A second source that fails open is worse than none, so the row says so rather than carrying the last good number. It still does not decide anything; re-pointing the
 selector days before a submission would invalidate the record the change is meant to support.</td></tr>
 <tr><td data-label=""><strong>bitget-signal</strong></td>
 <td data-label="State"><span class="tag on">answering in halves</span></td>
@@ -599,7 +599,7 @@ the whole session.</li>
 <p>All figures are produced by code in <code>research/</code> from public endpoints,
 labelled <em>observed</em>, <em>estimated</em> or <em>targeted</em>.</p>
 <div class="scroll stacked"><table><thead><tr><th>Finding</th><th>Value</th></tr></thead><tbody>
-<tr><td data-label="">rTokens live on spot / with a perp leg</td><td class="num" data-label="Value">2810 / 241</td></tr>
+<tr><td data-label="">rTokens live on spot / with a perp leg</td><td class="num" data-label="Value">2809 / 241</td></tr>
 <tr><td data-label="">Median overnight variance removed</td><td class="num" data-label="Value">98.2%</td></tr>
 <tr><td data-label="">R² on top-decile move nights</td><td class="num" data-label="Value">0.978-0.999</td></tr>
 <tr><td data-label="">Median p95 tail reduction</td><td class="num" data-label="Value">88%</td></tr>
