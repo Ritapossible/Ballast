@@ -6,7 +6,7 @@
   "funding": {
     "max_bp": 3.23,
     "max_name": "NKE",
-    "mean_bp": 1.24,
+    "mean_bp": 1.28,
     "measured_on": "2026-10-16",
     "min_bp": -0.13,
     "min_name": "PLTR",
@@ -212,7 +212,7 @@
     "split": 0.7
   },
   "rtokens_hedgeable": 261,
-  "rtokens_total": 2614,
+  "rtokens_total": 2913,
   "tail": [
     {
       "name": "TSLA",
