@@ -4,18 +4,18 @@
   "beta_names": 12,
   "exit_cost_bp": 20.0,
   "funding": {
-    "max_bp": 3.23,
+    "max_bp": 3.16,
     "max_name": "NKE",
-    "mean_bp": 1.35,
-    "measured_on": "2026-10-17",
-    "min_bp": -0.1,
-    "min_name": "PLTR",
+    "mean_bp": 1.41,
+    "measured_on": "2026-10-19",
+    "min_bp": 0.0,
+    "min_name": "COST",
     "names": 12,
-    "names_paying": 1
+    "names_paying": 0
   },
   "hedge_cost_bp": 11.3,
   "hedge_cost_gross_bp": 12.0,
-  "measured_on": "2026-10-17",
+  "measured_on": "2026-10-19",
   "median_r2": 0.982,
   "median_tail_cut_pct": 88,
   "oos": {
@@ -212,7 +212,7 @@
     "split": 0.7
   },
   "rtokens_hedgeable": 261,
-  "rtokens_total": 2913,
+  "rtokens_total": 3018,
   "tail": [
     {
       "name": "TSLA",
