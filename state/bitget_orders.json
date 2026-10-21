@@ -1,7 +1,7 @@
 {
   "code": "00000",
   "msg": "success",
-  "requestTime": "1792614462061",
+  "requestTime": "1792625047399",
   "data": [
     {
       "orderId": "BAL1F91F3BE9E288DB2AE0C3836",
@@ -523,6 +523,35 @@
       "ballastSlippageBp": 2.0,
       "ballastBalanceChangeUsdt": "-1.8621",
       "ballastBalanceAfterUsdt": "-44.6245",
+      "paper": true
+    },
+    {
+      "orderId": "BALE6E99CBC6F40DD869B5F4E8D",
+      "clientOid": "BALE6E99CBC6F40DD869B5F4E8D",
+      "symbol": "TSLAUSDT",
+      "productType": "USDT-FUTURES",
+      "marginCoin": "USDT",
+      "side": "sell",
+      "tradeSide": "open",
+      "orderType": "market",
+      "force": "gtc",
+      "price": "375.104964",
+      "priceAvg": "375.104964",
+      "size": "2.736514",
+      "baseVolume": "2.736514",
+      "quoteVolume": "1026.4800",
+      "fee": "-0.615900",
+      "feeCoin": "USDT",
+      "status": "filled",
+      "cTime": "1792624385004",
+      "uTime": "1792624385004",
+      "ballastSession": "2026-10-21",
+      "ballastReason": "scheduled earnings tonight (high impact) - calendar selector",
+      "ballastDecidedBy": "rule",
+      "ballastSpotSymbol": "RTSLAUSDT",
+      "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": null,
+      "ballastBalanceAfterUsdt": null,
       "paper": true
     }
   ],
