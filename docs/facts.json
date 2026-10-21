@@ -4,9 +4,9 @@
   "beta_names": 12,
   "exit_cost_bp": 20.0,
   "funding": {
-    "max_bp": 2.86,
+    "max_bp": 2.9,
     "max_name": "ORCL",
-    "mean_bp": 1.4,
+    "mean_bp": 1.39,
     "measured_on": "2026-10-21",
     "min_bp": 0.0,
     "min_name": "COST",
@@ -211,8 +211,8 @@
     "shortest": 100,
     "split": 0.7
   },
-  "rtokens_hedgeable": 261,
-  "rtokens_total": 3016,
+  "rtokens_hedgeable": 266,
+  "rtokens_total": 3017,
   "tail": [
     {
       "name": "TSLA",
