@@ -1,5 +1,5 @@
 {
- "built_on": "2026-10-24T03:19:55+00:00",
+ "built_on": "2026-10-26T20:08:28+00:00",
  "check": {
   "matched": 125,
   "mismatched": [
@@ -6184,10 +6184,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-10-23",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "ADBE",
-   "value_added_bp": null
+   "value_added_bp": -58.5
   },
   {
    "action": "NO_HEDGE",
@@ -6200,10 +6200,10 @@
    "reasoning": "No scheduled earnings or other specific identifiable overnight catalyst for AMD is present in the sources. The headlines describe prior price moves and broad chip-sector concerns rather than a new event likely to move AMD during this window.",
    "selector_affected": false,
    "session": "2026-10-23",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "AMD",
-   "value_added_bp": null
+   "value_added_bp": 15.3
   },
   {
    "action": "NO_HEDGE",
@@ -6216,10 +6216,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-10-23",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "COIN",
-   "value_added_bp": null
+   "value_added_bp": -482.3
   },
   {
    "action": "NO_HEDGE",
@@ -6232,10 +6232,10 @@
    "reasoning": "No earnings are scheduled for COST in this overnight window and the supplied headlines contain no specific identifiable event likely to move the stock. The available COST headline is general price/commentary, which does not qualify as a hedge-triggering event.",
    "selector_affected": false,
    "session": "2026-10-23",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "COST",
-   "value_added_bp": null
+   "value_added_bp": 75.7
   },
   {
    "action": "NO_HEDGE",
@@ -6248,10 +6248,10 @@
    "reasoning": "The provided headline is analyst commentary rather than a specific overnight event for MSFT. The exchange calendar also shows no scheduled earnings in the window.",
    "selector_affected": false,
    "session": "2026-10-23",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "MSFT",
-   "value_added_bp": null
+   "value_added_bp": 9.0
   },
   {
    "action": "NO_HEDGE",
@@ -6264,10 +6264,10 @@
    "reasoning": "The headlines are analytical commentary about supply conditions, HBM4, CXMT controversy, and possible strike risk rather than a specific dated overnight catalyst. With no scheduled earnings in the window, there is no identifiable event requiring a hedge.",
    "selector_affected": false,
    "session": "2026-10-23",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "MU",
-   "value_added_bp": null
+   "value_added_bp": 154.3
   },
   {
    "action": "NO_HEDGE",
@@ -6280,10 +6280,10 @@
    "reasoning": "There is no scheduled earnings event in the window and the supplied headlines are general price commentary rather than a specific overnight catalyst. No identifiable event appears likely to move NKE specifically during this closed-market window.",
    "selector_affected": false,
    "session": "2026-10-23",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "NKE",
-   "value_added_bp": null
+   "value_added_bp": 241.8
   },
   {
    "action": "NO_HEDGE",
@@ -6296,10 +6296,10 @@
    "reasoning": "No earnings are scheduled for the window, and the supplied headlines are commentary or intraday market reaction rather than a new overnight catalyst. Therefore there is no specific identifiable event tonight that justifies hedging NVDA.",
    "selector_affected": false,
    "session": "2026-10-23",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "NVDA",
-   "value_added_bp": null
+   "value_added_bp": 170.1
   },
   {
    "action": "NO_HEDGE",
@@ -6312,10 +6312,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-10-23",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "ORCL",
-   "value_added_bp": null
+   "value_added_bp": -128.5
   },
   {
    "action": "NO_HEDGE",
@@ -6328,10 +6328,10 @@
    "reasoning": "No scheduled earnings or confirmed company catalyst occurs in the PLTR overnight window, and the supplied headlines are mainly analyst or general commentary. The NATO AI sovereignty headline is broad market commentary rather than an identifiable overnight catalyst for PLTR.",
    "selector_affected": false,
    "session": "2026-10-23",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "PLTR",
-   "value_added_bp": null
+   "value_added_bp": -140.9
   },
   {
    "action": "NO_HEDGE",
@@ -6344,10 +6344,10 @@
    "reasoning": "The headlines mention broad catalysts such as a Fed meeting and earnings, but they do not confirm that any specific event occurs during the SPY overnight window. With no scheduled earnings and only general market commentary, the sources are insufficient to decide whether a hedge is needed.",
    "selector_affected": false,
    "session": "2026-10-23",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "SPY",
-   "value_added_bp": null
+   "value_added_bp": 37.0
   },
   {
    "action": "NO_HEDGE",
@@ -6360,10 +6360,10 @@
    "reasoning": "The supplied headlines are commentary, holdings changes, post-earnings reaction, and valuation opinions rather than a scheduled identifiable catalyst for the overnight window. With no earnings scheduled and no concrete event shown, there is no specific reason to hedge this TSLA position tonight.",
    "selector_affected": false,
    "session": "2026-10-23",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "TSLA",
-   "value_added_bp": null
+   "value_added_bp": 544.9
   }
  ],
  "vol_gate_enabled": false
