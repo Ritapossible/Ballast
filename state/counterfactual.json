@@ -1,5 +1,5 @@
 {
- "built_on": "2026-10-28T04:02:41+00:00",
+ "built_on": "2026-10-28T19:50:45+00:00",
  "check": {
   "matched": 133,
   "mismatched": [
@@ -26,8 +26,8 @@
   "recorded": 324,
   "rule": 134
  },
- "flip_value_added_bp": -561.0,
- "flips_settled": 12,
+ "flip_value_added_bp": -636.3,
+ "flips_settled": 14,
  "rows": [
   {
    "action": "HEDGE",
@@ -6568,10 +6568,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-10-27",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "ADBE",
-   "value_added_bp": null
+   "value_added_bp": 40.6
   },
   {
    "action": "HEDGE",
@@ -6584,10 +6584,10 @@
    "reasoning": "AMD has a specific after-hours catalyst in the reported Nvidia/AMD-Meta expanded chip partnership and share purchase. That news can drive overnight repricing while the underlying US market is closed.",
    "selector_affected": false,
    "session": "2026-10-27",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "AMD",
-   "value_added_bp": null
+   "value_added_bp": -45.1
   },
   {
    "action": "HEDGE",
@@ -6600,10 +6600,10 @@
    "reasoning": "Bitcoin breaking below $80,000 and the start of a Fed meeting create an overnight macro/crypto catalyst that can move Coinbase-linked exposure. Even without earnings, crypto markets trade continuously and can reprice COIN before the underlying opens.",
    "selector_affected": false,
    "session": "2026-10-27",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "COIN",
-   "value_added_bp": null
+   "value_added_bp": -30.2
   },
   {
    "action": "NO_HEDGE",
@@ -6616,10 +6616,10 @@
    "reasoning": "There are no scheduled earnings and no COST-specific earnings, guidance, legal, product, or macro event identified for the overnight window. The available COST headlines describe routine share withholding and prior price movement, not a new catalyst likely to move the stock overnight.",
    "selector_affected": false,
    "session": "2026-10-27",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "COST",
-   "value_added_bp": null
+   "value_added_bp": -93.3
   },
   {
    "action": "NO_HEDGE",
@@ -6632,10 +6632,10 @@
    "reasoning": "The supplied headlines contain no MSFT-specific earnings, guidance, legal, product, or other identifiable overnight event. Broad tech-sector layoff commentary is not enough to judge a hedge for MSFT alone.",
    "selector_affected": false,
    "session": "2026-10-27",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "MSFT",
-   "value_added_bp": null
+   "value_added_bp": -20.6
   },
   {
    "action": "NO_HEDGE",
@@ -6648,10 +6648,10 @@
    "reasoning": "The supplied headlines are commentary and speculation rather than a specific overnight event for MU. There is no scheduled earnings event in the window, so no identifiable catalyst requiring a hedge.",
    "selector_affected": false,
    "session": "2026-10-27",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "MU",
-   "value_added_bp": null
+   "value_added_bp": 513.7
   },
   {
    "action": "NO_HEDGE",
@@ -6664,10 +6664,10 @@
    "reasoning": "The supplied headlines are dividend, valuation, and general stock commentary rather than identifiable overnight events for Nike. With no scheduled earnings in the window and no specific catalyst shown, there is no clear event that should move NKE tonight.",
    "selector_affected": false,
    "session": "2026-10-27",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "NKE",
-   "value_added_bp": null
+   "value_added_bp": -15.8
   },
   {
    "action": "NO_HEDGE",
@@ -6680,10 +6680,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-10-27",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "NVDA",
-   "value_added_bp": null
+   "value_added_bp": 17.7
   },
   {
    "action": "NO_HEDGE",
@@ -6696,10 +6696,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-10-27",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "ORCL",
-   "value_added_bp": null
+   "value_added_bp": 25.8
   },
   {
    "action": "NO_HEDGE",
@@ -6712,10 +6712,10 @@
    "reasoning": "There is no scheduled earnings event for PLTR in this overnight window, and the supplied headlines are ratings, price-target commentary, and earnings previews rather than identifiable overnight catalysts. Analyst opinion and general buzz do not meet the threshold for hedging.",
    "selector_affected": false,
    "session": "2026-10-27",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "PLTR",
-   "value_added_bp": null
+   "value_added_bp": -142.2
   },
   {
    "action": "NO_HEDGE",
@@ -6728,10 +6728,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-10-27",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "SPY",
-   "value_added_bp": null
+   "value_added_bp": 23.6
   },
   {
    "action": "NO_HEDGE",
@@ -6744,10 +6744,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-10-27",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "TSLA",
-   "value_added_bp": null
+   "value_added_bp": -127.4
   }
  ],
  "vol_gate_enabled": false

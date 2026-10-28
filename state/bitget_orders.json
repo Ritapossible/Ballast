@@ -1,7 +1,7 @@
 {
   "code": "00000",
   "msg": "success",
-  "requestTime": "1793159895081",
+  "requestTime": "1793216768056",
   "data": [
     {
       "orderId": "BAL1F91F3BE9E288DB2AE0C3836",
@@ -608,8 +608,8 @@
       "ballastDecidedBy": "model",
       "ballastSpotSymbol": "RCOINUSDT",
       "ballastSlippageBp": 2.0,
-      "ballastBalanceChangeUsdt": null,
-      "ballastBalanceAfterUsdt": null,
+      "ballastBalanceChangeUsdt": "-2.6518",
+      "ballastBalanceAfterUsdt": "-103.8847",
       "paper": true
     },
     {
@@ -637,8 +637,8 @@
       "ballastDecidedBy": "model",
       "ballastSpotSymbol": "RAMDUSDT",
       "ballastSlippageBp": 2.0,
-      "ballastBalanceChangeUsdt": null,
-      "ballastBalanceAfterUsdt": null,
+      "ballastBalanceChangeUsdt": "-5.0458",
+      "ballastBalanceAfterUsdt": "-108.9305",
       "paper": true
     }
   ],
