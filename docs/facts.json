@@ -4,10 +4,10 @@
   "beta_names": 12,
   "exit_cost_bp": 20.0,
   "funding": {
-    "max_bp": 2.59,
-    "max_name": "ORCL",
-    "mean_bp": 1.27,
-    "measured_on": "2026-10-27",
+    "max_bp": 2.51,
+    "max_name": "COIN",
+    "mean_bp": 1.26,
+    "measured_on": "2026-10-28",
     "min_bp": 0.0,
     "min_name": "COST",
     "names": 12,
@@ -15,7 +15,7 @@
   },
   "hedge_cost_bp": 11.3,
   "hedge_cost_gross_bp": 12.0,
-  "measured_on": "2026-10-27",
+  "measured_on": "2026-10-28",
   "median_r2": 0.982,
   "median_tail_cut_pct": 88,
   "oos": {
