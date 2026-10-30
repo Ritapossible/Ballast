@@ -1,7 +1,7 @@
 {
   "code": "00000",
   "msg": "success",
-  "requestTime": "1793309682218",
+  "requestTime": "1793318950453",
   "data": [
     {
       "orderId": "BAL1F91F3BE9E288DB2AE0C3836",
@@ -697,6 +697,35 @@
       "ballastSlippageBp": 2.0,
       "ballastBalanceChangeUsdt": "+38.2316",
       "ballastBalanceAfterUsdt": "-68.3711",
+      "paper": true
+    },
+    {
+      "orderId": "BALDF20A90FD7B62723312DE9D0",
+      "clientOid": "BALDF20A90FD7B62723312DE9D0",
+      "symbol": "COINUSDT",
+      "productType": "USDT-FUTURES",
+      "marginCoin": "USDT",
+      "side": "sell",
+      "tradeSide": "open",
+      "orderType": "market",
+      "force": "gtc",
+      "price": "155.728848",
+      "priceAvg": "155.728848",
+      "size": "5.528327",
+      "baseVolume": "5.528327",
+      "quoteVolume": "860.9200",
+      "fee": "-0.516600",
+      "feeCoin": "USDT",
+      "status": "filled",
+      "cTime": "1793318068340",
+      "uTime": "1793318068340",
+      "ballastSession": "2026-10-29",
+      "ballastReason": "event reader judged HEDGE - earnings (high impact, confidence 96%)",
+      "ballastDecidedBy": "model",
+      "ballastSpotSymbol": "RCOINUSDT",
+      "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": null,
+      "ballastBalanceAfterUsdt": null,
       "paper": true
     }
   ],
