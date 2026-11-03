@@ -1,5 +1,5 @@
 {
- "built_on": "2026-11-03T05:21:58+00:00",
+ "built_on": "2026-11-03T20:36:09+00:00",
  "counts": {
   "agreed": 0,
   "checked": 0,
@@ -3636,7 +3636,7 @@
    "agree": false,
    "bitget_mcp": "unknown",
    "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "nasdaq": "yes",
    "session": "2026-10-30",
    "ticker": "PLTR"
   },
