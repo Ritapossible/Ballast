@@ -211,8 +211,8 @@
     "shortest": 100,
     "split": 0.7
   },
-  "rtokens_hedgeable": 273,
-  "rtokens_total": 3017,
+  "rtokens_hedgeable": 285,
+  "rtokens_total": 3103,
   "tail": [
     {
       "name": "TSLA",
