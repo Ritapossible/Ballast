@@ -1,7 +1,7 @@
 {
   "code": "00000",
   "msg": "success",
-  "requestTime": "1793743977356",
+  "requestTime": "1793753304985",
   "data": [
     {
       "orderId": "BAL1F91F3BE9E288DB2AE0C3836",
@@ -755,6 +755,35 @@
       "ballastSlippageBp": 2.0,
       "ballastBalanceChangeUsdt": "+9.5668",
       "ballastBalanceAfterUsdt": "-5.2465",
+      "paper": true
+    },
+    {
+      "orderId": "BALE8DD44AC2C61831D937C014E",
+      "clientOid": "BALE8DD44AC2C61831D937C014E",
+      "symbol": "AMDUSDT",
+      "productType": "USDT-FUTURES",
+      "marginCoin": "USDT",
+      "side": "sell",
+      "tradeSide": "open",
+      "orderType": "market",
+      "force": "gtc",
+      "price": "515.996780",
+      "priceAvg": "515.996780",
+      "size": "1.987706",
+      "baseVolume": "1.987706",
+      "quoteVolume": "1025.6500",
+      "fee": "-0.615400",
+      "feeCoin": "USDT",
+      "status": "filled",
+      "cTime": "1793752450571",
+      "uTime": "1793752450571",
+      "ballastSession": "2026-11-03",
+      "ballastReason": "scheduled earnings tonight (high impact) - calendar selector",
+      "ballastDecidedBy": "rule",
+      "ballastSpotSymbol": "RAMDUSDT",
+      "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": null,
+      "ballastBalanceAfterUsdt": null,
       "paper": true
     }
   ],
