@@ -39,7 +39,7 @@ file. Reproduce with `research/`; full detail and disclosed defects in
 | Worst nights | MSFT 1,128 bp -> 233 bp · AMD 1,262 bp -> 90 bp |
 | Cost of protection | **11.3 bp** taker, net of funding received |
 | Cost of exiting instead | **20 bp**, and you lose the position |
-| Hedgeable universe | **285** of 3,103 live rTokens |
+| Hedgeable universe | **286** of 3,102 live rTokens |
 <!-- facts:end -->
 
 ## What it does not claim

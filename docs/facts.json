@@ -6,7 +6,7 @@
   "funding": {
     "max_bp": 2.21,
     "max_name": "COIN",
-    "mean_bp": 0.89,
+    "mean_bp": 0.91,
     "measured_on": "2026-11-04",
     "min_bp": 0.0,
     "min_name": "COST",
@@ -211,8 +211,8 @@
     "shortest": 100,
     "split": 0.7
   },
-  "rtokens_hedgeable": 285,
-  "rtokens_total": 3103,
+  "rtokens_hedgeable": 286,
+  "rtokens_total": 3102,
   "tail": [
     {
       "name": "TSLA",
