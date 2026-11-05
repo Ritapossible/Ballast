@@ -1,7 +1,7 @@
 {
   "code": "00000",
   "msg": "success",
-  "requestTime": "1793855079037",
+  "requestTime": "1793913031361",
   "data": [
     {
       "orderId": "BAL1F91F3BE9E288DB2AE0C3836",
@@ -811,8 +811,8 @@
       "ballastDecidedBy": "model",
       "ballastSpotSymbol": "RORCLUSDT",
       "ballastSlippageBp": 2.0,
-      "ballastBalanceChangeUsdt": null,
-      "ballastBalanceAfterUsdt": null,
+      "ballastBalanceChangeUsdt": "+35.0608",
+      "ballastBalanceAfterUsdt": "+48.4401",
       "paper": true
     }
   ],

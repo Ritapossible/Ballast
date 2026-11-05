@@ -4,9 +4,9 @@
   "beta_names": 12,
   "exit_cost_bp": 20.0,
   "funding": {
-    "max_bp": 2.17,
+    "max_bp": 2.07,
     "max_name": "COIN",
-    "mean_bp": 0.95,
+    "mean_bp": 0.99,
     "measured_on": "2026-11-05",
     "min_bp": 0.0,
     "min_name": "COST",
@@ -211,7 +211,7 @@
     "shortest": 100,
     "split": 0.7
   },
-  "rtokens_hedgeable": 285,
+  "rtokens_hedgeable": 286,
   "rtokens_total": 3097,
   "tail": [
     {
