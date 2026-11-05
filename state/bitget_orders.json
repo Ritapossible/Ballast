@@ -1,7 +1,7 @@
 {
   "code": "00000",
   "msg": "success",
-  "requestTime": "1793831233347",
+  "requestTime": "1793840901722",
   "data": [
     {
       "orderId": "BAL1F91F3BE9E288DB2AE0C3836",
@@ -784,6 +784,35 @@
       "ballastSlippageBp": 2.0,
       "ballastBalanceChangeUsdt": "+18.6258",
       "ballastBalanceAfterUsdt": "+13.3793",
+      "paper": true
+    },
+    {
+      "orderId": "BAL50EF1F8335076E98D0669DEE",
+      "clientOid": "BAL50EF1F8335076E98D0669DEE",
+      "symbol": "ORCLUSDT",
+      "productType": "USDT-FUTURES",
+      "marginCoin": "USDT",
+      "side": "sell",
+      "tradeSide": "open",
+      "orderType": "market",
+      "force": "gtc",
+      "price": "124.215152",
+      "priceAvg": "124.215152",
+      "size": "6.112137",
+      "baseVolume": "6.112137",
+      "quoteVolume": "759.2200",
+      "fee": "-0.455500",
+      "feeCoin": "USDT",
+      "status": "filled",
+      "cTime": "1793839899930",
+      "uTime": "1793839899930",
+      "ballastSession": "2026-11-04",
+      "ballastReason": "event reader judged HEDGE - product (medium impact, confidence 72%)",
+      "ballastDecidedBy": "model",
+      "ballastSpotSymbol": "RORCLUSDT",
+      "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": null,
+      "ballastBalanceAfterUsdt": null,
       "paper": true
     }
   ],
