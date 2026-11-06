@@ -6,8 +6,8 @@
   "funding": {
     "max_bp": 2.07,
     "max_name": "COIN",
-    "mean_bp": 0.99,
-    "measured_on": "2026-11-05",
+    "mean_bp": 1.01,
+    "measured_on": "2026-11-06",
     "min_bp": 0.0,
     "min_name": "COST",
     "names": 12,
@@ -15,7 +15,7 @@
   },
   "hedge_cost_bp": 11.3,
   "hedge_cost_gross_bp": 12.0,
-  "measured_on": "2026-11-05",
+  "measured_on": "2026-11-06",
   "median_r2": 0.982,
   "median_tail_cut_pct": 88,
   "oos": {
