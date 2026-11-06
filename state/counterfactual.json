@@ -1,5 +1,5 @@
 {
- "built_on": "2026-11-06T05:09:13+00:00",
+ "built_on": "2026-11-06T20:35:33+00:00",
  "check": {
   "matched": 164,
   "mismatched": [
@@ -26,8 +26,8 @@
   "recorded": 408,
   "rule": 165
  },
- "flip_value_added_bp": -149.8,
- "flips_settled": 16,
+ "flip_value_added_bp": -1493.4,
+ "flips_settled": 19,
  "rows": [
   {
    "action": "HEDGE",
@@ -7912,10 +7912,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-11-05",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "ADBE",
-   "value_added_bp": null
+   "value_added_bp": -204.5
   },
   {
    "action": "NO_HEDGE",
@@ -7928,10 +7928,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-11-05",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "AMD",
-   "value_added_bp": null
+   "value_added_bp": 1060.7
   },
   {
    "action": "NO_HEDGE",
@@ -7944,10 +7944,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-11-05",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "COIN",
-   "value_added_bp": null
+   "value_added_bp": 165.5
   },
   {
    "action": "NO_HEDGE",
@@ -7960,10 +7960,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-11-05",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "COST",
-   "value_added_bp": null
+   "value_added_bp": -36.7
   },
   {
    "action": "NO_HEDGE",
@@ -7976,10 +7976,10 @@
    "reasoning": "The headlines do not identify a clear MSFT-specific overnight catalyst such as earnings, guidance, or a material corporate event. The data-center delay item concerns IREN and the other items are retrospective price commentary or insider-sale notice.",
    "selector_affected": false,
    "session": "2026-11-05",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "MSFT",
-   "value_added_bp": null
+   "value_added_bp": 12.0
   },
   {
    "action": "HEDGE",
@@ -7992,10 +7992,10 @@
    "reasoning": "Micron is at the center of a sharp AI-chip sector selloff, creating elevated overnight gap risk even without a scheduled company event. The hedge cost is small relative to the potential continuation of this high-volatility sector move.",
    "selector_affected": false,
    "session": "2026-11-05",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "MU",
-   "value_added_bp": null
+   "value_added_bp": -525.7
   },
   {
    "action": "NO_HEDGE",
@@ -8008,10 +8008,10 @@
    "reasoning": "The only supplied headline is an analyst downgrade, which is explicitly not a qualifying event. There is no scheduled earnings or other identifiable overnight catalyst for NKE in the sources.",
    "selector_affected": false,
    "session": "2026-11-05",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "NKE",
-   "value_added_bp": null
+   "value_added_bp": -124.9
   },
   {
    "action": "HEDGE",
@@ -8024,10 +8024,10 @@
    "reasoning": "Headlines during the overnight window show NVDA falling sharply amid a broad AI/chip selloff and election uncertainty. That macro event can continue to move the stock before the next open, so hedging is warranted.",
    "selector_affected": false,
    "session": "2026-11-05",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "NVDA",
-   "value_added_bp": null
+   "value_added_bp": -509.9
   },
   {
    "action": "NO_HEDGE",
@@ -8040,10 +8040,10 @@
    "reasoning": "The supplied headlines are price-action and technical commentary, not a specific overnight catalyst for Oracle. With no scheduled earnings and no identifiable event in the sources, hedging is not warranted.",
    "selector_affected": false,
    "session": "2026-11-05",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "ORCL",
-   "value_added_bp": null
+   "value_added_bp": 325.4
   },
   {
    "action": "NO_HEDGE",
@@ -8056,10 +8056,10 @@
    "reasoning": "The supplied headlines show recent price weakness and analyst commentary, but no specific identifiable overnight event for PLTR. With no scheduled earnings in the window, there is no clear event-driven reason to hedge.",
    "selector_affected": false,
    "session": "2026-11-05",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "PLTR",
-   "value_added_bp": null
+   "value_added_bp": 624.2
   },
   {
    "action": "NO_HEDGE",
@@ -8072,10 +8072,10 @@
    "reasoning": "The provided calendar shows no scheduled earnings in the overnight window, and the only headline is an option contract page rather than a catalyst. There is no identifiable event supplied that can specifically move SPY tonight.",
    "selector_affected": false,
    "session": "2026-11-05",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "SPY",
-   "value_added_bp": null
+   "value_added_bp": 143.4
   },
   {
    "action": "HEDGE",
@@ -8088,10 +8088,10 @@
    "reasoning": "The post-election political and regulatory uncertainty is an identifiable macro catalyst that can continue to move TSLA overnight. The stock has already fallen sharply, so gap risk during the closed primary-market window is elevated.",
    "selector_affected": false,
    "session": "2026-11-05",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "TSLA",
-   "value_added_bp": null
+   "value_added_bp": -308.0
   }
  ],
  "vol_gate_enabled": false

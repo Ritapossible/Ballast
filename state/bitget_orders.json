@@ -1,7 +1,7 @@
 {
   "code": "00000",
   "msg": "success",
-  "requestTime": "1793941474162",
+  "requestTime": "1793997045282",
   "data": [
     {
       "orderId": "BAL1F91F3BE9E288DB2AE0C3836",
@@ -840,8 +840,8 @@
       "ballastDecidedBy": "model",
       "ballastSpotSymbol": "RTSLAUSDT",
       "ballastSlippageBp": 2.0,
-      "ballastBalanceChangeUsdt": null,
-      "ballastBalanceAfterUsdt": null,
+      "ballastBalanceChangeUsdt": "-28.5273",
+      "ballastBalanceAfterUsdt": "+19.9128",
       "paper": true
     },
     {
@@ -869,8 +869,8 @@
       "ballastDecidedBy": "model",
       "ballastSpotSymbol": "RNVDAUSDT",
       "ballastSlippageBp": 2.0,
-      "ballastBalanceChangeUsdt": null,
-      "ballastBalanceAfterUsdt": null,
+      "ballastBalanceChangeUsdt": "-40.5687",
+      "ballastBalanceAfterUsdt": "-20.6559",
       "paper": true
     },
     {
@@ -898,8 +898,8 @@
       "ballastDecidedBy": "model",
       "ballastSpotSymbol": "RMUUSDT",
       "ballastSlippageBp": 2.0,
-      "ballastBalanceChangeUsdt": null,
-      "ballastBalanceAfterUsdt": null,
+      "ballastBalanceChangeUsdt": "-34.4186",
+      "ballastBalanceAfterUsdt": "-55.0745",
       "paper": true
     }
   ],
