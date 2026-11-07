@@ -1,7 +1,7 @@
 {
   "code": "00000",
   "msg": "success",
-  "requestTime": "1794002231567",
+  "requestTime": "1794010464974",
   "data": [
     {
       "orderId": "BAL1F91F3BE9E288DB2AE0C3836",
@@ -900,6 +900,35 @@
       "ballastSlippageBp": 2.0,
       "ballastBalanceChangeUsdt": "-34.4186",
       "ballastBalanceAfterUsdt": "-55.0745",
+      "paper": true
+    },
+    {
+      "orderId": "BALE14061C2271C84778D7F1933",
+      "clientOid": "BALE14061C2271C84778D7F1933",
+      "symbol": "TSLAUSDT",
+      "productType": "USDT-FUTURES",
+      "marginCoin": "USDT",
+      "side": "sell",
+      "tradeSide": "open",
+      "orderType": "market",
+      "force": "gtc",
+      "price": "359.558074",
+      "priceAvg": "359.558074",
+      "size": "2.736331",
+      "baseVolume": "2.736331",
+      "quoteVolume": "983.8700",
+      "fee": "-0.590300",
+      "feeCoin": "USDT",
+      "status": "filled",
+      "cTime": "1794009847508",
+      "uTime": "1794009847508",
+      "ballastSession": "2026-11-06",
+      "ballastReason": "event reader judged HEDGE - product (medium impact, confidence 55%)",
+      "ballastDecidedBy": "model",
+      "ballastSpotSymbol": "RTSLAUSDT",
+      "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": null,
+      "ballastBalanceAfterUsdt": null,
       "paper": true
     }
   ],
