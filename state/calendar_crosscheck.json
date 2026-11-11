@@ -1,11 +1,11 @@
 {
- "built_on": "2026-11-10T23:04:39+00:00",
+ "built_on": "2026-11-11T01:56:16+00:00",
  "counts": {
   "agreed": 0,
   "checked": 0,
-  "decisions": 528,
+  "decisions": 540,
   "disagreed": 0,
-  "unknown": 528
+  "unknown": 540
  },
  "rows": [
   {
@@ -4230,6 +4230,102 @@
    "detail": "bitget-mcp-server \u00b7 categories: ",
    "nasdaq": "no",
    "session": "2026-11-09",
+   "ticker": "TSLA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "nasdaq": "no",
+   "session": "2026-11-10",
+   "ticker": "ADBE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "nasdaq": "no",
+   "session": "2026-11-10",
+   "ticker": "AMD"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "nasdaq": "no",
+   "session": "2026-11-10",
+   "ticker": "COIN"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "nasdaq": "no",
+   "session": "2026-11-10",
+   "ticker": "COST"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "nasdaq": "no",
+   "session": "2026-11-10",
+   "ticker": "MSFT"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "nasdaq": "no",
+   "session": "2026-11-10",
+   "ticker": "MU"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "nasdaq": "no",
+   "session": "2026-11-10",
+   "ticker": "NKE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "nasdaq": "no",
+   "session": "2026-11-10",
+   "ticker": "NVDA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "nasdaq": "no",
+   "session": "2026-11-10",
+   "ticker": "ORCL"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "nasdaq": "no",
+   "session": "2026-11-10",
+   "ticker": "PLTR"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "nasdaq": "no",
+   "session": "2026-11-10",
+   "ticker": "SPY"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "nasdaq": "no",
+   "session": "2026-11-10",
    "ticker": "TSLA"
   }
  ],
