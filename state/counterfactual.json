@@ -1,5 +1,5 @@
 {
- "built_on": "2026-11-12T06:44:57+00:00",
+ "built_on": "2026-11-12T22:32:22+00:00",
  "check": {
   "matched": 185,
   "mismatched": [
@@ -26,8 +26,8 @@
   "recorded": 456,
   "rule": 186
  },
- "flip_value_added_bp": -1560.0,
- "flips_settled": 21,
+ "flip_value_added_bp": -1709.7,
+ "flips_settled": 23,
  "rows": [
   {
    "action": "HEDGE",
@@ -8680,10 +8680,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-11-11",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "ADBE",
-   "value_added_bp": null
+   "value_added_bp": -55.7
   },
   {
    "action": "NO_HEDGE",
@@ -8696,10 +8696,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-11-11",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "AMD",
-   "value_added_bp": null
+   "value_added_bp": 134.5
   },
   {
    "action": "NO_HEDGE",
@@ -8712,10 +8712,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-11-11",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "COIN",
-   "value_added_bp": null
+   "value_added_bp": -331.3
   },
   {
    "action": "NO_HEDGE",
@@ -8728,10 +8728,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-11-11",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "COST",
-   "value_added_bp": null
+   "value_added_bp": 53.2
   },
   {
    "action": "NO_HEDGE",
@@ -8744,10 +8744,10 @@
    "reasoning": "The supplied headlines are market commentary and price-target discussion, not scheduled or identifiable overnight events for MSFT. With no earnings in the window and no specific catalyst shown, hedging is not warranted.",
    "selector_affected": false,
    "session": "2026-11-11",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "MSFT",
-   "value_added_bp": null
+   "value_added_bp": 115.7
   },
   {
    "action": "NO_HEDGE",
@@ -8760,10 +8760,10 @@
    "reasoning": "There is no scheduled earnings event in the overnight window, and the supplied headlines are analyst commentary or general AI-trade reaction rather than a specific MU event. Therefore there is no identifiable overnight catalyst that justifies hedging this position.",
    "selector_affected": false,
    "session": "2026-11-11",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "MU",
-   "value_added_bp": null
+   "value_added_bp": -428.7
   },
   {
    "action": "NO_HEDGE",
@@ -8776,10 +8776,10 @@
    "reasoning": "The headlines mention a November Investor Day and general strategy commentary, but they do not confirm a specific event during this overnight window. Without a dated, identifiable catalyst, the sources do not support a hedge decision.",
    "selector_affected": false,
    "session": "2026-11-11",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "NKE",
-   "value_added_bp": null
+   "value_added_bp": -23.2
   },
   {
    "action": "HEDGE",
@@ -8792,10 +8792,10 @@
    "reasoning": "A specific overnight report says Nvidia's board is preparing to oust CEO Jensen Huang, which is a material governance/legal risk that can move the stock. The headlines show the stock already reacting, supporting the need for protection.",
    "selector_affected": false,
    "session": "2026-11-11",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "NVDA",
-   "value_added_bp": null
+   "value_added_bp": -130.4
   },
   {
    "action": "NO_HEDGE",
@@ -8808,10 +8808,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-11-11",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "ORCL",
-   "value_added_bp": null
+   "value_added_bp": -239.0
   },
   {
    "action": "NO_HEDGE",
@@ -8824,10 +8824,10 @@
    "reasoning": "There is no scheduled earnings event or identifiable company-specific catalyst for PLTR in the overnight window. The supplied headlines are commentary, technical analysis, and general market discussion rather than a specific event that could move the stock tonight.",
    "selector_affected": false,
    "session": "2026-11-11",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "PLTR",
-   "value_added_bp": null
+   "value_added_bp": -3.9
   },
   {
    "action": "HEDGE",
@@ -8840,10 +8840,10 @@
    "reasoning": "After-close reports that Nvidia may oust Jensen Huang create a governance shock for a large S&P 500 constituent and can spill into index futures overnight. This is specific enough and potentially large enough to move SPY more than the roughly 11-basis-point hedge cost.",
    "selector_affected": false,
    "session": "2026-11-11",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "SPY",
-   "value_added_bp": null
+   "value_added_bp": -19.3
   },
   {
    "action": "NO_HEDGE",
@@ -8856,10 +8856,10 @@
    "reasoning": "",
    "selector_affected": false,
    "session": "2026-11-11",
-   "settled": false,
+   "settled": true,
    "source": "recorded",
    "ticker": "TSLA",
-   "value_added_bp": null
+   "value_added_bp": 54.7
   }
  ],
  "vol_gate_enabled": false
