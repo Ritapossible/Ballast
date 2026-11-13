@@ -1,7 +1,7 @@
 {
   "code": "00000",
   "msg": "success",
-  "requestTime": "1794522970210",
+  "requestTime": "1794532486070",
   "data": [
     {
       "orderId": "BAL1F91F3BE9E288DB2AE0C3836",
@@ -1016,6 +1016,35 @@
       "ballastSlippageBp": 2.0,
       "ballastBalanceChangeUsdt": "-1.9009",
       "ballastBalanceAfterUsdt": "-80.6623",
+      "paper": true
+    },
+    {
+      "orderId": "BAL92741F8C701D78DBC2BF5740",
+      "clientOid": "BAL92741F8C701D78DBC2BF5740",
+      "symbol": "NVDAUSDT",
+      "productType": "USDT-FUTURES",
+      "marginCoin": "USDT",
+      "side": "sell",
+      "tradeSide": "open",
+      "orderType": "market",
+      "force": "gtc",
+      "price": "168.036386",
+      "priceAvg": "168.036386",
+      "size": "4.398571",
+      "baseVolume": "4.398571",
+      "quoteVolume": "739.1200",
+      "fee": "-0.443500",
+      "feeCoin": "USDT",
+      "status": "filled",
+      "cTime": "1794531598987",
+      "uTime": "1794531598987",
+      "ballastSession": "2026-11-12",
+      "ballastReason": "event reader judged HEDGE - none (high impact, confidence 85%)",
+      "ballastDecidedBy": "model",
+      "ballastSpotSymbol": "RNVDAUSDT",
+      "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": null,
+      "ballastBalanceAfterUsdt": null,
       "paper": true
     }
   ],
