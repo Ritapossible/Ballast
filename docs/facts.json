@@ -4,10 +4,10 @@
   "beta_names": 12,
   "exit_cost_bp": 20.0,
   "funding": {
-    "max_bp": 1.83,
+    "max_bp": 1.86,
     "max_name": "COIN",
-    "mean_bp": 0.93,
-    "measured_on": "2026-11-13",
+    "mean_bp": 0.94,
+    "measured_on": "2026-11-14",
     "min_bp": -0.0,
     "min_name": "COST",
     "names": 12,
@@ -15,7 +15,7 @@
   },
   "hedge_cost_bp": 11.3,
   "hedge_cost_gross_bp": 12.0,
-  "measured_on": "2026-11-13",
+  "measured_on": "2026-11-14",
   "median_r2": 0.982,
   "median_tail_cut_pct": 88,
   "oos": {
@@ -212,7 +212,7 @@
     "split": 0.7
   },
   "rtokens_hedgeable": 288,
-  "rtokens_total": 3097,
+  "rtokens_total": 3096,
   "tail": [
     {
       "name": "TSLA",
