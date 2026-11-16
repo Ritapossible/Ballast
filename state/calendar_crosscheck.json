@@ -1,5 +1,5 @@
 {
- "built_on": "2026-11-14T05:56:42+00:00",
+ "built_on": "2026-11-16T23:30:18+00:00",
  "counts": {
   "agreed": 0,
   "checked": 0,
@@ -11,15 +11,15 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-09-09",
    "ticker": "ADBE"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "AMD"
@@ -27,7 +27,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "COIN"
@@ -35,7 +35,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "COST"
@@ -43,7 +43,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "MSFT"
@@ -51,7 +51,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "MU"
@@ -59,7 +59,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "NKE"
@@ -67,7 +67,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "NVDA"
@@ -75,15 +75,15 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-09-09",
    "ticker": "ORCL"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "PLTR"
@@ -91,7 +91,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "SPY"
@@ -99,7 +99,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-09",
    "ticker": "TSLA"
@@ -107,15 +107,15 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-09-10",
    "ticker": "ADBE"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-10",
    "ticker": "AMD"
@@ -123,7 +123,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-10",
    "ticker": "COIN"
@@ -131,7 +131,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-10",
    "ticker": "COST"
@@ -139,7 +139,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-10",
    "ticker": "MSFT"
@@ -147,7 +147,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-10",
    "ticker": "MU"
@@ -155,7 +155,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-10",
    "ticker": "NKE"
@@ -163,7 +163,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-10",
    "ticker": "NVDA"
@@ -171,15 +171,15 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-09-10",
    "ticker": "ORCL"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-10",
    "ticker": "PLTR"
@@ -187,7 +187,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-10",
    "ticker": "SPY"
@@ -195,7 +195,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-10",
    "ticker": "TSLA"
@@ -203,7 +203,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "ADBE"
@@ -211,7 +211,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "AMD"
@@ -219,7 +219,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "COIN"
@@ -227,7 +227,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "COST"
@@ -235,7 +235,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "MSFT"
@@ -243,7 +243,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "MU"
@@ -251,7 +251,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "NKE"
@@ -259,7 +259,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "NVDA"
@@ -267,7 +267,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "ORCL"
@@ -275,7 +275,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "PLTR"
@@ -283,7 +283,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "SPY"
@@ -291,7 +291,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-11",
    "ticker": "TSLA"
@@ -299,7 +299,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "ADBE"
@@ -307,7 +307,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "AMD"
@@ -315,7 +315,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "COIN"
@@ -323,7 +323,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "COST"
@@ -331,7 +331,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "MSFT"
@@ -339,7 +339,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "MU"
@@ -347,7 +347,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "NKE"
@@ -355,7 +355,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "NVDA"
@@ -363,7 +363,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "ORCL"
@@ -371,7 +371,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "PLTR"
@@ -379,7 +379,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "SPY"
@@ -387,7 +387,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-14",
    "ticker": "TSLA"
@@ -395,7 +395,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "ADBE"
@@ -403,7 +403,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "AMD"
@@ -411,7 +411,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "COIN"
@@ -419,7 +419,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "COST"
@@ -427,7 +427,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "MSFT"
@@ -435,7 +435,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "MU"
@@ -443,7 +443,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "NKE"
@@ -451,7 +451,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "NVDA"
@@ -459,7 +459,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "ORCL"
@@ -467,7 +467,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "PLTR"
@@ -475,7 +475,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "SPY"
@@ -483,7 +483,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-15",
    "ticker": "TSLA"
@@ -491,7 +491,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "ADBE"
@@ -499,7 +499,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "AMD"
@@ -507,7 +507,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "COIN"
@@ -515,7 +515,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "COST"
@@ -523,7 +523,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "MSFT"
@@ -531,7 +531,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "MU"
@@ -539,7 +539,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "NKE"
@@ -547,7 +547,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "NVDA"
@@ -555,7 +555,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "ORCL"
@@ -563,7 +563,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "PLTR"
@@ -571,7 +571,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "SPY"
@@ -579,7 +579,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-16",
    "ticker": "TSLA"
@@ -587,7 +587,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "ADBE"
@@ -595,7 +595,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "AMD"
@@ -603,7 +603,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "COIN"
@@ -611,7 +611,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "COST"
@@ -619,7 +619,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "MSFT"
@@ -627,7 +627,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "MU"
@@ -635,7 +635,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "NKE"
@@ -643,7 +643,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "NVDA"
@@ -651,7 +651,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "ORCL"
@@ -659,7 +659,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "PLTR"
@@ -667,7 +667,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "SPY"
@@ -675,7 +675,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-17",
    "ticker": "TSLA"
@@ -683,7 +683,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "ADBE"
@@ -691,7 +691,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "AMD"
@@ -699,7 +699,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "COIN"
@@ -707,7 +707,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "COST"
@@ -715,7 +715,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "MSFT"
@@ -723,7 +723,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "MU"
@@ -731,7 +731,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "NKE"
@@ -739,7 +739,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "NVDA"
@@ -747,7 +747,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "ORCL"
@@ -755,7 +755,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "PLTR"
@@ -763,7 +763,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "SPY"
@@ -771,7 +771,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-18",
    "ticker": "TSLA"
@@ -779,7 +779,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "ADBE"
@@ -787,7 +787,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "AMD"
@@ -795,7 +795,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "COIN"
@@ -803,7 +803,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "COST"
@@ -811,7 +811,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "MSFT"
@@ -819,7 +819,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "MU"
@@ -827,7 +827,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "NKE"
@@ -835,7 +835,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "NVDA"
@@ -843,7 +843,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "ORCL"
@@ -851,7 +851,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "PLTR"
@@ -859,7 +859,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "SPY"
@@ -867,7 +867,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-21",
    "ticker": "TSLA"
@@ -875,7 +875,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-22",
    "ticker": "ADBE"
@@ -883,7 +883,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-22",
    "ticker": "AMD"
@@ -891,7 +891,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-22",
    "ticker": "COIN"
@@ -899,7 +899,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-22",
    "ticker": "COST"
@@ -907,7 +907,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-22",
    "ticker": "MSFT"
@@ -915,7 +915,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-22",
    "ticker": "MU"
@@ -923,7 +923,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-22",
    "ticker": "NKE"
@@ -931,7 +931,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-22",
    "ticker": "NVDA"
@@ -939,7 +939,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-22",
    "ticker": "ORCL"
@@ -947,7 +947,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-22",
    "ticker": "PLTR"
@@ -955,7 +955,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-22",
    "ticker": "SPY"
@@ -963,7 +963,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-22",
    "ticker": "TSLA"
@@ -971,7 +971,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-23",
    "ticker": "ADBE"
@@ -979,7 +979,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-23",
    "ticker": "AMD"
@@ -987,7 +987,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-23",
    "ticker": "COIN"
@@ -995,15 +995,15 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-09-23",
    "ticker": "COST"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-23",
    "ticker": "MSFT"
@@ -1011,7 +1011,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-23",
    "ticker": "MU"
@@ -1019,7 +1019,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-23",
    "ticker": "NKE"
@@ -1027,7 +1027,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-23",
    "ticker": "NVDA"
@@ -1035,7 +1035,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-23",
    "ticker": "ORCL"
@@ -1043,7 +1043,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-23",
    "ticker": "PLTR"
@@ -1051,7 +1051,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-23",
    "ticker": "SPY"
@@ -1059,7 +1059,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-23",
    "ticker": "TSLA"
@@ -1067,7 +1067,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-24",
    "ticker": "ADBE"
@@ -1075,7 +1075,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-24",
    "ticker": "AMD"
@@ -1083,7 +1083,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-24",
    "ticker": "COIN"
@@ -1091,15 +1091,15 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-09-24",
    "ticker": "COST"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-24",
    "ticker": "MSFT"
@@ -1107,7 +1107,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-24",
    "ticker": "MU"
@@ -1115,7 +1115,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-24",
    "ticker": "NKE"
@@ -1123,7 +1123,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-24",
    "ticker": "NVDA"
@@ -1131,7 +1131,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-24",
    "ticker": "ORCL"
@@ -1139,7 +1139,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-24",
    "ticker": "PLTR"
@@ -1147,7 +1147,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-24",
    "ticker": "SPY"
@@ -1155,7 +1155,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-24",
    "ticker": "TSLA"
@@ -1163,7 +1163,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-25",
    "ticker": "ADBE"
@@ -1171,7 +1171,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-25",
    "ticker": "AMD"
@@ -1179,7 +1179,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-25",
    "ticker": "COIN"
@@ -1187,7 +1187,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-25",
    "ticker": "COST"
@@ -1195,7 +1195,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-25",
    "ticker": "MSFT"
@@ -1203,7 +1203,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-25",
    "ticker": "MU"
@@ -1211,7 +1211,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-25",
    "ticker": "NKE"
@@ -1219,7 +1219,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-25",
    "ticker": "NVDA"
@@ -1227,7 +1227,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-25",
    "ticker": "ORCL"
@@ -1235,7 +1235,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-25",
    "ticker": "PLTR"
@@ -1243,7 +1243,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-25",
    "ticker": "SPY"
@@ -1251,7 +1251,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-25",
    "ticker": "TSLA"
@@ -1259,7 +1259,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-28",
    "ticker": "ADBE"
@@ -1267,7 +1267,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-28",
    "ticker": "AMD"
@@ -1275,7 +1275,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-28",
    "ticker": "COIN"
@@ -1283,7 +1283,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-28",
    "ticker": "COST"
@@ -1291,7 +1291,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-28",
    "ticker": "MSFT"
@@ -1299,7 +1299,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-28",
    "ticker": "MU"
@@ -1307,7 +1307,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-28",
    "ticker": "NKE"
@@ -1315,7 +1315,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-28",
    "ticker": "NVDA"
@@ -1323,7 +1323,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-28",
    "ticker": "ORCL"
@@ -1331,7 +1331,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-28",
    "ticker": "PLTR"
@@ -1339,7 +1339,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-28",
    "ticker": "SPY"
@@ -1347,7 +1347,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-28",
    "ticker": "TSLA"
@@ -1355,7 +1355,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-29",
    "ticker": "ADBE"
@@ -1363,7 +1363,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-29",
    "ticker": "AMD"
@@ -1371,7 +1371,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-29",
    "ticker": "COIN"
@@ -1379,7 +1379,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-29",
    "ticker": "COST"
@@ -1387,7 +1387,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-29",
    "ticker": "MSFT"
@@ -1395,15 +1395,15 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-09-29",
    "ticker": "MU"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-29",
    "ticker": "NKE"
@@ -1411,7 +1411,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-29",
    "ticker": "NVDA"
@@ -1419,7 +1419,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-29",
    "ticker": "ORCL"
@@ -1427,7 +1427,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-29",
    "ticker": "PLTR"
@@ -1435,7 +1435,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-29",
    "ticker": "SPY"
@@ -1443,7 +1443,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-29",
    "ticker": "TSLA"
@@ -1451,7 +1451,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-30",
    "ticker": "ADBE"
@@ -1459,7 +1459,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-30",
    "ticker": "AMD"
@@ -1467,7 +1467,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-30",
    "ticker": "COIN"
@@ -1475,7 +1475,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-30",
    "ticker": "COST"
@@ -1483,7 +1483,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-30",
    "ticker": "MSFT"
@@ -1491,23 +1491,23 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-09-30",
    "ticker": "MU"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-09-30",
    "ticker": "NKE"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-30",
    "ticker": "NVDA"
@@ -1515,7 +1515,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-30",
    "ticker": "ORCL"
@@ -1523,7 +1523,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-30",
    "ticker": "PLTR"
@@ -1531,7 +1531,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-30",
    "ticker": "SPY"
@@ -1539,7 +1539,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-09-30",
    "ticker": "TSLA"
@@ -1547,7 +1547,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-01",
    "ticker": "ADBE"
@@ -1555,7 +1555,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-01",
    "ticker": "AMD"
@@ -1563,7 +1563,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-01",
    "ticker": "COIN"
@@ -1571,7 +1571,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-01",
    "ticker": "COST"
@@ -1579,7 +1579,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-01",
    "ticker": "MSFT"
@@ -1587,7 +1587,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-01",
    "ticker": "MU"
@@ -1595,15 +1595,15 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-10-01",
    "ticker": "NKE"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-01",
    "ticker": "NVDA"
@@ -1611,7 +1611,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-01",
    "ticker": "ORCL"
@@ -1619,7 +1619,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-01",
    "ticker": "PLTR"
@@ -1627,7 +1627,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-01",
    "ticker": "SPY"
@@ -1635,7 +1635,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-01",
    "ticker": "TSLA"
@@ -1643,7 +1643,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-02",
    "ticker": "ADBE"
@@ -1651,7 +1651,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-02",
    "ticker": "AMD"
@@ -1659,7 +1659,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-02",
    "ticker": "COIN"
@@ -1667,7 +1667,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-02",
    "ticker": "COST"
@@ -1675,7 +1675,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-02",
    "ticker": "MSFT"
@@ -1683,7 +1683,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-02",
    "ticker": "MU"
@@ -1691,7 +1691,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-02",
    "ticker": "NKE"
@@ -1699,7 +1699,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-02",
    "ticker": "NVDA"
@@ -1707,7 +1707,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-02",
    "ticker": "ORCL"
@@ -1715,7 +1715,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-02",
    "ticker": "PLTR"
@@ -1723,7 +1723,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-02",
    "ticker": "SPY"
@@ -1731,7 +1731,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-02",
    "ticker": "TSLA"
@@ -1739,7 +1739,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-05",
    "ticker": "ADBE"
@@ -1747,7 +1747,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-05",
    "ticker": "AMD"
@@ -1755,7 +1755,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-05",
    "ticker": "COIN"
@@ -1763,7 +1763,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-05",
    "ticker": "COST"
@@ -1771,7 +1771,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-05",
    "ticker": "MSFT"
@@ -1779,7 +1779,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-05",
    "ticker": "MU"
@@ -1787,7 +1787,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-05",
    "ticker": "NKE"
@@ -1795,7 +1795,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-05",
    "ticker": "NVDA"
@@ -1803,7 +1803,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-05",
    "ticker": "ORCL"
@@ -1811,7 +1811,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-05",
    "ticker": "PLTR"
@@ -1819,7 +1819,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-05",
    "ticker": "SPY"
@@ -1827,7 +1827,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-05",
    "ticker": "TSLA"
@@ -1835,7 +1835,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-06",
    "ticker": "ADBE"
@@ -1843,7 +1843,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-06",
    "ticker": "AMD"
@@ -1851,7 +1851,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-06",
    "ticker": "COIN"
@@ -1859,7 +1859,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-06",
    "ticker": "COST"
@@ -1867,7 +1867,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-06",
    "ticker": "MSFT"
@@ -1875,7 +1875,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-06",
    "ticker": "MU"
@@ -1883,7 +1883,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-06",
    "ticker": "NKE"
@@ -1891,7 +1891,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-06",
    "ticker": "NVDA"
@@ -1899,7 +1899,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-06",
    "ticker": "ORCL"
@@ -1907,7 +1907,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-06",
    "ticker": "PLTR"
@@ -1915,7 +1915,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-06",
    "ticker": "SPY"
@@ -1923,7 +1923,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-06",
    "ticker": "TSLA"
@@ -1931,7 +1931,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-07",
    "ticker": "ADBE"
@@ -1939,7 +1939,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-07",
    "ticker": "AMD"
@@ -1947,7 +1947,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-07",
    "ticker": "COIN"
@@ -1955,7 +1955,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-07",
    "ticker": "COST"
@@ -1963,7 +1963,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-07",
    "ticker": "MSFT"
@@ -1971,7 +1971,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-07",
    "ticker": "MU"
@@ -1979,7 +1979,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-07",
    "ticker": "NKE"
@@ -1987,7 +1987,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-07",
    "ticker": "NVDA"
@@ -1995,7 +1995,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-07",
    "ticker": "ORCL"
@@ -2003,7 +2003,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-07",
    "ticker": "PLTR"
@@ -2011,7 +2011,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-07",
    "ticker": "SPY"
@@ -2019,7 +2019,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-07",
    "ticker": "TSLA"
@@ -2027,7 +2027,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-08",
    "ticker": "ADBE"
@@ -2035,7 +2035,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-08",
    "ticker": "AMD"
@@ -2043,7 +2043,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-08",
    "ticker": "COIN"
@@ -2051,7 +2051,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-08",
    "ticker": "COST"
@@ -2059,7 +2059,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-08",
    "ticker": "MSFT"
@@ -2067,7 +2067,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-08",
    "ticker": "MU"
@@ -2075,7 +2075,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-08",
    "ticker": "NKE"
@@ -2083,7 +2083,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-08",
    "ticker": "NVDA"
@@ -2091,7 +2091,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-08",
    "ticker": "ORCL"
@@ -2099,7 +2099,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-08",
    "ticker": "PLTR"
@@ -2107,7 +2107,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-08",
    "ticker": "SPY"
@@ -2115,7 +2115,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-08",
    "ticker": "TSLA"
@@ -2123,7 +2123,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-09",
    "ticker": "ADBE"
@@ -2131,7 +2131,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-09",
    "ticker": "AMD"
@@ -2139,7 +2139,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-09",
    "ticker": "COIN"
@@ -2147,7 +2147,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-09",
    "ticker": "COST"
@@ -2155,7 +2155,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-09",
    "ticker": "MSFT"
@@ -2163,7 +2163,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-09",
    "ticker": "MU"
@@ -2171,7 +2171,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-09",
    "ticker": "NKE"
@@ -2179,7 +2179,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-09",
    "ticker": "NVDA"
@@ -2187,7 +2187,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-09",
    "ticker": "ORCL"
@@ -2195,7 +2195,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-09",
    "ticker": "PLTR"
@@ -2203,7 +2203,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-09",
    "ticker": "SPY"
@@ -2211,7 +2211,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-09",
    "ticker": "TSLA"
@@ -2219,7 +2219,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-12",
    "ticker": "ADBE"
@@ -2227,7 +2227,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-12",
    "ticker": "AMD"
@@ -2235,7 +2235,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-12",
    "ticker": "COIN"
@@ -2243,7 +2243,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-12",
    "ticker": "COST"
@@ -2251,7 +2251,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-12",
    "ticker": "MSFT"
@@ -2259,7 +2259,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-12",
    "ticker": "MU"
@@ -2267,7 +2267,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-12",
    "ticker": "NKE"
@@ -2275,7 +2275,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-12",
    "ticker": "NVDA"
@@ -2283,7 +2283,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-12",
    "ticker": "ORCL"
@@ -2291,7 +2291,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-12",
    "ticker": "PLTR"
@@ -2299,7 +2299,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-12",
    "ticker": "SPY"
@@ -2307,7 +2307,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-12",
    "ticker": "TSLA"
@@ -2315,7 +2315,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-13",
    "ticker": "ADBE"
@@ -2323,7 +2323,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-13",
    "ticker": "AMD"
@@ -2331,7 +2331,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-13",
    "ticker": "COIN"
@@ -2339,7 +2339,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-13",
    "ticker": "COST"
@@ -2347,7 +2347,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-13",
    "ticker": "MSFT"
@@ -2355,7 +2355,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-13",
    "ticker": "MU"
@@ -2363,7 +2363,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-13",
    "ticker": "NKE"
@@ -2371,7 +2371,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-13",
    "ticker": "NVDA"
@@ -2379,7 +2379,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-13",
    "ticker": "ORCL"
@@ -2387,7 +2387,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-13",
    "ticker": "PLTR"
@@ -2395,7 +2395,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-13",
    "ticker": "SPY"
@@ -2403,7 +2403,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-13",
    "ticker": "TSLA"
@@ -2411,7 +2411,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-14",
    "ticker": "ADBE"
@@ -2419,7 +2419,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-14",
    "ticker": "AMD"
@@ -2427,7 +2427,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-14",
    "ticker": "COIN"
@@ -2435,7 +2435,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-14",
    "ticker": "COST"
@@ -2443,7 +2443,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-14",
    "ticker": "MSFT"
@@ -2451,7 +2451,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-14",
    "ticker": "MU"
@@ -2459,7 +2459,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-14",
    "ticker": "NKE"
@@ -2467,7 +2467,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-14",
    "ticker": "NVDA"
@@ -2475,7 +2475,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-14",
    "ticker": "ORCL"
@@ -2483,7 +2483,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-14",
    "ticker": "PLTR"
@@ -2491,7 +2491,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-14",
    "ticker": "SPY"
@@ -2499,7 +2499,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-14",
    "ticker": "TSLA"
@@ -2507,7 +2507,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-15",
    "ticker": "ADBE"
@@ -2515,7 +2515,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-15",
    "ticker": "AMD"
@@ -2523,7 +2523,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-15",
    "ticker": "COIN"
@@ -2531,7 +2531,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-15",
    "ticker": "COST"
@@ -2539,7 +2539,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-15",
    "ticker": "MSFT"
@@ -2547,7 +2547,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-15",
    "ticker": "MU"
@@ -2555,7 +2555,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-15",
    "ticker": "NKE"
@@ -2563,7 +2563,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-15",
    "ticker": "NVDA"
@@ -2571,7 +2571,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-15",
    "ticker": "ORCL"
@@ -2579,7 +2579,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-15",
    "ticker": "PLTR"
@@ -2587,7 +2587,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-15",
    "ticker": "SPY"
@@ -2595,7 +2595,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-15",
    "ticker": "TSLA"
@@ -2603,7 +2603,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-16",
    "ticker": "ADBE"
@@ -2611,7 +2611,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-16",
    "ticker": "AMD"
@@ -2619,7 +2619,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-16",
    "ticker": "COIN"
@@ -2627,7 +2627,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-16",
    "ticker": "COST"
@@ -2635,7 +2635,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-16",
    "ticker": "MSFT"
@@ -2643,7 +2643,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-16",
    "ticker": "MU"
@@ -2651,7 +2651,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-16",
    "ticker": "NKE"
@@ -2659,7 +2659,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-16",
    "ticker": "NVDA"
@@ -2667,7 +2667,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-16",
    "ticker": "ORCL"
@@ -2675,7 +2675,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-16",
    "ticker": "PLTR"
@@ -2683,7 +2683,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-16",
    "ticker": "SPY"
@@ -2691,7 +2691,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-16",
    "ticker": "TSLA"
@@ -2699,7 +2699,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-19",
    "ticker": "ADBE"
@@ -2707,7 +2707,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-19",
    "ticker": "AMD"
@@ -2715,7 +2715,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-19",
    "ticker": "COIN"
@@ -2723,7 +2723,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-19",
    "ticker": "COST"
@@ -2731,7 +2731,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-19",
    "ticker": "MSFT"
@@ -2739,7 +2739,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-19",
    "ticker": "MU"
@@ -2747,7 +2747,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-19",
    "ticker": "NKE"
@@ -2755,7 +2755,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-19",
    "ticker": "NVDA"
@@ -2763,7 +2763,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-19",
    "ticker": "ORCL"
@@ -2771,7 +2771,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-19",
    "ticker": "PLTR"
@@ -2779,7 +2779,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-19",
    "ticker": "SPY"
@@ -2787,7 +2787,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-19",
    "ticker": "TSLA"
@@ -2795,7 +2795,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-20",
    "ticker": "ADBE"
@@ -2803,7 +2803,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-20",
    "ticker": "AMD"
@@ -2811,7 +2811,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-20",
    "ticker": "COIN"
@@ -2819,7 +2819,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-20",
    "ticker": "COST"
@@ -2827,7 +2827,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-20",
    "ticker": "MSFT"
@@ -2835,7 +2835,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-20",
    "ticker": "MU"
@@ -2843,7 +2843,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-20",
    "ticker": "NKE"
@@ -2851,7 +2851,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-20",
    "ticker": "NVDA"
@@ -2859,7 +2859,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-20",
    "ticker": "ORCL"
@@ -2867,7 +2867,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-20",
    "ticker": "PLTR"
@@ -2875,7 +2875,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-20",
    "ticker": "SPY"
@@ -2883,15 +2883,15 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-10-20",
    "ticker": "TSLA"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-21",
    "ticker": "ADBE"
@@ -2899,7 +2899,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-21",
    "ticker": "AMD"
@@ -2907,7 +2907,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-21",
    "ticker": "COIN"
@@ -2915,7 +2915,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-21",
    "ticker": "COST"
@@ -2923,7 +2923,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-21",
    "ticker": "MSFT"
@@ -2931,7 +2931,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-21",
    "ticker": "MU"
@@ -2939,7 +2939,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-21",
    "ticker": "NKE"
@@ -2947,7 +2947,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-21",
    "ticker": "NVDA"
@@ -2955,7 +2955,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-21",
    "ticker": "ORCL"
@@ -2963,7 +2963,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-21",
    "ticker": "PLTR"
@@ -2971,7 +2971,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-21",
    "ticker": "SPY"
@@ -2979,15 +2979,15 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-10-21",
    "ticker": "TSLA"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-22",
    "ticker": "ADBE"
@@ -2995,7 +2995,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-22",
    "ticker": "AMD"
@@ -3003,7 +3003,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-22",
    "ticker": "COIN"
@@ -3011,7 +3011,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-22",
    "ticker": "COST"
@@ -3019,7 +3019,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-22",
    "ticker": "MSFT"
@@ -3027,7 +3027,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-22",
    "ticker": "MU"
@@ -3035,7 +3035,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-22",
    "ticker": "NKE"
@@ -3043,7 +3043,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-22",
    "ticker": "NVDA"
@@ -3051,7 +3051,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-22",
    "ticker": "ORCL"
@@ -3059,7 +3059,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-22",
    "ticker": "PLTR"
@@ -3067,7 +3067,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-22",
    "ticker": "SPY"
@@ -3075,7 +3075,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-22",
    "ticker": "TSLA"
@@ -3083,7 +3083,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-23",
    "ticker": "ADBE"
@@ -3091,7 +3091,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-23",
    "ticker": "AMD"
@@ -3099,7 +3099,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-23",
    "ticker": "COIN"
@@ -3107,7 +3107,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-23",
    "ticker": "COST"
@@ -3115,7 +3115,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-23",
    "ticker": "MSFT"
@@ -3123,7 +3123,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-23",
    "ticker": "MU"
@@ -3131,7 +3131,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-23",
    "ticker": "NKE"
@@ -3139,7 +3139,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-23",
    "ticker": "NVDA"
@@ -3147,7 +3147,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-23",
    "ticker": "ORCL"
@@ -3155,7 +3155,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-23",
    "ticker": "PLTR"
@@ -3163,7 +3163,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-23",
    "ticker": "SPY"
@@ -3171,7 +3171,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-23",
    "ticker": "TSLA"
@@ -3179,7 +3179,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-26",
    "ticker": "ADBE"
@@ -3187,7 +3187,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-26",
    "ticker": "AMD"
@@ -3195,7 +3195,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-26",
    "ticker": "COIN"
@@ -3203,7 +3203,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-26",
    "ticker": "COST"
@@ -3211,7 +3211,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-26",
    "ticker": "MSFT"
@@ -3219,7 +3219,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-26",
    "ticker": "MU"
@@ -3227,7 +3227,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-26",
    "ticker": "NKE"
@@ -3235,7 +3235,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-26",
    "ticker": "NVDA"
@@ -3243,7 +3243,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-26",
    "ticker": "ORCL"
@@ -3251,7 +3251,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-26",
    "ticker": "PLTR"
@@ -3259,7 +3259,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-26",
    "ticker": "SPY"
@@ -3267,7 +3267,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-26",
    "ticker": "TSLA"
@@ -3275,7 +3275,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-27",
    "ticker": "ADBE"
@@ -3283,7 +3283,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-27",
    "ticker": "AMD"
@@ -3291,7 +3291,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-27",
    "ticker": "COIN"
@@ -3299,7 +3299,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-27",
    "ticker": "COST"
@@ -3307,15 +3307,15 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-10-27",
    "ticker": "MSFT"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-27",
    "ticker": "MU"
@@ -3323,7 +3323,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-27",
    "ticker": "NKE"
@@ -3331,7 +3331,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-27",
    "ticker": "NVDA"
@@ -3339,7 +3339,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-27",
    "ticker": "ORCL"
@@ -3347,7 +3347,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-27",
    "ticker": "PLTR"
@@ -3355,7 +3355,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-27",
    "ticker": "SPY"
@@ -3363,7 +3363,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-27",
    "ticker": "TSLA"
@@ -3371,7 +3371,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-28",
    "ticker": "ADBE"
@@ -3379,7 +3379,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-28",
    "ticker": "AMD"
@@ -3387,15 +3387,15 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-10-28",
    "ticker": "COIN"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-28",
    "ticker": "COST"
@@ -3403,15 +3403,15 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-10-28",
    "ticker": "MSFT"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-28",
    "ticker": "MU"
@@ -3419,7 +3419,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-28",
    "ticker": "NKE"
@@ -3427,7 +3427,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-28",
    "ticker": "NVDA"
@@ -3435,7 +3435,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-28",
    "ticker": "ORCL"
@@ -3443,7 +3443,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-28",
    "ticker": "PLTR"
@@ -3451,7 +3451,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-28",
    "ticker": "SPY"
@@ -3459,7 +3459,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-28",
    "ticker": "TSLA"
@@ -3467,7 +3467,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-29",
    "ticker": "ADBE"
@@ -3475,7 +3475,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-29",
    "ticker": "AMD"
@@ -3483,15 +3483,15 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-10-29",
    "ticker": "COIN"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-29",
    "ticker": "COST"
@@ -3499,7 +3499,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-29",
    "ticker": "MSFT"
@@ -3507,7 +3507,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-29",
    "ticker": "MU"
@@ -3515,7 +3515,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-29",
    "ticker": "NKE"
@@ -3523,7 +3523,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-29",
    "ticker": "NVDA"
@@ -3531,7 +3531,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-29",
    "ticker": "ORCL"
@@ -3539,7 +3539,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-29",
    "ticker": "PLTR"
@@ -3547,7 +3547,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-29",
    "ticker": "SPY"
@@ -3555,7 +3555,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-29",
    "ticker": "TSLA"
@@ -3563,7 +3563,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-30",
    "ticker": "ADBE"
@@ -3571,7 +3571,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-30",
    "ticker": "AMD"
@@ -3579,7 +3579,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-30",
    "ticker": "COIN"
@@ -3587,7 +3587,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-30",
    "ticker": "COST"
@@ -3595,7 +3595,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-30",
    "ticker": "MSFT"
@@ -3603,7 +3603,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-30",
    "ticker": "MU"
@@ -3611,7 +3611,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-30",
    "ticker": "NKE"
@@ -3619,7 +3619,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-30",
    "ticker": "NVDA"
@@ -3627,7 +3627,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-30",
    "ticker": "ORCL"
@@ -3635,15 +3635,15 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-10-30",
    "ticker": "PLTR"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-30",
    "ticker": "SPY"
@@ -3651,7 +3651,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-10-30",
    "ticker": "TSLA"
@@ -3659,7 +3659,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-02",
    "ticker": "ADBE"
@@ -3667,15 +3667,15 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-11-02",
    "ticker": "AMD"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-02",
    "ticker": "COIN"
@@ -3683,7 +3683,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-02",
    "ticker": "COST"
@@ -3691,7 +3691,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-02",
    "ticker": "MSFT"
@@ -3699,7 +3699,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-02",
    "ticker": "MU"
@@ -3707,7 +3707,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-02",
    "ticker": "NKE"
@@ -3715,7 +3715,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-02",
    "ticker": "NVDA"
@@ -3723,7 +3723,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-02",
    "ticker": "ORCL"
@@ -3731,15 +3731,15 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-11-02",
    "ticker": "PLTR"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-02",
    "ticker": "SPY"
@@ -3747,7 +3747,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-02",
    "ticker": "TSLA"
@@ -3755,7 +3755,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-03",
    "ticker": "ADBE"
@@ -3763,15 +3763,15 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
-   "nasdaq": "no",
+   "detail": "initialize returned no session id",
+   "nasdaq": "yes",
    "session": "2026-11-03",
    "ticker": "AMD"
   },
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-03",
    "ticker": "COIN"
@@ -3779,7 +3779,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-03",
    "ticker": "COST"
@@ -3787,7 +3787,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-03",
    "ticker": "MSFT"
@@ -3795,7 +3795,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-03",
    "ticker": "MU"
@@ -3803,7 +3803,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-03",
    "ticker": "NKE"
@@ -3811,7 +3811,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-03",
    "ticker": "NVDA"
@@ -3819,7 +3819,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-03",
    "ticker": "ORCL"
@@ -3827,7 +3827,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-03",
    "ticker": "PLTR"
@@ -3835,7 +3835,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-03",
    "ticker": "SPY"
@@ -3843,7 +3843,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-03",
    "ticker": "TSLA"
@@ -3851,7 +3851,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-04",
    "ticker": "ADBE"
@@ -3859,7 +3859,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-04",
    "ticker": "AMD"
@@ -3867,7 +3867,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-04",
    "ticker": "COIN"
@@ -3875,7 +3875,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-04",
    "ticker": "COST"
@@ -3883,7 +3883,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-04",
    "ticker": "MSFT"
@@ -3891,7 +3891,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-04",
    "ticker": "MU"
@@ -3899,7 +3899,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-04",
    "ticker": "NKE"
@@ -3907,7 +3907,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-04",
    "ticker": "NVDA"
@@ -3915,7 +3915,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-04",
    "ticker": "ORCL"
@@ -3923,7 +3923,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-04",
    "ticker": "PLTR"
@@ -3931,7 +3931,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-04",
    "ticker": "SPY"
@@ -3939,7 +3939,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-04",
    "ticker": "TSLA"
@@ -3947,7 +3947,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-05",
    "ticker": "ADBE"
@@ -3955,7 +3955,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-05",
    "ticker": "AMD"
@@ -3963,7 +3963,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-05",
    "ticker": "COIN"
@@ -3971,7 +3971,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-05",
    "ticker": "COST"
@@ -3979,7 +3979,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-05",
    "ticker": "MSFT"
@@ -3987,7 +3987,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-05",
    "ticker": "MU"
@@ -3995,7 +3995,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-05",
    "ticker": "NKE"
@@ -4003,7 +4003,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-05",
    "ticker": "NVDA"
@@ -4011,7 +4011,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-05",
    "ticker": "ORCL"
@@ -4019,7 +4019,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-05",
    "ticker": "PLTR"
@@ -4027,7 +4027,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-05",
    "ticker": "SPY"
@@ -4035,7 +4035,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-05",
    "ticker": "TSLA"
@@ -4043,7 +4043,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-06",
    "ticker": "ADBE"
@@ -4051,7 +4051,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-06",
    "ticker": "AMD"
@@ -4059,7 +4059,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-06",
    "ticker": "COIN"
@@ -4067,7 +4067,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-06",
    "ticker": "COST"
@@ -4075,7 +4075,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-06",
    "ticker": "MSFT"
@@ -4083,7 +4083,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-06",
    "ticker": "MU"
@@ -4091,7 +4091,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-06",
    "ticker": "NKE"
@@ -4099,7 +4099,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-06",
    "ticker": "NVDA"
@@ -4107,7 +4107,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-06",
    "ticker": "ORCL"
@@ -4115,7 +4115,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-06",
    "ticker": "PLTR"
@@ -4123,7 +4123,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-06",
    "ticker": "SPY"
@@ -4131,7 +4131,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-06",
    "ticker": "TSLA"
@@ -4139,7 +4139,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-09",
    "ticker": "ADBE"
@@ -4147,7 +4147,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-09",
    "ticker": "AMD"
@@ -4155,7 +4155,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-09",
    "ticker": "COIN"
@@ -4163,7 +4163,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-09",
    "ticker": "COST"
@@ -4171,7 +4171,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-09",
    "ticker": "MSFT"
@@ -4179,7 +4179,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-09",
    "ticker": "MU"
@@ -4187,7 +4187,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-09",
    "ticker": "NKE"
@@ -4195,7 +4195,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-09",
    "ticker": "NVDA"
@@ -4203,7 +4203,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-09",
    "ticker": "ORCL"
@@ -4211,7 +4211,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-09",
    "ticker": "PLTR"
@@ -4219,7 +4219,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-09",
    "ticker": "SPY"
@@ -4227,7 +4227,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-09",
    "ticker": "TSLA"
@@ -4235,7 +4235,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-10",
    "ticker": "ADBE"
@@ -4243,7 +4243,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-10",
    "ticker": "AMD"
@@ -4251,7 +4251,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-10",
    "ticker": "COIN"
@@ -4259,7 +4259,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-10",
    "ticker": "COST"
@@ -4267,7 +4267,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-10",
    "ticker": "MSFT"
@@ -4275,7 +4275,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-10",
    "ticker": "MU"
@@ -4283,7 +4283,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-10",
    "ticker": "NKE"
@@ -4291,7 +4291,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-10",
    "ticker": "NVDA"
@@ -4299,7 +4299,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-10",
    "ticker": "ORCL"
@@ -4307,7 +4307,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-10",
    "ticker": "PLTR"
@@ -4315,7 +4315,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-10",
    "ticker": "SPY"
@@ -4323,7 +4323,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-10",
    "ticker": "TSLA"
@@ -4331,7 +4331,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-11",
    "ticker": "ADBE"
@@ -4339,7 +4339,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-11",
    "ticker": "AMD"
@@ -4347,7 +4347,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-11",
    "ticker": "COIN"
@@ -4355,7 +4355,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-11",
    "ticker": "COST"
@@ -4363,7 +4363,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-11",
    "ticker": "MSFT"
@@ -4371,7 +4371,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-11",
    "ticker": "MU"
@@ -4379,7 +4379,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-11",
    "ticker": "NKE"
@@ -4387,7 +4387,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-11",
    "ticker": "NVDA"
@@ -4395,7 +4395,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-11",
    "ticker": "ORCL"
@@ -4403,7 +4403,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-11",
    "ticker": "PLTR"
@@ -4411,7 +4411,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-11",
    "ticker": "SPY"
@@ -4419,7 +4419,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-11",
    "ticker": "TSLA"
@@ -4427,7 +4427,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-12",
    "ticker": "ADBE"
@@ -4435,7 +4435,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-12",
    "ticker": "AMD"
@@ -4443,7 +4443,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-12",
    "ticker": "COIN"
@@ -4451,7 +4451,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-12",
    "ticker": "COST"
@@ -4459,7 +4459,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-12",
    "ticker": "MSFT"
@@ -4467,7 +4467,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-12",
    "ticker": "MU"
@@ -4475,7 +4475,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-12",
    "ticker": "NKE"
@@ -4483,7 +4483,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-12",
    "ticker": "NVDA"
@@ -4491,7 +4491,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-12",
    "ticker": "ORCL"
@@ -4499,7 +4499,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-12",
    "ticker": "PLTR"
@@ -4507,7 +4507,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-12",
    "ticker": "SPY"
@@ -4515,7 +4515,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-12",
    "ticker": "TSLA"
@@ -4523,7 +4523,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-13",
    "ticker": "ADBE"
@@ -4531,7 +4531,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-13",
    "ticker": "AMD"
@@ -4539,7 +4539,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-13",
    "ticker": "COIN"
@@ -4547,7 +4547,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-13",
    "ticker": "COST"
@@ -4555,7 +4555,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-13",
    "ticker": "MSFT"
@@ -4563,7 +4563,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-13",
    "ticker": "MU"
@@ -4571,7 +4571,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-13",
    "ticker": "NKE"
@@ -4579,7 +4579,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-13",
    "ticker": "NVDA"
@@ -4587,7 +4587,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-13",
    "ticker": "ORCL"
@@ -4595,7 +4595,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-13",
    "ticker": "PLTR"
@@ -4603,7 +4603,7 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-13",
    "ticker": "SPY"
@@ -4611,14 +4611,14 @@
   {
    "agree": false,
    "bitget_mcp": "unknown",
-   "detail": "bitget-mcp-server \u00b7 categories: ",
+   "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-13",
    "ticker": "TSLA"
   }
  ],
  "service": {
-  "detail": "bitget-mcp-server \u00b7 categories: ",
+  "detail": "initialize returned no session id",
   "reachable": false
  },
  "source": "https://agent.bitget.com/mcp"
