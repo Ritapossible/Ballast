@@ -1,5 +1,5 @@
 {
- "built_on": "2026-11-18T03:49:59+00:00",
+ "built_on": "2026-11-18T22:16:14+00:00",
  "counts": {
   "agreed": 0,
   "checked": 0,
@@ -4676,7 +4676,7 @@
    "agree": false,
    "bitget_mcp": "unknown",
    "detail": "initialize returned no session id",
-   "nasdaq": "no",
+   "nasdaq": "yes",
    "session": "2026-11-16",
    "ticker": "NVDA"
   },
