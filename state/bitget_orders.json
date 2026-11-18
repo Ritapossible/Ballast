@@ -1,7 +1,7 @@
 {
   "code": "00000",
   "msg": "success",
-  "requestTime": "1794959177010",
+  "requestTime": "1794969113941",
   "data": [
     {
       "orderId": "BAL1F91F3BE9E288DB2AE0C3836",
@@ -1103,6 +1103,35 @@
       "ballastSlippageBp": 2.0,
       "ballastBalanceChangeUsdt": "+14.1331",
       "ballastBalanceAfterUsdt": "-36.0512",
+      "paper": true
+    },
+    {
+      "orderId": "BAL6A74EAA98FDFBE452EF1CB3A",
+      "clientOid": "BAL6A74EAA98FDFBE452EF1CB3A",
+      "symbol": "NVDAUSDT",
+      "productType": "USDT-FUTURES",
+      "marginCoin": "USDT",
+      "side": "sell",
+      "tradeSide": "open",
+      "orderType": "market",
+      "force": "gtc",
+      "price": "157.958402",
+      "priceAvg": "157.958402",
+      "size": "4.399259",
+      "baseVolume": "4.399259",
+      "quoteVolume": "694.9000",
+      "fee": "-0.416900",
+      "feeCoin": "USDT",
+      "status": "filled",
+      "cTime": "1794968415991",
+      "uTime": "1794968415991",
+      "ballastSession": "2026-11-17",
+      "ballastReason": "scheduled earnings tonight (high impact) - calendar selector",
+      "ballastDecidedBy": "rule",
+      "ballastSpotSymbol": "RNVDAUSDT",
+      "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": null,
+      "ballastBalanceAfterUsdt": null,
       "paper": true
     }
   ],
