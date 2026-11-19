@@ -4,10 +4,10 @@
   "beta_names": 12,
   "exit_cost_bp": 20.0,
   "funding": {
-    "max_bp": 1.91,
+    "max_bp": 1.97,
     "max_name": "NVDA",
     "mean_bp": 0.91,
-    "measured_on": "2026-11-18",
+    "measured_on": "2026-11-19",
     "min_bp": 0.0,
     "min_name": "NKE",
     "names": 12,
@@ -15,7 +15,7 @@
   },
   "hedge_cost_bp": 11.3,
   "hedge_cost_gross_bp": 12.0,
-  "measured_on": "2026-11-18",
+  "measured_on": "2026-11-19",
   "median_r2": 0.982,
   "median_tail_cut_pct": 88,
   "oos": {
@@ -211,8 +211,8 @@
     "shortest": 100,
     "split": 0.7
   },
-  "rtokens_hedgeable": 288,
-  "rtokens_total": 3097,
+  "rtokens_hedgeable": 287,
+  "rtokens_total": 3093,
   "tail": [
     {
       "name": "TSLA",

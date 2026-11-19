@@ -1,11 +1,11 @@
 {
- "built_on": "2026-11-18T23:19:31+00:00",
+ "built_on": "2026-11-19T02:01:02+00:00",
  "counts": {
   "agreed": 0,
   "checked": 0,
-  "decisions": 600,
+  "decisions": 612,
   "disagreed": 0,
-  "unknown": 600
+  "unknown": 612
  },
  "rows": [
   {
@@ -4806,6 +4806,102 @@
    "detail": "initialize returned no session id",
    "nasdaq": "no",
    "session": "2026-11-17",
+   "ticker": "TSLA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "initialize returned no session id",
+   "nasdaq": "no",
+   "session": "2026-11-18",
+   "ticker": "ADBE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "initialize returned no session id",
+   "nasdaq": "no",
+   "session": "2026-11-18",
+   "ticker": "AMD"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "initialize returned no session id",
+   "nasdaq": "no",
+   "session": "2026-11-18",
+   "ticker": "COIN"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "initialize returned no session id",
+   "nasdaq": "no",
+   "session": "2026-11-18",
+   "ticker": "COST"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "initialize returned no session id",
+   "nasdaq": "no",
+   "session": "2026-11-18",
+   "ticker": "MSFT"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "initialize returned no session id",
+   "nasdaq": "no",
+   "session": "2026-11-18",
+   "ticker": "MU"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "initialize returned no session id",
+   "nasdaq": "no",
+   "session": "2026-11-18",
+   "ticker": "NKE"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "initialize returned no session id",
+   "nasdaq": "no",
+   "session": "2026-11-18",
+   "ticker": "NVDA"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "initialize returned no session id",
+   "nasdaq": "no",
+   "session": "2026-11-18",
+   "ticker": "ORCL"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "initialize returned no session id",
+   "nasdaq": "no",
+   "session": "2026-11-18",
+   "ticker": "PLTR"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "initialize returned no session id",
+   "nasdaq": "no",
+   "session": "2026-11-18",
+   "ticker": "SPY"
+  },
+  {
+   "agree": false,
+   "bitget_mcp": "unknown",
+   "detail": "initialize returned no session id",
+   "nasdaq": "no",
+   "session": "2026-11-18",
    "ticker": "TSLA"
   }
  ],

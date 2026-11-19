@@ -1,7 +1,7 @@
 {
   "code": "00000",
   "msg": "success",
-  "requestTime": "1795043835824",
+  "requestTime": "1795053528126",
   "data": [
     {
       "orderId": "BAL1F91F3BE9E288DB2AE0C3836",
@@ -1132,6 +1132,35 @@
       "ballastSlippageBp": 2.0,
       "ballastBalanceChangeUsdt": "+9.0893",
       "ballastBalanceAfterUsdt": "-26.9619",
+      "paper": true
+    },
+    {
+      "orderId": "BAL47FD80F08E8891FA42E92EEA",
+      "clientOid": "BAL47FD80F08E8891FA42E92EEA",
+      "symbol": "NVDAUSDT",
+      "productType": "USDT-FUTURES",
+      "marginCoin": "USDT",
+      "side": "sell",
+      "tradeSide": "open",
+      "orderType": "market",
+      "force": "gtc",
+      "price": "152.169560",
+      "priceAvg": "152.169560",
+      "size": "4.396411",
+      "baseVolume": "4.396411",
+      "quoteVolume": "669.0000",
+      "fee": "-0.401400",
+      "feeCoin": "USDT",
+      "status": "filled",
+      "cTime": "1795053082285",
+      "uTime": "1795053082285",
+      "ballastSession": "2026-11-18",
+      "ballastReason": "event reader judged HEDGE - earnings (high impact, confidence 75%)",
+      "ballastDecidedBy": "model",
+      "ballastSpotSymbol": "RNVDAUSDT",
+      "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": null,
+      "ballastBalanceAfterUsdt": null,
       "paper": true
     }
   ],
