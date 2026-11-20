@@ -1,7 +1,7 @@
 {
   "code": "00000",
   "msg": "success",
-  "requestTime": "1795130717463",
+  "requestTime": "1795139820483",
   "data": [
     {
       "orderId": "BAL1F91F3BE9E288DB2AE0C3836",
@@ -1161,6 +1161,35 @@
       "ballastSlippageBp": 2.0,
       "ballastBalanceChangeUsdt": "-14.5106",
       "ballastBalanceAfterUsdt": "-41.4725",
+      "paper": true
+    },
+    {
+      "orderId": "BALF2037DC2139E988F8ECA7392",
+      "clientOid": "BALF2037DC2139E988F8ECA7392",
+      "symbol": "AMDUSDT",
+      "productType": "USDT-FUTURES",
+      "marginCoin": "USDT",
+      "side": "sell",
+      "tradeSide": "open",
+      "orderType": "market",
+      "force": "gtc",
+      "price": "473.245332",
+      "priceAvg": "473.245332",
+      "size": "1.987405",
+      "baseVolume": "1.987405",
+      "quoteVolume": "940.5300",
+      "fee": "-0.564300",
+      "feeCoin": "USDT",
+      "status": "filled",
+      "cTime": "1795139094818",
+      "uTime": "1795139094818",
+      "ballastSession": "2026-11-19",
+      "ballastReason": "event reader judged HEDGE - macro (high impact, confidence 78%)",
+      "ballastDecidedBy": "model",
+      "ballastSpotSymbol": "RAMDUSDT",
+      "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": null,
+      "ballastBalanceAfterUsdt": null,
       "paper": true
     }
   ],
