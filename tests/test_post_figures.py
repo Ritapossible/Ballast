@@ -37,17 +37,34 @@ class ThePrePostCheckerStillReadsTheDrafts(unittest.TestCase):
                      for name in ("X_ARTICLE.md", "X_POST.md")}
 
     def test_every_figure_is_still_found(self) -> None:
+        """Only for a draft still awaiting a post.
+
+        A posted draft is frozen: its figures are the record as it stood that
+        day, and the live site carries the current ones. Holding published text
+        to a moving record would demand it be rewritten to match later data.
+        """
         rows = self.checker.expectations()
         self.assertGreaterEqual(len(rows), 25,
                                 "the checker stopped deriving most of its figures")
         for file, what, patterns, expected in rows:
-            if expected == "<none>":
+            if expected == "<none>" or self.checker.posted(self.texts[file]):
                 continue
             with self.subTest(figure=what):
                 self.assertTrue(
                     self.checker.matches(self.texts[file], patterns),
                     f"no pattern for {what!r} matches {file} any more, so it is "
                     f"no longer being checked")
+
+    def test_a_posted_draft_is_recognised_as_frozen(self) -> None:
+        for name, text in self.texts.items():
+            with self.subTest(draft=name):
+                mark = self.checker.posted(text)
+                self.assertIsNotNone(mark, f"{name} records no posted URL")
+                self.assertTrue(mark[0].startswith("https://"))
+
+    def test_an_unposted_draft_is_still_checked(self) -> None:
+        """Freezing must apply only to what has gone out."""
+        self.assertIsNone(self.checker.posted("A draft with no marker."))
 
     def test_a_wrapped_figure_is_still_seen(self) -> None:
         """Markdown wraps at the margin; a figure split across lines still counts."""

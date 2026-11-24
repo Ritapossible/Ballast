@@ -19,6 +19,7 @@ import json
 import re
 import unittest
 from pathlib import Path
+from typing import ClassVar
 
 import yaml
 
@@ -83,29 +84,46 @@ class EveryCronReachesItsStep(unittest.TestCase):
 
 
 class TheNightIsDecidedNearTheClose(unittest.TestCase):
-    def test_a_trigger_fires_within_minutes_of_the_bell(self):
-        session = dt.date(2026, 10, 1)
-        close = close_utc(session)
-        earliest = min(
-            (dt.datetime.combine(session, dt.time(h, m), tzinfo=dt.timezone.utc)
-             for h, m in (minute_of(c) for c in wired("Decide"))),
-            key=lambda when: abs((when - close).total_seconds()))
-        late = (earliest - close).total_seconds() / 60
-        self.assertGreater(late, 0,
-                           "a decide trigger before the close resolves to the "
-                           "PREVIOUS session and would decide the wrong night")
-        self.assertLessEqual(late, DECIDE_BY_MINUTES,
-                             f"earliest decide trigger is {late:.0f} min after "
-                             f"the close; the hedge has to be on before the "
-                             f"after-hours release, not after it")
+    # One in EDT and one in EST. A cron is a fixed UTC time and the US close is
+    # not: 20:00Z in summer, 21:00Z in winter. Testing one date only is how a
+    # near-close trigger that was correct on 2026-10-03 silently became a trigger
+    # firing 55 minutes BEFORE the close on 2026-11-01, deciding the previous
+    # session and contributing nothing for three weeks.
+    SESSIONS: ClassVar[tuple] = (dt.date(2026, 10, 1), dt.date(2026, 11, 23))
+
+    def test_a_trigger_fires_soon_after_the_bell_in_both_dst_regimes(self):
+        for session in self.SESSIONS:
+            with self.subTest(session=session, close=f"{close_utc(session):%H:%MZ}"):
+                close = close_utc(session)
+                after = [
+                    (dt.datetime.combine(session, dt.time(h, m),
+                                         tzinfo=dt.timezone.utc) - close).total_seconds() / 60
+                    for h, m in (minute_of(c) for c in wired("Decide"))]
+                # Only triggers AFTER the bell count; one before it resolves to
+                # the previous session, so it is not cover for this night at all.
+                usable = [m for m in after if m > 0]
+                self.assertTrue(usable, "no decide trigger fires after this close")
+                self.assertLessEqual(
+                    min(usable), DECIDE_BY_MINUTES,
+                    f"earliest decide trigger after the {close:%H:%MZ} close is "
+                    f"{min(usable):.0f} min late; the hedge has to be on before "
+                    f"the after-hours release, not after it")
+
+    def test_the_close_really_does_move_between_the_two_sessions(self):
+        """Guards the test above: two dates in the same regime would prove nothing."""
+        closes = {f"{close_utc(s):%H:%MZ}" for s in self.SESSIONS}
+        self.assertEqual(len(closes), 2, f"both sessions share a close: {closes}")
 
     def test_firing_before_the_close_would_pick_the_wrong_session(self):
         """Why the trigger is at :05 and not on the hour or earlier."""
-        close = close_utc(dt.date(2026, 10, 1))
-        self.assertEqual(current_session(close - dt.timedelta(minutes=5)),
-                         dt.date(2026, 9, 30))
-        self.assertEqual(current_session(close + dt.timedelta(minutes=5)),
-                         dt.date(2026, 10, 1))
+        for session in self.SESSIONS:
+            with self.subTest(session=session):
+                close = close_utc(session)
+                self.assertNotEqual(
+                    current_session(close - dt.timedelta(minutes=5)), session,
+                    "a run before the bell must not resolve to this session")
+                self.assertEqual(
+                    current_session(close + dt.timedelta(minutes=5)), session)
 
     def test_the_backups_are_still_there(self):
         """The early trigger replaces nothing - GitHub drops schedules."""

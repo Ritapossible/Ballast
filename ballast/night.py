@@ -142,14 +142,7 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
     lag_hours = (now - close).total_seconds() / 3600
     total_hours = window_hours(session)
     elapsed = lag_hours / total_hours if total_hours else 1.0
-    if elapsed > MAX_WINDOW_ELAPSED and not force:
-        raise WindowElapsed(
-            f"{lag_hours:.1f}h of the {total_hours:.1f}h window for {session} has already "
-            f"passed ({elapsed:.0%}). A hedge placed now could not have covered the move "
-            f"settlement would credit it with. Pass --force only to reconstruct a session "
-            f"deliberately, knowing the entry is not an ex-ante decision.")
 
-    book = Book.load(config.BOOK_PATH)
     ledger = Ledger(config.LEDGER_PATH, config.secret())
 
     # Appending under a new key to a chain signed with an old one produces a
@@ -165,6 +158,14 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
     # but not one after another - and a manual run followed by a cron GitHub delayed
     # by hours is exactly that. A no-op rather than an error, so the late run is not
     # reported as a failure for correctly declining to duplicate work.
+    #
+    # This check runs BEFORE the window guard below, and the order is the whole
+    # point. A night already on the chain needs no decision whatever the hour, so
+    # a late backup has nothing to do and should say so quietly. While the guard
+    # came first, that run raised WindowElapsed instead and failed the job: on
+    # 2026-11-24 the 06:16Z backup mailed a failure for a session that had been
+    # correctly decided at 04:42Z. The guard was right, the record was intact, and
+    # the only fault was that this returned too late to be reached.
     decided = {e["body"].get("session") for e in ledger.records("night_summary")}
     if session.isoformat() in decided and not force:
         return {"session": session.isoformat(), "positions": 0, "hedged": 0,
@@ -174,6 +175,18 @@ def run(dry_run: bool = False, no_reader: bool = False, force: bool = False) -> 
                 "window_elapsed_at_decision": round(elapsed, 3), "forced": False,
                 "usage": {}, "dry_run": dry_run, "reader": "not run",
                 "note": "already decided; nothing appended"}
+
+    # Only an UNDECIDED session reaches the clock. A decision recorded after most
+    # of the window has passed is not a decision: the move it claims to have judged
+    # has already happened.
+    if elapsed > MAX_WINDOW_ELAPSED and not force:
+        raise WindowElapsed(
+            f"{lag_hours:.1f}h of the {total_hours:.1f}h window for {session} has already "
+            f"passed ({elapsed:.0%}). A hedge placed now could not have covered the move "
+            f"settlement would credit it with. Pass --force only to reconstruct a session "
+            f"deliberately, knowing the entry is not an ex-ante decision.")
+
+    book = Book.load(config.BOOK_PATH)
 
     spot_marks, histories, perp_marks, unreachable = {}, {}, {}, {}
     for pos in book:

@@ -145,11 +145,34 @@ def matches(text: str, patterns: list[str]) -> list[str]:
     return found
 
 
+POSTED = re.compile(r"<!--\s*posted:\s*(\S+)\s+on\s+(\S+)\s*-->")
+
+
+def posted(text: str) -> tuple[str, str] | None:
+    """The URL and date a draft was published at, if it was."""
+    found = POSTED.search(text)
+    return (found.group(1), found.group(2)) if found else None
+
+
 def main() -> int:
     texts = {name: (DOCS / name).read_text() for name in ("X_ARTICLE.md", "X_POST.md")}
     bad = []
     print("Checking the X drafts against the ledger, facts.json and state/\n")
+    # A draft that has been posted is history and is left alone. This checker
+    # exists to stop a figure going out wrong; once it has gone out, holding the
+    # source to a record that keeps moving would demand the published text be
+    # rewritten to match later data, which is falsifying it rather than checking
+    # it. The live site carries the current figures and rebuilds nightly.
+    frozen = {name: posted(text) for name, text in texts.items()}
+    for name, mark in frozen.items():
+        if mark:
+            print(f"  [posted] {name}: published {mark[1]}, not checked - {mark[0]}")
+    if all(frozen.values()):
+        print("\nEvery draft has been posted; nothing to check before posting.")
+        return 0
     for file, what, patterns, expected in expectations():
+        if frozen.get(file):
+            continue
         found = matches(texts[file], patterns)
         if expected == "<none>":
             ok = not found

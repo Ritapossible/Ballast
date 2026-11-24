@@ -21,7 +21,7 @@ from ballast import bgc, config, morning, night, report
 from ballast.book import Book, Position
 from ballast.ledger import Ledger, LedgerError
 from ballast.market import MarketDataUnavailable
-from ballast.sessions import close_utc, next_session, open_utc
+from ballast.sessions import close_utc, next_session, open_utc, window_hours
 
 SECRET = b"integration-secret"
 SESSION = dt.date(2026, 9, 10)          # a Thursday
@@ -203,6 +203,31 @@ class TestNightIsIdempotent(LivePathCase):
         self.assertEqual(len(self.ledger().records("decision")), before)
         self.assertEqual(len(self.ledger().records("night_summary")), 1)
         self.assertGreater(first["positions"], 0)
+
+    def test_a_repeat_past_the_window_limit_no_ops_instead_of_failing(self):
+        """The case that mailed a failure on 2026-11-24.
+
+        A night decided at 04:42Z, a backup cron arriving at 06:16Z with 53% of
+        the window gone. The guard refused it and the job failed - for a session
+        that was already correctly on the chain, with nothing to do and nothing
+        wrong. A night already decided needs no decision whatever the hour, so the
+        chain is checked before the clock.
+        """
+        self.run_night()
+        before = len(self.ledger().records("decision"))
+        late = close_utc(SESSION) + dt.timedelta(
+            hours=window_hours(SESSION) * 0.6)      # past the 50% refusal limit
+        second = self.run_night(at=late)            # must not raise
+        self.assertIn("already decided", second["note"])
+        self.assertGreater(second["window_elapsed_at_decision"], 0.5)
+        self.assertEqual(len(self.ledger().records("decision")), before)
+        self.assertEqual(len(self.ledger().records("night_summary")), 1)
+
+    def test_an_undecided_night_is_still_refused_when_it_is_too_late(self):
+        """Reordering must not disarm the guard - only move it behind the chain."""
+        with self.assertRaises(night.WindowElapsed):
+            self.run_night(at=close_utc(SESSION) + dt.timedelta(
+                hours=window_hours(SESSION) * 0.6))
 
     def test_the_chain_still_verifies_after_a_repeat(self):
         self.run_night()

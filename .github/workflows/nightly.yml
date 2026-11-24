@@ -33,15 +33,28 @@ name: Ballast nightly
 # and re-grading them from their fill timestamps turned the book's drawdown from
 # better than the unhedged book to worse. See ballast/regrade.py.
 #
-# 20:05Z and not earlier: the overnight window opens at the 20:00Z close, and
-# current_session() resolves a 19:55Z run to the PREVIOUS session - firing before
-# the bell would decide the wrong night. Five past is the earliest safe minute,
-# and it is still ahead of most after-hours earnings releases (16:00-16:30 ET),
-# which is the point. A hedge placed after the release has already eaten the move
-# it was meant to insure.
+# Five past the close and not earlier: current_session() resolves a run from
+# before the bell to the PREVIOUS session, so firing early decides the wrong
+# night. Five past is the earliest safe minute and still ahead of most after-hours
+# earnings releases (16:00-16:30 ET), which is the point - a hedge placed after
+# the release has already eaten the move it was meant to insure.
+#
+# TWO near-close triggers, because the close MOVES. sessions.py is DST-aware and
+# the US close is 20:00Z in EDT and 21:00Z in EST, but a cron is a fixed UTC time
+# and cannot follow it. A single 20:05Z trigger was correct when it shipped on
+# 2026-10-03 and became wrong on 2026-11-01, when the clocks went back: from then
+# on it fired 55 minutes BEFORE the close, resolved to the previous session, and
+# contributed nothing. Nights fell through to the delayed backups - 2026-11-23 was
+# decided 44% into its window, against a 50% refusal limit.
+#
+# So both are scheduled and whichever lands on the wrong side of the bell resolves
+# to the previous session, finds it already decided, and no-ops. That is safe only
+# because night.run() checks the chain before it checks the clock; see the comment
+# there, which this schedule depends on.
 on:
   schedule:
-    - cron: "5 20 * * 1-5"     # 16:05 ET - five minutes after the close
+    - cron: "5 20 * * 1-5"     # 16:05 EDT - five minutes after the summer close
+    - cron: "5 21 * * 1-5"     # 16:05 EST - five minutes after the winter close
     - cron: "0 21 * * 1-5"     # 17:00 ET - one hour after the close
     - cron: "30 22 * * 1-5"    # backup, if the first was delayed or dropped
     - cron: "0 0 * * 2-6"      # last chance, 4h after the close it belongs to
@@ -123,7 +136,7 @@ jobs:
 
       - name: Decide (after the close)
         if: >-
-          contains(fromJSON('["5 20 * * 1-5","0 21 * * 1-5","30 22 * * 1-5","0 0 * * 2-6"]'),
+          contains(fromJSON('["5 20 * * 1-5","5 21 * * 1-5","0 21 * * 1-5","30 22 * * 1-5","0 0 * * 2-6"]'),
                    github.event.schedule)
           || inputs.task == 'night' || inputs.task == 'both'
         env:

@@ -1,3 +1,10 @@
+<!-- posted: https://x.com/RitaCryptoTips/status/2106281887572365419 on 2026-10-03 -->
+> **Posted 2026-10-03.** This is the text as published, and its figures are
+> the record as it stood that day. It is not kept in step with the live
+> record and must not be: rewriting a published post's source to match later
+> data would be falsifying it. For current figures see ballast-v1.vercel.app,
+> which rebuilds from the chain every night.
+
 # X post — required, and an entry without it is invalid
 
 Must contain **`#BitgetHackathon`** and **`@Bitget_AI`**. Post from the account
