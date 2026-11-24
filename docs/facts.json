@@ -6,9 +6,9 @@
   "funding": {
     "max_bp": 2.35,
     "max_name": "NVDA",
-    "mean_bp": 0.84,
+    "mean_bp": 0.86,
     "measured_on": "2026-11-24",
-    "min_bp": -0.04,
+    "min_bp": -0.09,
     "min_name": "COST",
     "names": 12,
     "names_paying": 1
