@@ -6,12 +6,12 @@
   "funding": {
     "max_bp": 2.35,
     "max_name": "NVDA",
-    "mean_bp": 0.86,
+    "mean_bp": 0.84,
     "measured_on": "2026-11-24",
-    "min_bp": 0.0,
-    "min_name": "NKE",
+    "min_bp": -0.04,
+    "min_name": "COST",
     "names": 12,
-    "names_paying": 0
+    "names_paying": 1
   },
   "hedge_cost_bp": 11.3,
   "hedge_cost_gross_bp": 12.0,
