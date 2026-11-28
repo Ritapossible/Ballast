@@ -4,10 +4,10 @@
   "beta_names": 12,
   "exit_cost_bp": 20.0,
   "funding": {
-    "max_bp": 2.33,
+    "max_bp": 2.45,
     "max_name": "NVDA",
-    "mean_bp": 0.8,
-    "measured_on": "2026-11-27",
+    "mean_bp": 0.82,
+    "measured_on": "2026-11-28",
     "min_bp": -0.1,
     "min_name": "COST",
     "names": 12,
@@ -15,7 +15,7 @@
   },
   "hedge_cost_bp": 11.3,
   "hedge_cost_gross_bp": 12.0,
-  "measured_on": "2026-11-27",
+  "measured_on": "2026-11-28",
   "median_r2": 0.982,
   "median_tail_cut_pct": 88,
   "oos": {
@@ -211,7 +211,7 @@
     "shortest": 100,
     "split": 0.7
   },
-  "rtokens_hedgeable": 292,
+  "rtokens_hedgeable": 296,
   "rtokens_total": 3088,
   "tail": [
     {

@@ -1,7 +1,7 @@
 {
   "code": "00000",
   "msg": "success",
-  "requestTime": "1795761738239",
+  "requestTime": "1795834266962",
   "data": [
     {
       "orderId": "BAL1F91F3BE9E288DB2AE0C3836",
@@ -1219,6 +1219,35 @@
       "ballastSlippageBp": 2.0,
       "ballastBalanceChangeUsdt": "-145.9532",
       "ballastBalanceAfterUsdt": "-192.3165",
+      "paper": true
+    },
+    {
+      "orderId": "BAL7514F8C17AB8D2EF711929B0",
+      "clientOid": "BAL7514F8C17AB8D2EF711929B0",
+      "symbol": "PLTRUSDT",
+      "productType": "USDT-FUTURES",
+      "marginCoin": "USDT",
+      "side": "sell",
+      "tradeSide": "open",
+      "orderType": "market",
+      "force": "gtc",
+      "price": "172.445504",
+      "priceAvg": "172.445504",
+      "size": "5.797716",
+      "baseVolume": "5.797716",
+      "quoteVolume": "999.7900",
+      "fee": "-0.599900",
+      "feeCoin": "USDT",
+      "status": "filled",
+      "cTime": "1795833409204",
+      "uTime": "1795833409204",
+      "ballastSession": "2026-11-27",
+      "ballastReason": "event reader judged HEDGE - product (medium impact, confidence 72%)",
+      "ballastDecidedBy": "model",
+      "ballastSpotSymbol": "RPLTRUSDT",
+      "ballastSlippageBp": 2.0,
+      "ballastBalanceChangeUsdt": null,
+      "ballastBalanceAfterUsdt": null,
       "paper": true
     }
   ],
