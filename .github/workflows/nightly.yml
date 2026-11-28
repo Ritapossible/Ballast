@@ -297,8 +297,37 @@ jobs:
           # with the runner.
           git stash push --staged --message "pending ledger"
           git pull --rebase --autostash origin main
-          git stash pop
+
+          # The pop conflicts whenever another run has already pushed, because
+          # almost everything here is GENERATED and carries a run timestamp:
+          # bitget_orders.json has requestTime, the crosscheck and probe have
+          # built_on, the pages have a build stamp. Two runs minutes apart cannot
+          # agree on those bytes and never need to - on 2026-11-28 a run at 03:09Z
+          # died on four such conflicts seven minutes after another had pushed.
+          #
+          # So a conflict in a generated file is resolved towards main, whose copy
+          # was built from a ledger at least as new as this runner's; anything
+          # genuinely new here is rebuilt by the next run. The ledger is the one
+          # file that is authored rather than generated, and a conflict in it is a
+          # real disagreement about history: that is never auto-resolved.
+          if ! git stash pop; then
+            conflicted=$(git diff --name-only --diff-filter=U)
+            echo "stash pop conflicted on: $conflicted"
+            if echo "$conflicted" | grep -qx 'state/ledger.jsonl'; then
+              echo "::error::ledger.jsonl conflicted - two runs disagree about the"
+              echo "::error::chain. Refusing to auto-resolve; resolve by hand."
+              exit 1
+            fi
+            for f in $conflicted; do git checkout --ours -- "$f"; done
+            git add -A state/ docs/ README.md
+            git stash drop
+          fi
+
           git add -A state/ docs/ README.md
+          if git diff --cached --quiet; then
+            echo "another run already published this; nothing left to commit"
+            exit 0
+          fi
           git commit -m "ledger: $(date -u '+%Y-%m-%d %H:%MZ')"
 
           for attempt in 1 2 3; do

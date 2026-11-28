@@ -23,6 +23,7 @@ from ballast import config
 from ballast.holidays import is_trading_day
 from ballast.ledger import Ledger
 from ballast.report import DECIDE_GRACE_HOURS
+from ballast.schedule import decide_deadline
 from ballast.sessions import UTC, close_utc
 
 
@@ -43,9 +44,15 @@ def missing(days: int, now: dt.datetime | None = None) -> list[dt.date]:
         day = now.date() - dt.timedelta(days=back)
         if not is_trading_day(day):
             continue
-        # Only count it once the run was actually overdue, on the same clock the
-        # site uses to decide whether it is stale.
-        if now < close_utc(day) + dt.timedelta(hours=DECIDE_GRACE_HOURS):
+        # Only count it once the run was actually overdue - which means after
+        # the LAST trigger that could still have decided it, not after a fixed
+        # number of hours. The flat grace was four hours, which matches the
+        # schedule on a 21:00Z close and is two hours short on an early one: the
+        # half day after Thanksgiving closed at 18:00Z, its last chance was
+        # 00:00Z, and the gate failed the job at 22:51Z for a night that was
+        # decided soon after. A gate that cries before the system has finished
+        # trying is a gate people learn to ignore.
+        if now < decide_deadline(day, DECIDE_GRACE_HOURS):
             continue
         iso = day.isoformat()
         if earliest and iso < earliest:
